@@ -216,21 +216,24 @@
       box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.05);
     }
 
-    .nav-item {
+        .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 4px;
       color: #64748b;
-      text-decoration: none;
-      font-size: 0.75rem;
-      font-weight: 500;
-      background: none;
+      font-size: 0.65rem;
+      font-weight: 700;
+      transition: all 0.2s;
+      cursor: pointer !important;
       border: none;
-      cursor: pointer;
+      background: none;
+      padding: 0;
       flex: 1;
-      padding: 6px 0;
+      height: 100%;
+      pointer-events: auto !important;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .nav-item i {
@@ -764,7 +767,7 @@
     <button class="cart-btn" onclick="switchNav('orders')">
       <i data-lucide="shopping-bag"></i>
       <span class="cart-badge" id="mobileCartCount">0</span>
-    </button>
+    </div>
   </header>
 
   <!-- ================= VIEW 1: HOME VIEW ================= -->
@@ -773,7 +776,7 @@
     <div class="hero-promo" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08)); border-color: rgba(99, 102, 241, 0.15);">
       <h2>로컬망 1티어 직결<br><span style="color: #4f46e5; font-weight: 800;">JDISIM eSIM</span></h2>
       <p>현지 통신사 망과 다이렉트로 연결되어 지연 없는 LTE/5G 데이터를 초저가에 즐기세요.</p>
-      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</button>
+      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</div>
     </div>
 
     <!-- Search container (click to navigate to store view) -->
@@ -920,7 +923,7 @@
     <div class="order-tracker-form">
       <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
       <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 입력 (숫자만)">
-      <button class="tracker-btn" onclick="searchOrders()">주문 내역 조회하기</button>
+      <button class="tracker-btn" onclick="searchOrders()">주문 내역 조회하기</div>
     </div>
 
     <div id="orderSearchResults"></div>
@@ -957,22 +960,22 @@
 
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav">
-    <button class="nav-item active" data-nav="home" onclick="switchNav('home')">
+    <div class="nav-item active" data-nav="home" onclick="switchNav('home')">
       <i data-lucide="home"></i>
       <span>홈</span>
-    </button>
-    <button class="nav-item" data-nav="store" onclick="switchNav('store')">
+    </div>
+    <div class="nav-item" data-nav="store" onclick="switchNav('store')">
       <i data-lucide="compass"></i>
       <span>eSIM 스토어</span>
-    </button>
-    <button class="nav-item" data-nav="orders" onclick="switchNav('orders')">
+    </div>
+    <div class="nav-item" data-nav="orders" onclick="switchNav('orders')">
       <i data-lucide="receipt"></i>
       <span>주문 조회</span>
-    </button>
-    <button class="nav-item" onclick="location.href='guide.html'">
+    </div>
+    <div class="nav-item" onclick="window.location.assign('guide.html')">
       <i data-lucide="book-open"></i>
       <span>이심 가이드</span>
-    </button>
+    </div>
   </nav>
 
   <!-- Bottom Option Selector Sheet -->
@@ -982,7 +985,7 @@
       <h3 class="bottom-sheet-title" id="sheetProductTitle">상품 옵션 선택</h3>
       <button class="bottom-sheet-close" onclick="closeBottomSheet()">
         <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-      </button>
+      </div>
     </div>
 
     <!-- 1. Carrier -->
@@ -1020,9 +1023,9 @@
         <div class="checkout-total-price" id="checkoutTotalPrice">0원</div>
       </div>
       <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 20px;">
-        <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</button>
+        <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</div>
         <span id="checkoutQty" style="font-weight:700; font-size:0.95rem;">1</span>
-        <button onclick="changeQty(1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">+</button>
+        <button onclick="changeQty(1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">+</div>
       </div>
     </div>
 
@@ -1033,7 +1036,7 @@
       <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
     </div>
 
-    <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</button>
+    <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</div>
   </div>
 
   <!-- Device compatibility check modal -->
@@ -1041,7 +1044,7 @@
   <div class="mobile-modal" id="deviceModal">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700;">3초 기종 진단 가이드</h3>
-      <button class="bottom-sheet-close" onclick="closeModal()">✕</button>
+      <button class="bottom-sheet-close" onclick="closeModal()">✕</div>
     </div>
     <div style="font-size: 0.85rem; color: #334155; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
       <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
@@ -1215,7 +1218,7 @@
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
             <span class="product-price">${minPrice.toLocaleString()}원~</span>
-            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</div>
           </div>
         `;
         container.appendChild(card);
@@ -1318,7 +1321,7 @@
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
             <span class="product-price">${minPrice.toLocaleString()}원~</span>
-            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</div>
           </div>
         `;
         listContainer.appendChild(card);
