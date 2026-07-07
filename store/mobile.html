@@ -986,24 +986,27 @@
     </div>
 
     <!-- Carrier Option -->
-    <div id="carrierSection">
-      <div class="option-group-title">
+    <div id="carrierSection" style="margin-bottom: 16px;">
+      <div class="option-group-title" style="margin-bottom: 6px;">
         <span>로밍망 통신사 선택</span>
-        <span style="font-weight: 500; font-size: 0.75rem; color: #a855f7;">로밍망/로컬망 필수 확인</span>
+        <span style="font-weight: 500; font-size: 0.72rem; color: #a855f7;">로밍망/로컬망 필수 확인</span>
       </div>
-      <div class="option-pills" id="carrierPills"></div>
+      <select id="carrierSelect" class="tracker-input" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; font-size: 0.88rem; outline: none; margin-top: 4px;" onchange="selectCarrier(this.value)">
+      </select>
     </div>
 
     <!-- Capacity Option -->
-    <div>
-      <div class="option-group-title">일일 데이터 제공량</div>
-      <div class="option-pills" id="capacityPills"></div>
+    <div style="margin-bottom: 16px;">
+      <div class="option-group-title" style="margin-bottom: 6px;">데이터 제공량 선택 (데일리 vs 총용량)</div>
+      <select id="capacitySelect" class="tracker-input" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; font-size: 0.88rem; outline: none; margin-top: 4px;" onchange="selectCapacity(this.value)">
+      </select>
     </div>
 
     <!-- Days Option -->
-    <div>
-      <div class="option-group-title">사용 일수 선택</div>
-      <div class="option-pills" id="daysPills"></div>
+    <div style="margin-bottom: 20px;">
+      <div class="option-group-title" style="margin-bottom: 6px;">사용 기간 선택</div>
+      <select id="daysSelect" class="tracker-input" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; font-size: 0.88rem; outline: none; margin-top: 4px;" onchange="selectDays(this.value)">
+      </select>
     </div>
 
     <!-- Quantity & Price Calculator -->
@@ -1313,23 +1316,22 @@
     }
 
     function renderCarrierPills(carriers) {
-      const container = document.getElementById('carrierPills');
+      const select = document.getElementById('carrierSelect');
+      if (!select) return;
       if (carriers.length <= 1) {
         document.getElementById('carrierSection').style.display = 'none';
         return;
       }
       document.getElementById('carrierSection').style.display = 'block';
-      container.innerHTML = carriers.map(c => `
-        <div class="option-pill ${c === selectedCarrier ? 'active' : ''}" onclick="selectCarrier('${c}')">${c}</div>
+      
+      select.innerHTML = carriers.map(c => `
+        <option value="${c}" ${c === selectedCarrier ? 'selected' : ''}>${c}</option>
       `).join('');
     }
 
     function selectCarrier(carrier) {
       selectedCarrier = carrier;
       activeCarrier = carrierOptions.find(co => co.carrier === carrier) || carrierOptions[0];
-      document.querySelectorAll('#carrierPills .option-pill').forEach(p => {
-        p.classList.toggle('active', p.innerText === carrier);
-      });
       onCarrierSelected();
     }
 
@@ -1344,17 +1346,41 @@
     }
 
     function renderCapacityPills(capacities) {
-      const container = document.getElementById('capacityPills');
-      container.innerHTML = capacities.map(c => `
-        <div class="option-pill ${c === selectedCapacity ? 'active' : ''}" onclick="selectCapacity('${c}')">${c}</div>
-      `).join('');
+      const select = document.getElementById('capacitySelect');
+      if (!select) return;
+
+      // Group capacities into daily (매일) vs total (총용량)
+      const dailyCapacities = capacities.filter(c => c.includes('매일') || c.includes('일'));
+      const totalCapacities = capacities.filter(c => !c.includes('매일') && !c.includes('일'));
+
+      let html = '';
+      if (dailyCapacities.length > 0) {
+        html += `<optgroup label="📅 매일 초기화 (일일 요금제)">`;
+        html += dailyCapacities.map(c => `
+          <option value="${c}" ${c === selectedCapacity ? 'selected' : ''}>${c}</option>
+        `).join('');
+        html += `</optgroup>`;
+      }
+      
+      if (totalCapacities.length > 0) {
+        html += `<optgroup label="🎒 전체 기간 사용 (총용량 요금제)">`;
+        html += totalCapacities.map(c => `
+          <option value="${c}" ${c === selectedCapacity ? 'selected' : ''}>${c}</option>
+        `).join('');
+        html += `</optgroup>`;
+      }
+
+      if (html === '') {
+        html = capacities.map(c => `
+          <option value="${c}" ${c === selectedCapacity ? 'selected' : ''}>${c}</option>
+        `).join('');
+      }
+
+      select.innerHTML = html;
     }
 
     function selectCapacity(capacity) {
       selectedCapacity = capacity;
-      document.querySelectorAll('#capacityPills .option-pill').forEach(p => {
-        p.classList.toggle('active', p.innerText === capacity);
-      });
       onCapacitySelected();
     }
 
@@ -1370,17 +1396,16 @@
     }
 
     function renderDaysPills(days) {
-      const container = document.getElementById('daysPills');
-      container.innerHTML = days.map(d => `
-        <div class="option-pill ${parseInt(d) === parseInt(selectedDays) ? 'active' : ''}" onclick="selectDays('${d}')">${d}일</div>
+      const select = document.getElementById('daysSelect');
+      if (!select) return;
+      
+      select.innerHTML = days.map(d => `
+        <option value="${d}" ${parseInt(d) === parseInt(selectedDays) ? 'selected' : ''}>${d}일</option>
       `).join('');
     }
 
     function selectDays(days) {
-      selectedDays = parseInt(days);
-      document.querySelectorAll('#daysPills .option-pill').forEach(p => {
-        p.classList.toggle('active', parseInt(p.innerText) === selectedDays);
-      });
+      selectedDays = days;
       updatePricing();
     }
 
