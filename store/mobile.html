@@ -1156,6 +1156,7 @@
     };
 
     function renderHomeFeatured() {
+      try {
       const container = document.getElementById('homeFeaturedList');
       if (!container || !window.PRODUCTS_DATA) return;
       container.innerHTML = '';
@@ -1228,6 +1229,7 @@
     }
 
     function toggleFaqAccordion(el) {
+      try {
       const content = el.querySelector('.faq-accordion-content');
       const icon = el.querySelector('[data-lucide="chevron-down"], [data-lucide="chevron-up"]');
       const isHidden = content.style.display === 'none' || !content.style.display;
@@ -1248,12 +1250,6 @@
 
     function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
       try {
-        const listContainer = document.getElementById('storeProductList');
-        if (!listContainer) return;
-        if (!window.PRODUCTS_DATA) {
-            listContainer.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b;">상품 데이터를 불러오는 중입니다...</div>';
-            return;
-        }
       const listContainer = document.getElementById('storeProductList');
       if (!listContainer || !window.PRODUCTS_DATA) return;
 
