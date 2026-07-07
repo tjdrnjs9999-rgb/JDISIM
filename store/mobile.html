@@ -1,6 +1,26 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
+  <script>
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      var div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = 'red';
+      div.style.color = 'white';
+      div.style.zIndex = '100000';
+      div.style.padding = '10px';
+      div.style.fontSize = '12px';
+      div.style.wordBreak = 'break-all';
+      div.innerHTML = '🚨 ERROR: ' + msg + '<br>Line: ' + lineNo;
+      document.body.appendChild(div);
+      return false;
+    };
+    console.log("Diagnostic script loaded");
+  </script>
+
   <meta name="impact-site-verification" value="aacb94f9-36f7-40f0-a6f3-76e5515e0401">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -749,6 +769,8 @@
   </style>
 </head>
 <body>
+  <div id="debugBtn" onclick="alert('✅ 시스템 정상: 클릭이 작동합니다!')" style="position:fixed; top:50px; left:10px; z-index:100001; background:rgba(0,0,0,0.5); color:white; padding:5px 10px; border-radius:5px; font-size:10px; cursor:pointer;">[CLICK TEST]</div>
+
 
   <!-- Background Video -->
   <div class="video-bg-container">
@@ -1706,9 +1728,19 @@
     });
 
     // Initial render
-    renderMiniReviews();
-    renderHomeFeatured();
-    renderStoreProducts();
+    
+    window.onload = function() {
+      console.log("Window loaded, initializing...");
+      try {
+        lucide.createIcons();
+        renderMiniReviews();
+        renderHomeFeatured();
+        renderStoreProducts();
+      } catch(e) {
+        window.onerror(e.message, null, "init");
+      }
+    };
+
   </script>
 </body>
 </html>
