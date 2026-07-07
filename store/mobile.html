@@ -822,7 +822,7 @@
 <body>
   
   
-  <div id="debugBtn" onclick="alert('✅ 시스템 정상: 클릭이 작동합니다!')" style="position:fixed; top:10px; left:10px; z-index:1000000; background:#ff00ff; color:white; padding:15px 25px; border-radius:10px; font-size:16px; font-weight:900; cursor:pointer; border:4px solid white; box-shadow: 0 0 20px #ff00ff;">[버전체크: 1783416345]</div>
+  
 
 
 
@@ -1148,7 +1148,7 @@
     };
     
     // Initialize icons
-    if (window.lucide) lucide.createIcons();
+    lucide.createIcons();
 
     // Local state variables
     
@@ -1314,7 +1314,7 @@
         `;
         container.appendChild(card);
       });
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1334,7 +1334,7 @@
         content.style.display = 'none';
         if (icon) icon.setAttribute('data-lucide', 'chevron-down');
       }
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1412,7 +1412,7 @@
         `;
         listContainer.appendChild(card);
       });
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1794,7 +1794,7 @@
     window.onload = function() {
       console.log("Window loaded, initializing...");
       try {
-        if (window.lucide) lucide.createIcons();
+        lucide.createIcons();
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
