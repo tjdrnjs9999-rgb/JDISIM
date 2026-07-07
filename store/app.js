@@ -3,7 +3,9 @@
 // ================= [설정] 포트원 결제 연동 설정 =================
 // 보안을 위해 프로젝트 루트 폴더의 .env 파일에 키를 작성하여 관리할 수 있습니다.
 // .env 파일이 없거나 로드에 실패할 시 아래 기본 가상 테스트 코드가 적용됩니다.
-let PORTONE_MERCHANT_ID = "imp19278797"; 
+let PORTONE_MERCHANT_ID = "imp19278797";
+    let PORTONE_STORE_ID = "";
+    let PORTONE_CHANNEL_KEY = ""; 
 let PORTONE_PG_PROVIDER = "kakaopay.TC0ONETIME"; 
 // =============================================================
 
@@ -261,6 +263,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const val = parts.slice(1).join('=').trim().replace(/^['"]|['"]$/g, '');
             if (key === 'PORTONE_MERCHANT_ID') PORTONE_MERCHANT_ID = val;
             if (key === 'PORTONE_PG_PROVIDER') PORTONE_PG_PROVIDER = val;
+            if (key === 'PORTONE_STORE_ID') PORTONE_STORE_ID = val;
+            if (key === 'PORTONE_CHANNEL_KEY') PORTONE_CHANNEL_KEY = val;
           }
         });
       }
@@ -891,43 +895,60 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderModalContent(carrierOptions) {
     const p = activeCarrier;
     
-    // 캐리어 선택 탭 마크업
-    let carrierTabsHTML = '';
-    if (carrierOptions.length >= 1) {
-      carrierTabsHTML = `
-        <div class="config-group">
-          <div class="config-section-title">통신망 / 통신사 옵션</div>
-          <div class="pills-grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));">
-            ${carrierOptions.map(co => `
-              <button class="pill-option ${co.carrier === p.carrier ? 'active' : ''}" data-carrier="${co.carrier}">
-                ${co.carrier}
-                <span class="pill-subtext">${co.network_type} (${co.network_speed})</span>
-              </button>
-            `).join('')}
-          </div>
-        </div>
-      `;
+    // 4단계 캐스케이딩 옵션 로직 (데일리/총용량 구분)
+    const p = activeCarrier;
+    
+    // 1. Available Types (데일리 vs 총용량)
+    const types = new Set();
+    p.plans.forEach(pl => {
+      if (pl.data_limit.includes('매일')) types.add('데일리');
+      else types.add('총용량');
+    });
+    const typeList = Array.from(types);
+    
+    // Validate activePlanType
+    if (!window.activePlanType || !typeList.includes(window.activePlanType)) {
+      window.activePlanType = typeList[0];
     }
-
-    const dataLimits = [...new Set(p.plans.map(pl => pl.data_limit))];
-    const availableDurations = p.plans
-      .filter(pl => pl.data_limit === activeDataLimit)
-      .map(pl => pl.duration)
-      .sort((a, b) => a - b);
-      
+    
+    // 2. Filter plans by Type
+    const isDaily = (window.activePlanType === '데일리');
+    const typeFilteredPlans = p.plans.filter(pl => pl.data_limit.includes('매일') === isDaily);
+    
+    // 3. Available Capacities
+    const caps = new Set();
+    typeFilteredPlans.forEach(pl => {
+      const c = pl.data_limit.replace('매일 ', '').replace('총 ', '').trim();
+      caps.add(c);
+    });
+    const capList = Array.from(caps).sort((a,b) => {
+       const parseSize = s => parseFloat(s.replace(/[^\d.]/g, '')) * (s.includes('MB') ? 1 : 1024);
+       return parseSize(a) - parseSize(b);
+    });
+    
+    if (!activeDataLimit || !capList.includes(activeDataLimit.replace('매일 ', '').replace('총 ', '').trim())) {
+      activeDataLimit = (isDaily ? '매일 ' : (typeFilteredPlans[0].data_limit.includes('총') ? '총 ' : '')) + capList[0];
+    }
+    
+    const cleanActiveData = activeDataLimit.replace('매일 ', '').replace('총 ', '').trim();
+    
+    // 4. Available Durations
+    const durFilteredPlans = typeFilteredPlans.filter(pl => pl.data_limit.replace('매일 ', '').replace('총 ', '').trim() === cleanActiveData);
+    const availableDurations = Array.from(new Set(durFilteredPlans.map(pl => pl.duration))).sort((a, b) => a - b);
+    
     if (!availableDurations.includes(activeDuration)) {
       activeDuration = availableDurations[0];
     }
     
-    activePlan = p.plans.find(pl => pl.data_limit === activeDataLimit && pl.duration === activeDuration) || p.plans[0];
+    activePlan = durFilteredPlans.find(pl => pl.duration === activeDuration) || durFilteredPlans[0];
     
-    // 최종 금액 계산 (동반인 이심 10% 할인 적용)
+    // 최종 금액 계산
     const basePrice = activePlan.final_price;
     const finalPriceVal = Math.round(basePrice + (activeQuantity - 1) * basePrice * 0.9);
     
-    // 모달 본문 HTML 조합 (요청에 따라 제품코드 제거 완료)
+        // 모달 본문 HTML 조합 (요청에 따라 제품코드 제거 완료)
     modalContent.innerHTML = `
-      <!-- Left Config Section -->
+      <!-- Left Config Section (4-Step Granular Dropdowns) -->
       <div>
         <div class="modal-header">
           <div class="modal-category">${p.category}</div>
@@ -937,33 +958,44 @@ document.addEventListener('DOMContentLoaded', async () => {
           </h2>
         </div>
         
-        <!-- 캐리어 탭 (여러 개 있을 때만 노출) -->
-        ${carrierTabsHTML}
-
-        <!-- 데이터 용량 선택 -->
+        <!-- 1. 통신사 선택 -->
         <div class="config-group">
-          <div class="config-section-title">데이터 용량 옵션</div>
-          <div class="pills-grid">
-            ${dataLimits.map(dl => `
-              <button class="pill-option ${dl === activeDataLimit ? 'active' : ''}" data-datalimit="${dl}">
-                ${dl}
-                <span class="pill-subtext">${p.plans.find(pl=>pl.data_limit === dl)?.service_type || '데이터'}</span>
-              </button>
+          <div class="config-section-title">1. 통신사 및 네트워크망 선택</div>
+          <select id="carrierSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
+            ${carrierOptions.map(co => `
+              <option value="${co.carrier}" ${co.carrier === p.carrier ? 'selected' : ''}>
+                ${co.carrier} (${co.network_type} - ${co.network_speed})
+              </option>
             `).join('')}
-          </div>
+          </select>
         </div>
 
-        <!-- 기간 선택 -->
+        <!-- 2. 플랜 타입 선택 -->
         <div class="config-group">
-          <div class="config-section-title">이용 일수 (기간)</div>
-          <div class="pills-grid" style="grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));">
+          <div class="config-section-title">2. 플랜 타입 (데일리 vs 총용량)</div>
+          <select id="planTypeSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
+            ${typeList.map(t => `<option value="${t}" ${t === window.activePlanType ? 'selected' : ''}>${t === '데일리' ? '📅 데일리 (매일 리셋)' : '🎒 총용량 (전체 기간)'}</option>`).join('')}
+          </select>
+        </div>
+
+        <!-- 3. 데이터 용량 선택 -->
+        <div class="config-group">
+          <div class="config-section-title">3. 데이터 용량 선택</div>
+          <select id="capacitySelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
+            ${capList.map(c => `<option value="${c}" ${c === cleanActiveData ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+
+        <!-- 4. 이용 일수 선택 -->
+        <div class="config-group">
+          <div class="config-section-title">4. 이용 일수 (기간) 선택</div>
+          <select id="durationSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
             ${availableDurations.map(dur => `
-              <button class="pill-option ${dur === activeDuration ? 'active' : ''}" data-duration="${dur}">
-                ${dur}일
-              </button>
+              <option value="${dur}" ${dur === activeDuration ? 'selected' : ''}>${dur}일</option>
             `).join('')}
-          </div>
+          </select>
         </div>
+      </div>
       </div>
 
       <!-- Right Sidebar (Pricing & Specs - 원가표 모든 스펙 연동) -->
@@ -1206,38 +1238,58 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `;
 
-    // 캐리어 변경 리스너
-    const carrierPills = modalContent.querySelectorAll('[data-carrier]');
-    carrierPills.forEach(cp => {
-      cp.addEventListener('click', (e) => {
-        const targetCarrierName = cp.getAttribute('data-carrier');
-        const targetProd = carrierOptions.find(co => co.carrier === targetCarrierName);
+    // 4단계 캐스케이딩 드롭다운 리스너
+    const cSelect = document.getElementById('carrierSelect');
+    if (cSelect) {
+      cSelect.addEventListener('change', (e) => {
+        const targetProd = carrierOptions.find(co => co.carrier === e.target.value);
         if (targetProd) {
           activeCarrier = targetProd;
-          activeDataLimit = activeCarrier.plans[0].data_limit;
-          activeDuration = activeCarrier.plans[0].duration;
+          // Reset child states
+          window.activePlanType = null;
+          activeDataLimit = null;
+          activeDuration = null;
           renderModalContent(carrierOptions);
         }
       });
-    });
+    }
 
-    // 데이터 용량 변경 리스너
-    const datalimitPills = modalContent.querySelectorAll('[data-datalimit]');
-    datalimitPills.forEach(dp => {
-      dp.addEventListener('click', () => {
-        activeDataLimit = dp.getAttribute('data-datalimit');
+    const ptSelect = document.getElementById('planTypeSelect');
+    if (ptSelect) {
+      ptSelect.addEventListener('change', (e) => {
+        window.activePlanType = e.target.value;
+        activeDataLimit = null;
+        activeDuration = null;
         renderModalContent(carrierOptions);
       });
-    });
+    }
+
+    const capSelect = document.getElementById('capacitySelect');
+    if (capSelect) {
+      capSelect.addEventListener('change', (e) => {
+        const isDaily = (window.activePlanType === '데일리');
+        activeDataLimit = (isDaily ? '매일 ' : '') + e.target.value;
+        activeDuration = null;
+        renderModalContent(carrierOptions);
+      });
+    }
+
+    const durSelect = document.getElementById('durationSelect');
+    if (durSelect) {
+      durSelect.addEventListener('change', (e) => {
+        activeDuration = parseInt(e.target.value);
+        renderModalContent(carrierOptions);
+      });
+    }
 
     // 기간 변경 리스너
-    const durationPills = modalContent.querySelectorAll('[data-duration]');
-    durationPills.forEach(dp => {
-      dp.addEventListener('click', () => {
-        activeDuration = parseInt(dp.getAttribute('data-duration'));
+    const durationSelect = document.getElementById('durationSelect');
+    if (durationSelect) {
+      durationSelect.addEventListener('change', (e) => {
+        activeDuration = parseInt(e.target.value);
         renderModalContent(carrierOptions);
       });
-    });
+    }
 
     // 바텀 탭 스위처 리스너
     const bottomTabHeaders = modalContent.querySelectorAll('.bottom-tab-header');
@@ -1676,24 +1728,51 @@ document.addEventListener('DOMContentLoaded', async () => {
       const confirmPay = confirm(`🔗 [안전 결제 테스트 모드]\n\n상품: ${paymentName}\n결제 금액: ${priceVal.toLocaleString()}원\n\n카카오페이 무료 테스트 결제창을 실행할까요?\n(실제 돈이 청구되지 않는 가상 테스트 환경입니다.)`);
       if (!confirmPay) return;
 
-      window.IMP.request_pay({
-        pg: PORTONE_PG_PROVIDER,
-        pay_method: "card",
-        merchant_uid: orderCode,
-        name: paymentName,
-        amount: priceVal,
-        buyer_email: email,
-        buyer_tel: phone
-      }, function (rsp) {
-        if (rsp.success) {
-          submitPayment(orderCode, priceVal);
-        } else {
-          const forcePay = confirm(`결제에 실패하였습니다.\n사유: ${rsp.error_msg}\n\n[테스트 환경 안내]\n로컬 실행 환경(file:// 프로토콜 등)에서는 보안 정책으로 인해 PG사 결제창이 작동하지 않을 수 있습니다.\n\n테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?`);
-          if (forcePay) {
+      // Check if PortOne V2 parameters are present in env
+      if (window.PortOne && PORTONE_STORE_ID) {
+        window.PortOne.requestPayment({
+          storeId: PORTONE_STORE_ID,
+          channelKey: PORTONE_CHANNEL_KEY,
+          paymentId: orderCode,
+          orderName: paymentName,
+          totalAmount: priceVal,
+          currency: "CURRENCY_KRW",
+          payMethod: "CARD",
+          customer: {
+            email: email,
+            phoneNumber: phone
+          }
+        }).then(function (rsp) {
+          if (rsp.code != null) {
+            alert(`결제에 실패하였습니다.\n사유: ${rsp.message}`);
+            const forcePay = confirm("테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?");
+            if (forcePay) submitPayment(orderCode, priceVal);
+          } else {
             submitPayment(orderCode, priceVal);
           }
-        }
-      });
+        });
+      } else if (window.IMP) {
+        window.IMP.request_pay({
+          pg: PORTONE_PG_PROVIDER,
+          pay_method: "card",
+          merchant_uid: orderCode,
+          name: paymentName,
+          amount: priceVal,
+          buyer_email: email,
+          buyer_tel: phone
+        }, function (rsp) {
+          if (rsp.success) {
+            submitPayment(orderCode, priceVal);
+          } else {
+            const forcePay = confirm(`결제에 실패하였습니다.\n사유: ${rsp.error_msg}\n\n[테스트 환경 안내]\n로컬 실행 환경(file:// 프로토콜 등)에서는 보안 정책으로 인해 PG사 결제창이 작동하지 않을 수 있습니다.\n\n테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?`);
+            if (forcePay) {
+              submitPayment(orderCode, priceVal);
+            }
+          }
+        });
+      } else {
+        submitPayment(orderCode, priceVal);
+      }
     } else {
       submitPayment(orderCode, priceVal);
     }
