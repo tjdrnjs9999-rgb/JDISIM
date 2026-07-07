@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <script>
+    // Redirect mobile users to mobile.html
+    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !window.location.search.includes('desktop')) {
+      window.location.href = 'mobile.html';
+    }
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>쉽고 빠른 해외 데이터 | JDISIM</title>
