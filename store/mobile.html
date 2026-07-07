@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JDISIM 이심 | 모바일 스토어</title>
+  <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 결제 즉시 10초 만에 이심 발송!">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* Mobile-dedicated app-like overrides */
+    body {
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      background: #090b11;
+      color: #f1f3f9;
+      margin: 0;
+      padding: 0;
+      padding-bottom: 75px; /* for bottom navigation bar */
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Screen view framework */
+    .mobile-view {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 16px;
+    }
+
+    .mobile-view.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Header Bar */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 11, 17, 0.85);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .app-logo-badge {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .cart-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #fff;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      color: white;
+      font-size: 0.7rem;
+      padding: 1px 5px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background: rgba(13, 16, 27, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 200;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex: 1;
+      padding: 6px 0;
+    }
+
+    .nav-item i {
+      font-size: 1.3rem;
+    }
+
+    .nav-item.active {
+      color: #818cf8;
+    }
+
+    /* Home Hero Promo Banner */
+    .hero-promo {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+      border: 1px solid rgba(129, 140, 248, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-promo::after {
+      content: '';
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.3) 0%, transparent 70%);
+      right: -20px;
+      top: -20px;
+      z-index: 1;
+    }
+
+    .hero-promo h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      line-height: 1.3;
+    }
+
+    .hero-promo p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin: 0 0 16px 0;
+    }
+
+    .hero-promo-btn {
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Horizontal Category Scroller */
+    .category-scroller {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .category-scroller::-webkit-scrollbar {
+      display: none; /* Safari & Chrome */
+    }
+
+    .category-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+    }
+
+    .category-tab.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: #6366f1;
+      color: #a5b4fc;
+    }
+
+    /* Search Bar */
+    .search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 16px 12px 42px;
+      border-radius: 30px;
+      color: white;
+      font-size: 0.9rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #6366f1;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+    }
+
+    /* Product Grid */
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mobile-product-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .mobile-product-card:active {
+      transform: scale(0.98);
+    }
+
+    .product-flag-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #1e293b;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-country-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #818cf8;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .product-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+      color: #fff;
+    }
+
+    .product-carrier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px 8px;
+      border-radius: 20px;
+      color: #e2e8f0;
+    }
+
+    .product-price-section {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .product-price-label {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .buy-btn-small {
+      background: #4f46e5;
+      border: none;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 30px;
+      cursor: pointer;
+    }
+
+    /* Bottom Sheet Option Selector Drawer */
+    .bottom-sheet-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .bottom-sheet-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #0f1322;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 400;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 24px 20px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .bottom-sheet.active {
+      transform: translateY(0);
+    }
+
+    .bottom-sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .bottom-sheet-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .bottom-sheet-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Option pill groupings */
+    .option-group-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #94a3b8;
+      margin: 16px 0 8px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .option-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .option-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-pill.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: #6366f1;
+      color: #a5b4fc;
+    }
+
+    /* Pricing Row inside drawer */
+    .checkout-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 24px;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .checkout-total-label {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .checkout-total-price {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #a855f7;
+    }
+
+    .order-action-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 14px;
+      border-radius: 30px;
+      margin-top: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Devices self check card */
+    .device-check-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+
+    .device-check-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    /* Review slider app section */
+    .review-mini-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .review-body {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    /* Order tracking views */
+    .order-tracker-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .tracker-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: white;
+      font-size: 0.9rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .tracker-btn {
+      background: #6366f1;
+      border: none;
+      color: white;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .order-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #64748b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Device modal style */
+    .mobile-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: #111425;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 500;
+      width: 90%;
+      max-width: 380px;
+      box-sizing: border-box;
+      display: none;
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+
+    .mobile-modal.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <a href="#" class="app-logo" onclick="switchNav('home')">
+      <div class="app-logo-badge">J</div>
+      <span>JDISIM</span>
+    </a>
+    <button class="cart-btn" onclick="switchNav('orders')">
+      <i data-lucide="shopping-bag"></i>
+      <span class="cart-badge" id="mobileCartCount">0</span>
+    </button>
+  </header>
+
+  <!-- ================= VIEW 1: HOME VIEW ================= -->
+  <main id="view-home" class="mobile-view active">
+    <div class="hero-promo">
+      <h2>해외여행 데이터,<br><span style="color: #a5b4fc">공항 대기 없이 10초 만에!</span></h2>
+      <p>전 세계 150개국 고품격 이심 로밍망을 유통 마진 없는 업계 최저가에 만나보세요.</p>
+      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ eSIM 구매하러 가기</button>
+    </div>
+
+    <div class="search-container" onclick="switchNav('store')">
+      <i data-lucide="search" class="search-icon"></i>
+      <input type="text" class="search-input" placeholder="어디로 여행을 떠나시나요?" readonly>
+    </div>
+
+    <!-- Quick Device Self Check -->
+    <div class="device-check-card">
+      <div class="device-check-header">
+        <i data-lucide="smartphone" style="color: #818cf8"></i>
+        <span>내 스마트폰 eSIM 지원 여부 확인</span>
+      </div>
+      <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 12px 0;">가지고 계신 기종이 eSIM을 사용할 수 있는지 3초 만에 진단해 드립니다.</p>
+      <button class="tracker-btn" style="width: 100%; font-size: 0.8rem; padding: 10px;" onclick="openDeviceCheck()">다이얼로 즉시 확인하기</button>
+    </div>
+
+    <!-- Client Reviews Mini list -->
+    <h3 style="font-size: 1rem; font-weight: 700; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 6px;">
+      <i data-lucide="message-square" style="color: #a855f7; width: 18px;"></i> 실시간 구매 후기
+    </h3>
+    <div id="miniReviewContainer"></div>
+  </main>
+
+  <!-- ================= VIEW 2: STORE VIEW ================= -->
+  <main id="view-store" class="mobile-view">
+    <!-- Search -->
+    <div class="search-container">
+      <i data-lucide="search" class="search-icon"></i>
+      <input type="text" id="storeSearchInput" class="search-input" placeholder="국가명, 통신사명으로 검색...">
+    </div>
+
+    <!-- Category Scroller -->
+    <div class="category-scroller" id="categoryScroller">
+      <div class="category-tab active" data-country="all">전체보기</div>
+      <div class="category-tab" data-country="일본">🇯🇵 일본</div>
+      <div class="category-tab" data-country="베트남">🇻🇳 베트남</div>
+      <div class="category-tab" data-country="태국">🇹🇭 태국</div>
+      <div class="category-tab" data-country="대만">🇹🇼 대만</div>
+      <div class="category-tab" data-country="미국">🇺🇸 미국</div>
+      <div class="category-tab" data-country="유럽">🇪🇺 유럽</div>
+    </div>
+
+    <!-- Products list -->
+    <div class="product-list" id="storeProductList"></div>
+  </main>
+
+  <!-- ================= VIEW 3: ORDER VIEW ================= -->
+  <main id="view-orders" class="mobile-view">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 6px 0;">주문 및 eSIM QR코드 조회</h3>
+    <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다.</p>
+
+    <div class="order-tracker-form">
+      <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
+      <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 입력 (숫자만)">
+      <button class="tracker-btn" onclick="searchOrders()">주문 내역 조회하기</button>
+    </div>
+
+    <div id="orderSearchResults"></div>
+  </main>
+
+  <!-- ================= VIEW 4: FAQ VIEW ================= -->
+  <main id="view-faq" class="mobile-view">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 16px 0;">이용 및 고객 안내</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #818cf8;">Q. 이심(eSIM) 개통은 언제 되나요?</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">결제가 완료되는 즉시 시스템에서 10초 이내에 입력하신 이메일과 알림톡으로 QR코드가 발송됩니다.</p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #818cf8;">Q. 환불 및 취소 조건은 무엇인가요?</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">eSIM 프로필 다운로드 전에는 100% 환불이 가능합니다. 단, QR코드를 스캔하여 한 번이라도 기기에 프로필을 다운로드한 경우 교환/환불이 불가하오니 유의해 주세요.</p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #818cf8;">Q. 데이터 접속이 안 됩니다.</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">반드시 기기 설정에서 [데이터 로밍 ON]이 활성화되어 있는지 확인해 주세요. 로컬 회선 설정 완료에 1~3분 정도 시간이 걸릴 수 있습니다.</p>
+      </div>
+
+      <a href="http://pf.kakao.com/_xxxxxx" target="_blank" class="order-action-btn" style="text-align: center; text-decoration: none; display: block; box-sizing: border-box;">
+        💬 카카오톡 1:1 실시간 문의하기
+      </a>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-nav="home" onclick="switchNav('home')">
+      <i data-lucide="home"></i>
+      <span>홈</span>
+    </button>
+    <button class="nav-item" data-nav="store" onclick="switchNav('store')">
+      <i data-lucide="compass"></i>
+      <span>eSIM 스토어</span>
+    </button>
+    <button class="nav-item" data-nav="orders" onclick="switchNav('orders')">
+      <i data-lucide="receipt"></i>
+      <span>주문 조회</span>
+    </button>
+    <button class="nav-item" data-nav="faq" onclick="switchNav('faq')">
+      <i data-lucide="help-circle"></i>
+      <span>이용 가이드</span>
+    </button>
+  </nav>
+
+  <!-- Bottom Option Selector Sheet -->
+  <div class="bottom-sheet-backdrop" id="bottomSheetBackdrop" onclick="closeBottomSheet()"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="bottom-sheet-header">
+      <h3 class="bottom-sheet-title" id="sheetProductTitle">상품 옵션 선택</h3>
+      <button class="bottom-sheet-close" onclick="closeBottomSheet()">
+        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+      </button>
+    </div>
+
+    <!-- Carrier Option -->
+    <div id="carrierSection">
+      <div class="option-group-title">
+        <span>로밍망 통신사 선택</span>
+        <span style="font-weight: 500; font-size: 0.75rem; color: #a855f7;">로밍망/로컬망 필수 확인</span>
+      </div>
+      <div class="option-pills" id="carrierPills"></div>
+    </div>
+
+    <!-- Capacity Option -->
+    <div>
+      <div class="option-group-title">일일 데이터 제공량</div>
+      <div class="option-pills" id="capacityPills"></div>
+    </div>
+
+    <!-- Days Option -->
+    <div>
+      <div class="option-group-title">사용 일수 선택</div>
+      <div class="option-pills" id="daysPills"></div>
+    </div>
+
+    <!-- Quantity & Price Calculator -->
+    <div class="checkout-footer">
+      <div>
+        <div class="checkout-total-label">총 상품 금액</div>
+        <div class="checkout-total-price" id="checkoutTotalPrice">0원</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 20px;">
+        <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</button>
+        <span id="checkoutQty" style="font-weight:700; font-size:0.95rem;">1</span>
+        <button onclick="changeQty(1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">+</button>
+      </div>
+    </div>
+
+    <!-- Contact & Email Inputs for checkout -->
+    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+      <input type="text" id="buyerName" class="tracker-input" placeholder="수령인 이름 (한글)">
+      <input type="tel" id="buyerPhone" class="tracker-input" placeholder="수령인 연락처 (예: 01012345678)">
+      <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
+    </div>
+
+    <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</button>
+  </div>
+
+  <!-- Device compatibility check modal -->
+  <div class="bottom-sheet-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
+  <div class="mobile-modal" id="deviceModal">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700;">3초 기종 진단 가이드</h3>
+      <button class="bottom-sheet-close" onclick="closeModal()">✕</button>
+    </div>
+    <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
+      <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
+      <p>2. 키패드에 <strong>*#06#</strong>을 차례로 입력합니다.</p>
+      <p>3. 화면에 기기 고유식별 정보 창이 뜹니다. 목록 중에 <strong>EID</strong> 항목이 있다면 eSIM을 지원하는 단말기입니다.</p>
+      <p style="color: #818cf8; font-weight: 700; background: rgba(129, 140, 248, 0.1); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+        ※ EID 글자가 없거나 보이지 않는 구형 기종은 eSIM 로밍을 사용할 수 없으므로 구매 전 꼭 체크해 주세요!
+      </p>
+    </div>
+  </div>
+
+  <!-- JavaScript imports -->
+  <script src="products.js"></script>
+  <script src="reviews_data.js"></script>
+  
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Local state variables
+    let currentSelectedCountry = '';
+    let selectedCarrier = '';
+    let selectedCapacity = '';
+    let selectedDays = '';
+    let purchaseQty = 1;
+    let selectedProductBase = null;
+
+    // View Navigation
+    function switchNav(targetView) {
+      document.querySelectorAll('.mobile-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      const activeView = document.getElementById('view-' + targetView);
+      if (activeView) activeView.classList.add('active');
+
+      const activeNavItem = document.querySelector(`.nav-item[data-nav="${targetView}"]`);
+      if (activeNavItem) activeNavItem.classList.add('active');
+
+      window.scrollTo({ top: 0 });
+    }
+
+    // Modal controls
+    function openDeviceCheck() {
+      document.getElementById('modalBackdrop').classList.add('active');
+      document.getElementById('deviceModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('active');
+      document.getElementById('deviceModal').classList.remove('active');
+    }
+
+    // Render Mini Reviews list on Home View
+    function renderMiniReviews() {
+      const container = document.getElementById('miniReviewContainer');
+      if (!container || !window.REVIEWS_DATA) return;
+
+      const randomReviews = [...window.REVIEWS_DATA].sort(() => 0.5 - Math.random()).slice(0, 3);
+      container.innerHTML = randomReviews.map(r => `
+        <div class="review-mini-card">
+          <div class="review-header">
+            <span style="font-weight: 700;">${r.author} (${r.category})</span>
+            <span>⭐ 5/5</span>
+          </div>
+          <div class="review-body">${r.body}</div>
+        </div>
+      `).join('');
+    }
+
+    // Country flags helper
+    const flagMap = {
+      "일본": "japan.jpg",
+      "베트남": "vietnam.jpg",
+      "태국": "thailand.jpg",
+      "대만": "taiwan.jpg",
+      "미국": "usa.jpg",
+      "유럽": "europe.jpg",
+      "싱가포르": "singapore.jpg",
+      "말레이시아": "malaysia.jpg",
+      "필리핀": "philippines.jpg",
+      "인도네시아": "indonesia.jpg"
+    };
+
+    // Render Products list on Store View
+    function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
+      const listContainer = document.getElementById('storeProductList');
+      if (!listContainer || !window.PRODUCTS_DATA) return;
+
+      listContainer.innerHTML = '';
+      
+      const lowercaseQuery = searchQuery.toLowerCase().trim();
+
+      Object.keys(window.PRODUCTS_DATA).forEach(countryName => {
+        // Apply Country Tab filter
+        if (countryFilter !== 'all' && countryFilter !== countryName) return;
+
+        const originalProducts = window.PRODUCTS_DATA[countryName];
+        
+        // Group options by Base Product Name
+        // A single JDISIM base product matches the country name + similar properties
+        // For mobile simplified layout, we list unique "요금제 그룹" per country
+        // Let's create a simplified product view per unique card
+        // Grouping: by country and core name
+        
+        // Find match in search query
+        const matchesSearch = countryName.toLowerCase().includes(lowercaseQuery) || 
+                              originalProducts.some(p => p.carrier.toLowerCase().includes(lowercaseQuery) || p.name.toLowerCase().includes(lowercaseQuery));
+        
+        if (searchQuery && !matchesSearch) return;
+
+        // Render card
+        const sampleProduct = originalProducts[0];
+        const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
+
+        const card = document.createElement('div');
+        card.className = 'mobile-product-card';
+        card.innerHTML = `
+          <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
+          <div class="product-info">
+            <div class="product-country-tag">${countryName} eSIM</div>
+            <h4 class="product-title">${countryName} 최저가 LTE/5G 요금제</h4>
+            <div class="product-carrier-badge">
+              <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
+              <span>${Array.from(new Set(originalProducts.map(p => p.carrier))).join(' / ')}</span>
+            </div>
+          </div>
+          <div class="product-price-section">
+            <span class="product-price-label">최저가</span>
+            <span class="product-price">${Math.min(...originalProducts.map(p => p.price)).toLocaleString()}원~</span>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}')">구매하기</button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // Bottom Sheet Options Handler
+    function openBottomSheet(countryName) {
+      currentSelectedCountry = countryName;
+      const products = window.PRODUCTS_DATA[countryName];
+      if (!products || products.length === 0) return;
+
+      document.getElementById('sheetProductTitle').innerText = `${countryName} 데이터 요금제 선택`;
+      
+      // Determine unique carriers
+      const carriers = Array.from(new Set(products.map(p => p.carrier)));
+      selectedCarrier = carriers[0];
+      
+      renderCarrierPills(carriers);
+      onCarrierSelected();
+
+      document.getElementById('bottomSheetBackdrop').classList.add('active');
+      document.getElementById('bottomSheet').classList.add('active');
+    }
+
+    function closeBottomSheet() {
+      document.getElementById('bottomSheetBackdrop').classList.remove('active');
+      document.getElementById('bottomSheet').classList.remove('active');
+    }
+
+    function renderCarrierPills(carriers) {
+      const container = document.getElementById('carrierPills');
+      if (carriers.length <= 1) {
+        document.getElementById('carrierSection').style.display = 'none';
+        return;
+      }
+      document.getElementById('carrierSection').style.display = 'block';
+      container.innerHTML = carriers.map(c => `
+        <div class="option-pill ${c === selectedCarrier ? 'active' : ''}" onclick="selectCarrier('${c}')">${c}</div>
+      `).join('');
+    }
+
+    function selectCarrier(carrier) {
+      selectedCarrier = carrier;
+      document.querySelectorAll('#carrierPills .option-pill').forEach(p => {
+        p.classList.toggle('active', p.innerText === carrier);
+      });
+      onCarrierSelected();
+    }
+
+    function onCarrierSelected() {
+      const products = window.PRODUCTS_DATA[currentSelectedCountry].filter(p => p.carrier === selectedCarrier);
+      
+      // Determine unique capacities
+      const capacities = Array.from(new Set(products.map(p => p.capacity)));
+      selectedCapacity = capacities[0];
+      
+      renderCapacityPills(capacities);
+      onCapacitySelected();
+    }
+
+    function renderCapacityPills(capacities) {
+      const container = document.getElementById('capacityPills');
+      container.innerHTML = capacities.map(c => `
+        <div class="option-pill ${c === selectedCapacity ? 'active' : ''}" onclick="selectCapacity('${c}')">${c}</div>
+      `).join('');
+    }
+
+    function selectCapacity(capacity) {
+      selectedCapacity = capacity;
+      document.querySelectorAll('#capacityPills .option-pill').forEach(p => {
+        p.classList.toggle('active', p.innerText === capacity);
+      });
+      onCapacitySelected();
+    }
+
+    function onCapacitySelected() {
+      const products = window.PRODUCTS_DATA[currentSelectedCountry].filter(
+        p => p.carrier === selectedCarrier && p.capacity === selectedCapacity
+      );
+
+      // Determine unique days
+      const days = Array.from(new Set(products.map(p => p.days)));
+      selectedDays = days[0];
+
+      renderDaysPills(days);
+      updatePricing();
+    }
+
+    function renderDaysPills(days) {
+      const container = document.getElementById('daysPills');
+      container.innerHTML = days.map(d => `
+        <div class="option-pill ${d === selectedDays ? 'active' : ''}" onclick="selectDays('${d}')">${d}일</div>
+      `).join('');
+    }
+
+    function selectDays(days) {
+      selectedDays = days;
+      document.querySelectorAll('#daysPills .option-pill').forEach(p => {
+        p.classList.toggle('active', parseInt(p.innerText) === parseInt(days));
+      });
+      updatePricing();
+    }
+
+    function updatePricing() {
+      const product = window.PRODUCTS_DATA[currentSelectedCountry].find(
+        p => p.carrier === selectedCarrier && p.capacity === selectedCapacity && parseInt(p.days) === parseInt(selectedDays)
+      );
+
+      if (product) {
+        selectedProductBase = product;
+        const total = product.price * purchaseQty;
+        document.getElementById('checkoutTotalPrice').innerText = `${total.toLocaleString()}원`;
+      }
+    }
+
+    function changeQty(amt) {
+      purchaseQty = Math.max(1, purchaseQty + amt);
+      document.getElementById('checkoutQty').innerText = purchaseQty;
+      updatePricing();
+    }
+
+    // Mock Checkout handler (aligned with admin panel orders)
+    function processMockCheckout() {
+      const name = document.getElementById('buyerName').value.trim();
+      const phone = document.getElementById('buyerPhone').value.trim();
+      const email = document.getElementById('buyerEmail').value.trim();
+
+      if (!name || !phone || !email) {
+        alert("개통 발송을 위해 수령인 이름, 연락처, 이메일을 모두 입력해 주세요.");
+        return;
+      }
+
+      if (!selectedProductBase) {
+        alert("상품 옵션을 다시 선택해 주세요.");
+        return;
+      }
+
+      // Generate order
+      const orderCode = 'JD' + Date.now().toString().slice(-8);
+      const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);
+
+      // Construct option name for playauto B2B matching
+      const targetB2BText = selectedProductBase.b2bName || `${selectedProductBase.carrier}_${selectedProductBase.capacity}_${selectedProductBase.days.toString().padStart(2, '0')}일`;
+
+      const newOrder = {
+        orderCode: orderCode,
+        createdAt: new Date().toISOString(),
+        buyerName: name,
+        phone: phone,
+        email: email,
+        totalPrice: selectedProductBase.price * purchaseQty,
+        paymentStatus: '결제완료',
+        shippingStatus: '배송준비중',
+        items: [
+          {
+            productCode: selectedProductBase.code,
+            productName: `${currentSelectedCountry} ${selectedProductBase.carrier} 매일 ${selectedProductBase.capacity} / ${selectedProductBase.days}일`,
+            optionName: targetB2BText,
+            quantity: purchaseQty,
+            price: selectedProductBase.price,
+            iccid: randIccid
+          }
+        ]
+      };
+
+      // Save to localStorage (shares with admin panel)
+      const existingOrders = JSON.parse(localStorage.getItem('jdisim_orders') || '[]');
+      existingOrders.unshift(newOrder);
+      localStorage.setItem('jdisim_orders', JSON.stringify(existingOrders));
+
+      // Trigger serverless webhook in background (Vercel)
+      triggerVercelWebhook(newOrder);
+
+      alert(`🎉 결제가 정상 완료되었습니다!\n주문번호: ${orderCode}\neSIM 발급번호: ${randIccid}\n\n10초 내로 입력하신 이메일과 카카오 알림톡으로 QR코드가 실시간 전송됩니다!`);
+      
+      closeBottomSheet();
+      document.getElementById('buyerName').value = '';
+      document.getElementById('buyerPhone').value = '';
+      document.getElementById('buyerEmail').value = '';
+      purchaseQty = 1;
+      document.getElementById('checkoutQty').innerText = '1';
+
+      // Go to order lookup view
+      document.getElementById('orderSearchName').value = name;
+      document.getElementById('orderSearchPhone').value = phone;
+      switchNav('orders');
+      searchOrders();
+    }
+
+    // Call Vercel serverless webhook in background
+    function triggerVercelWebhook(orderData) {
+      const payload = {
+        imp_uid: 'imp_mock_' + Date.now(),
+        merchant_uid: orderData.orderCode,
+        status: 'paid',
+        order_details: orderData
+      };
+
+      fetch('/api/payment-complete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('[플레이오토 웹훅 전송 결과]', data);
+      })
+      .catch(err => {
+        console.warn('[플레이오토 웹훅 전송 불가 - 로컬 테스트]', err.message);
+      });
+    }
+
+    // Search Order Logic
+    function searchOrders() {
+      const name = document.getElementById('orderSearchName').value.trim();
+      const phone = document.getElementById('orderSearchPhone').value.trim();
+      const resultsContainer = document.getElementById('orderSearchResults');
+
+      if (!name || !phone) {
+        alert("이름과 연락처를 입력해 주세요.");
+        return;
+      }
+
+      const orders = JSON.parse(localStorage.getItem('jdisim_orders') || '[]');
+      const filtered = orders.filter(o => o.buyerName === name && o.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''));
+
+      if (filtered.length === 0) {
+        resultsContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:0.9rem;">일치하는 주문 내역이 존재하지 않습니다.</div>`;
+        return;
+      }
+
+      resultsContainer.innerHTML = filtered.map(o => `
+        <div class="order-card">
+          <div class="order-card-header">
+            <span>주문번호: ${o.orderCode}</span>
+            <span style="color:#818cf8; font-weight:700;">개통완료</span>
+          </div>
+          <div style="font-size:0.85rem; font-weight:600; margin-bottom:12px;">${o.items[0].productName} (${o.items[0].quantity}개)</div>
+          
+          <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+            <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">eSIM 기기 등록용 QR코드</div>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=LPA:1$rsp.truphone.com$${o.items[0].iccid}" 
+                 style="width:120px; height:120px; border-radius:6px; border:4px solid white; margin:4px 0;" alt="eSIM QR">
+            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px; font-family:monospace;">ICCID: ${o.items[0].iccid}</div>
+          </div>
+          
+          <div style="font-size:0.75rem; color:#94a3b8; line-height:1.4;">
+            ※ 위 QR코드를 휴대폰 카메라 또는 설정 -> 셀룰러 요금제 추가에서 스캔하시면 즉시 사용 개통됩니다.
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Category click handler
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const filter = tab.getAttribute('data-country');
+        renderStoreProducts(filter, document.getElementById('storeSearchInput').value);
+      });
+    });
+
+    // Real-time search handler
+    document.getElementById('storeSearchInput').addEventListener('input', (e) => {
+      const activeTab = document.querySelector('.category-tab.active');
+      const countryFilter = activeTab ? activeTab.getAttribute('data-country') : 'all';
+      renderStoreProducts(countryFilter, e.target.value);
+    });
+
+    // Initial render
+    renderMiniReviews();
+    renderStoreProducts();
+  </script>
+</body>
+</html>

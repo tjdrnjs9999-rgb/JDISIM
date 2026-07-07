@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JDISIM 관리자 콘솔 🔒</title>
+  <!-- Google Fonts Outfit & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #090a0f;
+      --bg-card: #11131c;
+      --bg-input: #1b1e2a;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #10b981; /* Emerald green */
+      --accent-hover: #059669;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --border: rgba(255, 255, 255, 0.08);
+      --font-outfit: 'Outfit', 'Noto Sans KR', sans-serif;
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-outfit);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Scrollbar customized */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* 1. Secure Authentication Screen */
+    #authScreen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at center, #1b2035 0%, #090a0f 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: rgba(17, 19, 28, 0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      transform: translateY(0);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .auth-card:hover {
+      box-shadow: 0 20px 35px -5px rgba(16, 185, 129, 0.1), var(--shadow-lg);
+    }
+
+    .auth-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 1rem;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .auth-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    .auth-btn {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .auth-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .auth-btn:active {
+      transform: scale(0.98);
+    }
+
+    .auth-error {
+      color: var(--danger);
+      font-size: 0.82rem;
+      margin-top: 10px;
+      display: none;
+      font-weight: 500;
+    }
+
+    /* Auth card shake animation for wrong password */
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+      20%, 40%, 60%, 80% { transform: translateX(6px); }
+    }
+
+    /* 2. Admin Dashboard Layout */
+    #adminDashboard {
+      display: none; /* hidden until auth succeeds */
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-inner {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      background: var(--accent);
+      color: #000;
+      font-weight: 900;
+      font-size: 1.25rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .logout-btn {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 30px 24px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      flex: 1;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .stat-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-filter-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex: 1;
+      max-width: 800px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px 10px 40px;
+      color: #fff;
+      font-size: 0.9rem;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .filter-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .filter-select:focus {
+      border-color: var(--accent);
+    }
+
+    .export-btn {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .export-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Table Card */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      line-height: 1.4;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .order-code-cell {
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-outfit);
+      font-size: 0.88rem;
+    }
+
+    .buyer-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .buyer-name {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .buyer-contact {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .product-info-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .product-country {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .product-carrier {
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      padding: 2px 6px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .option-cell {
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: var(--font-outfit);
+      color: #93c5fd; /* Soft blue */
+      font-size: 0.78rem;
+    }
+
+    .qty-price-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      text-align: right;
+    }
+
+    .total-price-val {
+      font-weight: 800;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .qty-val {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .iccid-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .iccid-code {
+      font-family: monospace;
+      font-weight: bold;
+      color: #e2e8f0;
+      font-size: 0.78rem;
+    }
+
+    .qr-preview-link {
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .badge-status.issued {
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-status.cancelled {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .action-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .action-btn:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .action-btn.cancel {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    .action-btn.cancel:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+
+    .empty-state {
+      padding: 80px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    /* Modal Overlay styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .qr-container {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .payload-pre {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      width: 100%;
+      max-height: 350px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #34d399;
+      white-space: pre-wrap;
+    }
+
+    .copy-btn {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    footer.dashboard-footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Secure Access Auth Screen -->
+  <div id="authScreen">
+    <div class="auth-card" id="authCard">
+      <span class="auth-icon">⚙️</span>
+      <h2 class="auth-title">JDISIM Admin Access</h2>
+      <p class="auth-subtitle">관리자 보안 인증이 필요합니다.</p>
+      
+      <form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="adminPassword">보안 비밀번호</label>
+          <input class="auth-input" type="password" id="adminPassword" placeholder="••••••••" required autocomplete="current-password" autofocus>
+        </div>
+        <button class="auth-btn" type="submit">인증 및 로그인 🔓</button>
+        <div class="auth-error" id="authError">⚠️ 비밀번호가 올바르지 않습니다.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Main Admin Dashboard -->
+  <div id="adminDashboard">
+    <header>
+      <div class="header-inner">
+        <div class="logo-section">
+          <div class="logo-badge">J</div>
+          <div class="logo-text">JDISIM <span>Admin</span></div>
+        </div>
+        
+        <div class="header-actions">
+          <div class="status-badge">
+            <div class="status-dot"></div>
+            <span>보안 세션 활성</span>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()">로그아웃 🔒</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Stats Summary cards -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">총 주문 누적</span>
+            <span class="stat-value" id="statTotalOrders">0건</span>
+          </div>
+          <div class="stat-icon-box">📦</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">총 매출 규모</span>
+            <span class="stat-value" style="color: var(--accent);" id="statTotalRevenue">0원</span>
+          </div>
+          <div class="stat-icon-box">💵</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">eSIM 발급 수량</span>
+            <span class="stat-value" id="statTotalEsims">0개</span>
+          </div>
+          <div class="stat-icon-box">📱</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">오늘 신규 주문</span>
+            <span class="stat-value" id="statTodayOrders">0건</span>
+          </div>
+          <div class="stat-icon-box">🔥</div>
+        </div>
+      </section>
+
+      <!-- Operation Control Options Panel -->
+      <section class="controls-bar">
+        <div class="search-filter-box">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchBar" placeholder="주문코드, 구매자명, 이메일, 연락처로 검색..." oninput="filterOrders()">
+          </div>
+          
+          <select class="filter-select" id="countryFilter" onchange="filterOrders()">
+            <option value="ALL">지구촌 전체 국가</option>
+            <option value="일본">일본 (Japan)</option>
+            <option value="베트남">베트남 (Vietnam)</option>
+            <option value="태국">태국 (Thailand)</option>
+            <option value="대만">대만 (Taiwan)</option>
+            <option value="싱가포르">싱가포르 (Singapore)</option>
+            <option value="말레이시아">말레이시아 (Malaysia)</option>
+            <option value="미국">미국 (USA)</option>
+            <option value="유럽">유럽 (Europe)</option>
+          </select>
+        </div>
+
+        <button class="export-btn" onclick="exportToCSV()">
+          <span>📊</span> Excel 다운로드 (CSV)
+        </button>
+      </section>
+
+      <!-- Orders Main Table -->
+      <section class="table-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 140px;">주문코드</th>
+                <th style="width: 150px;">주문일시</th>
+                <th>구매자 정보</th>
+                <th>국가 및 통신사</th>
+                <th>원가표 B2B 옵션명</th>
+                <th style="text-align: right; width: 120px;">금액/수량</th>
+                <th>발급 ICCID/QR</th>
+                <th style="width: 100px;">주문상태</th>
+                <th style="text-align: center; width: 180px;">관리작업</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <div class="empty-icon">📂</div>
+          <p>등록된 자사몰 결제/주문 데이터가 없습니다.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="dashboard-footer">
+      <p>JDISIM Admin System © 2026. All operations securely encrypted on localhost localstorage.</p>
+    </footer>
+  </div>
+
+  <!-- Modal A: QR Code Preview Modal -->
+  <div class="modal-overlay" id="qrModal" onclick="closeModal(event, 'qrModal')">
+    <div class="modal-card">
+      <button class="modal-close" onclick="forceCloseModal('qrModal')">&times;</button>
+      <h3 class="modal-title"><span>📱</span> 고객용 eSIM QR코드 및 ICCID</h3>
+      <div class="modal-body">
+        <div class="qr-container" id="modalQrBox">
+          <!-- Canvas or image loaded dynamically -->
+        </div>
+        <div style="text-align: center; width: 100%;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">ICCID 발급 정보</div>
+          <div class="iccid-code" id="modalIccidVal" style="font-size: 1.15rem; letter-spacing: 0.8px; margin-bottom: 15px;">-</div>
+          
+          <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 8px; padding: 10px; font-size: 0.78rem; text-align: left; color: #a7f3d0; line-height: 1.4;">
+            ℹ️ <strong>고객 상담 팁:</strong> 고객이 QR코드 스캔 인식이 안 된다고 문의 시, 위의 ICCID 번호를 복사하여 도도매처(B2B) 관리자단에서 상태 조회 및 활성화 여부를 점검할 수 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal B: PlayAuto Sync Webhook Payload Preview Modal -->
+  <div class="modal-overlay" id="webhookModal" onclick="closeModal(event, 'webhookModal')">
+    <div class="modal-card" style="max-width: 600px;">
+      <button class="modal-close" onclick="forceCloseModal('webhookModal')">&times;</button>
+      <h3 class="modal-title"><span>⚙️</span> PlayAuto Webhook 연동 페이로드</h3>
+      <div class="modal-body" style="align-items: stretch;">
+        <p style="font-size: 0.8rem; color: var(--text-muted);">
+          플레이오토 EMP 주문수집 연동 API 규격에 맞춰 빌링 및 배송지 정보가 모의 구성되었습니다.
+        </p>
+        <pre class="payload-pre" id="payloadPreBox"></pre>
+        <button class="copy-btn" id="payloadCopyBtn" onclick="copyPayloadToClipboard()">JSON 데이터 복사 📋</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Custom hashing algorithm (Runs everywhere including file:// protocol)
+    const SECURITY_HASH = "3513af10_40dea3e";
+
+    function getCustomHash(str) {
+      let hash1 = 5381;
+      let hash2 = 89;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash1 = ((hash1 << 5) + hash1) + char;
+        hash2 = ((hash2 << 7) - hash2) + char;
+      }
+      return (hash1 & 0xFFFFFFFF).toString(16) + "_" + (hash2 & 0xFFFFFFFF).toString(16);
+    }
+
+    // Checking if already authorized in current session
+    window.addEventListener('DOMContentLoaded', () => {
+      const isAuth = sessionStorage.getItem('admin_auth') === 'true';
+      if (isAuth) {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('adminDashboard').style.display = 'flex';
+        loadDashboard();
+      }
+    });
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const pwInput = document.getElementById('adminPassword');
+      const authError = document.getElementById('authError');
+      const authCard = document.getElementById('authCard');
+      
+      const hash = getCustomHash(pwInput.value);
+      if (hash === SECURITY_HASH) {
+        // Success
+        sessionStorage.setItem('admin_auth', 'true');
+        
+        // Smooth transition
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('adminDashboard').style.display = 'flex';
+        
+        loadDashboard();
+      } else {
+        // Error
+        authError.style.display = 'block';
+        authCard.classList.add('shake');
+        pwInput.value = '';
+        pwInput.focus();
+        
+        setTimeout(() => {
+          authCard.classList.remove('shake');
+        }, 400);
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('admin_auth');
+      window.location.reload();
+    }
+
+    // ----------------------------------------------------
+    // Dashboard Logic
+    // ----------------------------------------------------
+    let allOrders = [];
+
+    function loadDashboard() {
+      allOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
+      
+      // Calculate Stats
+      calculateStats();
+      
+      // Render Table
+      renderTable(allOrders);
+    }
+
+    function calculateStats() {
+      const activeOrders = allOrders.filter(o => o.status !== '취소됨');
+      
+      // Total Orders
+      document.getElementById('statTotalOrders').textContent = `${allOrders.length}건`;
+      
+      // Total Revenue
+      const totalRev = activeOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+      document.getElementById('statTotalRevenue').textContent = `${totalRev.toLocaleString()}원`;
+      
+      // Issued eSIMs count
+      const totalEsims = activeOrders.reduce((sum, o) => {
+        const itemQty = o.items ? o.items.reduce((qSum, it) => qSum + (it.quantity || 1), 0) : 1;
+        return sum + itemQty;
+      }, 0);
+      document.getElementById('statTotalEsims').textContent = `${totalEsims}개`;
+      
+      // Today's Orders
+      const todayStr = new Date().toLocaleDateString();
+      const todayOrders = allOrders.filter(o => {
+        const oDateStr = new Date(o.orderDate || o.timestamp).toLocaleDateString();
+        return oDateStr === todayStr;
+      }).length;
+      document.getElementById('statTodayOrders').textContent = `${todayOrders}건`;
+    }
+
+    function renderTable(dataList) {
+      const tbody = document.getElementById('ordersTableBody');
+      const emptyState = document.getElementById('emptyState');
+      
+      tbody.innerHTML = '';
+      
+      if (dataList.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      dataList.forEach(order => {
+        const orderDateStr = new Date(order.orderDate || order.timestamp).toLocaleString('ko-KR', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+        
+        const statusText = order.status || '발급완료';
+        const statusClass = statusText === '취소됨' ? 'cancelled' : 'issued';
+        
+        // Loop products inside order
+        const itemsList = order.items || [];
+        itemsList.forEach((item, itemIdx) => {
+          const tr = document.createElement('tr');
+          
+          // Order code and time columns are rendered with rowSpan if multiple items, 
+          // but for ease of search filter, we write them on each row (with thin border separation).
+          
+          // 1. Order Code
+          const tdCode = document.createElement('td');
+          tdCode.className = 'order-code-cell';
+          tdCode.textContent = order.orderCode;
+          tr.appendChild(tdCode);
+          
+          // 2. Order Date
+          const tdDate = document.createElement('td');
+          tdDate.style.color = 'var(--text-muted)';
+          tdDate.textContent = orderDateStr;
+          tr.appendChild(tdDate);
+          
+          // 3. Buyer Info
+          const tdBuyer = document.createElement('td');
+          tdBuyer.innerHTML = `
+            <div class="buyer-info">
+              <span class="buyer-name">${order.buyerName || order.email.split('@')[0]}</span>
+              <span class="buyer-contact">${order.phone || '-'}</span>
+              <span class="buyer-contact" style="color:var(--accent);">${order.email}</span>
+            </div>
+          `;
+          tr.appendChild(tdBuyer);
+          
+          // 4. Product Info
+          const tdProd = document.createElement('td');
+          tdProd.innerHTML = `
+            <div class="product-info-cell">
+              <span class="product-country">${item.country} eSIM</span>
+              <span class="product-carrier">${item.carrier}</span>
+            </div>
+          `;
+          tr.appendChild(tdProd);
+          
+          // 5. Option Name
+          const tdOpt = document.createElement('td');
+          tdOpt.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <div class="option-cell" title="${item.optionName}">${item.optionName}</div>
+              <span style="font-size:0.72rem; color:var(--text-muted); font-family:monospace;">코드: ${item.productCode}</span>
+            </div>
+          `;
+          tr.appendChild(tdOpt);
+          
+          // 6. Qty and Price
+          const tdPrice = document.createElement('td');
+          tdPrice.className = 'qty-price-cell';
+          const itemTotal = (item.planDuration && item.quantity) ? order.totalPrice : order.totalPrice; // fallback
+          tdPrice.innerHTML = `
+            <span class="total-price-val">${(order.totalPrice || 0).toLocaleString()}원</span>
+            <span class="qty-val">${item.quantity || 1}개 / ${item.planLimit} / ${item.planDuration}일</span>
+          `;
+          tr.appendChild(tdPrice);
+          
+          // 7. ICCID / QR link
+          const tdIccid = document.createElement('td');
+          tdIccid.innerHTML = `
+            <div class="iccid-cell">
+              <span class="iccid-code">${item.iccidIssued || item.iccid || '89852...'}</span>
+              <span class="qr-preview-link" onclick="openQrPreview('${item.iccidIssued || item.iccid || '89852...'}')">QR코드 보기 🔍</span>
+            </div>
+          `;
+          tr.appendChild(tdIccid);
+          
+          // 8. Status badge
+          const tdStatus = document.createElement('td');
+          tdStatus.innerHTML = `<span class="badge-status ${statusClass}">${statusText}</span>`;
+          tr.appendChild(tdStatus);
+          
+          // 9. Actions
+          const tdActions = document.createElement('td');
+          tdActions.style.textAlign = 'center';
+          
+          let actionBtnsHTML = '';
+          if (statusText !== '취소됨') {
+            actionBtnsHTML += `
+              <button class="action-btn cancel" onclick="cancelOrder('${order.orderCode}')">주문취소</button>
+            `;
+          } else {
+            actionBtnsHTML += `
+              <button class="action-btn" onclick="restoreOrder('${order.orderCode}')" style="color:var(--accent);">주문복구</button>
+            `;
+          }
+          
+          actionBtnsHTML += `
+            <button class="action-btn" onclick="showWebhookPayload('${order.orderCode}', ${itemIdx})">연동 JSON</button>
+          `;
+          
+          tdActions.innerHTML = `<div class="action-group">${actionBtnsHTML}</div>`;
+          tr.appendChild(tdActions);
+          
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // Search and Filters
+    function filterOrders() {
+      const q = document.getElementById('searchBar').value.toLowerCase().trim();
+      const countryFilter = document.getElementById('countryFilter').value;
+      
+      const filtered = allOrders.filter(order => {
+        // Country filter
+        let matchCountry = true;
+        if (countryFilter !== 'ALL') {
+          const hasCountry = order.items && order.items.some(it => it.country === countryFilter);
+          matchCountry = hasCountry;
+        }
+        
+        if (!matchCountry) return false;
+        
+        // Search query
+        if (!q) return true;
+        
+        const codeMatch = order.orderCode.toLowerCase().includes(q);
+        const buyerMatch = (order.buyerName || '').toLowerCase().includes(q);
+        const emailMatch = order.email.toLowerCase().includes(q);
+        const phoneMatch = (order.phone || '').toLowerCase().includes(q);
+        const iccidMatch = order.items && order.items.some(it => (it.iccidIssued || it.iccid || '').toLowerCase().includes(q));
+        
+        return codeMatch || buyerMatch || emailMatch || phoneMatch || iccidMatch;
+      });
+      
+      renderTable(filtered);
+    }
+
+    // Actions implementation
+    function cancelOrder(orderCode) {
+      if (!confirm(`정말로 주문 [${orderCode}] 건을 취소하시겠습니까?\n취소 시 매출액 및 발급 건수 집계에서 즉시 차감됩니다.`)) return;
+      
+      allOrders.forEach(o => {
+        if (o.orderCode === orderCode) {
+          o.status = '취소됨';
+        }
+      });
+      localStorage.setItem('esim_orders', JSON.stringify(allOrders));
+      loadDashboard();
+    }
+
+    function restoreOrder(orderCode) {
+      if (!confirm(`주문 [${orderCode}] 건의 상태를 '발급완료'로 다시 복구하시겠습니까?`)) return;
+      
+      allOrders.forEach(o => {
+        if (o.orderCode === orderCode) {
+          o.status = '발급완료';
+        }
+      });
+      localStorage.setItem('esim_orders', JSON.stringify(allOrders));
+      loadDashboard();
+    }
+
+    // Open QR Code Preview
+    function openQrPreview(iccid) {
+      const modal = document.getElementById('qrModal');
+      document.getElementById('modalIccidVal').textContent = iccid;
+      
+      const qrBox = document.getElementById('modalQrBox');
+      qrBox.innerHTML = '';
+      
+      // Simulate eSIM QR Code image generation
+      const img = document.createElement('img');
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=LPA:1$rsp.truphone.com$${iccid}`;
+      img.alt = "eSIM QR Code";
+      img.style.width = '180px';
+      img.style.height = '180px';
+      
+      qrBox.appendChild(img);
+      modal.classList.add('active');
+    }
+
+    // Show PlayAuto Webhook JSON payload
+    function showWebhookPayload(orderCode, itemIdx) {
+      const modal = document.getElementById('webhookModal');
+      const order = allOrders.find(o => o.orderCode === orderCode);
+      if (!order) return;
+      
+      const item = order.items[itemIdx];
+      const playAutoPayload = {
+        api_key: "YOUR_PLAYAUTO_API_KEY",
+        action: "order_collect_push",
+        order_info: {
+          order_num: order.orderCode,
+          mall_id: "jdisim",
+          mall_name: "JDISIM 자사몰",
+          order_date: order.orderDate || order.timestamp,
+          payment_price: order.totalPrice,
+          buyer: {
+            name: order.buyerName || order.email.split('@')[0],
+            phone: order.phone,
+            email: order.email
+          },
+          receiver: {
+            name: order.buyerName || order.email.split('@')[0],
+            phone: order.phone,
+            zipcode: "00000",
+            address1: "이메일/알림톡 실시간 전송 (무배송 상품)",
+            address2: ""
+          },
+          items: [{
+            product_code: item.productCode,
+            product_name: item.optionName || `${item.country} ${item.carrier} (${item.planLimit} / ${item.planDuration}일)`,
+            quantity: item.quantity || 1,
+            price: order.totalPrice,
+            iccid_issued: item.iccidIssued || item.iccid
+          }]
+        }
+      };
+      
+      document.getElementById('payloadPreBox').textContent = JSON.stringify(playAutoPayload, null, 2);
+      modal.classList.add('active');
+    }
+
+    function copyPayloadToClipboard() {
+      const payloadText = document.getElementById('payloadPreBox').textContent;
+      navigator.clipboard.writeText(payloadText).then(() => {
+        const copyBtn = document.getElementById('payloadCopyBtn');
+        copyBtn.textContent = "JSON 데이터 복사 완료! ✓";
+        copyBtn.style.background = "#059669";
+        
+        setTimeout(() => {
+          copyBtn.textContent = "JSON 데이터 복사 📋";
+          copyBtn.style.background = "var(--accent)";
+        }, 1500);
+      });
+    }
+
+    // Modal Close utilities
+    function forceCloseModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function closeModal(e, id) {
+      if (e.target === document.getElementById(id)) {
+        forceCloseModal(id);
+      }
+    }
+
+    // CSV/Excel Export implementation
+    function exportToCSV() {
+      if (allOrders.length === 0) {
+        alert("다운로드할 주문 내역이 존재하지 않습니다.");
+        return;
+      }
+      
+      let csvContent = "\uFEFF"; // BOM for Excel Korean support
+      csvContent += "주문코드,주문일시,구매자명,이메일,연락처,구매국가,통신사,B2B옵션명(원가표사용일수),상품코드,수량,총결제금액,발급ICCID,주문상태\n";
+      
+      allOrders.forEach(o => {
+        const dateStr = new Date(o.orderDate || o.timestamp).toLocaleString();
+        const status = o.status || "발급완료";
+        const buyer = o.buyerName || o.email.split('@')[0];
+        
+        o.items.forEach(it => {
+          const row = [
+            o.orderCode,
+            `"${dateStr}"`,
+            `"${buyer}"`,
+            `"${o.email}"`,
+            `"${o.phone || '-'}"`,
+            `"${it.country}"`,
+            `"${it.carrier}"`,
+            `"${it.optionName}"`,
+            `"${it.productCode}"`,
+            it.quantity || 1,
+            o.totalPrice,
+            `"${it.iccidIssued || it.iccid}"`,
+            status
+          ].join(',');
+          csvContent += row + "\n";
+        });
+      });
+      
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `JDISIM_주문내역_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "jdisim-store",
+  "version": "1.0.0",
+  "description": "JDISIM eSIM Store with PlayAuto Integration",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^1.7.2"
+  },
+  "scripts": {
+    "start": "node playauto_webhook.js"
+  }
+}
