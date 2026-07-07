@@ -211,7 +211,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 200;
+      /* z-index: 200; Overridden */
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.05);
     }
@@ -985,7 +985,7 @@
       <h3 class="bottom-sheet-title" id="sheetProductTitle">상품 옵션 선택</h3>
       <button class="bottom-sheet-close" onclick="closeBottomSheet()">
         <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-      </div>
+      </button>
     </div>
 
     <!-- 1. Carrier -->
@@ -1061,10 +1061,23 @@
   <script src="reviews_data.js"></script>
   
   <script>
+
+    // Global Error Handler for Debugging
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      const errorMsg = "Error: " + msg + "\nLine: " + lineNo + "\nColumn: " + columnNo;
+      console.error(errorMsg);
+      // alert(errorMsg); // Uncomment this if you want to see errors on phone
+      return false;
+    };
+    
     // Initialize icons
     lucide.createIcons();
 
     // Local state variables
+    
+    let PORTONE_MERCHANT_ID = "";
+    let PORTONE_PG_PROVIDER = "";
+    
     let currentSelectedCountry = '';
     let selectedCarrier = '';
     let selectedCapacity = '';
