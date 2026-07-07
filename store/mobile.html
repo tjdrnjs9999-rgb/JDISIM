@@ -2,23 +2,8 @@
 <html lang="ko">
 <head>
   <script>
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-      var div = document.createElement('div');
-      div.style.position = 'fixed';
-      div.style.top = '0';
-      div.style.left = '0';
-      div.style.width = '100%';
-      div.style.background = 'red';
-      div.style.color = 'white';
-      div.style.zIndex = '100000';
-      div.style.padding = '10px';
-      div.style.fontSize = '12px';
-      div.style.wordBreak = 'break-all';
-      div.innerHTML = '🚨 ERROR: ' + msg + '<br>Line: ' + lineNo;
-      document.body.appendChild(div);
-      return false;
-    };
-    console.log("Diagnostic script loaded");
+    
+    
   </script>
 
   <meta name="impact-site-verification" value="aacb94f9-36f7-40f0-a6f3-76e5515e0401">
@@ -854,7 +839,7 @@
     <button class="cart-btn" onclick="switchNav('orders')">
       <i data-lucide="shopping-bag"></i>
       <span class="cart-badge" id="mobileCartCount">0</span>
-    </button>
+    </div>
   </header>
 
   <!-- ================= VIEW 1: HOME VIEW ================= -->
@@ -863,7 +848,7 @@
     <div class="hero-promo" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08)); border-color: rgba(99, 102, 241, 0.15);">
       <h2>로컬망 1티어 직결<br><span style="color: #4f46e5; font-weight: 800;">JDISIM eSIM</span></h2>
       <p>현지 통신사 망과 다이렉트로 연결되어 지연 없는 LTE/5G 데이터를 초저가에 즐기세요.</p>
-      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</button>
+      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</div>
     </div>
 
     <!-- Search container (click to navigate to store view) -->
@@ -1010,7 +995,7 @@
     <div class="order-tracker-form">
       <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
       <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 입력 (숫자만)">
-      <button class="tracker-btn" onclick="searchOrders()">주문 내역 조회하기</button>
+      <button class="tracker-btn" onclick="searchOrders()">주문 내역 조회하기</div>
     </div>
 
     <div id="orderSearchResults"></div>
@@ -1110,9 +1095,9 @@
         <div class="checkout-total-price" id="checkoutTotalPrice">0원</div>
       </div>
       <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 20px;">
-        <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</button>
+        <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</div>
         <span id="checkoutQty" style="font-weight:700; font-size:0.95rem;">1</span>
-        <button onclick="changeQty(1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">+</button>
+        <button onclick="changeQty(1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">+</div>
       </div>
     </div>
 
@@ -1124,13 +1109,14 @@
     </div>
 
     <button class="order-action-btn" id="paySubmitBtn" onclick="processMockCheckout()">결제 완료하기</button>
+  </div>
 
   <!-- Device compatibility check modal -->
   <div class="bottom-sheet-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
   <div class="mobile-modal" id="deviceModal">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700;">3초 기종 진단 가이드</h3>
-      <button class="bottom-sheet-close" onclick="closeModal()">✕</button>
+      <button class="bottom-sheet-close" onclick="closeModal()">✕</div>
     </div>
     <div style="font-size: 0.85rem; color: #334155; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
       <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
@@ -1149,15 +1135,10 @@
   <script>
 
     // Global Error Handler for Debugging
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-      const errorMsg = "Error: " + msg + "\nLine: " + lineNo + "\nColumn: " + columnNo;
-      console.error(errorMsg);
-      // alert(errorMsg); // Uncomment this if you want to see errors on phone
-      return false;
-    };
+    
     
     // Initialize icons
-    if (window.lucide) lucide.createIcons();
+    lucide.createIcons();
 
     // Local state variables
     
@@ -1174,7 +1155,7 @@
     // View Navigation
     
     function switchNav(targetView) {
-      console.log('Switching to:', targetView);
+      
       try {
           // 1. Hide all views
           const views = document.querySelectorAll('.mobile-view');
@@ -1302,7 +1283,6 @@
 
         const card = document.createElement('div');
         card.className = 'mobile-product-card';
-        card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
           <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
           <div class="product-info">
@@ -1319,12 +1299,12 @@
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
             <span class="product-price">${minPrice.toLocaleString()}원~</span>
-            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</div>
           </div>
         `;
         container.appendChild(card);
       });
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1344,7 +1324,7 @@
         content.style.display = 'none';
         if (icon) icon.setAttribute('data-lucide', 'chevron-down');
       }
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1401,7 +1381,6 @@
 
         const card = document.createElement('div');
         card.className = 'mobile-product-card';
-        card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
           <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
           <div class="product-info">
@@ -1418,12 +1397,12 @@
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
             <span class="product-price">${minPrice.toLocaleString()}원~</span>
-            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</div>
           </div>
         `;
         listContainer.appendChild(card);
       });
-      if (window.lucide) lucide.createIcons();
+      lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1436,7 +1415,7 @@
     
     window.openBottomSheetFromCard = function(el) {
       try {
-        console.log("Card clicked:", el);
+        
         const tagEl = el.querySelector('.product-country-tag');
         const carrierEl = el.querySelector('.product-carrier-badge span');
         
@@ -1469,6 +1448,7 @@
       
       const carriers = carrierOptions.map(co => co.carrier);
       renderCarrierPills(carriers);
+      onCarrierSelected();
 
       document.getElementById('bottomSheetBackdrop').classList.add('active');
       document.getElementById('bottomSheet').classList.add('active');
@@ -1751,7 +1731,7 @@
       })
       .then(res => res.json())
       .then(data => {
-        console.log('[플레이오토 웹훅 전송 결과]', data);
+        
       })
       .catch(err => {
         console.warn('[플레이오토 웹훅 전송 불가 - 로컬 테스트]', err.message);
@@ -1819,9 +1799,9 @@
     // Initial render
     
     window.onload = function() {
-      console.log("Window loaded, initializing...");
+      
       try {
-        if (window.lucide) lucide.createIcons();
+        lucide.createIcons();
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
