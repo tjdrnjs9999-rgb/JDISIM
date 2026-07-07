@@ -198,7 +198,7 @@
     }
 
     /* Bottom Navigation Bar */
-    .bottom-nav {
+    .bottom-nav { z-index: 9999 !important;
       position: fixed;
       bottom: 0;
       left: 0;
@@ -969,9 +969,9 @@
       <i data-lucide="receipt"></i>
       <span>주문 조회</span>
     </button>
-    <button class="nav-item" data-nav="faq" onclick="switchNav('faq')">
-      <i data-lucide="help-circle"></i>
-      <span>이용 가이드</span>
+    <button class="nav-item" onclick="location.href='guide.html'">
+      <i data-lucide="book-open"></i>
+      <span>이심 가이드</span>
     </button>
   </nav>
 
@@ -1070,22 +1070,50 @@
     let selectedProductBase = null;
 
     // View Navigation
+    
     function switchNav(targetView) {
-      document.querySelectorAll('.mobile-view').forEach(view => {
-        view.classList.remove('active');
-      });
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-      });
+      console.log('Switching to:', targetView);
+      try {
+          // 1. Hide all views
+          const views = document.querySelectorAll('.mobile-view');
+          views.forEach(v => {
+            v.classList.remove('active');
+            v.style.display = 'none'; // Force hide
+          });
+          
+          // 2. Deactivate all nav items
+          document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+          });
 
-      const activeView = document.getElementById('view-' + targetView);
-      if (activeView) activeView.classList.add('active');
+          // 3. Show target view
+          const activeView = document.getElementById('view-' + targetView);
+          if (activeView) {
+            activeView.classList.add('active');
+            activeView.style.display = 'block'; // Force show
+          } else {
+            console.error('View not found: view-' + targetView);
+          }
 
-      const activeNavItem = document.querySelector(`.nav-item[data-nav="${targetView}"]`);
-      if (activeNavItem) activeNavItem.classList.add('active');
+          // 4. Activate target nav item
+          const activeNavItem = document.querySelector(`.nav-item[data-nav="${targetView}"]`);
+          if (activeNavItem) {
+            activeNavItem.classList.add('active');
+          }
 
-      window.scrollTo({ top: 0 });
+          // 5. Special logic for store
+          if (targetView === 'store') {
+            if (typeof renderStoreProducts === 'function') {
+                renderStoreProducts();
+            }
+          }
+
+          window.scrollTo({ top: 0 });
+      } catch (e) {
+          console.error('Navigation error:', e);
+      }
     }
+
 
     // Modal controls
     function openDeviceCheck() {
@@ -1117,16 +1145,11 @@
 
     // Country flags helper
     const flagMap = {
-      "일본": "japan.jpg",
-      "베트남": "vietnam.jpg",
-      "태국": "thailand.jpg",
-      "대만": "taiwan.jpg",
-      "미국": "usa.jpg",
-      "유럽": "europe.jpg",
-      "싱가포르": "singapore.jpg",
-      "말레이시아": "malaysia.jpg",
-      "필리핀": "philippines.jpg",
-      "인도네시아": "indonesia.jpg"
+      "일본": "japan.jpg", "베트남": "vietnam.jpg", "태국": "thailand.jpg",
+      "대만": "taiwan.jpg", "미국": "usa.jpg", "하와이": "usa.jpg",
+      "유럽": "europe.jpg", "싱가포르": "singapore.jpg", "말레이시아": "malaysia.jpg",
+      "필리핀": "philippines.jpg", "인도네시아": "indonesia.jpg", "중국": "china.jpg",
+      "홍콩": "hongkong.jpg", "마카오": "macau.jpg", "괌": "guam.jpg", "사이판": "saipan.jpg"
     };
 
     function renderHomeFeatured() {
@@ -1162,7 +1185,9 @@
         const networkType = group.network_type || '로밍망';
 
         if (!group.plans || group.plans.length === 0) return;
-        const minPrice = Math.min(...group.plans.map(p => p.final_price));
+        const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
+        if (validPlans.length === 0) return;
+        const minPrice = Math.min(...validPlans.map(p => p.final_price));
         const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
 
         let networkBadgeStyle = '';
@@ -1196,6 +1221,7 @@
         container.appendChild(card);
       });
       lucide.createIcons();
+      } catch(err) { console.error('Render error:', err); }
     }
 
     function toggleFaqAccordion(el) {
@@ -1214,9 +1240,17 @@
         if (icon) icon.setAttribute('data-lucide', 'chevron-down');
       }
       lucide.createIcons();
+      } catch(err) { console.error('Render error:', err); }
     }
 
     function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
+      try {
+        const listContainer = document.getElementById('storeProductList');
+        if (!listContainer) return;
+        if (!window.PRODUCTS_DATA) {
+            listContainer.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b;">상품 데이터를 불러오는 중입니다...</div>';
+            return;
+        }
       const listContainer = document.getElementById('storeProductList');
       if (!listContainer || !window.PRODUCTS_DATA) return;
 
@@ -1252,7 +1286,9 @@
 
         // Find min price
         if (!group.plans || group.plans.length === 0) return;
-        const minPrice = Math.min(...group.plans.map(p => p.final_price));
+        const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
+        if (validPlans.length === 0) return;
+        const minPrice = Math.min(...validPlans.map(p => p.final_price));
 
         const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
 
@@ -1288,6 +1324,7 @@
         listContainer.appendChild(card);
       });
       lucide.createIcons();
+      } catch(err) { console.error('Render error:', err); }
     }
 
     // Bottom Sheet Options Handler
@@ -1507,6 +1544,11 @@
         const allOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
         allOrders.unshift(newOrder);
         localStorage.setItem('esim_orders', JSON.stringify(allOrders));
+        
+        // [PlayAuto Sync] Trigger Vercel Webhook
+        if (typeof triggerVercelWebhook === 'function') {
+            triggerVercelWebhook(newOrder);
+        }
 
         closeBottomSheet();
         switchNav('orders');

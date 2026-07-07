@@ -1780,6 +1780,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 16. 결제 완료 처리 및 가상 영수증 출력
+  
+  // [PlayAuto Sync] Vercel Serverless Webhook Trigger
+  function triggerVercelWebhook(orderData) {
+    const payload = {
+      imp_uid: 'imp_mock_' + Date.now(),
+      merchant_uid: orderData.orderCode,
+      status: 'paid',
+      order_details: orderData
+    };
+
+    fetch('/api/payment-complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => console.log('[플레이오토 웹훅 전송 결과]', data))
+    .catch(err => console.warn('[플레이오토 웹훅 전송 불가]', err.message));
+  }
+
   function submitPayment(orderCode, finalPriceVal) {
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
@@ -1850,6 +1870,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let savedOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
     savedOrders.unshift(newOrder);
     localStorage.setItem('esim_orders', JSON.stringify(savedOrders));
+    triggerVercelWebhook(newOrder);
     
     // 플레이오토 EMP 주문 수집 API 연동 페이로드 모의 콘솔 로깅
     if (typeof logPlayAutoSyncPayload === 'function') {
@@ -2515,6 +2536,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Save updated back to localStorage
     localStorage.setItem('esim_orders', JSON.stringify(savedOrders));
+    triggerVercelWebhook(newOrder);
 
     // Update screen
     updateSimulatorUI(activeItem);
@@ -2535,6 +2557,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     activeItem.usedBytes = 0;
     localStorage.setItem('esim_orders', JSON.stringify(savedOrders));
+    triggerVercelWebhook(newOrder);
     updateSimulatorUI(activeItem);
   }
 
