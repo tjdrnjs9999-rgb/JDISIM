@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <meta name='impact-site-verification' value='aacb94f9-36f7-40f0-a6f3-76e5515e0401'>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JDISIM 이심 | 모바일 스토어</title>
@@ -1406,8 +1407,35 @@
       updatePricing();
     }
 
-    // Mock Checkout handler (aligned with admin panel orders)
-    function processMockCheckout() {
+    // Hybrid PortOne V1/V2 Checkout handler
+    let PORTONE_STORE_ID = "";
+    let PORTONE_CHANNEL_KEY = "";
+
+    async function loadEnvForPayment() {
+      try {
+        const response = await fetch('.env');
+        if (response.ok) {
+          const text = await response.text();
+          text.split('\n').forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) return;
+            const parts = trimmed.split('=');
+            if (parts.length >= 2) {
+              const key = parts[0].trim();
+              const val = parts.slice(1).join('=').trim().replace(/^['"]|['"]$/g, '');
+              if (key === 'PORTONE_MERCHANT_ID') PORTONE_MERCHANT_ID = val;
+              if (key === 'PORTONE_PG_PROVIDER') PORTONE_PG_PROVIDER = val;
+              if (key === 'PORTONE_STORE_ID') PORTONE_STORE_ID = val;
+              if (key === 'PORTONE_CHANNEL_KEY') PORTONE_CHANNEL_KEY = val;
+            }
+          });
+        }
+      } catch (e) {
+        console.warn("Env load failed", e);
+      }
+    }
+
+    async function processMockCheckout() {
       const name = document.getElementById('buyerName').value.trim();
       const phone = document.getElementById('buyerPhone').value.trim();
       const email = document.getElementById('buyerEmail').value.trim();
@@ -1422,11 +1450,13 @@
         return;
       }
 
-      // Generate order
+      await loadEnvForPayment();
+
+      const priceVal = activePlan.final_price * purchaseQty;
       const orderCode = 'JD' + Date.now().toString().slice(-8);
       const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);
+      const paymentName = `${currentSelectedCountry} ${activeCarrier.carrier} eSIM`;
 
-      // B2B Option Mapping (Aligned with full carrier map & restored codes)
       const lookupKey = `${activePlan.product_code}_${selectedDays}일`;
       let targetB2BText = (window.OPTION_CODES_MAP && window.OPTION_CODES_MAP[lookupKey]);
       if (!targetB2BText) {
@@ -1441,7 +1471,7 @@
         buyerName: name,
         phone: phone,
         email: email,
-        totalPrice: activePlan.final_price * purchaseQty,
+        totalPrice: priceVal,
         paymentStatus: '결제완료',
         shippingStatus: '배송준비중',
         items: [
@@ -1456,28 +1486,69 @@
         ]
       };
 
-      // Save to localStorage (shares with admin panel)
-      const existingOrders = JSON.parse(localStorage.getItem('jdisim_orders') || '[]');
-      existingOrders.unshift(newOrder);
-      localStorage.setItem('jdisim_orders', JSON.stringify(existingOrders));
+      function submitRealOrder() {
+        const allOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
+        allOrders.unshift(newOrder);
+        localStorage.setItem('esim_orders', JSON.stringify(allOrders));
 
-      // Trigger serverless webhook in background (Vercel)
-      triggerVercelWebhook(newOrder);
+        closeBottomSheet();
+        switchNav('orders');
+        setTimeout(() => {
+          renderOrdersList();
+        }, 100);
+      }
 
-      alert(`🎉 결제가 정상 완료되었습니다!\n주문번호: ${orderCode}\neSIM 발급번호: ${randIccid}\n\n10초 내로 입력하신 이메일과 카카오 알림톡으로 QR코드가 실시간 전송됩니다!`);
-      
-      closeBottomSheet();
-      document.getElementById('buyerName').value = '';
-      document.getElementById('buyerPhone').value = '';
-      document.getElementById('buyerEmail').value = '';
-      purchaseQty = 1;
-      document.getElementById('checkoutQty').innerText = '1';
+      // Check PortOne V2
+      if (window.PortOne && PORTONE_STORE_ID) {
+        const confirmPay = confirm(`🔗 [안전 결제 모드]\n\n상품: ${paymentName}\n결제 금액: ${priceVal.toLocaleString()}원\n\n결제를 진행할까요?`);
+        if (!confirmPay) return;
 
-      // Go to order lookup view
-      document.getElementById('orderSearchName').value = name;
-      document.getElementById('orderSearchPhone').value = phone;
-      switchNav('orders');
-      searchOrders();
+        window.PortOne.requestPayment({
+          storeId: PORTONE_STORE_ID,
+          channelKey: PORTONE_CHANNEL_KEY,
+          paymentId: orderCode,
+          orderName: paymentName,
+          totalAmount: priceVal,
+          currency: "CURRENCY_KRW",
+          payMethod: "CARD",
+          customer: {
+            name: name,
+            email: email,
+            phoneNumber: phone
+          }
+        }).then(function(rsp) {
+          if (rsp.code != null) {
+            alert("결제 실패: " + rsp.message);
+            const forcePay = confirm("결제에 실패하였습니다. 테스트 모드이므로 강제로 결제 처리할까요?");
+            if (forcePay) submitRealOrder();
+          } else {
+            submitRealOrder();
+          }
+        });
+      } else if (window.IMP) {
+        const confirmPay = confirm(`🔗 [안전 결제 테스트 모드]\n\n상품: ${paymentName}\n결제 금액: ${priceVal.toLocaleString()}원\n\n결제를 진행할까요?`);
+        if (!confirmPay) return;
+
+        window.IMP.request_pay({
+          pg: PORTONE_PG_PROVIDER,
+          pay_method: "card",
+          merchant_uid: orderCode,
+          name: paymentName,
+          amount: priceVal,
+          buyer_email: email,
+          buyer_tel: phone,
+          buyer_name: name
+        }, function(rsp) {
+          if (rsp.success) {
+            submitRealOrder();
+          } else {
+            const forcePay = confirm(`결제 실패: ${rsp.error_msg}\n\n테스트 모드이므로 가상으로 결제를 완료하시겠습니까?`);
+            if (forcePay) submitRealOrder();
+          }
+        });
+      } else {
+        submitRealOrder();
+      }
     }
 
     // Call Vercel serverless webhook in background
