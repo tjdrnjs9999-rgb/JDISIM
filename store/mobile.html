@@ -155,7 +155,7 @@
     }
 
     /* Header Bar */
-    .app-header {  background: #ff00ff !important; 
+    .app-header {  background: #4f46e5 !important; 
       position: sticky;
       top: 0;
       z-index: 100;
@@ -817,6 +817,16 @@
       border-color: #4f46e5;
     }
     
+  /* Click Fix */
+    .mobile-product-card {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-product-card * {
+      pointer-events: none !important; /* Let the parent handle the click */
+    }
+
   </style>
 </head>
 <body>
@@ -1422,11 +1432,28 @@
     let activePlan = null;
 
     
-    function openBottomSheetFromCard(el) {
-      const country = el.querySelector('.product-country-tag').innerText.replace(' eSIM', '').replace('HOT 추천', '').trim();
-      const carrier = el.querySelector('.product-carrier-badge span').innerText.trim();
-      openBottomSheet(country, carrier);
-    }
+    
+    window.openBottomSheetFromCard = function(el) {
+      try {
+        console.log("Card clicked:", el);
+        const tagEl = el.querySelector('.product-country-tag');
+        const carrierEl = el.querySelector('.product-carrier-badge span');
+        
+        let country = tagEl ? tagEl.innerText.replace(' eSIM', '').replace('HOT 추천', '').trim() : '일본';
+        let carrier = carrierEl ? carrierEl.innerText.trim() : 'Softbank';
+        
+        if (typeof openBottomSheet === 'function') {
+          openBottomSheet(country, carrier);
+        } else {
+          alert('오류: openBottomSheet 함수를 찾을 수 없습니다.');
+        }
+      } catch (err) {
+        console.error("Click handler error:", err);
+        // Fallback: just open Japan Softbank if everything fails
+        if (typeof openBottomSheet === 'function') openBottomSheet('일본', 'Softbank');
+      }
+    };
+
 
     function openBottomSheet(countryName, defaultCarrier = '') {
       currentSelectedCountry = countryName;
