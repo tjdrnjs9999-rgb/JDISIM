@@ -11,16 +11,56 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
-    /* Mobile-dedicated app-like overrides */
+    /* Global Word Break Keep-All to prevent squishing text vertically */
+    * {
+      word-break: keep-all !important;
+      overflow-wrap: break-word;
+    }
+
     body {
       font-family: 'Outfit', 'Noto Sans KR', sans-serif;
-      background: #090b11;
-      color: #f1f3f9;
+      background: transparent;
+      color: #0f172a; /* Slate 900 */
       margin: 0;
       padding: 0;
       padding-bottom: 75px; /* for bottom navigation bar */
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Background Video Styles (aligned with PC styles.css) */
+    .video-bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+      background-color: #f8fafc;
+    }
+
+    .video-bg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(248, 250, 252, 0.88); 
+      backdrop-filter: saturate(140%) blur(4px);
+      -webkit-backdrop-filter: saturate(140%) blur(4px);
+    }
+
+    #bgVideo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
     }
 
     /* Screen view framework */
@@ -43,10 +83,10 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(9, 11, 17, 0.85);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
       padding: 12px 16px;
       display: flex;
       justify-content: space-between;
@@ -59,7 +99,7 @@
       gap: 8px;
       font-size: 1.1rem;
       font-weight: 700;
-      color: #fff;
+      color: #0f172a;
       text-decoration: none;
     }
 
@@ -77,13 +117,16 @@
     }
 
     .cart-btn {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.05);
       border: none;
-      color: #fff;
+      color: #0f172a;
       padding: 8px;
       border-radius: 50%;
       cursor: pointer;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .cart-badge {
@@ -105,15 +148,16 @@
       left: 0;
       right: 0;
       height: 65px;
-      background: rgba(13, 16, 27, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-top: 1px solid rgba(15, 23, 42, 0.07);
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 200;
       padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.05);
     }
 
     .nav-item {
@@ -122,7 +166,7 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      color: #94a3b8;
+      color: #64748b;
       text-decoration: none;
       font-size: 0.75rem;
       font-weight: 500;
@@ -138,18 +182,19 @@
     }
 
     .nav-item.active {
-      color: #818cf8;
+      color: #4f46e5;
     }
 
     /* Home Hero Promo Banner */
     .hero-promo {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
-      border: 1px solid rgba(129, 140, 248, 0.2);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.07), rgba(168, 85, 247, 0.07));
+      border: 1px solid rgba(99, 102, 241, 0.15);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 24px;
       position: relative;
       overflow: hidden;
+      color: #0f172a;
     }
 
     .hero-promo::after {
@@ -157,7 +202,7 @@
       position: absolute;
       width: 120px;
       height: 120px;
-      background: radial-gradient(circle, rgba(129, 140, 248, 0.3) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.2) 0%, transparent 70%);
       right: -20px;
       top: -20px;
       z-index: 1;
@@ -165,14 +210,14 @@
 
     .hero-promo h2 {
       font-size: 1.3rem;
-      font-weight: 700;
+      font-weight: 800;
       margin: 0 0 8px 0;
       line-height: 1.3;
     }
 
     .hero-promo p {
       font-size: 0.85rem;
-      color: #94a3b8;
+      color: #475569;
       margin: 0 0 16px 0;
     }
 
@@ -180,12 +225,12 @@
       background: linear-gradient(90deg, #6366f1, #a855f7);
       border: none;
       color: white;
-      font-weight: 600;
+      font-weight: 700;
       padding: 10px 20px;
       border-radius: 30px;
       font-size: 0.85rem;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
     }
 
     /* Horizontal Category Scroller */
@@ -206,22 +251,23 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(15, 23, 42, 0.08);
       padding: 8px 14px;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
       white-space: nowrap;
       cursor: pointer;
-      color: #94a3b8;
+      color: #64748b;
       transition: all 0.2s ease;
     }
 
     .category-tab.active {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: #6366f1;
-      color: #a5b4fc;
+      background: rgba(79, 70, 229, 0.08);
+      border-color: #4f46e5;
+      color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
     }
 
     /* Search Bar */
@@ -232,19 +278,21 @@
 
     .search-input {
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(15, 23, 42, 0.1);
       padding: 12px 16px 12px 42px;
       border-radius: 30px;
-      color: white;
+      color: #0f172a;
       font-size: 0.9rem;
       box-sizing: border-box;
       outline: none;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
     }
 
     .search-input:focus {
-      border-color: #6366f1;
-      background: rgba(255, 255, 255, 0.08);
+      border-color: #4f46e5;
+      background: #ffffff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.08);
     }
 
     .search-icon {
@@ -262,15 +310,9 @@
       gap: 16px;
     }
 
-    /* Global Word Break Keep-All to prevent squishing text vertically */
-    * {
-      word-break: keep-all !important;
-      overflow-wrap: break-word;
-    }
-
     .mobile-product-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: 20px;
       padding: 18px 16px;
       display: flex;
@@ -278,13 +320,15 @@
       gap: 16px;
       position: relative;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
     }
 
     .mobile-product-card:active {
       transform: scale(0.97);
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(99, 102, 241, 0.3);
     }
 
     .product-flag-img {
@@ -292,8 +336,8 @@
       height: 54px;
       border-radius: 14px;
       object-fit: cover;
-      background: #1e293b;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      background: #e2e8f0;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
     }
 
     .product-info {
@@ -306,7 +350,7 @@
     .product-country-tag {
       font-size: 0.75rem;
       font-weight: 800;
-      color: #818cf8;
+      color: #4f46e5;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -315,7 +359,7 @@
       font-size: 0.95rem;
       font-weight: 700;
       margin: 0;
-      color: #fff;
+      color: #0f172a;
       line-height: 1.4;
     }
 
@@ -325,11 +369,11 @@
       gap: 4px;
       font-size: 0.7rem;
       font-weight: 700;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.2);
+      background: rgba(79, 70, 229, 0.06);
+      border: 1px solid rgba(79, 70, 229, 0.12);
       padding: 3px 9px;
       border-radius: 20px;
-      color: #a5b4fc;
+      color: #4f46e5;
       width: fit-content;
     }
 
@@ -352,11 +396,8 @@
     .product-price {
       font-size: 1.1rem;
       font-weight: 800;
-      color: #fff;
+      color: #0f172a;
       margin-bottom: 6px;
-      background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
     .buy-btn-small {
@@ -368,7 +409,7 @@
       padding: 7px 14px;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
       transition: all 0.2s;
     }
 
@@ -383,7 +424,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(5px);
       z-index: 300;
       opacity: 0;
@@ -401,10 +442,12 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: #0f1322;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       border-top-left-radius: 24px;
       border-top-right-radius: 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
       z-index: 400;
       transform: translateY(100%);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -412,6 +455,7 @@
       max-height: 85vh;
       overflow-y: auto;
       box-sizing: border-box;
+      color: #0f172a;
     }
 
     .bottom-sheet.active {
@@ -427,14 +471,15 @@
 
     .bottom-sheet-title {
       font-size: 1.1rem;
-      font-weight: 700;
+      font-weight: 800;
       margin: 0;
+      color: #0f172a;
     }
 
     .bottom-sheet-close {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.05);
       border: none;
-      color: #94a3b8;
+      color: #64748b;
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -447,8 +492,8 @@
     /* Option pill groupings */
     .option-group-title {
       font-size: 0.85rem;
-      font-weight: 700;
-      color: #94a3b8;
+      font-weight: 800;
+      color: #475569;
       margin: 16px 0 8px 0;
       display: flex;
       justify-content: space-between;
@@ -461,9 +506,9 @@
     }
 
     .option-pill {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.03);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      color: #475569;
       padding: 10px 18px;
       border-radius: 24px;
       font-size: 0.8rem;
@@ -474,15 +519,15 @@
     }
 
     .option-pill.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
-      border-color: #818cf8;
-      color: #fff;
-      box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+      background: rgba(79, 70, 229, 0.08);
+      border-color: #4f46e5;
+      color: #4f46e5;
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.15);
     }
 
     /* Pricing Row inside drawer */
     .checkout-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
       margin-top: 24px;
       padding-top: 20px;
       display: flex;
@@ -492,36 +537,38 @@
 
     .checkout-total-label {
       font-size: 0.85rem;
-      color: #94a3b8;
+      color: #64748b;
+      font-weight: 500;
     }
 
     .checkout-total-price {
       font-size: 1.3rem;
       font-weight: 800;
-      color: #a855f7;
+      color: #4f46e5;
     }
 
     .order-action-btn {
       width: 100%;
-      background: linear-gradient(90deg, #6366f1, #a855f7);
+      background: linear-gradient(90deg, #6366f1, #4f46e5);
       border: none;
       color: white;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.95rem;
       padding: 14px;
       border-radius: 30px;
       margin-top: 16px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
     }
 
     /* Devices self check card */
     .device-check-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(15, 23, 42, 0.06);
       border-radius: 16px;
       padding: 16px;
       margin-top: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
     }
 
     .device-check-header {
@@ -529,16 +576,18 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 12px;
-      font-weight: 700;
+      font-weight: 800;
+      color: #0f172a;
     }
 
     /* Review slider app section */
     .review-mini-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      padding: 14px;
       border-radius: 12px;
       margin-bottom: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
     }
 
     .review-header {
@@ -546,13 +595,13 @@
       justify-content: space-between;
       font-size: 0.75rem;
       color: #64748b;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .review-body {
       font-size: 0.8rem;
-      color: #cbd5e1;
-      line-height: 1.4;
+      color: #334155;
+      line-height: 1.5;
     }
 
     /* Order tracking views */
@@ -565,32 +614,39 @@
 
     .tracker-input {
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.03);
+      border: 1px solid rgba(15, 23, 42, 0.08);
       padding: 12px 16px;
       border-radius: 12px;
-      color: white;
+      color: #0f172a;
       font-size: 0.9rem;
       box-sizing: border-box;
       outline: none;
     }
 
+    .tracker-input:focus {
+      background: #ffffff;
+      border-color: #4f46e5;
+    }
+
     .tracker-btn {
-      background: #6366f1;
+      background: #4f46e5;
       border: none;
       color: white;
-      font-weight: 700;
+      font-weight: 800;
       padding: 12px;
       border-radius: 12px;
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
     }
 
     .order-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(15, 23, 42, 0.08);
       border-radius: 16px;
       padding: 16px;
       margin-top: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
     }
 
     .order-card-header {
@@ -598,7 +654,7 @@
       justify-content: space-between;
       font-size: 0.75rem;
       color: #64748b;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
       padding-bottom: 10px;
       margin-bottom: 10px;
     }
@@ -609,8 +665,10 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
-      background: #111425;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(15, 23, 42, 0.1);
       border-radius: 20px;
       padding: 20px;
       z-index: 500;
@@ -620,6 +678,8 @@
       display: none;
       opacity: 0;
       transition: all 0.25s ease;
+      color: #0f172a;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     }
 
     .mobile-modal.active {
@@ -630,6 +690,14 @@
   </style>
 </head>
 <body>
+
+  <!-- Background Video -->
+  <div class="video-bg-container">
+    <video autoplay muted loop playsinline id="bgVideo">
+      <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
+    </video>
+    <div class="video-bg-overlay"></div>
+  </div>
 
   <!-- App Header -->
   <header class="app-header">
@@ -646,7 +714,7 @@
   <!-- ================= VIEW 1: HOME VIEW ================= -->
   <main id="view-home" class="mobile-view active">
     <div class="hero-promo">
-      <h2>해외여행 데이터,<br><span style="color: #a5b4fc">공항 대기 없이 10초 만에!</span></h2>
+      <h2>해외여행 데이터,<br><span style="color: #4f46e5">공항 대기 없이 10초 만에!</span></h2>
       <p>전 세계 150개국 고품격 이심 로밍망을 유통 마진 없는 업계 최저가에 만나보세요.</p>
       <button class="hero-promo-btn" onclick="switchNav('store')">⚡ eSIM 구매하러 가기</button>
     </div>
@@ -659,10 +727,10 @@
     <!-- Quick Device Self Check -->
     <div class="device-check-card">
       <div class="device-check-header">
-        <i data-lucide="smartphone" style="color: #818cf8"></i>
+        <i data-lucide="smartphone" style="color: #4f46e5"></i>
         <span>내 스마트폰 eSIM 지원 여부 확인</span>
       </div>
-      <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 12px 0;">가지고 계신 기종이 eSIM을 사용할 수 있는지 3초 만에 진단해 드립니다.</p>
+      <p style="font-size: 0.8rem; color: #475569; margin: 0 0 12px 0;">가지고 계신 기종이 eSIM을 사용할 수 있는지 3초 만에 진단해 드립니다.</p>
       <button class="tracker-btn" style="width: 100%; font-size: 0.8rem; padding: 10px;" onclick="openDeviceCheck()">다이얼로 즉시 확인하기</button>
     </div>
 
@@ -699,7 +767,7 @@
   <!-- ================= VIEW 3: ORDER VIEW ================= -->
   <main id="view-orders" class="mobile-view">
     <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 6px 0;">주문 및 eSIM QR코드 조회</h3>
-    <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다.</p>
+    <p style="font-size: 0.8rem; color: #475569; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다.</p>
 
     <div class="order-tracker-form">
       <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
@@ -716,18 +784,18 @@
     
     <div style="display: flex; flex-direction: column; gap: 14px;">
       <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
-        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #818cf8;">Q. 이심(eSIM) 개통은 언제 되나요?</h4>
-        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">결제가 완료되는 즉시 시스템에서 10초 이내에 입력하신 이메일과 알림톡으로 QR코드가 발송됩니다.</p>
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #4f46e5;">Q. 이심(eSIM) 개통은 언제 되나요?</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">결제가 완료되는 즉시 시스템에서 10초 이내에 입력하신 이메일과 알림톡으로 QR코드가 발송됩니다.</p>
       </div>
 
       <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
-        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #818cf8;">Q. 환불 및 취소 조건은 무엇인가요?</h4>
-        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">eSIM 프로필 다운로드 전에는 100% 환불이 가능합니다. 단, QR코드를 스캔하여 한 번이라도 기기에 프로필을 다운로드한 경우 교환/환불이 불가하오니 유의해 주세요.</p>
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #4f46e5;">Q. 환불 및 취소 조건은 무엇인가요?</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">eSIM 프로필 다운로드 전에는 100% 환불이 가능합니다. 단, QR코드를 스캔하여 한 번이라도 기기에 프로필을 다운로드한 경우 교환/환불이 불가하오니 유의해 주세요.</p>
       </div>
 
       <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
-        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #818cf8;">Q. 데이터 접속이 안 됩니다.</h4>
-        <p style="margin: 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">반드시 기기 설정에서 [데이터 로밍 ON]이 활성화되어 있는지 확인해 주세요. 로컬 회선 설정 완료에 1~3분 정도 시간이 걸릴 수 있습니다.</p>
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #4f46e5;">Q. 데이터 접속이 안 됩니다.</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">반드시 기기 설정에서 [데이터 로밍 ON]이 활성화되어 있는지 확인해 주세요. 로컬 회선 설정 완료에 1~3분 정도 시간이 걸릴 수 있습니다.</p>
       </div>
 
       <a href="http://pf.kakao.com/_xxxxxx" target="_blank" class="order-action-btn" style="text-align: center; text-decoration: none; display: block; box-sizing: border-box;">
@@ -820,11 +888,11 @@
       <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700;">3초 기종 진단 가이드</h3>
       <button class="bottom-sheet-close" onclick="closeModal()">✕</button>
     </div>
-    <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
+    <div style="font-size: 0.85rem; color: #334155; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
       <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
       <p>2. 키패드에 <strong>*#06#</strong>을 차례로 입력합니다.</p>
       <p>3. 화면에 기기 고유식별 정보 창이 뜹니다. 목록 중에 <strong>EID</strong> 항목이 있다면 eSIM을 지원하는 단말기입니다.</p>
-      <p style="color: #818cf8; font-weight: 700; background: rgba(129, 140, 248, 0.1); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+      <p style="color: #4f46e5; font-weight: 700; background: rgba(79, 70, 229, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
         ※ EID 글자가 없거나 보이지 않는 구형 기종은 eSIM 로밍을 사용할 수 없으므로 구매 전 꼭 체크해 주세요!
       </p>
     </div>
@@ -907,35 +975,77 @@
     };
 
     // Render Products list on Store View
+    const flagMap = {
+      "일본": "japan.jpg",
+      "베트남": "vietnam.jpg",
+      "태국": "thailand.jpg",
+      "대만": "taiwan.jpg",
+      "미국": "usa.jpg",
+      "유럽": "europe.jpg",
+      "싱가포르": "singapore.jpg",
+      "말레이시아": "malaysia.jpg",
+      "필리핀": "philippines.jpg",
+      "인도네시아": "indonesia.jpg"
+    };
+
     function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
       const listContainer = document.getElementById('storeProductList');
       if (!listContainer || !window.PRODUCTS_DATA) return;
 
       listContainer.innerHTML = '';
-      
       const lowercaseQuery = searchQuery.toLowerCase().trim();
 
-      Object.keys(window.PRODUCTS_DATA).forEach(countryName => {
-        // Apply Country Tab filter
-        if (countryFilter !== 'all' && countryFilter !== countryName) return;
+      // Group products by country
+      const uniqueCountries = {};
+      window.PRODUCTS_DATA.forEach(group => {
+        const c = group.country;
+        if (!uniqueCountries[c]) {
+          uniqueCountries[c] = [];
+        }
+        uniqueCountries[c].push(group);
+      });
 
-        const originalProducts = window.PRODUCTS_DATA[countryName];
-        
-        // Group options by Base Product Name
-        // A single JDISIM base product matches the country name + similar properties
-        // For mobile simplified layout, we list unique "요금제 그룹" per country
-        // Let's create a simplified product view per unique card
-        // Grouping: by country and core name
-        
-        // Find match in search query
+      Object.keys(uniqueCountries).forEach(countryName => {
+        const groups = uniqueCountries[countryName];
+        const sampleGroup = groups[0];
+        const categoryName = sampleGroup.category;
+
+        // Apply Country Tab filter
+        let matchFilter = false;
+        if (countryFilter === 'all') {
+          matchFilter = true;
+        } else if (countryFilter === countryName) {
+          matchFilter = true;
+        } else if (countryFilter === '유럽' && (categoryName.includes('유럽') || countryName.includes('유럽'))) {
+          matchFilter = true;
+        } else if (countryFilter === '미국' && (countryName.includes('미국') || countryName.includes('하와이'))) {
+          matchFilter = true;
+        }
+
+        if (!matchFilter) return;
+
+        // Apply search query
         const matchesSearch = countryName.toLowerCase().includes(lowercaseQuery) || 
-                              originalProducts.some(p => p.carrier.toLowerCase().includes(lowercaseQuery) || p.name.toLowerCase().includes(lowercaseQuery));
+                              groups.some(g => g.carrier.toLowerCase().includes(lowercaseQuery)) ||
+                              categoryName.toLowerCase().includes(lowercaseQuery);
         
         if (searchQuery && !matchesSearch) return;
 
-        // Render card
-        const sampleProduct = originalProducts[0];
+        // Find min price
+        let minPrice = Infinity;
+        groups.forEach(g => {
+          if (g.plans) {
+            g.plans.forEach(pl => {
+              if (pl.final_price < minPrice) {
+                minPrice = pl.final_price;
+              }
+            });
+          }
+        });
+        if (minPrice === Infinity) return;
+
         const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
+        const carriersStr = Array.from(new Set(groups.map(g => g.carrier.split('/')[0].trim()))).join(' / ');
 
         const card = document.createElement('div');
         card.className = 'mobile-product-card';
@@ -943,15 +1053,15 @@
           <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
           <div class="product-info">
             <div class="product-country-tag">${countryName} eSIM</div>
-            <h4 class="product-title">${countryName} 최저가 LTE/5G 요금제</h4>
+            <h4 class="product-title">${countryName} 로컬 로밍망 요금제</h4>
             <div class="product-carrier-badge">
               <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
-              <span>${Array.from(new Set(originalProducts.map(p => p.carrier))).join(' / ')}</span>
+              <span>${carriersStr}</span>
             </div>
           </div>
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
-            <span class="product-price">${Math.min(...originalProducts.map(p => p.price)).toLocaleString()}원~</span>
+            <span class="product-price">${minPrice.toLocaleString()}원~</span>
             <button class="buy-btn-small" onclick="openBottomSheet('${countryName}')">구매하기</button>
           </div>
         `;
@@ -961,17 +1071,22 @@
     }
 
     // Bottom Sheet Options Handler
+    let carrierOptions = [];
+    let activeCarrier = null;
+    let activePlan = null;
+
     function openBottomSheet(countryName) {
       currentSelectedCountry = countryName;
-      const products = window.PRODUCTS_DATA[countryName];
-      if (!products || products.length === 0) return;
+      
+      carrierOptions = window.PRODUCTS_DATA.filter(g => g.country === countryName);
+      if (carrierOptions.length === 0) return;
 
       document.getElementById('sheetProductTitle').innerText = `${countryName} 데이터 요금제 선택`;
       
-      // Determine unique carriers
-      const carriers = Array.from(new Set(products.map(p => p.carrier)));
-      selectedCarrier = carriers[0];
+      activeCarrier = carrierOptions[0];
+      selectedCarrier = activeCarrier.carrier;
       
+      const carriers = carrierOptions.map(co => co.carrier);
       renderCarrierPills(carriers);
       onCarrierSelected();
 
@@ -998,6 +1113,7 @@
 
     function selectCarrier(carrier) {
       selectedCarrier = carrier;
+      activeCarrier = carrierOptions.find(co => co.carrier === carrier) || carrierOptions[0];
       document.querySelectorAll('#carrierPills .option-pill').forEach(p => {
         p.classList.toggle('active', p.innerText === carrier);
       });
@@ -1005,10 +1121,9 @@
     }
 
     function onCarrierSelected() {
-      const products = window.PRODUCTS_DATA[currentSelectedCountry].filter(p => p.carrier === selectedCarrier);
+      if (!activeCarrier || !activeCarrier.plans) return;
       
-      // Determine unique capacities
-      const capacities = Array.from(new Set(products.map(p => p.capacity)));
+      const capacities = Array.from(new Set(activeCarrier.plans.map(p => p.data_limit)));
       selectedCapacity = capacities[0];
       
       renderCapacityPills(capacities);
@@ -1031,12 +1146,10 @@
     }
 
     function onCapacitySelected() {
-      const products = window.PRODUCTS_DATA[currentSelectedCountry].filter(
-        p => p.carrier === selectedCarrier && p.capacity === selectedCapacity
-      );
-
-      // Determine unique days
-      const days = Array.from(new Set(products.map(p => p.days)));
+      if (!activeCarrier || !activeCarrier.plans) return;
+      
+      const matchingPlans = activeCarrier.plans.filter(p => p.data_limit === selectedCapacity);
+      const days = Array.from(new Set(matchingPlans.map(p => p.duration))).sort((a, b) => a - b);
       selectedDays = days[0];
 
       renderDaysPills(days);
@@ -1046,26 +1159,31 @@
     function renderDaysPills(days) {
       const container = document.getElementById('daysPills');
       container.innerHTML = days.map(d => `
-        <div class="option-pill ${d === selectedDays ? 'active' : ''}" onclick="selectDays('${d}')">${d}일</div>
+        <div class="option-pill ${parseInt(d) === parseInt(selectedDays) ? 'active' : ''}" onclick="selectDays('${d}')">${d}일</div>
       `).join('');
     }
 
     function selectDays(days) {
-      selectedDays = days;
+      selectedDays = parseInt(days);
       document.querySelectorAll('#daysPills .option-pill').forEach(p => {
-        p.classList.toggle('active', parseInt(p.innerText) === parseInt(days));
+        p.classList.toggle('active', parseInt(p.innerText) === selectedDays);
       });
       updatePricing();
     }
 
     function updatePricing() {
-      const product = window.PRODUCTS_DATA[currentSelectedCountry].find(
-        p => p.carrier === selectedCarrier && p.capacity === selectedCapacity && parseInt(p.days) === parseInt(selectedDays)
+      if (!activeCarrier || !activeCarrier.plans) return;
+      
+      activePlan = activeCarrier.plans.find(
+        p => p.data_limit === selectedCapacity && parseInt(p.duration) === selectedDays
       );
 
-      if (product) {
-        selectedProductBase = product;
-        const total = product.price * purchaseQty;
+      if (!activePlan) {
+        activePlan = activeCarrier.plans.find(p => p.data_limit === selectedCapacity) || activeCarrier.plans[0];
+      }
+
+      if (activePlan) {
+        const total = activePlan.final_price * purchaseQty;
         document.getElementById('checkoutTotalPrice').innerText = `${total.toLocaleString()}원`;
       }
     }
@@ -1087,7 +1205,7 @@
         return;
       }
 
-      if (!selectedProductBase) {
+      if (!activePlan || !activeCarrier) {
         alert("상품 옵션을 다시 선택해 주세요.");
         return;
       }
@@ -1096,8 +1214,14 @@
       const orderCode = 'JD' + Date.now().toString().slice(-8);
       const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);
 
-      // Construct option name for playauto B2B matching
-      const targetB2BText = selectedProductBase.b2bName || `${selectedProductBase.carrier}_${selectedProductBase.capacity}_${selectedProductBase.days.toString().padStart(2, '0')}일`;
+      // B2B Option Mapping (Aligned with full carrier map & restored codes)
+      const lookupKey = `${activePlan.product_code}_${selectedDays}일`;
+      let targetB2BText = (window.OPTION_CODES_MAP && window.OPTION_CODES_MAP[lookupKey]);
+      if (!targetB2BText) {
+        const carrierInfo = (window.FULL_CARRIER_MAP && window.FULL_CARRIER_MAP[activePlan.product_code]) || activeCarrier.carrier;
+        let exactCarrier = carrierInfo.split('/')[0].trim();
+        targetB2BText = `${currentSelectedCountry}_${exactCarrier}_${selectedCapacity}_${selectedDays.toString().padStart(2, '0')}일`;
+      }
 
       const newOrder = {
         orderCode: orderCode,
@@ -1105,16 +1229,16 @@
         buyerName: name,
         phone: phone,
         email: email,
-        totalPrice: selectedProductBase.price * purchaseQty,
+        totalPrice: activePlan.final_price * purchaseQty,
         paymentStatus: '결제완료',
         shippingStatus: '배송준비중',
         items: [
           {
-            productCode: selectedProductBase.code,
-            productName: `${currentSelectedCountry} ${selectedProductBase.carrier} 매일 ${selectedProductBase.capacity} / ${selectedProductBase.days}일`,
+            productCode: activePlan.product_code,
+            productName: `${currentSelectedCountry} ${activeCarrier.carrier} 매일 ${selectedCapacity} / ${selectedDays}일`,
             optionName: targetB2BText,
             quantity: purchaseQty,
-            price: selectedProductBase.price,
+            price: activePlan.final_price,
             iccid: randIccid
           }
         ]
@@ -1196,14 +1320,14 @@
           </div>
           <div style="font-size:0.85rem; font-weight:600; margin-bottom:12px;">${o.items[0].productName} (${o.items[0].quantity}개)</div>
           
-          <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+          <div style="background:rgba(15, 23, 42, 0.03); padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">eSIM 기기 등록용 QR코드</div>
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=LPA:1$rsp.truphone.com$${o.items[0].iccid}" 
                  style="width:120px; height:120px; border-radius:6px; border:4px solid white; margin:4px 0;" alt="eSIM QR">
-            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px; font-family:monospace;">ICCID: ${o.items[0].iccid}</div>
+            <div style="font-size:0.75rem; color:#475569; margin-top:4px; font-family:monospace;">ICCID: ${o.items[0].iccid}</div>
           </div>
           
-          <div style="font-size:0.75rem; color:#94a3b8; line-height:1.4;">
+          <div style="font-size:0.75rem; color:#475569; line-height:1.4;">
             ※ 위 QR코드를 휴대폰 카메라 또는 설정 -> 셀룰러 요금제 추가에서 스캔하시면 즉시 사용 개통됩니다.
           </div>
         </div>
