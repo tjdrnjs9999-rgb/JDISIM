@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <script>
@@ -1420,6 +1420,13 @@
     let carrierOptions = [];
     let activeCarrier = null;
     let activePlan = null;
+
+    
+    function openBottomSheetFromCard(el) {
+      const country = el.querySelector('.product-country-tag').innerText.replace(' eSIM', '').replace('HOT 추천', '').trim();
+      const carrier = el.querySelector('.product-carrier-badge span').innerText.trim();
+      openBottomSheet(country, carrier);
+    }
 
     function openBottomSheet(countryName, defaultCarrier = '') {
       currentSelectedCountry = countryName;

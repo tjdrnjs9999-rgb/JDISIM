@@ -56,6 +56,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         cart = [];
       }
       updateCartBadge();
+    try {
+      const saved = localStorage.getItem('esim_cart');
+      if (saved) {
+        cart = JSON.parse(saved);
+      } else {
+        cart = [];
+      }
+      updateCartBadge();
     } catch (e) {
       console.error("Failed to load cart", e);
       cart = [];
@@ -2806,4 +2814,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initDragScroll();
   initReviewExpander();
   await init();
+});
+
 });
