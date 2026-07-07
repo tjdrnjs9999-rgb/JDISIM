@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JDISIM 가이드 센터 | 가장 쉬운 이심 사용 설명서</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #6366f1;
+      --accent: #f43f5e;
+      --bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      word-break: keep-all;
+    }
+
+    body {
+      background: #f8fafc;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .guide-header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    /* Hero */
+    .guide-hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      padding: 40px 20px;
+      color: white;
+      text-align: center;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    /* Search Bar */
+    .search-section {
+      padding: 20px;
+      margin-top: -25px;
+    }
+
+    .search-box {
+      background: white;
+      border-radius: 30px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .search-input {
+      border: none;
+      flex: 1;
+      outline: none;
+      font-size: 0.95rem;
+    }
+
+    /* Content Layout */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px 60px 20px;
+    }
+
+    .guide-section {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .section-label {
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    /* Steps */
+    .step-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .step-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Highlight Box */
+    .tip-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    .tip-title {
+      color: #16a34a;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* FAQ Accordion */
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .faq-answer {
+      padding-top: 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: none;
+    }
+
+    /* Footer CTA */
+    .contact-cta {
+      background: #0f172a;
+      color: white;
+      border-radius: var(--radius);
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .cta-btn {
+      background: white;
+      color: #0f172a;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      margin-top: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header class="guide-header">
+    <button class="back-btn" onclick="window.history.back()">
+      <i data-lucide="chevron-left"></i>
+    </button>
+    <div class="header-title">가이드 센터</div>
+  </header>
+
+  <section class="guide-hero">
+    <span class="hero-tag">JDISIM EXCLUSIVE</span>
+    <h1 class="hero-title">가장 쉽고 품격 있는<br>이심(eSIM) 사용법</h1>
+    <p style="opacity: 0.9; font-size: 0.9rem;">복잡한 설정은 잊으세요. JDISIM이 10초 만에 해결해 드립니다.</p>
+  </section>
+
+  <div class="search-section">
+    <div class="search-box">
+      <i data-lucide="search" style="color: var(--text-muted)"></i>
+      <input type="text" class="search-input" placeholder="궁금한 내용을 검색해 보세요 (예: 기종진단)">
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Section 1: Compatibility -->
+    <div class="guide-section">
+      <span class="section-label">01. PREPARATION</span>
+      <h2 class="section-title">내 폰이 이심(eSIM)을<br>지원하는지 궁금하신가요?</h2>
+      
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>전화 다이얼을 켜세요</h4>
+          <p>전화 앱을 열고 키패드에 <strong>*#06#</strong>을 입력해 보세요.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>EID 항목을 확인하세요</h4>
+          <p>목록 중에 <strong>EID</strong>라는 글자가 보인다면? 축하드립니다! JDISIM의 초고속 이심을 바로 사용하실 수 있는 최신 폰입니다.</p>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-title"><i data-lucide="info"></i> JDISIM의 해석</div>
+        <p style="font-size: 0.85rem; color: #166534;">설정 메뉴를 복잡하게 뒤질 필요 없습니다. *#06#은 전 세계 공통의 가장 확실한 진단법입니다.</p>
+      </div>
+    </div>
+
+    <!-- Section 2: Activation -->
+    <div class="guide-section">
+      <span class="section-label">02. ACTIVATION</span>
+      <h2 class="section-title">QR코드 스캔 한 번으로<br>현지망 1티어 다이렉트 연결</h2>
+      
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>QR코드 준비</h4>
+          <p>결제 즉시 이메일과 카톡으로 전송된 QR코드를 다른 기기에 띄우거나 출력하세요.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>카메라 스캔</h4>
+          <p>휴대폰 설정 ➡️ 연결(네트워크) ➡️ SIM 관리자 ➡️ <strong>eSIM 추가</strong>를 누르고 QR코드를 비추세요.</p>
+        </div>
+      </div>
+
+      <div class="tip-box" style="background: #eff6ff; border-color: #bfdbfe;">
+        <div class="tip-title" style="color: #2563eb;"><i data-lucide="zap"></i> 전문가의 팁</div>
+        <p style="font-size: 0.85rem; color: #1e40af;">한국에서 미리 등록해도 괜찮습니다! 단, '데이터 로밍'은 현지 공항에 도착해서 켜는 것이 가장 깔끔한 연결 방법입니다.</p>
+      </div>
+    </div>
+
+    <!-- Section 3: Troubleshooting -->
+    <div class="guide-section">
+      <span class="section-label">03. TROUBLESHOOTING</span>
+      <h2 class="section-title">데이터가 안 터질 때<br>당황하지 않는 3가지 노하우</h2>
+      
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>로밍 스위치를 확인하세요</h4>
+          <p>가장 많은 실수는 '데이터 로밍' 스위치를 끄는 것입니다. 반드시 <strong>ON</strong>으로 되어있는지 확인하세요.</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>비행기 모드 매직</h4>
+          <p>현지 통신사 망을 처음 잡을 때 시간이 걸릴 수 있습니다. 비행기 모드를 3번 정도 껐다 켜보세요.</p>
+        </div>
+      </div>
+
+      <div class="tip-box" style="background: #fff1f2; border-color: #fecdd3;">
+        <div class="tip-title" style="color: #e11d48;"><i data-lucide="alert-circle"></i> 긴급 상황인가요?</div>
+        <p style="font-size: 0.85rem; color: #9f1239;">그래도 안 된다면? JDISIM 전담 상담원이 대기 중인 카카오톡 채널로 지금 바로 메시지를 보내주세요.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="guide-section">
+      <h2 class="section-title" style="margin-bottom: 10px;">자주 묻는 질문</h2>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Q. 한국 번호로 오는 문자도 받을 수 있나요?
+          <i data-lucide="plus"></i>
+        </div>
+        <div class="faq-answer">
+          네, 가능합니다! 한국 SIM을 '메인'으로 켜두시면 문자는 한국 번호로, 데이터는 JDISIM 이심으로 사용하는 '듀얼 심' 기능을 즐기실 수 있습니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Q. 여러 명이서 데이터를 나눠 쓸 수 있나요?
+          <i data-lucide="plus"></i>
+        </div>
+        <div class="faq-answer">
+          물론입니다! 테더링(핫스팟) 기능을 지원하므로, 친구나 가족과 함께 데이터를 공유해서 사용하실 수 있습니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-cta">
+      <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 10px;">아직 궁금한 점이 남으셨나요?</h3>
+      <p style="font-size: 0.9rem; opacity: 0.8;">JDISIM은 고객님이 해외에서 데이터를 연결하는 그 순간까지 함께합니다.</p>
+      <a href="http://pf.kakao.com/_xxxxxx" target="_blank" class="cta-btn">
+        <i data-lucide="message-circle"></i> 카톡 1:1 전담 상담하기
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const icon = el.querySelector('i');
+      const isOpen = answer.style.display === 'block';
+      
+      answer.style.display = isOpen ? 'none' : 'block';
+      icon.setAttribute('data-lucide', isOpen ? 'plus' : 'minus');
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
