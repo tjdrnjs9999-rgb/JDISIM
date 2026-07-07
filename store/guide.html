@@ -474,7 +474,7 @@
 
     <script>
         // Initialize icons
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
 
         const ARTICLES = [
             {
@@ -572,7 +572,7 @@
                     <i data-lucide="chevron-right" style="color:var(--text-muted); width:18px;"></i>
                 </a>
             `).join('');
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
         function openGuide(id) {
@@ -581,7 +581,7 @@
             document.getElementById('modalBody').innerHTML = art.content;
             document.getElementById('guideModal').classList.add('active');
             document.body.style.overflow = 'hidden';
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
         function closeGuide() {

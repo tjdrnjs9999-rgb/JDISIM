@@ -56,14 +56,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         cart = [];
       }
       updateCartBadge();
-    try {
-      const saved = localStorage.getItem('esim_cart');
-      if (saved) {
-        cart = JSON.parse(saved);
-      } else {
-        cart = [];
-      }
-      updateCartBadge();
     } catch (e) {
       console.error("Failed to load cart", e);
       cart = [];
@@ -901,8 +893,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 12. 모달 세부 콘텐츠 구성 렌더링 (원가표 모든 세부 필드 연동 완료)
   function renderModalContent(carrierOptions) {
-    const p = activeCarrier;
-    
     // 4단계 캐스케이딩 옵션 로직 (데일리/총용량 구분)
     const p = activeCarrier;
     
@@ -2814,6 +2804,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   initDragScroll();
   initReviewExpander();
   await init();
-});
-
 });

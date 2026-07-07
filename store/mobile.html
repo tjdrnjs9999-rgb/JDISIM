@@ -1148,7 +1148,7 @@
     };
     
     // Initialize icons
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 
     // Local state variables
     
@@ -1314,7 +1314,7 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1334,7 +1334,7 @@
         content.style.display = 'none';
         if (icon) icon.setAttribute('data-lucide', 'chevron-down');
       }
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1412,7 +1412,7 @@
         `;
         listContainer.appendChild(card);
       });
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1794,7 +1794,7 @@
     window.onload = function() {
       console.log("Window loaded, initializing...");
       try {
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
