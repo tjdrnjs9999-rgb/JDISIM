@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <script>
@@ -516,7 +516,7 @@
       pointer-events: auto;
     }
 
-    .bottom-sheet {
+    .bottom-sheet { padding-bottom: 80px !important; 
       position: fixed;
       left: 0;
       right: 0;
@@ -798,7 +798,7 @@
     }
     
   
-    .bottom-sheet {
+    .bottom-sheet { padding-bottom: 80px !important; 
       border-top-left-radius: 30px;
       border-top-right-radius: 30px;
       padding: 30px 24px;
@@ -1123,8 +1123,7 @@
       <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
     </div>
 
-    <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</button>
-  </div>
+    <button class="order-action-btn" id="paySubmitBtn" onclick="processMockCheckout()">결제 완료하기</button>
 
   <!-- Device compatibility check modal -->
   <div class="bottom-sheet-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
