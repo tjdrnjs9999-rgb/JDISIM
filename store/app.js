@@ -1,4 +1,4 @@
-// app.js - eSIM 스토어 핵심 프론트엔드 로직
+﻿// app.js - eSIM 스토어 핵심 프론트엔드 로직
 
 // ================= [설정] 포트원 결제 연동 설정 =================
 // 보안을 위해 프로젝트 루트 폴더의 .env 파일에 키를 작성하여 관리할 수 있습니다.
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </h2>
         </div>
         
-        <!-- 1. 통신사 선택 -->
+        <!-- 1. 통신사 및 네트워크망 선택-->
         <div class="config-group">
           <div class="config-section-title">1. 통신사 및 네트워크망 선택</div>
           <select id="carrierSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
