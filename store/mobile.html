@@ -713,35 +713,106 @@
 
   <!-- ================= VIEW 1: HOME VIEW ================= -->
   <main id="view-home" class="mobile-view active">
+    <!-- Hero Promo -->
     <div class="hero-promo">
-      <h2>해외여행 데이터,<br><span style="color: #4f46e5">공항 대기 없이 10초 만에!</span></h2>
-      <p>전 세계 150개국 고품격 이심 로밍망을 유통 마진 없는 업계 최저가에 만나보세요.</p>
-      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ eSIM 구매하러 가기</button>
+      <h2>해외여행 필수품,<br><span style="color: #4f46e5; font-weight: 800;">JDISIM 이심</span></h2>
+      <p>현지 로컬 통신망 직결로 가장 빠른 5G/LTE 데이터를 무제한 제공합니다. 결제 즉시 10초 만에 개통용 QR코드 발급 완료!</p>
+      <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</button>
     </div>
 
+    <!-- Search container (click to navigate to store view) -->
     <div class="search-container" onclick="switchNav('store')">
       <i data-lucide="search" class="search-icon"></i>
       <input type="text" class="search-input" placeholder="어디로 여행을 떠나시나요?" readonly>
     </div>
 
-    <!-- Quick Device Self Check -->
-    <div class="device-check-card">
-      <div class="device-check-header">
-        <i data-lucide="smartphone" style="color: #4f46e5"></i>
-        <span>내 스마트폰 eSIM 지원 여부 확인</span>
+    <!-- Popular Featured Products on Main (Home) -->
+    <h3 style="font-size: 1.05rem; font-weight: 800; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
+      <i data-lucide="sparkles" style="color: #4f46e5; width: 18px; height: 18px;"></i> 실시간 인기 추천 상품
+    </h3>
+    <div class="product-list" id="homeFeaturedList" style="margin-bottom: 24px;"></div>
+
+    <!-- 2x2 Features Grid (Selling points) -->
+    <h3 style="font-size: 1.05rem; font-weight: 800; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
+      <i data-lucide="award" style="color: #eab308; width: 18px; height: 18px;"></i> JDISIM을 선택해야 하는 이유
+    </h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+      <div class="device-check-card" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #4f46e5; margin-bottom: 6px;">
+          <i data-lucide="zap" style="width:16px; height:16px;"></i> 10초 즉시 발송
+        </div>
+        <div style="font-size: 0.75rem; color: #475569; line-height: 1.4;">구매와 동시에 이메일과 카카오 알림톡으로 개통 QR코드 즉시 전송</div>
       </div>
-      <p style="font-size: 0.8rem; color: #475569; margin: 0 0 12px 0;">가지고 계신 기종이 eSIM을 사용할 수 있는지 3초 만에 진단해 드립니다.</p>
-      <button class="tracker-btn" style="width: 100%; font-size: 0.8rem; padding: 10px;" onclick="openDeviceCheck()">다이얼로 즉시 확인하기</button>
+      
+      <div class="device-check-card" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #4f46e5; margin-bottom: 6px;">
+          <i data-lucide="coins" style="width:16px; height:16px;"></i> 최저가 보상제
+        </div>
+        <div style="font-size: 0.75rem; color: #475569; line-height: 1.4;">유통 중간 마진을 전면 배제하여 업계 최저 도매가 요금 실현</div>
+      </div>
+      
+      <div class="device-check-card" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #4f46e5; margin-bottom: 6px;">
+          <i data-lucide="shield-check" style="width:16px; height:16px;"></i> 100% 장애 보장
+        </div>
+        <div style="font-size: 0.75rem; color: #475569; line-height: 1.4;">현지 기기 불량이나 망 장애 확인 시 미사용 분량 100% 즉시 환불</div>
+      </div>
+      
+      <div class="device-check-card" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #4f46e5; margin-bottom: 6px;">
+          <i data-lucide="message-square" style="width:16px; height:16px;"></i> 24시 카톡 상담
+        </div>
+        <div style="font-size: 0.75rem; color: #475569; line-height: 1.4;">이동 중 오류나 문제 해결을 위한 실시간 전담 안내 서비스 대기</div>
+      </div>
     </div>
 
-    <!-- Client Reviews Mini list -->
-    <h3 style="font-size: 1rem; font-weight: 700; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 6px;">
-      <i data-lucide="message-square" style="color: #a855f7; width: 18px;"></i> 실시간 구매 후기
+    <!-- Quick Device Self Check -->
+    <div class="device-check-card" style="background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px; padding: 18px; margin-bottom: 24px;">
+      <div class="device-check-header" style="font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; color: #0f172a; margin-bottom: 8px;">
+        <i data-lucide="smartphone" style="color: #4f46e5; width: 20px; height: 20px;"></i>
+        <span>내 스마트폰 eSIM 지원 여부 확인</span>
+      </div>
+      <p style="font-size: 0.8rem; color: #475569; margin: 0 0 14px 0; line-height: 1.4;">다이얼 패드를 통한 간단한 입력만으로 단말기가 eSIM을 사용할 수 있는지 즉석 판독해 드립니다.</p>
+      <button class="tracker-btn" style="width: 100%; font-size: 0.85rem; font-weight: 700; padding: 11px; border-radius: 12px;" onclick="openDeviceCheck()">다이얼 진단법 자세히 보기</button>
+    </div>
+
+    <!-- Real Customer Review Feed -->
+    <h3 style="font-size: 1.05rem; font-weight: 800; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
+      <i data-lucide="heart" style="color: #ef4444; width: 18px; height: 18px;"></i> 실제 이용 고객 100% 리얼 후기
     </h3>
-    <div id="miniReviewContainer"></div>
+    <div id="miniReviewContainer" style="margin-bottom: 24px;"></div>
+
+    <!-- Interactive FAQ Accordion -->
+    <h3 style="font-size: 1.05rem; font-weight: 800; margin: 24px 0 12px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
+      <i data-lucide="help-circle" style="color: #4f46e5; width: 18px; height: 18px;"></i> 자주 묻는 질문 (FAQ)
+    </h3>
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+      <div class="faq-accordion-item" onclick="toggleFaqAccordion(this)" style="background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); padding: 14px; border-radius: 12px; cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="margin: 0; font-size: 0.85rem; color: #4f46e5; font-weight: 800;">Q. 이심(eSIM) 개통은 언제 완료되나요?</h4>
+          <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
+        </div>
+        <p class="faq-accordion-content" style="margin: 8px 0 0 0; font-size: 0.8rem; color: #475569; line-height: 1.5; display: none;">JDISIM의 주문 시스템은 결제 완료를 감지한 지 10초 이내에 입력하신 이메일 주소 및 카카오 알림톡으로 개통 QR코드를 즉시 실시간으로 자동 연동 발송합니다.</p>
+      </div>
+
+      <div class="faq-accordion-item" onclick="toggleFaqAccordion(this)" style="background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); padding: 14px; border-radius: 12px; cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="margin: 0; font-size: 0.85rem; color: #4f46e5; font-weight: 800;">Q. 한국에서 미리 프로필을 설치해도 안전한가요?</h4>
+          <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
+        </div>
+        <p class="faq-accordion-content" style="margin: 8px 0 0 0; font-size: 0.8rem; color: #475569; line-height: 1.5; display: none;">네, 국내에서 탑승 전 미리 QR코드를 등록하셔도 안전합니다. 실제 데이터 일수 차감 및 사용 시작 시점은 국내 공항이 아닌 해외 여행지에 도착해 현지 신호를 감지하여 로컬망에 연결되는 시점부터 자동 개시됩니다.</p>
+      </div>
+
+      <div class="faq-accordion-item" onclick="toggleFaqAccordion(this)" style="background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.06); padding: 14px; border-radius: 12px; cursor: pointer;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="margin: 0; font-size: 0.85rem; color: #4f46e5; font-weight: 800;">Q. 로밍망과 현지 로컬망의 차이는 무엇인가요?</h4>
+          <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
+        </div>
+        <p class="faq-accordion-content" style="margin: 8px 0 0 0; font-size: 0.8rem; color: #475569; line-height: 1.5; display: none;">로컬망(Local) 상품은 홍콩이나 제3국을 경유하지 않고 현지 이동통신사의 고유 망(예: 베트남 Viettel, 일본 Softbank)에 직접 무선 신호를 바인딩하여 핑(Ping) 지연이나 끊김 없이 현지인들과 동일한 가장 빠른 속도를 자랑합니다.</p>
+      </div>
+    </div>
   </main>
 
-  <!-- ================= VIEW 2: STORE VIEW ================= -->
   <main id="view-store" class="mobile-view">
     <!-- Search -->
     <div class="search-container">
@@ -974,19 +1045,72 @@
       "인도네시아": "indonesia.jpg"
     };
 
-    // Render Products list on Store View
-    const flagMap = {
-      "일본": "japan.jpg",
-      "베트남": "vietnam.jpg",
-      "태국": "thailand.jpg",
-      "대만": "taiwan.jpg",
-      "미국": "usa.jpg",
-      "유럽": "europe.jpg",
-      "싱가포르": "singapore.jpg",
-      "말레이시아": "malaysia.jpg",
-      "필리핀": "philippines.jpg",
-      "인도네시아": "indonesia.jpg"
-    };
+    function renderHomeFeatured() {
+      const container = document.getElementById('homeFeaturedList');
+      if (!container || !window.PRODUCTS_DATA) return;
+      container.innerHTML = '';
+      
+      const targets = ['일본', '베트남', '태국', '대만'];
+      targets.forEach(countryName => {
+        const groups = window.PRODUCTS_DATA.filter(g => g.country === countryName);
+        if (groups.length === 0) return;
+        
+        const group = groups[0];
+        let minPrice = Infinity;
+        groups.forEach(g => {
+          if (g.plans) {
+            g.plans.forEach(pl => {
+              if (pl.final_price < minPrice) {
+                minPrice = pl.final_price;
+              }
+            });
+          }
+        });
+        
+        if (minPrice === Infinity) return;
+        const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
+        const carriersStr = Array.from(new Set(groups.map(g => g.carrier.split('/')[0].trim()))).join(' / ');
+
+        const card = document.createElement('div');
+        card.className = 'mobile-product-card';
+        card.innerHTML = `
+          <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
+          <div class="product-info">
+            <div class="product-country-tag">HOT 추천</div>
+            <h4 class="product-title">${countryName} LTE/5G 요금제</h4>
+            <div class="product-carrier-badge">
+              <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
+              <span>${carriersStr}</span>
+            </div>
+          </div>
+          <div class="product-price-section">
+            <span class="product-price-label">최저가</span>
+            <span class="product-price">${minPrice.toLocaleString()}원~</span>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}')">구매하기</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function toggleFaqAccordion(el) {
+      const content = el.querySelector('.faq-accordion-content');
+      const icon = el.querySelector('[data-lucide="chevron-down"], [data-lucide="chevron-up"]');
+      const isHidden = content.style.display === 'none' || !content.style.display;
+      
+      document.querySelectorAll('.faq-accordion-content').forEach(c => c.style.display = 'none');
+      document.querySelectorAll('.faq-accordion-item [data-lucide="chevron-up"]').forEach(i => i.setAttribute('data-lucide', 'chevron-down'));
+      
+      if (isHidden) {
+        content.style.display = 'block';
+        if (icon) icon.setAttribute('data-lucide', 'chevron-up');
+      } else {
+        content.style.display = 'none';
+        if (icon) icon.setAttribute('data-lucide', 'chevron-down');
+      }
+      lucide.createIcons();
+    }
 
     function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
       const listContainer = document.getElementById('storeProductList');
@@ -1353,6 +1477,7 @@
 
     // Initial render
     renderMiniReviews();
+    renderHomeFeatured();
     renderStoreProducts();
   </script>
 </body>
