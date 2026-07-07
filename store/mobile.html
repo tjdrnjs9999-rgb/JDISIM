@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta name='impact-site-verification' value='aacb94f9-36f7-40f0-a6f3-76e5515e0401'>
+  <meta name="impact-site-verification" value="aacb94f9-36f7-40f0-a6f3-76e5515e0401">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JDISIM 이심 | 모바일 스토어</title>
@@ -1344,7 +1344,8 @@
       
       const types = new Set();
       activeCarrier.plans.forEach(p => {
-        if (p.data_limit.includes('매일')) types.add('데일리');
+        if (p.service_type === '데일리' || p.service_type === '무제한') types.add('데일리');
+        else if (p.service_type === '총용량' || p.data_limit.includes('총')) types.add('총용량');
         else types.add('총용량');
       });
       const typeList = Array.from(types);
@@ -1359,7 +1360,7 @@
     function onPlanTypeChange(val) {
       selectedPlanType = val;
       const isDaily = (val === '데일리');
-      const filteredPlans = activeCarrier.plans.filter(p => p.data_limit.includes('매일') === isDaily);
+      const filteredPlans = activeCarrier.plans.filter(p => (p.service_type === '데일리' || p.service_type === '무제한') === isDaily);
       
       const caps = new Set();
       filteredPlans.forEach(p => {
@@ -1383,7 +1384,7 @@
       const isDaily = (selectedPlanType === '데일리');
       const matchingPlans = activeCarrier.plans.filter(p => {
          const pLimit = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
-         return p.data_limit.includes('매일') === isDaily && pLimit === val.trim();
+         return (p.service_type === '데일리' || p.service_type === '무제한') === isDaily && pLimit === val.trim();
       });
 
       const days = Array.from(new Set(matchingPlans.map(p => p.duration))).sort((a, b) => a - b);

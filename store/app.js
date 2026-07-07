@@ -901,7 +901,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. Available Types (데일리 vs 총용량)
     const types = new Set();
     p.plans.forEach(pl => {
-      if (pl.data_limit.includes('매일')) types.add('데일리');
+      if (pl.service_type === '데일리' || pl.service_type === '무제한') types.add('데일리');
+      else if (pl.service_type === '총용량' || pl.data_limit.includes('총')) types.add('총용량');
       else types.add('총용량');
     });
     const typeList = Array.from(types);
@@ -913,7 +914,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 2. Filter plans by Type
     const isDaily = (window.activePlanType === '데일리');
-    const typeFilteredPlans = p.plans.filter(pl => pl.data_limit.includes('매일') === isDaily);
+    const typeFilteredPlans = p.plans.filter(pl => (pl.service_type === '데일리' || pl.service_type === '무제한') === isDaily);
     
     // 3. Available Capacities
     const caps = new Set();
@@ -1268,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (capSelect) {
       capSelect.addEventListener('change', (e) => {
         const isDaily = (window.activePlanType === '데일리');
-        activeDataLimit = (isDaily ? '매일 ' : '') + e.target.value;
+        activeDataLimit = (isDaily ? (typeFilteredPlans.find(tp => tp.data_limit.replace('매일 ', '').trim() === e.target.value).data_limit.includes('매일') ? '매일 ' : '') : '') + e.target.value;
         activeDuration = null;
         renderModalContent(carrierOptions);
       });
