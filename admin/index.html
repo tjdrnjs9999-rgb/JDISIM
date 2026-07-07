@@ -773,6 +773,97 @@
       font-size: 0.8rem;
       color: var(--text-muted);
     }
+
+    /* ==========================================
+       📱 Mobile Responsiveness & Typography (CSS overrides)
+       ========================================== */
+    
+    /* 1. Prevent vertical text crowding in tables */
+    .table-container th,
+    .table-container td {
+      white-space: nowrap !important;
+      word-break: keep-all; /* Keep Korean words whole */
+    }
+
+    /* 2. Meaningful paragraph typography and spacing */
+    p, .info-note, .modal-detail-row, .order-details-card p {
+      word-break: keep-all; /* Prevent letters breaking in the middle of words */
+      overflow-wrap: break-word;
+      line-height: 1.6 !important;
+    }
+
+    /* 3. Media Queries for Mobile Screens (max-width: 768px) */
+    @media (max-width: 768px) {
+      /* Adjust main dashboard spacing */
+      .dashboard-container {
+        padding: 12px !important;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px !important;
+      }
+
+      .header-actions {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .header-actions button {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+      }
+
+      /* Stats Grid: Stack cards vertically instead of squeezing them */
+      .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* Search & Filter bar layout */
+      .search-filter-bar {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px !important;
+      }
+
+      .search-box {
+        max-width: 100% !important;
+      }
+
+      .filter-group {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        white-space: nowrap;
+      }
+
+      /* Modals sizing on mobile */
+      .modal-content {
+        width: 95% !important;
+        margin: 10px auto !important;
+        padding: 20px 16px !important;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      /* Responsive detail items in Modal */
+      .modal-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* Auth card styling on mobile */
+      .auth-card {
+        width: 90% !important;
+        padding: 30px 20px !important;
+      }
+    }
   </style>
 </head>
 <body>

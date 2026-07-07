@@ -262,47 +262,61 @@
       gap: 16px;
     }
 
+    /* Global Word Break Keep-All to prevent squishing text vertically */
+    * {
+      word-break: keep-all !important;
+      overflow-wrap: break-word;
+    }
+
     .mobile-product-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 18px 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       position: relative;
-      transition: transform 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     }
 
     .mobile-product-card:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(99, 102, 241, 0.4);
     }
 
     .product-flag-img {
-      width: 50px;
-      height: 50px;
-      border-radius: 12px;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
       object-fit: cover;
       background: #1e293b;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
     .product-info {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .product-country-tag {
       font-size: 0.75rem;
-      font-weight: 700;
+      font-weight: 800;
       color: #818cf8;
       text-transform: uppercase;
-      margin-bottom: 2px;
+      letter-spacing: 0.5px;
     }
 
     .product-title {
       font-size: 0.95rem;
-      font-weight: 600;
-      margin: 0 0 6px 0;
+      font-weight: 700;
+      margin: 0;
       color: #fff;
+      line-height: 1.4;
     }
 
     .product-carrier-badge {
@@ -310,11 +324,13 @@
       align-items: center;
       gap: 4px;
       font-size: 0.7rem;
-      font-weight: 600;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 3px 8px;
+      font-weight: 700;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      padding: 3px 9px;
       border-radius: 20px;
-      color: #e2e8f0;
+      color: #a5b4fc;
+      width: fit-content;
     }
 
     .product-price-section {
@@ -323,11 +339,14 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-end;
+      white-space: nowrap; /* Prevent vertical text squishing */
+      min-width: 85px;
     }
 
     .product-price-label {
       font-size: 0.7rem;
       color: #64748b;
+      font-weight: 500;
     }
 
     .product-price {
@@ -335,17 +354,26 @@
       font-weight: 800;
       color: #fff;
       margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .buy-btn-small {
-      background: #4f46e5;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
       border: none;
       color: white;
       font-size: 0.75rem;
-      font-weight: 700;
-      padding: 6px 12px;
+      font-weight: 800;
+      padding: 7px 14px;
       border-radius: 30px;
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      transition: all 0.2s;
+    }
+
+    .buy-btn-small:active {
+      transform: scale(0.94);
     }
 
     /* Bottom Sheet Option Selector Drawer */
@@ -433,21 +461,23 @@
     }
 
     .option-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       color: #cbd5e1;
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 10px 18px;
+      border-radius: 24px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap; /* Prevent option names from squishing */
     }
 
     .option-pill.active {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: #6366f1;
-      color: #a5b4fc;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+      border-color: #818cf8;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
     }
 
     /* Pricing Row inside drawer */
