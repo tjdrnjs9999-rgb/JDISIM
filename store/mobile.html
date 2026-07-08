@@ -879,6 +879,26 @@
     <!-- 국가 바로가기 칩 (가로 스크롤) -->
     <div class="mobile-marquee" id="mobileCountryChips"></div>
 
+    <!-- 로미의 3초 요금제 매칭 (차별화 핵심 기능) -->
+    <div class="romi-finder">
+      <div class="rf-head">
+        <img src="images/fox-thinking.png" alt="고민하는 로미" class="rf-fox">
+        <div>
+          <div class="rf-title">로미의 3초 요금제 매칭</div>
+          <div class="rf-sub">어디로, 며칠 가세요? 132개 요금제에서 딱 맞는 걸 골라드려요</div>
+        </div>
+      </div>
+      <div class="rf-field">
+        <input type="text" id="rfCountry" placeholder="🌍 여행 국가 입력 (예: 일본)" autocomplete="off">
+        <div class="rf-suggest" id="rfSuggest"></div>
+      </div>
+      <div class="rf-days" id="rfDays">
+        <button class="rf-day" data-d="1">1일</button><button class="rf-day" data-d="2">2일</button><button class="rf-day" data-d="3">3일</button><button class="rf-day selected" data-d="4">4일</button><button class="rf-day" data-d="5">5일</button><button class="rf-day" data-d="7">7일</button><button class="rf-day" data-d="10">10일</button><button class="rf-day" data-d="15">15일</button><button class="rf-day" data-d="30">30일</button>
+      </div>
+      <button class="rf-go" id="rfGoBtn">🦊 로미에게 추천받기</button>
+      <div class="rf-results" id="rfResults"></div>
+    </div>
+
     <!-- Search container (click to navigate to store view) -->
     <div class="search-container" onclick="goToStoreSearch()">
       <i data-lucide="search" class="search-icon"></i>
@@ -1385,6 +1405,7 @@
         const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
         if (validPlans.length === 0) return;
         const minPrice = Math.min(...validPlans.map(p => p.final_price));
+        const minPerDay = Math.min(...validPlans.map(p => Math.round(p.final_price / (parseInt(p.duration) || 1))));
         const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
 
         let networkBadgeStyle = '';
@@ -1412,7 +1433,7 @@
           </div>
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
-            <span class="product-price">${minPrice.toLocaleString()}원~</span>
+            <span class="product-price">${minPrice.toLocaleString()}원~</span>\n            <span class="product-perday">하루 ${minPerDay.toLocaleString()}원꼴~</span>
             <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
           </div>
         `;
@@ -1482,6 +1503,7 @@
         const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
         if (validPlans.length === 0) return;
         const minPrice = Math.min(...validPlans.map(p => p.final_price));
+        const minPerDay = Math.min(...validPlans.map(p => Math.round(p.final_price / (parseInt(p.duration) || 1))));
 
         const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
 
@@ -1511,7 +1533,7 @@
           </div>
           <div class="product-price-section">
             <span class="product-price-label">최저가</span>
-            <span class="product-price">${minPrice.toLocaleString()}원~</span>
+            <span class="product-price">${minPrice.toLocaleString()}원~</span>\n            <span class="product-perday">하루 ${minPerDay.toLocaleString()}원꼴~</span>
             <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
           </div>
         `;
@@ -2035,6 +2057,7 @@
         renderHomeFeatured();
         renderStoreProducts();
         renderCountryChips();
+        initRomiFinder();
         if (SMARTSTORE_URL) {
           const sb = document.getElementById('smartstoreAltBtn');
           if (sb) { sb.href = SMARTSTORE_URL; sb.style.display = 'flex'; }
@@ -2050,6 +2073,113 @@
         window.onerror(e.message, null, "init");
       }
     };
+
+    // ===== 로미의 3초 요금제 매칭 =====
+    function romiParseCap(s) {
+      if (/무제한/.test(s)) return 9999;
+      let m = s.match(/([\d.]+)\s*GB/i); if (m) return parseFloat(m[1]);
+      m = s.match(/([\d.]+)\s*MB/i); if (m) return parseFloat(m[1]) / 1000;
+      return 0;
+    }
+    function romiMatch(country, days) {
+      const groups = (window.PRODUCTS_DATA || []).filter(p => p.country === country);
+      const cand = [];
+      groups.forEach(g => (g.plans || []).forEach(pl => {
+        const d = parseInt(pl.duration);
+        if (!d || typeof pl.final_price !== 'number') return;
+        cand.push({ g, pl, d, cap: romiParseCap(pl.data_limit) });
+      }));
+      if (!cand.length) return null;
+      const ok = cand.filter(c => c.d >= days);
+      const pool = ok.length ? ok : cand;
+      const byPrice = (a, b) => a.pl.final_price - b.pl.final_price;
+      const cheapest = [...pool].sort(byPrice)[0];
+      const unl = pool.filter(c => c.cap === 9999).sort(byPrice)[0] || null;
+      const sized = pool.filter(c => c.cap > 0 && c.cap < 9999);
+      const roomy = sized.length ? [...sized].sort((a, b) => b.cap - a.cap || byPrice(a, b))[0] : null;
+      const picks = [];
+      const used = new Set();
+      [[cheapest, '👑', '최저가'], [roomy, '🍱', '데이터 넉넉'], [unl, '♾️', '무제한']].forEach(([c, icon, label]) => {
+        if (!c) return;
+        const key = c.g.carrier + '|' + c.pl.data_limit + '|' + c.d;
+        if (used.has(key)) return;
+        used.add(key);
+        picks.push({ ...c, icon, label });
+      });
+      return picks;
+    }
+    function romiOpenPlan(country, carrier, dataLimit, days) {
+      switchNav('home');
+      openBottomSheet(country, carrier);
+      const chain = [
+        ['typeSelect', /매일/.test(dataLimit) ? '데일리' : '총용량'],
+        ['capacitySelect', dataLimit],
+        ['daysSelect', String(days)]
+      ];
+      let delay = 220;
+      chain.forEach(([id, val]) => {
+        setTimeout(() => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          const opt = [...sel.options].find(o => o.value === val || val.includes(o.value) || o.value.includes(val));
+          if (opt && sel.value !== opt.value) {
+            sel.value = opt.value;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }, delay);
+        delay += 160;
+      });
+    }
+    function initRomiFinder() {
+      const input = document.getElementById('rfCountry');
+      const suggest = document.getElementById('rfSuggest');
+      const daysWrap = document.getElementById('rfDays');
+      const goBtn = document.getElementById('rfGoBtn');
+      const results = document.getElementById('rfResults');
+      if (!input || !goBtn || !window.PRODUCTS_DATA) return;
+      const countries = [...new Set(window.PRODUCTS_DATA.map(p => p.country))];
+      input.addEventListener('input', () => {
+        const q = input.value.trim();
+        if (!q) { suggest.innerHTML = ''; suggest.style.display = 'none'; return; }
+        const hits = countries.filter(c => c.includes(q)).slice(0, 6);
+        suggest.innerHTML = hits.map(c => `<div class="rf-suggest-item" data-c="${c}">${c}</div>`).join('');
+        suggest.style.display = hits.length ? 'block' : 'none';
+      });
+      suggest.addEventListener('click', (e) => {
+        const item = e.target.closest('.rf-suggest-item');
+        if (!item) return;
+        input.value = item.getAttribute('data-c');
+        suggest.style.display = 'none';
+      });
+      daysWrap.addEventListener('click', (e) => {
+        const btn = e.target.closest('.rf-day');
+        if (!btn) return;
+        daysWrap.querySelectorAll('.rf-day').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+      goBtn.addEventListener('click', () => {
+        const country = input.value.trim();
+        const days = parseInt(daysWrap.querySelector('.rf-day.selected').getAttribute('data-d'));
+        if (!countries.includes(country)) {
+          results.innerHTML = '<div class="rf-empty">🦊 앗, 그 국가는 아직 준비 중이에요. 위 검색으로 지원 국가를 확인해 주세요!</div>';
+          return;
+        }
+        const picks = romiMatch(country, days);
+        if (!picks || !picks.length) {
+          results.innerHTML = '<div class="rf-empty">조건에 맞는 요금제를 찾지 못했어요 😢</div>';
+          return;
+        }
+        results.innerHTML = '<div class="rf-result-head">🦊 ' + country + ' ' + days + '일 여행이라면, 로미 추천은:</div>' + picks.map(p => `
+          <div class="rf-card" onclick="romiOpenPlan('${country}', '${p.g.carrier.replace(/'/g, "\\'")}', '${p.pl.data_limit}', ${p.d})">
+            <span class="rf-card-badge">${p.icon} ${p.label}</span>
+            <div class="rf-card-body">
+              <div class="rf-card-title">${p.g.carrier.replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '')} · ${p.pl.data_limit}</div>
+              <div class="rf-card-sub">${p.d}일 · ${p.g.network_type || ''} ${p.g.network_speed || ''}</div>
+            </div>
+            <div class="rf-card-price">${p.pl.final_price.toLocaleString()}원<em>하루 ${Math.round(p.pl.final_price / p.d).toLocaleString()}원</em></div>
+          </div>`).join('');
+      });
+    }
 
     // 홈 상단 국가 바로가기 칩 렌더링
     function renderCountryChips() {
