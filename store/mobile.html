@@ -1198,6 +1198,55 @@
 
     // View Navigation
     
+
+    // ===== 드롭다운 현대화: select 숨기고 알약/카드 UI 자동 생성 =====
+    (function() {
+      const KIND = { carrierSelect: 'cards', planTypeSelect: 'seg', capacitySelect: 'pills', daysSelect: 'pills' };
+      function renderOne(sel) {
+        const kind = KIND[sel.id];
+        if (!kind) return;
+        const prev = sel.parentElement.querySelector('.opt-group[data-for="' + sel.id + '"]');
+        if (prev) prev.remove();
+        if (sel.options.length === 0) return;
+        sel.classList.add('opt-hidden-select');
+        const wrap = document.createElement('div');
+        wrap.className = 'opt-group opt-' + kind;
+        wrap.setAttribute('data-for', sel.id);
+        [...sel.options].forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'opt-item' + (opt.value === sel.value ? ' selected' : '');
+          if (kind === 'cards') {
+            const m = opt.textContent.trim().match(/^(.+?)\s*\((.+)\)$/);
+            btn.innerHTML = m
+              ? '<span class="opt-main">' + m[1] + '</span><span class="opt-sub">' + m[2] + '</span>'
+              : '<span class="opt-main">' + opt.textContent.trim() + '</span>';
+          } else {
+            btn.textContent = opt.textContent.trim();
+          }
+          btn.addEventListener('click', () => {
+            if (sel.value === opt.value) return;
+            sel.value = opt.value;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            if (typeof sel.onchange === 'function') {} // 인라인 onchange는 dispatch로 실행됨
+            wrap.querySelectorAll('.opt-item').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+          });
+          wrap.appendChild(btn);
+        });
+        sel.insertAdjacentElement('afterend', wrap);
+      }
+      // 옵션이 JS로 다시 채워질 때마다 자동 재생성
+      document.addEventListener('DOMContentLoaded', () => {
+        Object.keys(KIND).forEach(id => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          renderOne(sel);
+          new MutationObserver(() => renderOne(sel)).observe(sel, { childList: true });
+        });
+      });
+    })();
+
     let suppressHistory = false;
     function switchNav(targetView) {
       // 브라우저 히스토리 기록 (뒤로가기 지원)
@@ -1644,7 +1693,70 @@
       }
     }
 
-    async function processMockCheckout() {
+    // [1단계] 결제 버튼 → 스펙 & 주의사항 최종 확인 레이어
+    function processMockCheckout() {
+      const name = document.getElementById('buyerName').value.trim();
+      const phone = document.getElementById('buyerPhone').value.trim();
+      const email = document.getElementById('buyerEmail').value.trim();
+      if (!name || !phone || !email) {
+        alert("개통 발송을 위해 수령인 이름, 연락처, 이메일을 모두 입력해 주세요.");
+        return;
+      }
+      if (!activePlan || !activeCarrier) {
+        alert("상품 옵션을 다시 선택해 주세요.");
+        return;
+      }
+      showMobileConfirmLayer();
+    }
+
+    function showMobileConfirmLayer() {
+      const priceVal = activePlan.final_price * purchaseQty;
+      let layer = document.getElementById('mobileConfirmLayer');
+      if (layer) layer.remove();
+      layer = document.createElement('div');
+      layer.id = 'mobileConfirmLayer';
+      layer.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:99999;display:flex;align-items:flex-end;';
+      layer.innerHTML = `
+        <div style="background:#fff;width:100%;border-radius:24px 24px 0 0;padding:24px 20px 28px;max-height:82vh;overflow-y:auto;">
+          <h3 style="margin:0 0 14px;font-size:1.05rem;font-weight:800;">🧾 구매 전 최종 확인</h3>
+          <div style="background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.25);border-radius:14px;padding:14px;margin-bottom:14px;">
+            <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">선택하신 상품 스펙</div>
+            <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${activeCarrier.carrier}</div>
+            <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
+              <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;">${priceVal.toLocaleString()}원</span>
+            </div>
+          </div>
+          <div style="font-size:0.8rem;color:#334155;line-height:1.65;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:14px;">
+            <div style="font-weight:800;margin-bottom:6px;color:#0f172a;">⚠️ 필수 주의사항</div>
+            • <strong>기종 확인:</strong> 키패드에 *#06# 입력 시 <strong>EID 번호</strong>가 보여야 사용 가능해요 (중국/홍콩/마카오 구매 아이폰 불가)<br>
+            • <strong>단순 변심:</strong> QR코드 발송 후에는 디지털 상품 특성상 취소/환불이 불가해요<br>
+            • <strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 카톡 고객센터로 접수 시 미해결 100% 환불 보장
+          </div>
+          <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;cursor:pointer;">
+            <input type="checkbox" id="mobileAgreeCheck" style="width:19px;height:19px;accent-color:#F2751F;">
+            <span style="font-size:0.85rem;font-weight:700;color:#0f172a;">위 상품 스펙과 주의사항을 모두 확인했어요</span>
+          </label>
+          <div style="display:flex;gap:10px;">
+            <button onclick="document.getElementById('mobileConfirmLayer').remove()" style="flex:1;padding:15px;border-radius:14px;border:1px solid #e2e8f0;background:#f1f5f9;font-weight:800;color:#334155;">취소</button>
+            <button id="mobileConfirmPayBtn" style="flex:1.6;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;opacity:0.5;" disabled>동의하고 결제하기</button>
+          </div>
+        </div>`;
+      document.body.appendChild(layer);
+      const check = layer.querySelector('#mobileAgreeCheck');
+      const payBtn = layer.querySelector('#mobileConfirmPayBtn');
+      check.addEventListener('change', () => {
+        payBtn.disabled = !check.checked;
+        payBtn.style.opacity = check.checked ? '1' : '0.5';
+      });
+      payBtn.addEventListener('click', () => {
+        layer.remove();
+        proceedMockCheckout();
+      });
+    }
+
+    // [2단계] 실제 결제 실행
+    async function proceedMockCheckout() {
       const name = document.getElementById('buyerName').value.trim();
       const phone = document.getElementById('buyerPhone').value.trim();
       const email = document.getElementById('buyerEmail').value.trim();
@@ -1708,7 +1820,14 @@
         closeBottomSheet();
         switchNav('orders');
         setTimeout(() => {
-          renderOrdersList();
+          // 방금 주문한 내역이 바로 보이도록 구매자 정보로 자동 조회
+          const sn = document.getElementById('orderSearchName');
+          const sp = document.getElementById('orderSearchPhone');
+          if (sn && sp && typeof searchOrders === 'function') {
+            sn.value = name;
+            sp.value = phone;
+            searchOrders();
+          }
         }, 100);
       }
 

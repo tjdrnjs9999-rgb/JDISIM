@@ -879,6 +879,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 11. 모달창 열기 및 데이터 연동
+
+  // ===== 드롭다운 현대화: select를 숨기고 알약/카드 UI로 변환 =====
+  function enhanceOptionSelects(scope) {
+    const KIND = { carrierSelect: 'cards', planTypeSelect: 'seg', capacitySelect: 'pills', durationSelect: 'pills', daysSelect: 'pills' };
+    scope.querySelectorAll('select').forEach(sel => {
+      const kind = KIND[sel.id];
+      if (!kind || sel.options.length === 0) return;
+      // 기존 변환 UI 제거 후 재생성
+      const prev = sel.parentElement.querySelector('.opt-group[data-for="' + sel.id + '"]');
+      if (prev) prev.remove();
+      sel.classList.add('opt-hidden-select');
+      const wrap = document.createElement('div');
+      wrap.className = 'opt-group opt-' + kind;
+      wrap.setAttribute('data-for', sel.id);
+      [...sel.options].forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'opt-item' + (opt.selected || opt.value === sel.value ? ' selected' : '');
+        if (kind === 'cards') {
+          // "통신사 (망 - 속도)" 형태 분해 → 카드 UI
+          const m = opt.textContent.trim().match(/^(.+?)\s*\((.+)\)$/);
+          btn.innerHTML = m
+            ? '<span class="opt-main">' + m[1] + '</span><span class="opt-sub">' + m[2] + '</span>'
+            : '<span class="opt-main">' + opt.textContent.trim() + '</span>';
+        } else {
+          btn.textContent = opt.textContent.trim();
+        }
+        btn.addEventListener('click', () => {
+          if (sel.value === opt.value) return;
+          sel.value = opt.value;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          // 재렌더되지 않는 환경 대비 선택 표시 즉시 갱신
+          wrap.querySelectorAll('.opt-item').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        });
+        wrap.appendChild(btn);
+      });
+      sel.insertAdjacentElement('afterend', wrap);
+    });
+  }
+  window.enhanceOptionSelects = enhanceOptionSelects;
+
   function openModal(prod) {
     activeProduct = prod;
     
@@ -1063,186 +1105,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           <span class="device-compat-banner-arrow">➡️</span>
         </div>
 
-        <!-- 2x2 Visual Spec Grid -->
-        <div class="spec-grid-visual">
-          <div class="spec-visual-card">
-            <div class="spec-visual-icon">📶</div>
-            <div class="spec-visual-label">망 접속 및 속도</div>
-            <div class="spec-visual-value">${p.network_type}<br>(${p.network_speed})</div>
-          </div>
-          <div class="spec-visual-card">
-            <div class="spec-visual-icon">🔄</div>
-            <div class="spec-visual-label">데이터 리셋</div>
-            <div class="spec-visual-value">${p.reset_data}</div>
-          </div>
-          <div class="spec-visual-card">
-            <div class="spec-visual-icon">📞</div>
-            <div class="spec-visual-label">전화 / 문자</div>
-            <div class="spec-visual-value">전화 ${p.calls}<br>문자 ${p.sms}</div>
-          </div>
-          <div class="spec-visual-card">
-            <div class="spec-visual-icon">⚡</div>
-            <div class="spec-visual-label">핫스팟 테더링</div>
-            <div class="spec-visual-value">${p.hotspot === '가능' ? '지원 가능' : '지원 불가'}</div>
-          </div>
-        </div>
-
-        <!-- Secondary Specs List with Emojis -->
-        <div class="spec-list-secondary">
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">⏰ 일일 리셋 시점</span>
-            <span class="spec-secondary-value" style="font-size: 0.75rem;">${convertResetTime(p.reset_daily, p.country)}</span>
-          </div>
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">🐢 데이터 소진 후 속도</span>
-            <span class="spec-secondary-value">${activePlan.low_speed || '소진 후 차단'}</span>
-          </div>
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">🛫 개통 시작 기준</span>
-            <span class="spec-secondary-value">${p.activation}</span>
-          </div>
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">⚙️ APN 정보</span>
-            <span class="spec-secondary-value" style="font-family: monospace; color: var(--accent);">${p.apn || '자동 설정'}</span>
-          </div>
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">📅 유효 기간</span>
-            <span class="spec-secondary-value">${p.validity}</span>
-          </div>
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">🔋 데이터 충전</span>
-            <span class="spec-secondary-value">${p.charging === '가능' ? '충전 가능' : '충전 불가'}</span>
-          </div>
-          <div class="spec-secondary-item">
-            <span class="spec-secondary-label">⏳ 사용 기한 연장</span>
-            <span class="spec-secondary-value">${p.extension === '가능' ? '연장 가능' : '연장 불가'}</span>
-          </div>
-        </div>
       </div>
 
-      <!-- Bottom Tabs (Guides - 이미지 내용 정밀 반영 완료) -->
-      <div class="modal-bottom-tabs">
-        <div class="bottom-tab-headers">
-          <button class="bottom-tab-header active" data-tab="setup-methods">eSIM 설치방법 살펴보기</button>
-          <button class="bottom-tab-header" data-tab="setup-ios">기본 스냅 등록 가이드 (iOS)</button>
-          <button class="bottom-tab-header" data-tab="setup-android">기본 스냅 등록 가이드 (Android)</button>
-          <button class="bottom-tab-header" data-tab="precautions-info">이용 안내 및 주의사항</button>
-        </div>
-        
-        <!-- 첨부 이미지 2 내용 반영 (APN 수동 설정법 및 대안책 - 스마트폰 모형 UI 적용) -->
-        <div class="bottom-tab-content active" id="tab-setup-methods">
-          <div style="background-color:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:20px; margin-bottom:20px; text-align: center;">
-            <p style="font-size:0.95rem; font-weight:800; color:var(--text-main); margin-bottom:8px;">📍 현지에서 신호가 안 잡힐 때 수동 APN 설정법</p>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:20px;">일부 스마트폰에서 자동으로 네트워크 개통이 되지 않을 때, 기기 설정에서 아래 값을 수동 입력해 주세요.</p>
-            
-            <div style="display:grid; grid-template-columns:1fr; gap:20px; text-align: left;">
-              <!-- iOS Mock Screen -->
-              <div>
-                <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                  🍎 아이폰 (iPhone) 설정 경로
-                </div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-                  설정 → 셀룰러 → 셀룰러 데이터 네트워크 → APN 정보 수동 입력 → 데이터 로밍 켜기
-                </div>
-                <div class="mock-phone-screen">
-                  <div class="mock-phone-header">Cellular Data Network Settings</div>
-                  <div class="mock-setting-row">
-                    <div class="mock-setting-label">📶 APN (액세스 포인트 이름)</div>
-                    <div class="mock-setting-val">${p.apn || '자동 설정'}</div>
-                  </div>
-                  <div class="mock-setting-row">
-                    <div class="mock-setting-label">🔒 Username</div>
-                    <div class="mock-setting-val">Blank (비워둠)</div>
-                  </div>
-                  <div class="mock-setting-row">
-                    <div class="mock-setting-label">🔑 Password</div>
-                    <div class="mock-setting-val">Blank (비워둠)</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Android Mock Screen -->
-              <div>
-                <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                  🤖 안드로이드 (Samsung 등) 설정 경로
-                </div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-                  설정 → 네트워크 및 인터넷 → 모바일 네트워크 → 액세스 포인트 이름(APN) → '추가' 클릭 → 정보 입력 후 우측 상단 점 세 개 클릭 후 저장 → 선택 활성화 → 데이터 로밍 켜기
-                </div>
-                <div class="mock-phone-screen">
-                  <div class="mock-phone-header">APN Settings (액세스 포인트 추가)</div>
-                  <div class="mock-setting-row">
-                    <div class="mock-setting-label">🏷️ Name (이름)</div>
-                    <div class="mock-setting-val">eSIM (또는 임의지정)</div>
-                  </div>
-                  <div class="mock-setting-row">
-                    <div class="mock-setting-label">📶 APN (액세스 포인트 이름)</div>
-                    <div class="mock-setting-val">${p.apn || '자동 설정'}</div>
-                  </div>
-                  <div class="mock-setting-row">
-                    <div class="mock-setting-label">🔒 MMSC / Proxy</div>
-                    <div class="mock-setting-val">Not Set (설정 안 함)</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- iOS Tab -->
-        <div class="bottom-tab-content" id="tab-setup-ios">
-          <div class="guide-step">
-            <h4><span class="guide-step-num">1</span> 설정 앱 열기</h4>
-            <p>아이폰 설정 > 셀룰러 > 'eSIM 추가'를 탭합니다.</p>
-          </div>
-          <div class="guide-step">
-            <h4><span class="guide-step-num">2</span> QR 코드 스캔</h4>
-            <p>'QR 코드 사용'을 누르고 수령한 이메일의 QR 코드를 스캔합니다.</p>
-          </div>
-          <div class="guide-step">
-            <h4><span class="guide-step-num">3</span> 셀룰러 요금제 레이블 지정</h4>
-            <p>추가된 요금제 이름을 '여행용' 또는 '보조'로 선택합니다.</p>
-          </div>
-          <div class="guide-step">
-            <h4><span class="guide-step-num">4</span> 로밍 켜기 및 회선 선택</h4>
-            <p>현지 공항 도착 후, 기존 메인 회선의 로밍은 끄고 '여행용(eSIM)' 회선의 셀룰러 로밍을 활성화합니다.</p>
-          </div>
-        </div>
-
-        <!-- Android Tab -->
-        <div class="bottom-tab-content" id="tab-setup-android">
-          <div class="guide-step">
-            <h4><span class="guide-step-num">1</span> 설정 및 연결 진입</h4>
-            <p>설정 > 연결 > SIM 카드 관리자 > '모바일 요금제 추가'를 선택합니다.</p>
-          </div>
-          <div class="guide-step">
-            <h4><span class="guide-step-num">2</span> 통신사 QR 코드 스캔</h4>
-            <p>'통신사 QR 코드 스캔'을 선택한 뒤 수령한 QR 이미지를 스캔하고 등록을 진행합니다.</p>
-          </div>
-          <div class="guide-step">
-            <h4><span class="guide-step-num">3</span> 요금제 활성화</h4>
-            <p>등록 완료 후 모바일 요금제 활성화를 켜줍니다.</p>
-          </div>
-          <div class="guide-step">
-            <h4><span class="guide-step-num">4</span> 데이터 회선 변경 및 로밍 켜기</h4>
-            <p>현지 도착 후, 기본 모바일 데이터를 추가된 eSIM으로 변경하고 '설정 > 해외 로밍 > 데이터 로밍'을 활성화합니다.</p>
-          </div>
-        </div>
-
-        <!-- 첨부 이미지 1 내용 반영 (이용 안내 및 주의사항) -->
-        <div class="bottom-tab-content" id="tab-precautions-info">
-          <div style="font-size:0.8rem; line-height:1.6; display:grid; grid-template-columns:1fr; gap:16px;">
-            <div>
-              <p style="color:#e11d48; font-weight:700; margin-bottom:4px;">🚨 교환 및 환불 주의사항</p>
-              <p>구매일로부터 30일 이내에 개통이력이 없는 eSIM 프로필은 취소 및 환불이 가능합니다. 단, QR 코드가 발급/발송된 이후나 출국 당일 취소는 단순변심인 경우 불가능합니다. eSIM 삭제 시 재설치 불가능하니 삭제 주의 바랍니다.</p>
-            </div>
-            <div>
-              <p style="color:var(--accent-warning); font-weight:700; margin-bottom:4px;">⚠️ 현지 데이터 불통 시 행동 수칙</p>
-              <p>현지에서 연결 실패 시 마음대로 eSIM을 삭제하지 마시고, 공항 무료 와이파이 등을 통해 24시간 실시간 고객센터로 카톡 문의를 남겨 기술 조치를 우선 받으셔야 환불 및 처리가 원활합니다.</p>
-            </div>
-          </div>
-        </div>
-      </div>
     `;
 
     // 4단계 캐스케이딩 드롭다운 리스너
@@ -1297,6 +1161,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderModalContent(carrierOptions);
       });
     }
+
+    // 드롭다운 → 모던 선택 UI 변환
+    enhanceOptionSelects(modalContent);
 
     // 바텀 탭 스위처 리스너
     const bottomTabHeaders = modalContent.querySelectorAll('.bottom-tab-header');
@@ -1484,16 +1351,56 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 12.5 주의사항 팝업 모달 제어 함수
   function showPrecautionModalForItems(items) {
-    // Bypassed precaution modal: open checkout modal flow directly
-    openCheckoutFlow(items);
-    return;
     checkoutItems = items;
     
     const countries = [...new Set(items.map(item => item.product.country))];
     const carriers = [...new Set(items.map(item => item.product.carrier))];
     
     let html = '';
-    
+
+    // [0] 선택 상품 스펙 요약 (구매 직전 최종 확인)
+    const totalQty = items.reduce((s, it) => s + (it.quantity || 1), 0);
+    const totalPrice = items.reduce((s, it) => s + (it.plan.final_price * (it.quantity || 1)), 0);
+    const specRows = items.map(it => `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem;">
+        <span style="font-weight: 700; color: var(--text-main);">${it.product.country} · ${it.product.carrier}</span>
+        <span style="color: var(--text-muted);">${it.plan.data_limit} / ${it.plan.duration}일 × ${it.quantity || 1}개</span>
+      </div>`).join('');
+    html += `
+      <div style="background: var(--accent-light); border: 1px solid rgba(242,117,31,0.25); border-radius: 12px; padding: 14px 16px; margin-bottom: 4px;">
+        <div style="font-size: 0.8rem; font-weight: 800; color: var(--accent); margin-bottom: 6px;">🧾 선택하신 상품 스펙</div>
+        ${specRows}
+        <div style="display: flex; justify-content: space-between; padding-top: 10px; font-weight: 800; font-size: 0.92rem;">
+          <span>총 ${totalQty}개</span><span style="color: var(--accent);">${totalPrice.toLocaleString()}원</span>
+        </div>
+      </div>
+    `;
+
+    // [0.5] 상품 스펙 아코디언 (선택창에서 이동해 온 상세 스펙)
+    const specItems = items.map(it => {
+      const pr = it.product;
+      const rows = [
+        ['📶 망 접속/속도', `${pr.network_type} (${pr.network_speed})`],
+        ['🔄 데이터 리셋', pr.reset_data || '-'],
+        ['📞 전화/문자', `전화 ${pr.calls} · 문자 ${pr.sms}`],
+        ['⚡ 핫스팟', pr.hotspot === '가능' ? '지원 가능' : '지원 불가'],
+        ['🛫 개통 기준', pr.activation || '-'],
+        ['🐢 소진 후 속도', it.plan.low_speed || '소진 후 차단'],
+        ['⚙️ APN', pr.apn || '자동 설정'],
+        ['📅 유효 기간', pr.validity || '-']
+      ].map(([l, v]) => `<div style="display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed var(--border-color); font-size:0.8rem;"><span style="color:var(--text-dim); flex-shrink:0;">${l}</span><span style="color:var(--text-main); font-weight:600; text-align:right;">${v}</span></div>`).join('');
+      return `<div style="margin-bottom:10px;"><div style="font-weight:800; font-size:0.85rem; color:var(--text-main); margin-bottom:4px;">${pr.country} · ${pr.carrier}</div>${rows}</div>`;
+    }).join('');
+    html += `
+      <div class="prec-accordion-item active">
+        <div class="prec-accordion-header">
+          <span>📶 상품 스펙 한눈에 보기</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="prec-accordion-content">${specItems}</div>
+      </div>
+    `;
+
     // EID 아코디언 (기본 열림: active 클래스)
     html += `
       <div class="prec-accordion-item active">
