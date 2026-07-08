@@ -1189,7 +1189,12 @@
 
     // View Navigation
     
+    let suppressHistory = false;
     function switchNav(targetView) {
+      // 브라우저 히스토리 기록 (뒤로가기 지원)
+      if (!suppressHistory && location.hash !== '#' + targetView) {
+        history.pushState({ view: targetView }, '', '#' + targetView);
+      }
       console.log('Switching to:', targetView);
       try {
           // 1. Hide all views
@@ -1488,9 +1493,11 @@
 
       document.getElementById('bottomSheetBackdrop').classList.add('active');
       document.getElementById('bottomSheet').classList.add('active');
+      history.pushState({ sheet: true }, '', location.hash || '#home');
     }
 
     function closeBottomSheet() {
+      if (history.state && history.state.sheet) { history.back(); return; }
       document.getElementById('bottomSheetBackdrop').classList.remove('active');
       document.getElementById('bottomSheet').classList.remove('active');
     }
@@ -1834,6 +1841,20 @@
 
     // Initial render
     
+    // 뒤로가기 대응: 시트가 열려 있으면 시트만 닫고, 아니면 해시 기준 뷰 복원
+    window.addEventListener('popstate', () => {
+      const sheet = document.getElementById('bottomSheet');
+      if (sheet && sheet.classList.contains('active')) {
+        document.getElementById('bottomSheetBackdrop').classList.remove('active');
+        sheet.classList.remove('active');
+        return;
+      }
+      const v = (location.hash || '#home').replace('#', '');
+      suppressHistory = true;
+      switchNav(['home', 'store', 'orders', 'faq'].includes(v) ? v : 'home');
+      suppressHistory = false;
+    });
+
     window.onload = function() {
       console.log("Window loaded, initializing...");
       try {
@@ -1842,6 +1863,13 @@
         renderHomeFeatured();
         renderStoreProducts();
         renderCountryChips();
+        // 새로고침/직접 진입 시 해시에 맞는 뷰로 시작
+        const initView = location.hash.replace('#', '');
+        if (initView && initView !== 'home' && ['store', 'orders', 'faq'].includes(initView)) {
+          suppressHistory = true;
+          switchNav(initView);
+          suppressHistory = false;
+        }
       } catch(e) {
         window.onerror(e.message, null, "init");
       }

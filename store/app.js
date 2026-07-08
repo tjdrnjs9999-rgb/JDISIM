@@ -447,7 +447,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 4. 뷰 전환 제어 함수
+  let suppressHistory = false;
   function switchView(viewId) {
+    // 브라우저 히스토리 기록 (뒤로가기 지원)
+    if (!suppressHistory && location.hash !== '#' + viewId) {
+      history.pushState({ view: viewId }, '', '#' + viewId);
+    }
     // 네비게이션 링크 스타일 업데이트
     navDesktop.querySelectorAll('.nav-link').forEach(link => {
       if (link.getAttribute('data-target') === viewId) {
@@ -2711,6 +2716,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 22. 글로벌 함수 노출 (HTML onclick 속성 연동 목적)
   window.switchView = switchView;
+
+  // 뒤로가기/앞으로가기 대응: 해시 기준으로 뷰 복원
+  const VALID_VIEWS = ['home', 'store', 'orders', 'faq', 'terms', 'privacy', 'refunds', 'partnership'];
+  window.addEventListener('popstate', () => {
+    const v = (location.hash || '#home').replace('#', '');
+    suppressHistory = true;
+    switchView(VALID_VIEWS.includes(v) ? v : 'home');
+    suppressHistory = false;
+  });
+  // 새로고침/링크 직접 진입 시 해시에 맞는 뷰로 시작
+  (function restoreFromHash() {
+    const v = location.hash.replace('#', '');
+    if (v && v !== 'home' && VALID_VIEWS.includes(v)) {
+      suppressHistory = true;
+      switchView(v);
+      suppressHistory = false;
+    }
+  })();
   window.scrollToElement = function(elementId) {
     const el = document.getElementById(elementId);
     if (el) {
