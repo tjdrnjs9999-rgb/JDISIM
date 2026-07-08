@@ -929,3 +929,147 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
   border-radius: 50%;
   background: var(--accent);
 }
+
+/* ================= 모바일 시네마틱 히어로 ================= */
+.m-hero {
+  position: relative;
+  margin: -16px -16px 26px;
+  min-height: calc(100vh - 132px);
+  min-height: calc(100svh - 132px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 0 0 28px 28px;
+  background: linear-gradient(160deg, #1c1410 0%, #3a2213 55%, #6b3a17 100%);
+}
+.m-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.m-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 12, 6, 0.18) 0%, rgba(20, 12, 6, 0.42) 55%, rgba(20, 12, 6, 0.78) 100%);
+}
+.m-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 22px calc(30px + env(safe-area-inset-bottom, 0px));
+  color: #fff;
+}
+.m-hero-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  padding: 6px 13px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  animation: heroRise .7s cubic-bezier(.22,1,.36,1) both;
+}
+.m-hero-title {
+  font-size: clamp(1.7rem, 8vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.24;
+  letter-spacing: -0.035em;
+  margin: 0 0 12px;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.35);
+  animation: heroRise .7s cubic-bezier(.22,1,.36,1) .08s both;
+}
+.m-hero-title em {
+  font-style: normal;
+  background: linear-gradient(100deg, #FFB56B, #FF8A3C);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.m-hero-sub {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.88;
+  font-weight: 500;
+  margin: 0 0 20px;
+  animation: heroRise .7s cubic-bezier(.22,1,.36,1) .16s both;
+}
+.m-hero-ctas { display: flex; flex-direction: column; gap: 9px; animation: heroRise .7s cubic-bezier(.22,1,.36,1) .24s both; }
+.m-hero-cta-primary {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent-gradient);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(242, 117, 31, 0.45);
+}
+.m-hero-cta-primary:active { transform: scale(0.98); }
+.m-hero-cta-ghost {
+  width: 100%;
+  padding: 13px;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.m-hero-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  animation: heroRise .7s cubic-bezier(.22,1,.36,1) .32s both;
+}
+.m-hero-stats > div:not(.m-hero-stat-div) { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.m-hero-stats strong { font-size: 1.05rem; font-weight: 800; color: #FFB56B; }
+.m-hero-stats span { font-size: 0.66rem; font-weight: 700; opacity: 0.75; }
+.m-hero-stat-div { width: 1px; height: 26px; background: rgba(255, 255, 255, 0.2); }
+.m-hero-fox {
+  position: absolute;
+  top: 14%;
+  right: -8px;
+  width: 128px;
+  z-index: 1;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.4));
+  animation: foxFloat 4.5s ease-in-out infinite;
+}
+.m-hero-scroll-cue {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.3rem;
+  font-weight: 800;
+  animation: cueBounce 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cueBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
+  50% { transform: translateX(-50%) translateY(6px); opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .m-hero-badge, .m-hero-title, .m-hero-sub, .m-hero-ctas, .m-hero-stats { animation: none; }
+  .m-hero-scroll-cue, .m-hero-fox { animation: none; }
+}
