@@ -896,6 +896,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     productModal.classList.add('active');
     document.body.style.overflow = 'hidden'; // 스크롤 락
+    history.pushState({ modal: true }, '', location.hash || '#home');
   }
 
   // 12. 모달 세부 콘텐츠 구성 렌더링 (원가표 모든 세부 필드 연동 완료)
@@ -1593,6 +1594,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function closeModal() {
     productModal.classList.remove('active');
     document.body.style.overflow = 'auto'; // 스크롤 복구
+    if (history.state && history.state.modal) history.back(); // 히스토리 정리
   }
 
   // 14. 결제 입력창 열기
@@ -2720,6 +2722,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 뒤로가기/앞으로가기 대응: 해시 기준으로 뷰 복원
   const VALID_VIEWS = ['home', 'store', 'orders', 'faq', 'terms', 'privacy', 'refunds', 'partnership'];
   window.addEventListener('popstate', () => {
+    // 상품 팝업이 열려 있으면 페이지 이동 대신 팝업만 닫기
+    if (productModal && productModal.classList.contains('active')) {
+      productModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      return;
+    }
     const v = (location.hash || '#home').replace('#', '');
     suppressHistory = true;
     switchView(VALID_VIEWS.includes(v) ? v : 'home');

@@ -166,10 +166,26 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
 }
 
 /* ---------- 여우 서비스 스트립 ---------- */
-.fox-strip-section { padding: 56px 20px; }
+.fox-strip-section {
+  padding: 64px 20px 56px;
+  background: linear-gradient(180deg, #FFF9F3 0%, #FFF3E8 100%);
+  border-top: 1px solid rgba(242, 117, 31, 0.1);
+  border-bottom: 1px solid rgba(242, 117, 31, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.fox-strip-section::before,
+.fox-strip-section::after {
+  content: "✈️";
+  position: absolute;
+  font-size: 1.6rem;
+  opacity: 0.18;
+}
+.fox-strip-section::before { top: 34px; left: 7%; transform: rotate(-12deg); }
+.fox-strip-section::after { bottom: 40px; right: 8%; transform: rotate(14deg); }
 .fox-strip-section .container { max-width: 1080px; margin: 0 auto; text-align: center; }
 .fox-strip-title { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink-warm); }
-.fox-strip-sub { color: var(--text-dim); margin: 10px 0 32px; }
+.fox-strip-sub { color: var(--text-dim); margin: 10px 0 36px; }
 .fox-strip-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -177,34 +193,52 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
 }
 .fox-card {
   background: #fff;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(242, 117, 31, 0.14);
   border-radius: 24px;
-  padding: 28px 20px 24px;
+  padding: 30px 22px 24px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, border-color .2s;
-}
-.fox-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 90% at 50% -20%, var(--fox-cream) 0%, transparent 60%);
-  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(210, 120, 40, 0.06);
 }
 .fox-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 44px rgba(34, 21, 16, 0.13);
   border-color: rgba(242, 117, 31, 0.4);
 }
+.fox-card-stage {
+  position: relative;
+  width: 168px;
+  height: 158px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.fox-card-stage::before {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, #FFE9D6 0%, #FFF6EC 68%, transparent 72%);
+  border: 1.5px dashed rgba(242, 117, 31, 0.28);
+}
 .fox-card img {
-  width: 132px;
-  height: 132px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
-  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 10px 14px rgba(34, 21, 16, 0.16));
   transition: transform .3s ease;
 }
-.fox-card:hover img { transform: scale(1.08) rotate(-2deg); }
+.fox-card:hover img { transform: scale(1.07) rotate(-2deg); }
 .fox-card-tag {
   display: inline-block;
   font-size: 0.68rem;
@@ -216,8 +250,41 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
   border-radius: 999px;
   margin-bottom: 8px;
 }
-.fox-card h3 { font-size: 1.05rem; font-weight: 800; color: var(--ink-warm); margin: 0 0 6px; }
-.fox-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.55; margin: 0; }
+.fox-card h3 { font-size: 1.08rem; font-weight: 800; color: var(--ink-warm); margin: 0 0 6px; }
+.fox-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.55; margin: 0; flex: 1; }
+.fox-card-cta {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.fox-card-cta em { font-style: normal; transition: transform .2s ease; }
+.fox-card:hover .fox-card-cta em { transform: translateX(4px); }
+
+/* 신뢰 지표 줄 */
+.fox-strip-stats {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 44px);
+  flex-wrap: wrap;
+}
+.fox-stat { display: flex; flex-direction: column; gap: 2px; }
+.fox-stat strong {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #F2751F, #E8590C);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fox-stat span { font-size: 0.78rem; font-weight: 700; color: var(--text-dim); }
+.fox-stat-divider { width: 1px; height: 34px; background: rgba(242, 117, 31, 0.2); }
 
 /* ---------- 리뷰 섹션 여우 ---------- */
 .review-fox-badge {
