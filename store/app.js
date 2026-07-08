@@ -9,6 +9,8 @@ let PORTONE_MERCHANT_ID = "imp19278797";
 let PORTONE_PG_PROVIDER = "kakaopay.TC0ONETIME"; 
 // 신용·체크카드 일반결제 PG (현재 KG이니시스 테스트 채널 - 실계약 후 실채널 코드로 교체)
 let CARD_PG_PROVIDER = "html5_inicis.INIpayTest";
+// 네이버 스마트스토어 대체 구매 링크 (URL 입력 시 구매 버튼 자동 노출, PG 오픈 전 임시 판매 경로)
+let SMARTSTORE_URL = "https://smartstore.naver.com/butt_on";
 // =============================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -904,6 +906,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 11. 모달창 열기 및 데이터 연동
 
   // ===== 드롭다운 현대화: select를 숨기고 알약/카드 UI로 변환 =====
+  // 표시용 통신사명 정리: '1티어 로밍망' 같은 괄호 수식어 제거 (내부 값은 원본 유지)
+  function cleanCarrierName(name) {
+    return String(name).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
+  }
+  window.cleanCarrierName = cleanCarrierName;
+
   function enhanceOptionSelects(scope) {
     const KIND = { carrierSelect: 'cards', planTypeSelect: 'seg', capacitySelect: 'pills', durationSelect: 'pills', daysSelect: 'pills' };
     scope.querySelectorAll('select').forEach(sel => {
@@ -929,11 +937,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.type = 'button';
         btn.className = 'opt-item' + (opt.selected || opt.value === sel.value ? ' selected' : '');
         if (kind === 'cards') {
-          // "통신사 (망 - 속도)" 형태 분해 → 카드 UI
-          const m = opt.textContent.trim().match(/^(.+?)\s*\((.+)\)$/);
-          btn.innerHTML = m
-            ? '<span class="opt-main">' + m[1] + '</span><span class="opt-sub">' + m[2] + '</span>'
-            : '<span class="opt-main">' + opt.textContent.trim() + '</span>';
+          // 통신사명 + 망종류/속도 배지 (data 속성 우선, 없으면 텍스트 정리)
+          const net = opt.getAttribute('data-net') || '';
+          const speed = opt.getAttribute('data-speed') || '';
+          const label = cleanCarrierName(opt.getAttribute('data-name') || opt.textContent);
+          const netClass = net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming';
+          const subHTML = (net || speed)
+            ? '<span class="opt-sub">' + (net ? '<em class="opt-net ' + netClass + '">' + net + '</em>' : '') + (speed ? '<em class="opt-speed">' + speed + '</em>' : '') + '</span>'
+            : '';
+          btn.innerHTML = '<span class="opt-main">' + label + '</span>' + subHTML;
         } else {
           btn.textContent = opt.textContent.trim();
         }
@@ -1034,7 +1046,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="modal-category">${p.category}</div>
           <h2 class="modal-title">
             ${p.country} eSIM 
-            <span class="card-carrier" style="font-size:0.95rem; padding: 4px 12px; margin-top:2px;">${p.carrier}</span>
+            <span class="card-carrier" style="font-size:0.95rem; padding: 4px 12px; margin-top:2px;">${window.cleanCarrierName(p.carrier)}</span>
           </h2>
         </div>
         
@@ -1043,8 +1055,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="config-section-title">1. 통신사 및 네트워크망 선택</div>
           <select id="carrierSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
             ${carrierOptions.map(co => `
-              <option value="${co.carrier}" ${co.carrier === p.carrier ? 'selected' : ''}>
-                ${co.carrier} (${co.network_type} - ${co.network_speed})
+              <option value="${co.carrier}" data-name="${co.carrier}" data-net="${co.network_type}" data-speed="${co.network_speed}" ${co.carrier === p.carrier ? 'selected' : ''}>
+                ${window.cleanCarrierName(co.carrier)} (${co.network_type} · ${co.network_speed})
               </option>
             `).join('')}
           </select>
@@ -1114,6 +1126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span>최종 결제 금액</span>
             <span class="summary-total-price">${finalPriceVal.toLocaleString()}원</span>
           </div>
+          ${activeDuration > 1 ? `<div style="text-align:right; font-size:0.74rem; color:var(--text-dim); margin-top:4px; font-weight:700;">☕ 하루 약 ${Math.round(finalPriceVal / activeQuantity / activeDuration).toLocaleString()}원 꼴</div>` : ''}
         </div>
         
         <div style="display: flex; gap: 10px; margin-top: 14px;">
@@ -1124,6 +1137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ⚡ 즉시 구매하기
           </button>
         </div>
+        ${SMARTSTORE_URL ? `<a href="${SMARTSTORE_URL}" target="_blank" rel="noopener" class="smartstore-alt-btn">🟢 네이버 스마트스토어에서 구매하기 (네이버페이 가능)</a>` : ''}
         
         <div class="device-compat-banner" id="detailDeviceCheckLink">
           <div class="device-compat-banner-left">

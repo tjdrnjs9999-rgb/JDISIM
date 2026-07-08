@@ -873,7 +873,7 @@
       <h2>로컬망 1티어 직결<br><span style="font-weight: 800;">JDISIM eSIM</span></h2>
       <p style="max-width: 200px;">현지 통신사 망과 다이렉트로 연결되어 지연 없는 LTE/5G 데이터를 초저가에.</p>
       <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</button>
-      <img src="images/fox-hello.png" alt="JDISIM 여우" class="mobile-hero-fox">
+      <img src="images/fox-hello.png" alt="JDISIM 마스코트 로미" class="mobile-hero-fox">
     </div>
 
     <!-- 국가 바로가기 칩 (가로 스크롤) -->
@@ -1132,6 +1132,7 @@
       <div>
         <div class="checkout-total-label">총 상품 금액</div>
         <div class="checkout-total-price" id="checkoutTotalPrice">0원</div>
+        <div id="perDayPrice" style="font-size:0.72rem;color:#94a3b8;font-weight:700;margin-top:2px;"></div>
       </div>
       <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 20px;">
         <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</button>
@@ -1148,6 +1149,7 @@
     </div>
 
     <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</button>
+    <a id="smartstoreAltBtn" href="#" target="_blank" rel="noopener" class="smartstore-alt-btn" style="display:none;">🟢 네이버 스마트스토어에서 구매하기</a>
   </div>
 
   <!-- Device compatibility check modal -->
@@ -1187,6 +1189,7 @@
     // Local state variables
     
     let PORTONE_MERCHANT_ID = "";
+    let SMARTSTORE_URL = "https://smartstore.naver.com/butt_on"; // 스마트스토어 대체 구매 링크
     let PORTONE_PG_PROVIDER = "";
     
     let currentSelectedCountry = '';
@@ -1225,10 +1228,14 @@
           btn.type = 'button';
           btn.className = 'opt-item' + (opt.value === sel.value ? ' selected' : '');
           if (kind === 'cards') {
-            const m = opt.textContent.trim().match(/^(.+?)\s*\((.+)\)$/);
-            btn.innerHTML = m
-              ? '<span class="opt-main">' + m[1] + '</span><span class="opt-sub">' + m[2] + '</span>'
-              : '<span class="opt-main">' + opt.textContent.trim() + '</span>';
+            const net = opt.getAttribute('data-net') || '';
+            const speed = opt.getAttribute('data-speed') || '';
+            const label = (opt.getAttribute('data-name') || opt.textContent).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
+            const netClass = net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming';
+            const subHTML = (net || speed)
+              ? '<span class="opt-sub">' + (net ? '<em class="opt-net ' + netClass + '">' + net + '</em>' : '') + (speed ? '<em class="opt-speed">' + speed + '</em>' : '') + '</span>'
+              : '';
+            btn.innerHTML = '<span class="opt-main">' + label + '</span>' + subHTML;
           } else {
             btn.textContent = opt.textContent.trim();
           }
@@ -1574,9 +1581,11 @@
       const select = document.getElementById('carrierSelect');
       if (!select) return;
       
-      select.innerHTML = carriers.map(c => `
-        <option value="${c}" ${c === selectedCarrier ? 'selected' : ''}>${c}</option>
-      `).join('');
+      const cleanName = n => String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
+      select.innerHTML = carriers.map(c => {
+        const co = carrierOptions.find(o => o.carrier === c) || {};
+        return `<option value="${c}" data-name="${c}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${c === selectedCarrier ? 'selected' : ''}>${cleanName(c)}</option>`;
+      }).join('');
       
       if (carriers.length <= 1) {
         document.getElementById('carrierSection').style.display = 'none';
@@ -1664,6 +1673,11 @@
       if (activePlan) {
         const total = activePlan.final_price * purchaseQty;
         document.getElementById('checkoutTotalPrice').innerText = `${total.toLocaleString()}원`;
+        const perDayEl = document.getElementById('perDayPrice');
+        if (perDayEl) {
+          const days = parseInt(activePlan.duration) || selectedDays || 1;
+          perDayEl.innerText = days > 1 ? `☕ 하루 약 ${Math.round(total / purchaseQty / days).toLocaleString()}원 꼴` : '';
+        }
       }
     }
 
@@ -2021,6 +2035,10 @@
         renderHomeFeatured();
         renderStoreProducts();
         renderCountryChips();
+        if (SMARTSTORE_URL) {
+          const sb = document.getElementById('smartstoreAltBtn');
+          if (sb) { sb.href = SMARTSTORE_URL; sb.style.display = 'flex'; }
+        }
         // 새로고침/직접 진입 시 해시에 맞는 뷰로 시작
         const initView = location.hash.replace('#', '');
         if (initView && initView !== 'home' && ['store', 'orders', 'faq'].includes(initView)) {
