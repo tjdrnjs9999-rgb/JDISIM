@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "routes": [
+    {
+      "src": "/api/payment-complete",
+      "dest": "/api/payment-complete.js"
+    },
+    {
+      "src": "/api/emp-orders",
+      "dest": "/api/emp-orders.js"
+    },
+    {
+      "src": "/",
+      "dest": "/store/index.html"
+    },
+    {
+      "src": "/mobile",
+      "dest": "/store/mobile.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "x-robots-tag": "index, follow",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff"
+      },
+      "dest": "/store/$1"
+    }
+  ]
+}

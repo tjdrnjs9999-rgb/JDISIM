@@ -1,9 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <script>
-    
-    
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      var div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = 'red';
+      div.style.color = 'white';
+      div.style.zIndex = '100000';
+      div.style.padding = '10px';
+      div.style.fontSize = '12px';
+      div.style.wordBreak = 'break-all';
+      div.innerHTML = '🚨 ERROR: ' + msg + '<br>Line: ' + lineNo;
+      document.body.appendChild(div);
+      return false;
+    };
+    console.log("Diagnostic script loaded");
   </script>
 
   <meta name="impact-site-verification" value="aacb94f9-36f7-40f0-a6f3-76e5515e0401">
@@ -490,7 +505,7 @@
       bottom: 0;
       background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(5px);
-      z-index: 300;
+      z-index: 10000;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
@@ -501,7 +516,7 @@
       pointer-events: auto;
     }
 
-    .bottom-sheet { padding-bottom: 80px !important; 
+    .bottom-sheet {
       position: fixed;
       left: 0;
       right: 0;
@@ -512,7 +527,7 @@
       border-top-left-radius: 24px;
       border-top-right-radius: 24px;
       border-top: 1px solid rgba(15, 23, 42, 0.08);
-      z-index: 400;
+      z-index: 10001;
       transform: translateY(100%);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       padding: 24px 20px;
@@ -783,7 +798,7 @@
     }
     
   
-    .bottom-sheet { padding-bottom: 80px !important; 
+    .bottom-sheet {
       border-top-left-radius: 30px;
       border-top-right-radius: 30px;
       padding: 30px 24px;
@@ -1058,7 +1073,7 @@
       <button class="bottom-sheet-close" onclick="closeBottomSheet()">
         <i data-lucide="x" style="width: 18px; height: 18px;"></i>
       </button>
-    </button>
+    </div>
 
     <!-- 1. Carrier -->
     <div id="carrierSection" style="margin-bottom: 12px;">
@@ -1108,8 +1123,8 @@
       <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
     </div>
 
-    <button class="order-action-btn" id="paySubmitBtn" onclick="processMockCheckout()">결제 완료하기</button>
-  </button>
+    <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</button>
+  </div>
 
   <!-- Device compatibility check modal -->
   <div class="bottom-sheet-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
@@ -1128,23 +1143,6 @@
     </div>
   </div>
 
-  <footer class="footer" style="padding: 30px 16px 100px 16px; border-top: 1px solid rgba(15, 23, 42, 0.08); background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-    <div class="footer-logo" style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 12px;">JDISIM</div>
-    <div class="footer-links" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-      <a href="javascript:void(0)" onclick="switchNav('terms')" style="font-size: 0.75rem; color: #64748b; text-decoration: none;">이용약관</a>
-      <a href="javascript:void(0)" onclick="switchNav('privacy')" style="font-size: 0.75rem; color: #64748b; text-decoration: none;">개인정보처리방침</a>
-      <a href="javascript:void(0)" onclick="switchNav('refunds')" style="font-size: 0.75rem; color: #64748b; text-decoration: none;">환불규정</a>
-    </div>
-    <p class="footer-info" style="font-size: 0.7rem; color: #64748b; line-height: 1.6; margin: 0;">
-      상호명: 버튼(Butt'on) | 대표자: 김성권 | 사업자등록번호: 760-15-01594<br>
-      주소: 서울특별시 성북구 종암로14길 19, 5층 501호(종암동)<br>
-      이메일: jdisim@naver.com | 고객센터: 010-9969-3248<br>
-      통신판매업신고번호: 제 2021-서울성북-0526 호<br>
-      카카오톡 채널 '@제이디아이심' (24시간 상담 가능)
-    </p>
-    <p class="footer-copyright" style="font-size: 0.65rem; color: #94a3b8; margin-top: 16px;">Copyright © 2026 JDISIM. All Rights Reserved.</p>
-  </footer>
-
   <!-- JavaScript imports -->
   <script src="products.js?v=1783416304"></script>
   <script src="reviews_data.js?v=1783416304"></script>
@@ -1152,10 +1150,15 @@
   <script>
 
     // Global Error Handler for Debugging
-    
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      const errorMsg = "Error: " + msg + "\nLine: " + lineNo + "\nColumn: " + columnNo;
+      console.error(errorMsg);
+      // alert(errorMsg); // Uncomment this if you want to see errors on phone
+      return false;
+    };
     
     // Initialize icons
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 
     // Local state variables
     
@@ -1172,7 +1175,7 @@
     // View Navigation
     
     function switchNav(targetView) {
-      
+      console.log('Switching to:', targetView);
       try {
           // 1. Hide all views
           const views = document.querySelectorAll('.mobile-view');
@@ -1300,6 +1303,7 @@
 
         const card = document.createElement('div');
         card.className = 'mobile-product-card';
+        card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
           <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
           <div class="product-info">
@@ -1321,7 +1325,7 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1341,7 +1345,7 @@
         content.style.display = 'none';
         if (icon) icon.setAttribute('data-lucide', 'chevron-down');
       }
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1398,6 +1402,7 @@
 
         const card = document.createElement('div');
         card.className = 'mobile-product-card';
+        card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
           <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
           <div class="product-info">
@@ -1419,7 +1424,7 @@
         `;
         listContainer.appendChild(card);
       });
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       } catch(err) { console.error('Render error:', err); }
     }
 
@@ -1432,7 +1437,7 @@
     
     window.openBottomSheetFromCard = function(el) {
       try {
-        
+        console.log("Card clicked:", el);
         const tagEl = el.querySelector('.product-country-tag');
         const carrierEl = el.querySelector('.product-carrier-badge span');
         
@@ -1465,7 +1470,6 @@
       
       const carriers = carrierOptions.map(co => co.carrier);
       renderCarrierPills(carriers);
-      onCarrierSelected();
 
       document.getElementById('bottomSheetBackdrop').classList.add('active');
       document.getElementById('bottomSheet').classList.add('active');
@@ -1748,7 +1752,7 @@
       })
       .then(res => res.json())
       .then(data => {
-        
+        console.log('[플레이오토 웹훅 전송 결과]', data);
       })
       .catch(err => {
         console.warn('[플레이오토 웹훅 전송 불가 - 로컬 테스트]', err.message);
@@ -1816,9 +1820,9 @@
     // Initial render
     
     window.onload = function() {
-      
+      console.log("Window loaded, initializing...");
       try {
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
