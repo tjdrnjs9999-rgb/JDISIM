@@ -1771,6 +1771,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           buyer_tel: phone
         }, function (rsp) {
           if (rsp.success) {
+            window.lastImpUid = rsp.imp_uid; // 서버 결제 검증용 실제 결제 ID
             submitPayment(orderCode, priceVal);
           } else {
             const forcePay = confirm(`결제에 실패하였습니다.\n사유: ${rsp.error_msg}\n\n[테스트 환경 안내]\n로컬 실행 환경(file:// 프로토콜 등)에서는 보안 정책으로 인해 PG사 결제창이 작동하지 않을 수 있습니다.\n\n테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?`);
@@ -1792,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // [PlayAuto Sync] Vercel Serverless Webhook Trigger
   function triggerVercelWebhook(orderData) {
     const payload = {
-      imp_uid: 'imp_mock_' + Date.now(),
+      imp_uid: window.lastImpUid || ('imp_mock_' + Date.now()),
       merchant_uid: orderData.orderCode,
       status: 'paid',
       order_details: orderData

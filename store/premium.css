@@ -391,3 +391,43 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
 @media (prefers-reduced-motion: reduce) {
   .hero-fox-img, .country-marquee, .mobile-hero-fox { animation: none !important; }
 }
+
+/* ---------- 후기 출처 뱃지 ---------- */
+.review-source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #03A94E;
+  background: rgba(3, 169, 78, 0.08);
+  border: 1px solid rgba(3, 169, 78, 0.22);
+  padding: 5px 13px;
+  border-radius: 999px;
+  margin-top: 10px;
+}
+
+/* ---------- 카카오톡 상담 플로팅 버튼 ---------- */
+.kakao-float-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 22px;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FEE500;
+  color: #191919;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 13px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.kakao-float-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22); }
+.kakao-float-btn .kf-icon { font-size: 1.15rem; }
+@media (max-width: 768px) {
+  .kakao-float-btn { bottom: 82px; padding: 12px 15px; font-size: 0.85rem; } /* 하단 네비 위로 */
+}
