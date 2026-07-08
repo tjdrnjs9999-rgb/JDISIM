@@ -1,0 +1,326 @@
+/* ============================================================
+   JDISIM Premium Design Layer — "Fox Orange" Brand System
+   styles.css 이후에 로드되어 토큰과 컴포넌트를 재정의합니다.
+   브랜드 근거: 마스코트 여우(오렌지 털 #F2751F, 티일 스카프 #2BB3A3)
+   ============================================================ */
+
+:root {
+  --accent: #F2751F;
+  --accent-purple: #F59E0B;
+  --accent-gradient: linear-gradient(135deg, #F97316 0%, #FB923C 55%, #F59E0B 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #EA580C 0%, #F97316 100%);
+  --accent-light: rgba(242, 117, 31, 0.09);
+  --border-active: #F2751F;
+  --fox-teal: #2BB3A3;
+  --fox-teal-light: rgba(43, 179, 163, 0.1);
+  --fox-cream: #FFF8F2;
+  --ink-warm: #221510;
+  --shadow-brand: 0 12px 32px rgba(242, 117, 31, 0.22);
+}
+
+/* ---------- 공통 컴포넌트 리스킨 ---------- */
+body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%); }
+
+.logo-icon, .app-logo-badge {
+  background: var(--accent-gradient) !important;
+  box-shadow: 0 4px 12px rgba(242, 117, 31, 0.35);
+}
+.nav-link.active, .nav-link:hover { color: var(--accent) !important; }
+.action-btn:not([style*="background"]) {
+  background: var(--accent-gradient);
+  box-shadow: var(--shadow-brand);
+}
+.action-btn:not([style*="background"]):hover { background: var(--accent-gradient-hover); }
+.cart-count, .cart-badge { background: var(--accent) !important; }
+.tab-btn.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.product-price { color: var(--accent) !important; }
+.product-card { border-radius: 20px; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease; }
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(34, 21, 16, 0.12);
+  border-color: rgba(242, 117, 31, 0.35);
+}
+.search-btn { background: var(--accent-gradient); }
+.pill.active {
+  background: var(--accent-light) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* ---------- 히어로: 여우 마스코트 무대 ---------- */
+.hero-video-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: left;
+}
+.hero-text-col { flex: 1.25; }
+.hero-video-badge {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--accent);
+  border: 1px solid rgba(242, 117, 31, 0.25);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.hero-video-title { letter-spacing: -0.03em; }
+.hero-video-title span {
+  background: linear-gradient(100deg, #FF8A3C 10%, #F2751F 55%, #E8590C 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero-video-btn-primary {
+  background: var(--accent-gradient) !important;
+  box-shadow: var(--shadow-brand) !important;
+  border: none !important;
+}
+.hero-fox-col {
+  flex: 0.85;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-width: 260px;
+}
+.hero-fox-img {
+  width: min(320px, 32vw);
+  filter: drop-shadow(0 24px 32px rgba(34, 21, 16, 0.28));
+  animation: foxFloat 4.5s ease-in-out infinite;
+}
+.hero-fox-bubble {
+  position: absolute;
+  top: -6px;
+  right: 4%;
+  background: #fff;
+  color: var(--ink-warm);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 10px 16px;
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 0 10px 24px rgba(34, 21, 16, 0.14);
+  border: 1.5px solid rgba(242, 117, 31, 0.2);
+  animation: bubblePop .6s cubic-bezier(.34,1.56,.64,1) .4s both;
+  z-index: 2;
+}
+.hero-fox-bubble em { font-style: normal; color: var(--accent); }
+@keyframes foxFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes bubblePop {
+  from { opacity: 0; transform: scale(.6) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ---------- 국가 해시태그 마퀴 ---------- */
+.country-marquee-section {
+  padding: 26px 0 10px;
+  overflow: hidden;
+}
+.country-marquee-label {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--ink-warm);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.country-marquee {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  animation: marqueeScroll 36s linear infinite;
+  padding: 4px 0 14px;
+}
+.country-marquee:hover { animation-play-state: paused; }
+.marquee-tag {
+  flex-shrink: 0;
+  background: #fff;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 10px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: var(--shadow-sm);
+}
+.marquee-tag:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-brand);
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ---------- 여우 서비스 스트립 ---------- */
+.fox-strip-section { padding: 56px 20px; }
+.fox-strip-section .container { max-width: 1080px; margin: 0 auto; text-align: center; }
+.fox-strip-title { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink-warm); }
+.fox-strip-sub { color: var(--text-dim); margin: 10px 0 32px; }
+.fox-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.fox-card {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 28px 20px 24px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, border-color .2s;
+}
+.fox-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% -20%, var(--fox-cream) 0%, transparent 60%);
+  pointer-events: none;
+}
+.fox-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 44px rgba(34, 21, 16, 0.13);
+  border-color: rgba(242, 117, 31, 0.4);
+}
+.fox-card img {
+  width: 132px;
+  height: 132px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  transition: transform .3s ease;
+}
+.fox-card:hover img { transform: scale(1.08) rotate(-2deg); }
+.fox-card-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--fox-teal);
+  background: var(--fox-teal-light);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.fox-card h3 { font-size: 1.05rem; font-weight: 800; color: var(--ink-warm); margin: 0 0 6px; }
+.fox-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.55; margin: 0; }
+
+/* ---------- 리뷰 섹션 여우 ---------- */
+.review-fox-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.review-fox-badge img { width: 84px; height: 84px; object-fit: contain; }
+
+/* ---------- 결제 수단 선택 ---------- */
+.pay-method-group { margin-top: 20px; text-align: left; }
+.pay-method-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.pay-method-options { display: flex; gap: 10px; }
+.pay-method-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 10px;
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  background: #fff;
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all .18s ease;
+  position: relative;
+}
+.pay-method-btn:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+.pay-method-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--ink-warm);
+  box-shadow: 0 6px 16px rgba(242, 117, 31, 0.15);
+}
+.pay-method-btn.kakao.selected { border-color: #FEE500; background: #FFFBE0; }
+.pay-method-btn.disabled { opacity: 0.55; cursor: not-allowed; }
+.pay-method-soon {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  background: var(--text-dim);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* ---------- 모바일 오버라이드 ---------- */
+.app-header { background: rgba(255, 253, 251, 0.9) !important; border-bottom: 1px solid rgba(242, 117, 31, 0.12) !important; }
+.app-header > div:first-child, .app-header .app-logo span { color: var(--accent) !important; }
+.bottom-nav .nav-item.active { color: var(--accent) !important; }
+.hero-promo {
+  background: linear-gradient(135deg, #FFF3E8 0%, #FFE8D4 55%, #FFF8F0 100%) !important;
+  border: 1px solid rgba(242, 117, 31, 0.18) !important;
+  position: relative;
+  overflow: visible !important;
+}
+.hero-promo h2 span, .hero-promo h2 strong { color: var(--accent) !important; }
+.hero-promo-btn { background: var(--accent-gradient) !important; color: #fff !important; box-shadow: var(--shadow-brand); border: none !important; }
+.mobile-hero-fox {
+  position: absolute;
+  right: 6px;
+  bottom: -6px;
+  width: 118px;
+  filter: drop-shadow(0 10px 16px rgba(34, 21, 16, 0.22));
+  animation: foxFloat 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.mobile-marquee {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.mobile-marquee::-webkit-scrollbar { display: none; }
+.mobile-marquee .marquee-tag { font-size: 0.82rem; padding: 8px 15px; }
+.dest-icon-circle { background: var(--fox-cream) !important; border: 1px solid rgba(242, 117, 31, 0.14); }
+.mobile-product-card { border-radius: 20px; border: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+.mobile-product-card:active { border-color: rgba(242, 117, 31, 0.4); }
+.buy-btn-small { background: var(--accent-gradient) !important; box-shadow: 0 4px 10px rgba(242, 117, 31, 0.25); }
+
+/* ---------- 반응형 & 모션 배려 ---------- */
+@media (max-width: 860px) {
+  .hero-video-content { flex-direction: column; text-align: center; gap: 8px; }
+  .hero-fox-col { min-width: 0; }
+  .hero-fox-img { width: min(220px, 52vw); }
+  .hero-fox-bubble { right: auto; left: 50%; transform: translateX(30%); font-size: 0.8rem; }
+  .fox-strip-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-fox-img, .country-marquee, .mobile-hero-fox { animation: none !important; }
+}

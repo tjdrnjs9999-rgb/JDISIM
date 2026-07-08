@@ -7,6 +7,8 @@ let PORTONE_MERCHANT_ID = "imp19278797";
     let PORTONE_STORE_ID = "";
     let PORTONE_CHANNEL_KEY = ""; 
 let PORTONE_PG_PROVIDER = "kakaopay.TC0ONETIME"; 
+// 신용·체크카드 일반결제 PG (현재 KG이니시스 테스트 채널 - 실계약 후 실채널 코드로 교체)
+let CARD_PG_PROVIDER = "html5_inicis.INIpayTest";
 // =============================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1724,8 +1726,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const orderCode = `ESIM-${dateStr}-${randNum}`;
 
     if (window.IMP) {
-      const confirmPay = confirm(`🔗 [안전 결제 테스트 모드]\n\n상품: ${paymentName}\n결제 금액: ${priceVal.toLocaleString()}원\n\n카카오페이 무료 테스트 결제창을 실행할까요?\n(실제 돈이 청구되지 않는 가상 테스트 환경입니다.)`);
-      if (!confirmPay) return;
+      // 선택된 결제 수단에 따라 PG 분기 (카카오페이 / 신용·체크카드)
+      const method = window.selectedPayMethod || 'kakaopay';
+      const pgProvider = method === 'card' ? CARD_PG_PROVIDER : PORTONE_PG_PROVIDER;
 
       // Check if PortOne V2 parameters are present in env
       if (window.PortOne && PORTONE_STORE_ID) {
@@ -1752,7 +1755,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       } else if (window.IMP) {
         window.IMP.request_pay({
-          pg: PORTONE_PG_PROVIDER,
+          pg: pgProvider,
           pay_method: "card",
           merchant_uid: orderCode,
           name: paymentName,
@@ -2803,5 +2806,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupFaqAccordion();
   initDragScroll();
   initReviewExpander();
+  // ================= [프리미엄 리디자인] 마퀴 · 여우 카드 · 결제 수단 =================
+  window.selectedPayMethod = 'kakaopay';
+
+  function initPremiumUI() {
+    // 1. 국가 해시태그 마퀴 렌더링 (2벌 복제로 무한 스크롤)
+    const marquee = document.getElementById('countryMarquee');
+    if (marquee && productsData.length) {
+      const countries = [...new Set(productsData.map(p => p.country))].slice(0, 14);
+      const tagsHtml = countries.map(c => `<div class="marquee-tag" data-country="${c}">#${c}</div>`).join('');
+      marquee.innerHTML = tagsHtml + tagsHtml; // seamless loop
+      marquee.addEventListener('click', (e) => {
+        const tag = e.target.closest('.marquee-tag');
+        if (!tag) return;
+        const input = document.getElementById('storeSearchInput');
+        if (input) input.value = tag.getAttribute('data-country');
+        searchQuery = tag.getAttribute('data-country').toLowerCase();
+        switchView('store');
+        renderGrid();
+      });
+    }
+
+    // 2. 여우 기종진단 카드
+    const foxDevice = document.getElementById('foxDeviceCheckCard');
+    if (foxDevice) foxDevice.addEventListener('click', () => openDeviceModal());
+
+    // 3. 결제 수단 선택
+    const payGroup = document.getElementById('payMethodGroup');
+    if (payGroup) {
+      payGroup.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pay-method-btn');
+        if (!btn) return;
+        payGroup.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        window.selectedPayMethod = btn.getAttribute('data-method');
+      });
+    }
+  }
+
   await init();
+  initPremiumUI();
 });

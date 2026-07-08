@@ -27,6 +27,7 @@
   <title>JDISIM 이심 | 모바일 스토어</title>
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 결제 즉시 10초 만에 이심 발송!">
   <link rel="stylesheet" href="styles.css?v=1783416304">
+  <link rel="stylesheet" href="premium.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -860,11 +861,15 @@
   <!-- ================= VIEW 1: HOME VIEW ================= -->
     <main id="view-home" class="mobile-view active">
     <!-- Hero Promo Banner (Dokebi App Style) -->
-    <div class="hero-promo" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08)); border-color: rgba(99, 102, 241, 0.15);">
-      <h2>로컬망 1티어 직결<br><span style="color: #4f46e5; font-weight: 800;">JDISIM eSIM</span></h2>
-      <p>현지 통신사 망과 다이렉트로 연결되어 지연 없는 LTE/5G 데이터를 초저가에 즐기세요.</p>
+    <div class="hero-promo" style="margin-bottom: 20px; padding-right: 118px;">
+      <h2>로컬망 1티어 직결<br><span style="font-weight: 800;">JDISIM eSIM</span></h2>
+      <p style="max-width: 200px;">현지 통신사 망과 다이렉트로 연결되어 지연 없는 LTE/5G 데이터를 초저가에.</p>
       <button class="hero-promo-btn" onclick="switchNav('store')">⚡ 인기 요금제 바로구매</button>
+      <img src="images/fox-hello.png" alt="JDISIM 여우" class="mobile-hero-fox">
     </div>
+
+    <!-- 국가 바로가기 칩 (가로 스크롤) -->
+    <div class="mobile-marquee" id="mobileCountryChips"></div>
 
     <!-- Search container (click to navigate to store view) -->
     <div class="search-container" onclick="goToStoreSearch()">
@@ -1836,10 +1841,28 @@
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
+        renderCountryChips();
       } catch(e) {
         window.onerror(e.message, null, "init");
       }
     };
+
+    // 홈 상단 국가 바로가기 칩 렌더링
+    function renderCountryChips() {
+      const wrap = document.getElementById('mobileCountryChips');
+      if (!wrap || !window.PRODUCTS_DATA) return;
+      const countries = [...new Set(window.PRODUCTS_DATA.map(p => p.country))].slice(0, 14);
+      wrap.innerHTML = countries.map(c => `<div class="marquee-tag" data-country="${c}">#${c}</div>`).join('');
+      wrap.addEventListener('click', (e) => {
+        const tag = e.target.closest('.marquee-tag');
+        if (!tag) return;
+        const country = tag.getAttribute('data-country');
+        switchNav('store');
+        const input = document.getElementById('storeSearchInput');
+        if (input) input.value = country;
+        renderStoreProducts('all', country);
+      });
+    }
 
   </script>
 </body>

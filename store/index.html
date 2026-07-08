@@ -13,6 +13,7 @@
   <title>쉽고 빠른 해외 데이터 | JDISIM</title>
   <meta name="description" content="전 세계 150개국 데이터를 공항 대기 없이, 결제 즉시 QR코드로 10초 만에 로밍하세요. 속도 저하 없는 1등 로컬망 요금제를 가장 합리적인 가격에 선보입니다.">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="premium.css">
 </head>
 <body>
 
@@ -64,17 +65,29 @@
         </video>
         <div class="hero-video-overlay"></div>
         <div class="hero-video-content">
-          <span class="hero-video-badge">No.1 Global eSIM</span>
-          <h1 class="hero-video-title">해외여행 데이터는<br><span>JDISIM 이심</span></h1>
-          <div class="hero-video-buttons">
-            <button class="hero-video-btn hero-video-btn-primary" onclick="switchView('store')">
-              ⚡ 이심 스토어 바로가기
-            </button>
-            <button class="hero-video-btn hero-video-btn-secondary" onclick="scrollToElement('precautions-section')">
-              📖 이용안내 & 가이드
-            </button>
+          <div class="hero-text-col">
+            <span class="hero-video-badge">🦊 No.1 Global eSIM</span>
+            <h1 class="hero-video-title">해외여행 데이터는<br><span>JDISIM 이심</span></h1>
+            <div class="hero-video-buttons">
+              <button class="hero-video-btn hero-video-btn-primary" onclick="switchView('store')">
+                ⚡ 이심 스토어 바로가기
+              </button>
+              <button class="hero-video-btn hero-video-btn-secondary" onclick="scrollToElement('precautions-section')">
+                📖 이용안내 & 가이드
+              </button>
+            </div>
+          </div>
+          <div class="hero-fox-col">
+            <div class="hero-fox-bubble">QR 스캔 <em>10초</em>면 개통 완료!</div>
+            <img src="images/fox-hello.png" alt="JDISIM 여우 마스코트" class="hero-fox-img">
           </div>
         </div>
+      </section>
+
+      <!-- 국가 해시태그 마퀴 (여행지 바로가기) -->
+      <section class="country-marquee-section">
+        <div class="country-marquee-label">어디로 여행을 떠날까요? ✈️</div>
+        <div class="country-marquee" id="countryMarquee"></div>
       </section>
 
       <!-- App Info Section (Rokebi 3-Card Style) -->
@@ -179,6 +192,34 @@
         </div>
       </section>
 
+      <!-- 여우 마스코트 서비스 스트립 -->
+      <section class="fox-strip-section">
+        <div class="container">
+          <h2 class="fox-strip-title">JDISIM 여우가 여행 내내 함께해요 🧡</h2>
+          <p class="fox-strip-sub">구매부터 개통, 현지 데이터 연결까지 — 막히는 순간 없이 도와드립니다.</p>
+          <div class="fox-strip-grid">
+            <div class="fox-card" onclick="switchView('store')">
+              <img src="images/fox-qr.png" alt="QR코드 즉시 발송" loading="lazy">
+              <div class="fox-card-tag">INSTANT</div>
+              <h3>결제 즉시 QR 발송</h3>
+              <p>결제가 끝나면 이메일과 알림톡으로 개통용 QR코드가 바로 도착해요. 공항 대기, 배송 기다림 없이 스캔 한 번이면 끝.</p>
+            </div>
+            <div class="fox-card" id="foxDeviceCheckCard">
+              <img src="images/fox-thinking.png" alt="기종 자가진단" loading="lazy">
+              <div class="fox-card-tag">CHECK</div>
+              <h3>내 폰, 이심 될까?</h3>
+              <p>키패드에 *#06# 입력 한 번으로 3초 만에 확인! 헷갈리면 기종 자가진단에서 내 휴대폰 모델을 바로 찾아보세요.</p>
+            </div>
+            <div class="fox-card" onclick="window.location.assign('guide.html')">
+              <img src="images/fox-phone.png" alt="24시간 상담" loading="lazy">
+              <div class="fox-card-tag">SUPPORT</div>
+              <h3>24시간 안심 케어</h3>
+              <p>현지에서 데이터가 안 잡혀도 걱정 마세요. 카카오톡 채널로 24시간 1:1 기술 지원, 미해결 시 100% 환불 보증.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Call To Action (스토어 이동) -->
       <section class="cta-banner">
         <div class="container">
@@ -195,6 +236,7 @@
         <div class="container">
           <div class="review-track-title-wrap">
             <div class="review-track-count" style="font-size: 1.6rem; letter-spacing: 2px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">★★★★★</div>
+            <div class="review-fox-badge"><img src="images/fox-thumbsup.png" alt="고객 만족 여우" loading="lazy"></div>
             <h2 class="review-track-title">실제 이용 고객들의 100% 솔직한 리얼 후기</h2>
           </div>
 
@@ -753,6 +795,19 @@
               <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">결제 즉시 이메일로 해당 국가 맞춤형 구글맵 맛집 지도 링크와 핵심 여행 가이드북 PDF가 함께 발송됩니다.</p>
             </div>
           </label>
+        </div>
+
+        <!-- 결제 수단 선택 -->
+        <div class="pay-method-group" id="payMethodGroup">
+          <span class="pay-method-label">결제 수단 선택</span>
+          <div class="pay-method-options">
+            <div class="pay-method-btn kakao selected" data-method="kakaopay">
+              <span style="font-size:1.1rem;">💛</span> 카카오페이
+            </div>
+            <div class="pay-method-btn" data-method="card">
+              💳 신용·체크카드
+            </div>
+          </div>
         </div>
 
         <!-- 24시간 긴급 안심 케어 무료 보증 뱃지 -->
