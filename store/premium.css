@@ -660,3 +660,142 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
   color: var(--text-muted);
 }
 .consent-detail.open { display: block; }
+
+/* ---------- 통신사 카드 망/속도 배지 ---------- */
+.opt-cards .opt-sub { display: flex; gap: 5px; align-items: center; }
+.opt-cards .opt-sub em {
+  font-style: normal;
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+.opt-net-local { background: rgba(5, 150, 105, 0.1); color: #059669; }
+.opt-net-roaming { background: rgba(79, 70, 229, 0.09); color: #4f46e5; }
+.opt-speed { background: var(--bg-tertiary); color: var(--text-dim); }
+
+/* ---------- 스마트스토어 대체 구매 버튼 ---------- */
+.smartstore-alt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 13px;
+  border-radius: 12px;
+  background: rgba(3, 199, 90, 0.08);
+  border: 1.5px solid rgba(3, 199, 90, 0.35);
+  color: #03A94E;
+  font-weight: 800;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: background .16s ease, transform .16s ease;
+}
+.smartstore-alt-btn:hover { background: rgba(3, 199, 90, 0.14); transform: translateY(-1px); }
+
+/* ---------- 상품 모달 CTA 존 (구매 버튼 위계) ---------- */
+.modal-cta-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 16px;
+}
+.cta-buy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent-gradient);
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 10px 26px rgba(242, 117, 31, 0.35);
+  position: relative;
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.cta-buy::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  animation: ctaShine 3.2s ease-in-out infinite;
+}
+@keyframes ctaShine {
+  0%, 60% { left: -80%; }
+  100% { left: 130%; }
+}
+.cta-buy:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(242, 117, 31, 0.45); }
+.cta-buy:active { transform: translateY(0); }
+.cta-buy-main { font-size: 1.02rem; font-weight: 800; letter-spacing: -0.01em; }
+.cta-buy-sub { font-size: 0.72rem; font-weight: 700; opacity: 0.85; }
+.cta-cart {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease;
+}
+.cta-cart:hover { border-color: rgba(242, 117, 31, 0.45); background: var(--fox-cream); }
+.cta-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 3px 0 0;
+}
+.cta-divider::before, .cta-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+.cta-divider span { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); white-space: nowrap; }
+.cta-smartstore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #03C75A;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(3, 199, 90, 0.28);
+  transition: transform .18s ease, box-shadow .18s ease, background .16s ease;
+}
+.cta-smartstore:hover {
+  transform: translateY(-2px);
+  background: #02b350;
+  box-shadow: 0 10px 22px rgba(3, 199, 90, 0.38);
+}
+.cta-ss-main { font-size: 0.92rem; font-weight: 800; }
+.cta-ss-sub { font-size: 0.7rem; font-weight: 700; opacity: 0.88; }
+
+/* 모바일 스마트스토어 버튼도 동일한 초록 솔리드로 통일 */
+.smartstore-alt-btn {
+  background: #03C75A;
+  border: none;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(3, 199, 90, 0.28);
+}
+.smartstore-alt-btn:hover { background: #02b350; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-buy::after { animation: none; }
+}

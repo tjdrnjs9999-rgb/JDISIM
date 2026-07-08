@@ -1129,15 +1129,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${activeDuration > 1 ? `<div style="text-align:right; font-size:0.74rem; color:var(--text-dim); margin-top:4px; font-weight:700;">☕ 하루 약 ${Math.round(finalPriceVal / activeQuantity / activeDuration).toLocaleString()}원 꼴</div>` : ''}
         </div>
         
-        <div style="display: flex; gap: 10px; margin-top: 14px;">
-          <button class="action-btn" id="addToCartBtn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: none; display: flex; align-items: center; justify-content: center; gap: 6px; flex: 1;">
-            🛒 장바구니 담기
+        <div class="modal-cta-zone">
+          <button class="cta-buy" id="buyNowBtn">
+            <span class="cta-buy-main">⚡ 즉시 구매하기</span>
+            <span class="cta-buy-sub">${finalPriceVal.toLocaleString()}원 · 카카오페이/카드</span>
           </button>
-          <button class="action-btn" id="buyNowBtn" style="flex: 1.2; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ⚡ 즉시 구매하기
-          </button>
+          <button class="cta-cart" id="addToCartBtn">🛒 장바구니 담기</button>
+          ${SMARTSTORE_URL ? `
+          <div class="cta-divider"><span>또는 네이버페이로 간편하게</span></div>
+          <a href="${SMARTSTORE_URL}" target="_blank" rel="noopener" class="cta-smartstore">
+            <span class="cta-ss-main">네이버 스마트스토어에서 구매</span>
+            <span class="cta-ss-sub">네이버페이 · 네이버 포인트 적립</span>
+          </a>` : ''}
         </div>
-        ${SMARTSTORE_URL ? `<a href="${SMARTSTORE_URL}" target="_blank" rel="noopener" class="smartstore-alt-btn">🟢 네이버 스마트스토어에서 구매하기 (네이버페이 가능)</a>` : ''}
         
         <div class="device-compat-banner" id="detailDeviceCheckLink">
           <div class="device-compat-banner-left">
