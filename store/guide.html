@@ -1,399 +1,611 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JDISIM 가이드 센터 | 가장 쉬운 이심 사용 설명서</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --secondary: #6366f1;
-      --accent: #4f46e5;
-      --bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --radius: 16px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JDISIM 가이드 센터 - 이심의 모든 것</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #eef2ff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: rgba(15, 23, 42, 0.08);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
-      word-break: keep-all;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    body {
-      background: #f8fafc;
-      color: var(--text-main);
-      line-height: 1.6;
-    }
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
 
-    /* Header */
-    .guide-header {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 16px 20px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 12px 20px;
+        }
 
-    .back-btn {
-      background: #f1f5f9;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
+        .header-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .header-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-    }
+        .logo {
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
 
-    /* Hero */
-    .guide-hero {
-      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-      padding: 40px 20px;
-      color: white;
-      text-align: center;
-    }
+        .back-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-    .hero-tag {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
+        /* Hero Section */
+        .hero {
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
 
-    .hero-title {
-      font-size: 1.6rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
+        .hero h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
 
-    /* Search Bar */
-    .search-section {
-      padding: 20px;
-      margin-top: -25px;
-    }
+        .hero p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
 
-    .search-box {
-      background: white;
-      border-radius: 30px;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-      border: 1px solid var(--border);
-    }
+        .search-box {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
-    .search-input {
-      border: none;
-      flex: 1;
-      outline: none;
-      font-size: 0.95rem;
-    }
+        .search-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 16px 20px 16px 50px;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            outline: none;
+            transition: all 0.2s;
+        }
 
-    /* Content Layout */
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 20px 60px 20px;
-    }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
 
-    .guide-section {
-      background: white;
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 20px;
-      border: 1px solid var(--border);
-    }
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
 
-    .section-label {
-      color: var(--primary);
-      font-size: 0.8rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      display: block;
-    }
+        /* Main Content */
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 800;
-      margin-bottom: 20px;
-    }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 24px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    /* Steps */
-    .step-item {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+        /* Category Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
 
-    .step-number {
-      width: 28px;
-      height: 28px;
-      background: var(--primary);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.85rem;
-      flex-shrink: 0;
-    }
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .step-content h4 {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
+        .category-card:active {
+            transform: scale(0.97);
+        }
 
-    .step-content p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /* Highlight Box */
-    .tip-box {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      padding: 16px;
-      border-radius: 12px;
-      margin-top: 16px;
-    }
+        .category-card h3 {
+            font-size: 1rem;
+            font-weight: 800;
+        }
 
-    .tip-title {
-      color: #16a34a;
-      font-weight: 800;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
+        .category-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
 
-    /* FAQ Accordion */
-    .faq-item {
-      border-bottom: 1px solid var(--border);
-      padding: 16px 0;
-    }
+        /* Article List */
+        .article-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
 
-    .faq-question {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
+        .article-card:hover {
+            border-color: var(--primary);
+        }
 
-    .faq-answer {
-      padding-top: 12px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      display: none;
-    }
+        .article-thumb {
+            width: 80px;
+            height: 60px;
+            background: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
 
-    /* Footer CTA */
-    .contact-cta {
-      background: #0f172a;
-      color: white;
-      border-radius: var(--radius);
-      padding: 30px 20px;
-      text-align: center;
-      margin-top: 40px;
-    }
+        .article-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .cta-btn {
-      background: white;
-      color: #0f172a;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      margin-top: 20px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
+        .article-info {
+            flex-grow: 1;
+        }
 
-  </style>
+        .article-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .article-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Banner Card */
+        .banner-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            color: white;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-card h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner-img {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            width: 140px;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Modal Styles */
+        .guide-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .guide-modal.active {
+            display: flex;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-close {
+            background: var(--bg-body);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .modal-body h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .modal-body .meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-content {
+            font-size: 1rem;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        .modal-content img {
+            width: 100%;
+            border-radius: 16px;
+            margin: 24px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-content h3 {
+            margin-top: 32px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .step-box {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        .step-num {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <header class="guide-header">
-    <button class="back-btn" onclick="window.history.back()">
-      <i data-lucide="chevron-left"></i>
-    </button>
-    <div class="header-title">가이드 센터</div>
-  </header>
-
-  <section class="guide-hero">
-    <span class="hero-tag">JDISIM EXCLUSIVE</span>
-    <h1 class="hero-title">가장 쉽고 품격 있는<br>이심(eSIM) 사용법</h1>
-    <p style="opacity: 0.9; font-size: 0.9rem;">복잡한 설정은 잊으세요. JDISIM이 10초 만에 해결해 드립니다.</p>
-  </section>
-
-  <div class="search-section">
-    <div class="search-box">
-      <i data-lucide="search" style="color: var(--text-muted)"></i>
-      <input type="text" class="search-input" placeholder="궁금한 내용을 검색해 보세요 (예: 기종진단)">
-    </div>
-  </div>
-
-  <div class="container">
-    
-    <!-- Section 1: Compatibility -->
-    <div class="guide-section">
-      <span class="section-label">01. PREPARATION</span>
-      <h2 class="section-title">내 폰이 이심(eSIM)을<br>지원하는지 궁금하신가요?</h2>
-      
-      <div class="step-item">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h4>전화 다이얼을 켜세요</h4>
-          <p>전화 앱을 열고 키패드에 <strong>*#06#</strong>을 입력해 보세요.</p>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo" onclick="window.history.back()">JDISIM</a>
+            <a href="index.html" class="back-btn">스토어로 이동</a>
         </div>
-      </div>
+    </header>
 
-      <div class="step-item">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h4>EID 항목을 확인하세요</h4>
-          <p>목록 중에 <strong>EID</strong>라는 글자가 보인다면? 축하드립니다! JDISIM의 초고속 이심을 바로 사용하실 수 있는 최신 폰입니다.</p>
+    <div class="hero">
+        <h1>JDISIM 가이드 센터</h1>
+        <p>이심 구매 전 확인부터 장애 해결까지, 무엇이든 물어보세요!</p>
+        <div class="search-box">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" class="search-input" placeholder="궁금한 내용을 검색해 보세요 (예: 아이폰 설정, 결제 취소)">
         </div>
-      </div>
-
-      <div class="tip-box">
-        <div class="tip-title"><i data-lucide="info"></i> JDISIM의 해석</div>
-        <p style="font-size: 0.85rem; color: #166534;">설정 메뉴를 복잡하게 뒤질 필요 없습니다. *#06#은 전 세계 공통의 가장 확실한 진단법입니다.</p>
-      </div>
     </div>
 
-    <!-- Section 2: Activation -->
-    <div class="guide-section">
-      <span class="section-label">02. ACTIVATION</span>
-      <h2 class="section-title">QR코드 스캔 한 번으로<br>현지망 1티어 다이렉트 연결</h2>
-      
-      <div class="step-item">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h4>QR코드 준비</h4>
-          <p>결제 즉시 이메일과 카톡으로 전송된 QR코드를 다른 기기에 띄우거나 출력하세요.</p>
+    <div class="content-container">
+        <!-- Banner Card -->
+        <div class="banner-card">
+            <h2>📢 처음 오셨나요?</h2>
+            <p>JDISIM 이심을 선택해주셔서 감사합니다. 1분 만에 끝나는 초간단 이심 설치 가이드를 확인하세요.</p>
+            <button class="btn-white" onclick="openGuide('intro')">가이드 보기</button>
+            <i data-lucide="info" class="banner-img"></i>
         </div>
-      </div>
 
-      <div class="step-item">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h4>카메라 스캔</h4>
-          <p>휴대폰 설정 ➡️ 연결(네트워크) ➡️ SIM 관리자 ➡️ <strong>eSIM 추가</strong>를 누르고 QR코드를 비추세요.</p>
+        <h2 class="section-title"><i data-lucide="layers" style="color:var(--primary)"></i> 전체 카테고리</h2>
+        <div class="category-grid">
+            <a href="#" class="category-card" onclick="filterCategory('setup')">
+                <div class="category-icon"><i data-lucide="smartphone"></i></div>
+                <h3>eSIM 설정</h3>
+                <p>구매한 이심을 단말기에 등록하고 개통하는 방법</p>
+            </a>
+            <a href="#" class="category-card" onclick="filterCategory('product')">
+                <div class="category-icon"><i data-lucide="globe"></i></div>
+                <h3>로컬망 상품</h3>
+                <p>국가별 현지 망 상품의 상세 특징과 주의사항</p>
+            </a>
+            <a href="#" class="category-card" onclick="filterCategory('trouble')">
+                <div class="category-icon"><i data-lucide="alert-circle"></i></div>
+                <h3>장애 해결</h3>
+                <p>데이터가 안 터질 때, QR 오류 등 긴급 대처법</p>
+            </a>
+            <a href="#" class="category-card" onclick="filterCategory('refund')">
+                <div class="category-icon"><i data-lucide="rotate-ccw"></i></div>
+                <h3>취소 및 환불</h3>
+                <p>결제 취소 조건 및 환불 절차 안내</p>
+            </a>
         </div>
-      </div>
 
-      <div class="tip-box" style="background: #eff6ff; border-color: #bfdbfe;">
-        <div class="tip-title" style="color: #2563eb;"><i data-lucide="zap"></i> 전문가의 팁</div>
-        <p style="font-size: 0.85rem; color: #1e40af;">한국에서 미리 등록해도 괜찮습니다! 단, '데이터 로밍'은 현지 공항에 도착해서 켜는 것이 가장 깔끔한 연결 방법입니다.</p>
-      </div>
+        <h2 class="section-title"><i data-lucide="book-open" style="color:var(--primary)"></i> 추천 아티클</h2>
+        <div id="articleList">
+            <!-- Articles will be rendered here -->
+        </div>
     </div>
 
-    <!-- Section 3: Troubleshooting -->
-    <div class="guide-section">
-      <span class="section-label">03. TROUBLESHOOTING</span>
-      <h2 class="section-title">데이터가 안 터질 때<br>당황하지 않는 3가지 노하우</h2>
-      
-      <div class="step-item">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h4>로밍 스위치를 확인하세요</h4>
-          <p>가장 많은 실수는 '데이터 로밍' 스위치를 끄는 것입니다. 반드시 <strong>ON</strong>으로 되어있는지 확인하세요.</p>
+    <!-- Article Modal -->
+    <div id="guideModal" class="guide-modal">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeGuide()"><i data-lucide="chevron-left"></i></button>
+            <span style="font-weight: 700; font-size: 0.9rem;">도움말</span>
         </div>
-      </div>
-
-      <div class="step-item">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h4>비행기 모드 매직</h4>
-          <p>현지 통신사 망을 처음 잡을 때 시간이 걸릴 수 있습니다. 비행기 모드를 3번 정도 껐다 켜보세요.</p>
+        <div class="modal-body" id="modalBody">
+            <!-- Article content will be injected here -->
         </div>
-      </div>
-
-      <div class="tip-box" style="background: #f1f5f9; border-color: #e2e8f0;">
-        <div class="tip-title" style="color: #4f46e5;"><i data-lucide="alert-circle"></i> 긴급 상황인가요?</div>
-        <p style="font-size: 0.85rem; color: #1e293b;">그래도 안 된다면? JDISIM 전담 상담원이 대기 중인 카카오톡 채널로 지금 바로 메시지를 보내주세요.</p>
-      </div>
     </div>
 
-    <!-- FAQ Section -->
-    <div class="guide-section">
-      <h2 class="section-title" style="margin-bottom: 10px;">자주 묻는 질문</h2>
-      
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">
-          Q. 한국 번호로 오는 문자도 받을 수 있나요?
-          <i data-lucide="plus"></i>
-        </div>
-        <div class="faq-answer">
-          네, 가능합니다! 한국 SIM을 '메인'으로 켜두시면 문자는 한국 번호로, 데이터는 JDISIM 이심으로 사용하는 '듀얼 심' 기능을 즐기실 수 있습니다.
-        </div>
-      </div>
+    <script>
+        // Initialize icons
+        if (window.lucide) lucide.createIcons();
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">
-          Q. 여러 명이서 데이터를 나눠 쓸 수 있나요?
-          <i data-lucide="plus"></i>
-        </div>
-        <div class="faq-answer">
-          물론입니다! 테더링(핫스팟) 기능을 지원하므로, 친구나 가족과 함께 데이터를 공유해서 사용하실 수 있습니다.
-        </div>
-      </div>
-    </div>
+        const ARTICLES = [
+            {
+                id: 'intro',
+                category: 'setup',
+                title: '📢 JDISIM 이심을 소개합니다',
+                desc: '가장 빠르고 정직한 이심 서비스를 지향하는 JDISIM의 철학',
+                thumb: 'https://images.unsplash.com/photo-1544006659-f0b21f04cb1d?auto=format&fit=crop&q=80&w=200',
+                content: `
+                    <h2>단 1분이면 끝나는 자유로운 여행의 시작</h2>
+                    <div class="meta">작성일: 2024.03.01 • 조회수: 12,402</div>
+                    <div class="modal-content">
+                        <img src="guide_hero_minimalist_1783414665548.jpg" alt="Hero">
+                        <p>JDISIM은 불필요한 마케팅 비용을 줄여 고객님들께 <b>업계 최저가</b>의 데이터를 공급합니다. 미끼 상품 없이 정직한 가격으로 승부합니다.</p>
+                        <h3>깡심만의 3대 약속</h3>
+                        <div class="step-box">
+                            <h4>➊ 최저가 집착</h4>
+                            <p>광고비와 오프라인 대리점 마진을 걷어내고 정말 가치 있는 통신비만 남겼습니다.</p>
+                        </div>
+                        <div class="step-box">
+                            <h4>➋ 광고 없는 정직함</h4>
+                            <p>연예인 모델 대신 서비스 품질과 가격 경쟁력으로 승부합니다.</p>
+                        </div>
+                        <div class="step-box">
+                            <h4>➌ 미끼 상품 금지</h4>
+                            <p>하루 500MB짜리 싼 가격으로 유혹한 뒤 실제 쓸만한 상품은 비싸게 파는 행위를 하지 않습니다.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'iphone-setup',
+                category: 'setup',
+                title: '📱 아이폰(iOS) eSIM 등록 가이드',
+                desc: '아이폰 모든 기종에서 이심을 등록하고 설정하는 방법입니다.',
+                thumb: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba3f21?auto=format&fit=crop&q=80&w=200',
+                content: `
+                    <h2>아이폰 eSIM 설정하기</h2>
+                    <div class="meta">작성일: 2024.03.05 • 조회수: 8,921</div>
+                    <div class="modal-content">
+                        <div class="step-box">
+                            <span class="step-num">1</span>
+                            <p>설정 -> 셀룰러 -> <b>eSIM 추가</b> 메뉴를 선택합니다.</p>
+                        </div>
+                        <div class="step-box">
+                            <span class="step-num">2</span>
+                            <p><b>QR 코드 사용</b>을 누르고 이메일로 받은 QR코드를 스캔합니다.</p>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1556656793-062ff987b50d?auto=format&fit=crop&q=80&w=600" alt="Scanning QR">
+                        <div class="step-box">
+                            <span class="step-num">3</span>
+                            <p><b>데이터 로밍</b>을 반드시 켭니다. (현지망 접속 필수 단계)</p>
+                        </div>
+                        <p style="color:red; font-size:0.85rem; margin-top:10px;">※ 주의: 절대 등록 도중 뒤로가기를 누르거나 창을 끄지 마세요.</p>
+                    </div>
+                `
+            },
+            {
+                id: 'trouble-data',
+                category: 'trouble',
+                title: '🚨 데이터가 안 터질 때 대처법',
+                desc: '현지 도착 후 인터넷 연결이 안 되는 경우 해결 방법입니다.',
+                thumb: 'https://images.unsplash.com/photo-1590333746438-2831a2939f37?auto=format&fit=crop&q=80&w=200',
+                content: `
+                    <h2>데이터 접속 불가 해결 가이드</h2>
+                    <div class="meta">작성일: 2024.03.10 • 조회수: 5,120</div>
+                    <div class="modal-content">
+                        <h3>먼저 체크해보세요!</h3>
+                        <div class="step-box">
+                            <h4>1. 데이터 로밍이 켜져 있나요?</h4>
+                            <p>설정 -> 셀룰러 -> 해당 이심 선택 -> 데이터 로밍 'ON' 확인</p>
+                        </div>
+                        <div class="step-box">
+                            <h4>2. 네트워크 선택이 수동인가요?</h4>
+                            <p>자동으로 되어 있다면 잠시 껐다가 현지 추천 통신사를 직접 선택해 보세요.</p>
+                        </div>
+                        <div class="step-box">
+                            <h4>3. 비행기 모드 3초 실행</h4>
+                            <p>네트워크를 재검색하도록 비행기 모드를 켰다가 다시 끕니다.</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
 
-    <div class="contact-cta">
-      <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 10px;">아직 궁금한 점이 남으셨나요?</h3>
-      <p style="font-size: 0.9rem; opacity: 0.8;">JDISIM은 고객님이 해외에서 데이터를 연결하는 그 순간까지 함께합니다.</p>
-      <a href="http://pf.kakao.com/_xxxxxx" target="_blank" class="cta-btn">
-        <i data-lucide="message-circle"></i> 카톡 1:1 전담 상담하기
-      </a>
-    </div>
+        function renderArticles(list = ARTICLES) {
+            const container = document.getElementById('articleList');
+            container.innerHTML = list.map(art => `
+                <a href="#" class="article-card" onclick="openGuide('${art.id}')">
+                    <div class="article-thumb"><img src="${art.thumb}" alt="Thumb"></div>
+                    <div class="article-info">
+                        <h4>${art.title}</h4>
+                        <p>${art.desc}</p>
+                    </div>
+                    <i data-lucide="chevron-right" style="color:var(--text-muted); width:18px;"></i>
+                </a>
+            `).join('');
+            if (window.lucide) lucide.createIcons();
+        }
 
-  </div>
+        function openGuide(id) {
+            const art = ARTICLES.find(a => a.id === id);
+            if (!art) return;
+            document.getElementById('modalBody').innerHTML = art.content;
+            document.getElementById('guideModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (window.lucide) lucide.createIcons();
+        }
 
-  <script>
-    lucide.createIcons();
+        function closeGuide() {
+            document.getElementById('guideModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-    function toggleFaq(el) {
-      const answer = el.nextElementSibling;
-      const icon = el.querySelector('i');
-      const isOpen = answer.style.display === 'block';
-      
-      answer.style.display = isOpen ? 'none' : 'block';
-      icon.setAttribute('data-lucide', isOpen ? 'plus' : 'minus');
-      lucide.createIcons();
-    }
-  </script>
+        function filterCategory(cat) {
+            const filtered = ARTICLES.filter(a => a.category === cat);
+            renderArticles(filtered);
+        }
+
+        // Search logic
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = ARTICLES.filter(a => 
+                a.title.toLowerCase().includes(query) || 
+                a.desc.toLowerCase().includes(query)
+            );
+            renderArticles(filtered);
+        });
+
+        renderArticles();
+    </script>
 </body>
 </html>
