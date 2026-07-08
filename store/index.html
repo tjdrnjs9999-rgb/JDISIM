@@ -848,6 +848,34 @@
           </ul>
         </div>
 
+        <!-- 약관 동의 (개인정보 수집·이용 / 결제대행 약관) -->
+        <div class="consent-box" id="consentBox">
+          <label class="consent-master">
+            <input type="checkbox" id="consentAgreeCheck">
+            <span>주문 내용을 확인하였으며, 약관 및 결제에 동의합니다.</span>
+          </label>
+          <div class="consent-row">
+            <span>개인정보 수집 및 이용 <em>(필수)</em></span>
+            <button type="button" class="consent-detail-btn" data-detail="privacy">자세히 보기</button>
+          </div>
+          <div class="consent-detail" id="consent-detail-privacy">
+            · 수집 항목: 수령인 이름, 휴대폰 번호, 이메일 주소<br>
+            · 수집 목적: 주문 처리, eSIM QR코드 발송, 고객 상담 및 민원 처리<br>
+            · 보유 기간: 전자상거래법에 따라 계약·대금결제·재화 공급 기록 5년 보관 후 파기<br>
+            · 처리 위탁: eSIM 상품(QR코드) 발송 업무 처리를 위해 공급사 '서래대박통신'에 이름·연락처·이메일이 제공됩니다.<br>
+            · 귀하는 동의를 거부할 권리가 있으며, 거부 시 주문 처리가 불가합니다.
+          </div>
+          <div class="consent-row">
+            <span>결제대행 서비스 이용약관 <em>(필수)</em></span>
+            <button type="button" class="consent-detail-btn" data-detail="pg">자세히 보기</button>
+          </div>
+          <div class="consent-detail" id="consent-detail-pg">
+            · 결제 처리는 결제대행사(포트원 및 제휴 PG사)를 통해 안전하게 이루어집니다.<br>
+            · 카드번호 등 결제수단 정보는 당사에 저장되지 않으며 결제대행사가 직접 처리합니다.<br>
+            · 결제대행 서비스의 세부 사항은 각 결제대행사의 표준 이용약관을 따릅니다.
+          </div>
+        </div>
+
         <div style="margin-top: 24px; display: flex; gap: 12px;">
           <button class="action-btn" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); box-shadow: none;" id="checkoutBackBtn">취소</button>
           <button class="action-btn" id="paySubmitBtn">결제 완료하기</button>
@@ -922,7 +950,7 @@
       </div>
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">1. 수집하는 개인정보 항목</h3>
-        <p style="margin-bottom: 24px;">회사는 주문 서비스 제공, QR코드 발송 및 본인 확인을 위해 아래의 정보를 수집합니다.<br>• 필수 항목: 이메일 주소, 휴대폰 번호<br>• 자동 수집 항목: 접속 IP, 쿠키, 서비스 이용 기록</p>
+        <p style="margin-bottom: 24px;">회사는 주문 서비스 제공, QR코드 발송 및 본인 확인을 위해 아래의 정보를 수집합니다.<br>• 필수 항목: 수령인 이름, 이메일 주소, 휴대폰 번호<br>• 자동 수집 항목: 접속 IP, 쿠키, 서비스 이용 기록</p>
 
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">2. 개인정보의 이용 목적</h3>
         <p style="margin-bottom: 24px;">• 구입한 eSIM 상품의 개통 QR코드 전송<br>• 비회원 주문 내역 조회 및 결제 영수증 확인<br>• 제휴 및 기술 관련 고객 문의 대응</p>
@@ -930,7 +958,12 @@
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">3. 개인정보의 보유 및 파기</h3>
         <p style="margin-bottom: 24px;">관계 법령(전자상거래 등에서의 소비자보호에 관한 법률 등)에 의거하여, 계약 및 청약철회 등에 관한 기록은 5년간 보관한 후 파기합니다.</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">4. 개인정보 보호책임자</h3>
+        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">4. 개인정보 처리의 위탁</h3>
+        <p style="margin-bottom: 24px;">회사는 원활한 서비스 제공을 위해 아래와 같이 개인정보 처리 업무를 위탁하고 있으며, 위탁계약 시 개인정보가 안전하게 관리될 수 있도록 필요한 사항을 규정하고 있습니다.<br>
+        • 수탁업체: 서래대박통신 / 위탁업무: eSIM 상품(개통용 QR코드) 발송 및 개통 처리 / 제공항목: 수령인 이름, 휴대폰 번호, 이메일 주소<br>
+        • 수탁업체: 결제대행사(포트원 및 제휴 PG사) / 위탁업무: 결제 처리 및 결제 도용 방지</p>
+
+        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">5. 개인정보 보호책임자</h3>
         <p style="margin-bottom: 24px;">• 성명: 김성권<br>• 직책: 대표자<br>• 연락처 / 이메일: jdisim@naver.com</p>
         
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 07일</p>

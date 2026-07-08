@@ -1208,6 +1208,14 @@
         const prev = sel.parentElement.querySelector('.opt-group[data-for="' + sel.id + '"]');
         if (prev) prev.remove();
         if (sel.options.length === 0) return;
+        // 옵션이 많으면(9개 이상) 칩 대신 모던 드롭다운 (예: 1~30일 상품)
+        if (kind === 'pills' && sel.options.length > 8) {
+          sel.classList.remove('opt-hidden-select');
+          sel.classList.add('opt-select-modern');
+          sel.style.cssText = '';
+          return;
+        }
+        sel.classList.remove('opt-select-modern');
         sel.classList.add('opt-hidden-select');
         const wrap = document.createElement('div');
         wrap.className = 'opt-group opt-' + kind;
@@ -1733,9 +1741,31 @@
             • <strong>단순 변심:</strong> QR코드 발송 후에는 디지털 상품 특성상 취소/환불이 불가해요<br>
             • <strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 카톡 고객센터로 접수 시 미해결 100% 환불 보장
           </div>
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:0.78rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#334155;font-weight:600;">
+              <span>개인정보 수집 및 이용 <span style="color:#94a3b8;font-size:0.72rem;">(필수)</span></span>
+              <button type="button" onclick="var d=document.getElementById('mDetailPrivacy');d.style.display=d.style.display==='block'?'none':'block';this.textContent=d.style.display==='block'?'접기':'자세히 보기';" style="background:none;border:none;color:#2563eb;font-weight:700;font-size:0.75rem;text-decoration:underline;font-family:inherit;">자세히 보기</button>
+            </div>
+            <div id="mDetailPrivacy" style="display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin:4px 0 8px;line-height:1.65;color:#64748b;">
+              · 수집 항목: 수령인 이름, 휴대폰 번호, 이메일<br>
+              · 목적: 주문 처리, eSIM QR코드 발송, 고객 상담<br>
+              · 보유: 전자상거래법에 따라 5년 보관 후 파기<br>
+              · 처리 위탁: QR코드 발송을 위해 공급사 '서래대박통신'에 이름·연락처·이메일이 제공됩니다<br>
+              · 동의 거부 시 주문 처리가 불가합니다
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#334155;font-weight:600;">
+              <span>결제대행 서비스 이용약관 <span style="color:#94a3b8;font-size:0.72rem;">(필수)</span></span>
+              <button type="button" onclick="var d=document.getElementById('mDetailPg');d.style.display=d.style.display==='block'?'none':'block';this.textContent=d.style.display==='block'?'접기':'자세히 보기';" style="background:none;border:none;color:#2563eb;font-weight:700;font-size:0.75rem;text-decoration:underline;font-family:inherit;">자세히 보기</button>
+            </div>
+            <div id="mDetailPg" style="display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin:4px 0 4px;line-height:1.65;color:#64748b;">
+              · 결제는 결제대행사(포트원 및 제휴 PG사)를 통해 안전하게 처리됩니다<br>
+              · 카드번호 등 결제수단 정보는 당사에 저장되지 않습니다<br>
+              · 세부 사항은 각 결제대행사 표준 이용약관을 따릅니다
+            </div>
+          </div>
           <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;cursor:pointer;">
             <input type="checkbox" id="mobileAgreeCheck" style="width:19px;height:19px;accent-color:#F2751F;">
-            <span style="font-size:0.85rem;font-weight:700;color:#0f172a;">위 상품 스펙과 주의사항을 모두 확인했어요</span>
+            <span style="font-size:0.85rem;font-weight:700;color:#0f172a;">주문 내용을 확인하였으며, 약관 및 결제에 동의합니다</span>
           </label>
           <div style="display:flex;gap:10px;">
             <button onclick="document.getElementById('mobileConfirmLayer').remove()" style="flex:1;padding:15px;border-radius:14px;border:1px solid #e2e8f0;background:#f1f5f9;font-weight:800;color:#334155;">취소</button>

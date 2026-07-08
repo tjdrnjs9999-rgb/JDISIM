@@ -366,6 +366,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 결제 닫기 및 네비게이션 리스너
     checkoutBackBtn.addEventListener('click', closeCheckout);
+
+    // 약관 동의 블록: 체크 전 결제 버튼 잠금 + 자세히 보기 토글
+    const consentBox = document.getElementById('consentBox');
+    const consentCheck = document.getElementById('consentAgreeCheck');
+    if (consentBox && consentCheck) {
+      const syncPayBtn = () => {
+        if (!paySubmitBtn) return;
+        paySubmitBtn.disabled = !consentCheck.checked;
+        paySubmitBtn.style.opacity = consentCheck.checked ? '1' : '0.5';
+        paySubmitBtn.style.cursor = consentCheck.checked ? 'pointer' : 'not-allowed';
+      };
+      consentCheck.addEventListener('change', syncPayBtn);
+      window.resetConsent = () => { consentCheck.checked = false; syncPayBtn(); };
+      consentBox.addEventListener('click', (e) => {
+        const btn = e.target.closest('.consent-detail-btn');
+        if (!btn) return;
+        const detail = document.getElementById('consent-detail-' + btn.getAttribute('data-detail'));
+        if (detail) {
+          detail.classList.toggle('open');
+          btn.textContent = detail.classList.contains('open') ? '접기' : '자세히 보기';
+        }
+      });
+    }
     paySubmitBtn.addEventListener('click', startPaymentProcess);
     receiptCloseBtn.addEventListener('click', completeCheckoutFlow);
     document.getElementById('orderLookupBtn').addEventListener('click', handleOrderLookup);
@@ -889,6 +912,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       // 기존 변환 UI 제거 후 재생성
       const prev = sel.parentElement.querySelector('.opt-group[data-for="' + sel.id + '"]');
       if (prev) prev.remove();
+      // 옵션이 많으면(9개 이상) 칩 대신 모던 드롭다운으로 표시 (예: 1~30일 상품)
+      if (kind === 'pills' && sel.options.length > 8) {
+        sel.classList.remove('opt-hidden-select');
+        sel.classList.add('opt-select-modern');
+        sel.style.cssText = '';
+        return;
+      }
+      sel.classList.remove('opt-select-modern');
       sel.classList.add('opt-hidden-select');
       const wrap = document.createElement('div');
       wrap.className = 'opt-group opt-' + kind;
@@ -1506,6 +1537,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 14. 결제 입력창 열기
   function openCheckoutFlow(items) {
+    if (window.resetConsent) window.resetConsent(); // 결제창 열 때마다 동의 초기화
     closeModal();
     closeCartDrawer();
     
@@ -1605,6 +1637,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 15.5 결제 통합 시작 처리 (포트원 카카오페이 무료 테스트 연동)
   function startPaymentProcess() {
+    const consentCheck = document.getElementById('consentAgreeCheck');
+    if (consentCheck && !consentCheck.checked) {
+      alert('약관 및 결제 동의에 체크해 주셔야 결제를 진행할 수 있습니다.');
+      return;
+    }
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
     
