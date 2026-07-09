@@ -1660,7 +1660,7 @@
     })();
 
     let suppressHistory = false;
-    // 도매 원본 통신사명의 군더더기 제거: "(1티어 로밍망)", "(현지 로컬망)", "(실속 로밍망)" 등
+    // 통신사명 표시 정리: 괄호 수식어 제거
     function cleanCarrier(n) {
       return String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지|실속)[^)]*\)/g, '').trim();
     }
@@ -2369,11 +2369,11 @@
       const paymentName = `${currentSelectedCountry} ${activeCarrier.carrier} eSIM`;
 
       const lookupKey = `${activePlan.product_code}_${selectedDays}일`;
-      let targetB2BText = (window.OPTION_CODES_MAP && window.OPTION_CODES_MAP[lookupKey]);
-      if (!targetB2BText) {
+      let targetOptionText = (window.OPTION_CODES_MAP && window.OPTION_CODES_MAP[lookupKey]);
+      if (!targetOptionText) {
         const carrierInfo = (window.FULL_CARRIER_MAP && window.FULL_CARRIER_MAP[activePlan.product_code]) || activeCarrier.carrier;
         let exactCarrier = carrierInfo.split('/')[0].trim();
-        targetB2BText = `${currentSelectedCountry}_${exactCarrier}_${selectedCapacity}_${selectedDays.toString().padStart(2, '0')}일`;
+        targetOptionText = `${currentSelectedCountry}_${exactCarrier}_${selectedCapacity}_${selectedDays.toString().padStart(2, '0')}일`;
       }
 
       const newOrder = {
@@ -2389,7 +2389,7 @@
           {
             productCode: activePlan.product_code,
             productName: `${currentSelectedCountry} ${activeCarrier.carrier} 매일 ${selectedCapacity} / ${selectedDays}일`,
-            optionName: targetB2BText,
+            optionName: targetOptionText,
             quantity: purchaseQty,
             price: activePlan.final_price,
             iccid: randIccid

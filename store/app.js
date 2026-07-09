@@ -906,7 +906,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 11. 모달창 열기 및 데이터 연동
 
   // ===== 드롭다운 현대화: select를 숨기고 알약/카드 UI로 변환 =====
-  // 표시용 통신사명 정리: '1티어 로밍망' 같은 괄호 수식어 제거 (내부 값은 원본 유지)
+  // 표시용 통신사명 정리: 괄호 수식어 제거 (내부 값은 원본 유지)
   function cleanCarrierName(name) {
     return String(name).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
   }
@@ -984,7 +984,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     history.pushState({ modal: true }, '', location.hash || '#home');
   }
 
-  // 12. 모달 세부 콘텐츠 구성 렌더링 (원가표 모든 세부 필드 연동 완료)
+  // 12. 모달 세부 콘텐츠 구성 렌더링 (상품표 모든 세부 필드 연동 완료)
   function renderModalContent(carrierOptions) {
     // 4단계 캐스케이딩 옵션 로직 (데일리/총용량 구분)
     const p = activeCarrier;
@@ -1090,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
       </div>
 
-      <!-- Right Sidebar (Pricing & Specs - 원가표 모든 스펙 연동) -->
+      <!-- Right Sidebar (Pricing & Specs - 상품표 모든 스펙 연동) -->
       <div class="modal-sidebar">
         <!-- 24시간 안심 케어 보증 상단 표시 -->
         <div class="safety-care-mini" style="display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); padding:8px 12px; border-radius:var(--radius-sm); margin-bottom:12px; font-size:0.75rem; color:#10b981; font-weight:700;">
@@ -1814,7 +1814,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const duration = item.plan.duration;
         const lookupKey = `${prodCode}_${duration}`;
         
-        // 원가표 매핑용 옵션코드(옵션명) 조회
+        // 옵션코드(옵션명) 조회
         let optionName = (window.OPTION_CODES_MAP && window.OPTION_CODES_MAP[lookupKey]);
         if (!optionName) {
           const exactCarrier = (window.FULL_CARRIER_MAP && window.FULL_CARRIER_MAP[prodCode]) || item.product.carrier;
@@ -1831,7 +1831,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           planLimit: item.plan.data_limit,
           planDuration: item.plan.duration,
           productCode: prodCode,
-          optionName: optionName, // 원가표 사용일수 옵션명 (예: JSX_일본소프트뱅크_매일5GB_01일)
+          optionName: optionName, // 사용일수 옵션명 (예: JSX_일본소프트뱅크_매일5GB_01일)
           quantity: item.quantity,
           addon: item.addon || false,
           iccid: randIccid,
@@ -2061,7 +2061,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       { name: "샤오미 Xiaomi 14 / 14 Pro / 14 Ultra / 14T / 14T Pro (해외판)", status: "success" },
       { name: "샤오미 Xiaomi 13 / 13 Pro / 13 Ultra / 13 Lite (해외판)", status: "success" },
       { name: "샤오미 Xiaomi 12T Pro (해외판)", status: "success" },
-      { name: "샤오미 Redmi Note (홍미노트) 시리즈 국내 정식 정발판 전체", status: "danger", note: "국내 총판을 통해 유통된 모든 정발 홍미노트 단말은 eSIM 규격을 누락하고 있습니다. 유심을 구매해 주세요." },
+      { name: "샤오미 Redmi Note (홍미노트) 시리즈 국내 정식 정발판 전체", status: "danger", note: "국내에 정식 출시된 모든 홍미노트 단말은 eSIM 기능이 빠져 있습니다. 유심을 구매해 주세요." },
       // Oppo & OnePlus
       { name: "오포 Oppo Find X5 / Find X5 Pro (해외판)", status: "success" },
       { name: "오포 Oppo Find X3 Pro / Reno 6 Pro 5G / Reno 5 A (해외판)", status: "success" },
