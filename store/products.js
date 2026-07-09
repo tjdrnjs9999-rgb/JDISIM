@@ -22148,7 +22148,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "차이나유니콤 / 차이나텔레콤",
+    "carrier": "차이나모바일",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -25568,8 +25568,8 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "차이나유니콤 / 차이나텔레콤",
-    "network_type": "로컬망",
+    "carrier": "차이나텔레콤",
+    "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
     "sms": "불가능",
@@ -27206,7 +27206,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "스마톤 (SmarTone)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -28709,7 +28709,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "홍콩·마카오 겸용",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -33722,7 +33722,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "중국 홍콩 마카오",
+    "carrier": "중국·홍콩·마카오 (유니콤·CSL·CTM)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -35873,7 +35873,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "중국·홍콩·마카오 (유니콤·CSL·CTM)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -38024,7 +38024,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "마카오",
-    "carrier": "중국 홍콩 마카오",
+    "carrier": "중국·홍콩·마카오 (유니콤·CSL·CTM)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -40175,7 +40175,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "중국 홍콩 마카오",
+    "carrier": "중국·홍콩·마카오 (차이나텔레콤)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -42884,8 +42884,8 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
-    "network_type": "로컬망",
+    "carrier": "중국·홍콩·마카오 (차이나텔레콤)",
+    "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
     "sms": "불가능",
@@ -45593,7 +45593,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "마카오",
-    "carrier": "중국 홍콩 마카오",
+    "carrier": "중국·홍콩·마카오 (차이나텔레콤)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -48302,7 +48302,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "중국 홍콩 마카오 대만",
+    "carrier": "중국·홍콩·마카오·대만 (유니콤·CSL·CTM·CHT)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -48347,8 +48347,8 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
-    "network_type": "로컬망",
+    "carrier": "중국·홍콩·마카오·대만 (유니콤·CSL·CTM·CHT)",
+    "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
     "sms": "불가능",
@@ -48392,7 +48392,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "마카오",
-    "carrier": "중국 홍콩 마카오 대만",
+    "carrier": "중국·홍콩·마카오·대만 (유니콤·CSL·CTM·CHT)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -48437,8 +48437,8 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "대만",
-    "carrier": "중화텔레콤 / 원전텔레콤",
-    "network_type": "로컬망",
+    "carrier": "중국·홍콩·마카오·대만 (유니콤·CSL·CTM·CHT)",
+    "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
     "sms": "불가능",
@@ -73511,7 +73511,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 & 버라이즌",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -75950,7 +75950,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -76319,7 +76319,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile) 장기 정액형",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -76499,7 +76499,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "버라이즌 & 로저스 (미국·캐나다)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -78272,7 +78272,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "캐나다",
-    "carrier": "로저스 (Rogers) / 벨 / 텔러스",
+    "carrier": "버라이즌 & 로저스 (미국·캐나다)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -80045,7 +80045,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (미국·캐나다·멕시코)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -80414,7 +80414,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "캐나다",
-    "carrier": "로저스 (Rogers) / 벨 / 텔러스",
+    "carrier": "티모바일 (미국·캐나다·멕시코)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -80783,7 +80783,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일+국제전화 (미국·캐나다·멕시코)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -80837,7 +80837,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "캐나다",
-    "carrier": "로저스 (Rogers) / 벨 / 텔러스",
+    "carrier": "티모바일+국제전화 (미국·캐나다·멕시코)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -80891,7 +80891,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일·로저스·텔셀 (미국·캐나다·멕시코)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -83105,7 +83105,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "캐나다",
-    "carrier": "로저스 (Rogers) / 벨 / 텔러스",
+    "carrier": "티모바일·로저스·텔셀 (미국·캐나다·멕시코)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -85319,7 +85319,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "멕시코",
-    "carrier": "TMOBILE+ROGERS+TELCEL",
+    "carrier": "티모바일·로저스·텔셀 (미국·캐나다·멕시코)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -87532,377 +87532,8 @@ window.PRODUCTS_DATA = [
   },
   {
     "category": "북미괌사이판",
-    "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
-    "network_type": "로컬망",
-    "network_speed": "5G/LTE",
-    "calls": "가능",
-    "sms": "가능",
-    "apn": "fast.t-mobile.com",
-    "activation": "입력한 개통희망일에 개통",
-    "validity": "개통희망일에 개통",
-    "registration": "개통후 단말기로 개통알림 전송",
-    "hotspot": "불가능",
-    "charging": "불가능",
-    "extension": "고객센터 문의",
-    "plans": [
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 5,
-        "final_price": 14800,
-        "original_price": 7,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 6,
-        "final_price": 17700,
-        "original_price": 8.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 7,
-        "final_price": 20700,
-        "original_price": 9.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 8,
-        "final_price": 23600,
-        "original_price": 11.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 9,
-        "final_price": 26600,
-        "original_price": 12.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 10,
-        "final_price": 29500,
-        "original_price": 14,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 11,
-        "final_price": 32500,
-        "original_price": 15.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 12,
-        "final_price": 35400,
-        "original_price": 16.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 13,
-        "final_price": 38400,
-        "original_price": 18.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 14,
-        "final_price": 41400,
-        "original_price": 19.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 15,
-        "final_price": 44300,
-        "original_price": 21,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 16,
-        "final_price": 47300,
-        "original_price": 22.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 17,
-        "final_price": 50200,
-        "original_price": 23.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 18,
-        "final_price": 53200,
-        "original_price": 25.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 19,
-        "final_price": 56100,
-        "original_price": 26.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 20,
-        "final_price": 59100,
-        "original_price": 28,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 21,
-        "final_price": 62000,
-        "original_price": 29.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 22,
-        "final_price": 65000,
-        "original_price": 30.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 23,
-        "final_price": 67900,
-        "original_price": 32.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 24,
-        "final_price": 70900,
-        "original_price": 33.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 25,
-        "final_price": 73800,
-        "original_price": 35,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 26,
-        "final_price": 76800,
-        "original_price": 36.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 27,
-        "final_price": 79700,
-        "original_price": 37.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 28,
-        "final_price": 82700,
-        "original_price": 39.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 29,
-        "final_price": 85700,
-        "original_price": 40.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 30,
-        "final_price": 88600,
-        "original_price": 42,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 31,
-        "final_price": 91600,
-        "original_price": 43.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 32,
-        "final_price": 94500,
-        "original_price": 44.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 33,
-        "final_price": 97500,
-        "original_price": 46.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 34,
-        "final_price": 100400,
-        "original_price": 47.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 35,
-        "final_price": 103400,
-        "original_price": 49,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 36,
-        "final_price": 106300,
-        "original_price": 50.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 37,
-        "final_price": 109300,
-        "original_price": 51.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 38,
-        "final_price": 112200,
-        "original_price": 53.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 39,
-        "final_price": 115200,
-        "original_price": 54.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 40,
-        "final_price": 118100,
-        "original_price": 56,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 50,
-        "final_price": 147700,
-        "original_price": 70,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 60,
-        "final_price": 109600,
-        "original_price": 51.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 90,
-        "final_price": 162300,
-        "original_price": 76.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      }
-    ]
-  },
-  {
-    "category": "북미괌사이판",
-    "country": "캐나다",
-    "carrier": "로저스 (Rogers) / 벨 / 텔러스",
+    "country": "멕시코",
+    "carrier": "티모바일 (미국·캐나다·멕시코)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -88271,484 +87902,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "멕시코",
-    "carrier": "TMOBILE",
-    "network_type": "로컬망",
-    "network_speed": "5G/LTE",
-    "calls": "가능",
-    "sms": "가능",
-    "apn": "fast.t-mobile.com",
-    "activation": "입력한 개통희망일에 개통",
-    "validity": "개통희망일에 개통",
-    "registration": "개통후 단말기로 개통알림 전송",
-    "hotspot": "불가능",
-    "charging": "불가능",
-    "extension": "고객센터 문의",
-    "plans": [
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 5,
-        "final_price": 14800,
-        "original_price": 7,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 6,
-        "final_price": 17700,
-        "original_price": 8.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 7,
-        "final_price": 20700,
-        "original_price": 9.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 8,
-        "final_price": 23600,
-        "original_price": 11.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 9,
-        "final_price": 26600,
-        "original_price": 12.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 10,
-        "final_price": 29500,
-        "original_price": 14,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 11,
-        "final_price": 32500,
-        "original_price": 15.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 12,
-        "final_price": 35400,
-        "original_price": 16.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 13,
-        "final_price": 38400,
-        "original_price": 18.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 14,
-        "final_price": 41400,
-        "original_price": 19.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 15,
-        "final_price": 44300,
-        "original_price": 21,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 16,
-        "final_price": 47300,
-        "original_price": 22.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 17,
-        "final_price": 50200,
-        "original_price": 23.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 18,
-        "final_price": 53200,
-        "original_price": 25.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 19,
-        "final_price": 56100,
-        "original_price": 26.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 20,
-        "final_price": 59100,
-        "original_price": 28,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 21,
-        "final_price": 62000,
-        "original_price": 29.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 22,
-        "final_price": 65000,
-        "original_price": 30.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 23,
-        "final_price": 67900,
-        "original_price": 32.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 24,
-        "final_price": 70900,
-        "original_price": 33.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 25,
-        "final_price": 73800,
-        "original_price": 35,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 26,
-        "final_price": 76800,
-        "original_price": 36.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 27,
-        "final_price": 79700,
-        "original_price": 37.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 28,
-        "final_price": 82700,
-        "original_price": 39.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 29,
-        "final_price": 85700,
-        "original_price": 40.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 30,
-        "final_price": 88600,
-        "original_price": 42,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 31,
-        "final_price": 91600,
-        "original_price": 43.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 32,
-        "final_price": 94500,
-        "original_price": 44.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 33,
-        "final_price": 97500,
-        "original_price": 46.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 34,
-        "final_price": 100400,
-        "original_price": 47.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 35,
-        "final_price": 103400,
-        "original_price": 49,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 36,
-        "final_price": 106300,
-        "original_price": 50.4,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 37,
-        "final_price": 109300,
-        "original_price": 51.8,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 38,
-        "final_price": 112200,
-        "original_price": 53.2,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 39,
-        "final_price": 115200,
-        "original_price": 54.6,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 40,
-        "final_price": 118100,
-        "original_price": 56,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 50,
-        "final_price": 147700,
-        "original_price": 70,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 60,
-        "final_price": 109600,
-        "original_price": 51.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 90,
-        "final_price": 162300,
-        "original_price": 76.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00217"
-      }
-    ]
-  },
-  {
-    "category": "북미괌사이판",
-    "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
-    "network_type": "로컬망",
-    "network_speed": "5G/LTE",
-    "calls": "가능",
-    "sms": "가능",
-    "apn": "fast.t-mobile.com",
-    "activation": "입력한 개통희망일에 개통",
-    "validity": "개통희망일에 개통",
-    "registration": "개통후 단말기로 개통알림 전송",
-    "hotspot": "불가능",
-    "charging": "불가능",
-    "extension": "고객센터 문의",
-    "plans": [
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 15,
-        "final_price": 65300,
-        "original_price": 30.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 30,
-        "final_price": 65300,
-        "original_price": 30.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 60,
-        "final_price": 118000,
-        "original_price": 55.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 90,
-        "final_price": 170800,
-        "original_price": 80.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      }
-    ]
-  },
-  {
-    "category": "북미괌사이판",
-    "country": "캐나다",
-    "carrier": "로저스 (Rogers) / 벨 / 텔러스",
-    "network_type": "로컬망",
-    "network_speed": "5G/LTE",
-    "calls": "가능",
-    "sms": "가능",
-    "apn": "fast.t-mobile.com",
-    "activation": "입력한 개통희망일에 개통",
-    "validity": "개통희망일에 개통",
-    "registration": "개통후 단말기로 개통알림 전송",
-    "hotspot": "불가능",
-    "charging": "불가능",
-    "extension": "고객센터 문의",
-    "plans": [
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 15,
-        "final_price": 65300,
-        "original_price": 30.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 30,
-        "final_price": 65300,
-        "original_price": 30.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 60,
-        "final_price": 118000,
-        "original_price": 55.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 90,
-        "final_price": 170800,
-        "original_price": 80.95,
-        "unit": "USD",
-        "product_code": "LS2023-eSIM-00218"
-      }
-    ]
-  },
-  {
-    "category": "북미괌사이판",
-    "country": "멕시코",
-    "carrier": "TMOBILE+국제전화",
+    "carrier": "티모바일+국제전화 (미국·캐나다·멕시코)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",

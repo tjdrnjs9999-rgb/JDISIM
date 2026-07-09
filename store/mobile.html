@@ -514,7 +514,7 @@
       bottom: 0;
       background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(5px);
-      z-index: 300;
+      z-index: 10000; /* 하단 네비게이션 바(9999)보다 위 */
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
@@ -536,11 +536,12 @@
       border-top-left-radius: 24px;
       border-top-right-radius: 24px;
       border-top: 1px solid rgba(15, 23, 42, 0.08);
-      z-index: 400;
+      z-index: 10001; /* 하단 네비게이션 바(9999)보다 위 */
       transform: translateY(100%);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       padding: 24px 20px;
       max-height: 85vh;
+      max-height: 90dvh; /* 주소창 변화 대응 (dvh 미지원 시 85vh 폴백) */
       overflow-y: auto;
       box-sizing: border-box;
       color: #0f172a;
@@ -759,7 +760,7 @@
       border: 1px solid rgba(15, 23, 42, 0.1);
       border-radius: 20px;
       padding: 20px;
-      z-index: 500;
+      z-index: 10002; /* 하단 네비게이션 바(9999)보다 위 */
       width: 90%;
       max-width: 380px;
       box-sizing: border-box;
@@ -811,6 +812,7 @@
       border-top-left-radius: 30px;
       border-top-right-radius: 30px;
       padding: 30px 24px;
+      padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px)); /* 아이폰 홈 인디케이터 영역 확보 */
       background: #ffffff;
     }
     .option-pill {
@@ -1174,7 +1176,7 @@
 
     <!-- 1. Carrier -->
     <div id="carrierSection" style="margin-bottom: 12px;">
-      <div class="option-group-title">1. 통신사 · 커버리지</div>
+      <div class="option-group-title">1. 통신사 선택</div>
       <select id="carrierSelect" class="tracker-input" onchange="onCarrierChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
     </div>
@@ -1303,7 +1305,7 @@
           if (kind === 'cards') {
             const net = opt.getAttribute('data-net') || '';
             const speed = opt.getAttribute('data-speed') || '';
-            const label = carrierDisplay(opt.getAttribute('data-country') || '', opt.getAttribute('data-name') || opt.textContent).label;
+            const label = (opt.getAttribute('data-name') || opt.textContent).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
             const netClass = net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming';
             const subHTML = (net || speed)
               ? '<span class="opt-sub">' + (net ? '<em class="opt-net ' + netClass + '">' + net + '</em>' : '') + (speed ? '<em class="opt-speed">' + speed + '</em>' : '') + '</span>'
@@ -1430,18 +1432,6 @@
     }
 
     // Country flags helper
-    // 통신사 칸에 통신사가 아닌 값(국가명·커버리지)이 든 경우 분류
-    function carrierDisplay(country, carrier) {
-      const n = String(carrier).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
-      const countrySet = new Set((window.PRODUCTS_DATA || []).map(p => p.country));
-      if (!n || n === '-') return { label: '현지 통신사 자동 연결', none: true };
-      if (/\d+\s*개국$/.test(n)) return { label: '🌍 ' + n + ' 커버', none: true };
-      if (n === '복수국가' || n === '홍콩 마카오' || n === country || countrySet.has(n)) {
-        return { label: '현지 통신사 자동 연결', none: true };
-      }
-      return { label: n, none: false };
-    }
-
     const flagMap = {
       "일본": "japan.jpg", "베트남": "vietnam.jpg", "태국": "thailand.jpg",
       "대만": "taiwan.jpg", "미국": "usa.jpg", "하와이": "usa.jpg",
@@ -1547,107 +1537,82 @@
 
     function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
       try {
-        const listContainer = document.getElementById('storeProductList');
-        if (!listContainer || !window.PRODUCTS_DATA) return;
-        listContainer.innerHTML = '';
-        const q = searchQuery.toLowerCase().trim();
-        const cleanName = n => String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
+      const listContainer = document.getElementById('storeProductList');
+      if (!listContainer || !window.PRODUCTS_DATA) return;
 
-        // 1. 필터·검색 통과 상품 수집
-        const passed = [];
-        window.PRODUCTS_DATA.forEach(group => {
-          const countryName = group.country;
-          const carrierName = group.carrier;
-          const categoryName = group.category || '';
+      listContainer.innerHTML = '';
+      const lowercaseQuery = searchQuery.toLowerCase().trim();
 
-          let matchFilter = false;
-          if (countryFilter === 'all') matchFilter = true;
-          else if (countryFilter === countryName) matchFilter = true;
-          else if (countryFilter === '유럽' && (categoryName.includes('유럽') || countryName.includes('유럽'))) matchFilter = true;
-          else if (countryFilter === '미국' && (countryName.includes('미국') || countryName.includes('하와이'))) matchFilter = true;
-          if (!matchFilter) return;
+      window.PRODUCTS_DATA.forEach(group => {
+        const countryName = group.country;
+        const carrierName = group.carrier;
+        const categoryName = group.category;
+        const networkType = group.network_type || '로밍망';
 
-          const matchesSearch = countryName.toLowerCase().includes(q) ||
-                                carrierName.toLowerCase().includes(q) ||
-                                categoryName.toLowerCase().includes(q);
-          if (q && !matchesSearch) return;
-
-          const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
-          if (!validPlans.length) return;
-          const minPrice = Math.min(...validPlans.map(p => p.final_price));
-          const durations = validPlans.map(p => parseInt(p.duration) || 1);
-          const minDur = Math.min(...durations);
-          const maxDur = Math.max(...durations);
-          passed.push({ group, countryName, carrierName, minPrice, minDur, maxDur, planCount: validPlans.length });
-        });
-
-        // 2. 국가별 묶기
-        const byCountry = new Map();
-        passed.forEach(item => {
-          if (!byCountry.has(item.countryName)) byCountry.set(item.countryName, []);
-          byCountry.get(item.countryName).push(item);
-        });
-
-        // 3. 인기 국가 우선 정렬
-        const POPULAR = ['일본', '베트남', '태국', '대만', '미국', '중국', '싱가포르', '필리핀', '홍콩', '유럽'];
-        const countries = [...byCountry.keys()].sort((a, b) => {
-          const ra = POPULAR.indexOf(a) === -1 ? 999 : POPULAR.indexOf(a);
-          const rb = POPULAR.indexOf(b) === -1 ? 999 : POPULAR.indexOf(b);
-          return ra - rb || byCountry.get(b).length - byCountry.get(a).length || a.localeCompare(b, 'ko');
-        });
-
-        if (!countries.length) {
-          listContainer.innerHTML = '<div class="cg-empty">검색 결과가 없어요 🦊<br>다른 국가명이나 통신사로 검색해 보세요.</div>';
-          return;
+        // Apply Country Tab filter
+        let matchFilter = false;
+        if (countryFilter === 'all') {
+          matchFilter = true;
+        } else if (countryFilter === countryName) {
+          matchFilter = true;
+        } else if (countryFilter === '유럽' && (categoryName.includes('유럽') || countryName.includes('유럽'))) {
+          matchFilter = true;
+        } else if (countryFilter === '미국' && (countryName.includes('미국') || countryName.includes('하와이'))) {
+          matchFilter = true;
         }
 
-        // 4. 국가 그룹 렌더 (검색·탭 필터 시 자동 펼침, 기본은 첫 그룹만 펼침)
-        const autoOpen = !!q || countryFilter !== 'all';
-        countries.forEach((c, idx) => {
-          const items = byCountry.get(c).sort((a, b) => a.minPrice - b.minPrice);
-          const gMin = Math.min(...items.map(i => i.minPrice));
-          const gPlans = items.reduce((s, i) => s + i.planCount, 0);
-          const flagSrc = `images/${flagMap[c] || 'global.jpg'}`;
+        if (!matchFilter) return;
 
-          const sec = document.createElement('div');
-          sec.className = 'cg' + ((autoOpen || idx === 0) ? ' open' : '');
-          sec.innerHTML = `
-            <button class="cg-head" type="button">
-              <img src="${flagSrc}" class="cg-flag" alt="${c}" onerror="this.style.display='none'">
-              <div class="cg-info">
-                <div class="cg-name">${c} <span class="cg-count">통신사 ${items.length}</span></div>
-                <div class="cg-sub">최저 <strong>${gMin.toLocaleString()}원</strong>부터 · 요금제 ${gPlans}종</div>
-              </div>
-              <span class="cg-arr">⌄</span>
-            </button>
-            <div class="cg-body"><div class="cg-body-in"></div></div>`;
+        // Apply search query
+        const matchesSearch = countryName.toLowerCase().includes(lowercaseQuery) || 
+                              carrierName.toLowerCase().includes(lowercaseQuery) ||
+                              categoryName.toLowerCase().includes(lowercaseQuery);
+        
+        if (searchQuery && !matchesSearch) return;
 
-          const bodyIn = sec.querySelector('.cg-body-in');
-          items.forEach(({ group, carrierName, minPrice, minDur, maxDur, planCount }) => {
-            const net = group.network_type || '로밍망';
-            const row = document.createElement('div');
-            row.className = 'cg-item';
-            row.onclick = () => openBottomSheet(c, carrierName);
-            row.innerHTML = `
-              <div class="cg-item-main">
-                <div class="cg-item-name">${carrierDisplay(c, carrierName).label}</div>
-                <div class="cg-item-badges">
-                  <em class="opt-net ${net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming'}">${net}</em>
-                  ${group.network_speed ? '<em class="opt-speed">' + group.network_speed + '</em>' : ''}
-                </div>
-              </div>
-              <div class="cg-item-price">
-                <strong>${minPrice.toLocaleString()}원~</strong>
-                <span>${minDur === maxDur ? minDur + '일' : minDur + '~' + maxDur + '일'} · ${planCount}개 플랜</span>
-              </div>
-              <span class="cg-item-go">›</span>`;
-            bodyIn.appendChild(row);
-          });
+        // Find min price
+        if (!group.plans || group.plans.length === 0) return;
+        const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
+        if (validPlans.length === 0) return;
+        const minPrice = Math.min(...validPlans.map(p => p.final_price));
+        const minPerDay = Math.min(...validPlans.map(p => Math.round(p.final_price / (parseInt(p.duration) || 1))));
 
-          sec.querySelector('.cg-head').addEventListener('click', () => sec.classList.toggle('open'));
-          listContainer.appendChild(sec);
-        });
-      } catch (err) { console.error('Render error:', err); }
+        const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
+
+        // Network Type Badge Styling
+        let networkBadgeStyle = '';
+        if (networkType === '로컬망') {
+          networkBadgeStyle = `background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.16); color: #16a34a;`;
+        } else {
+          networkBadgeStyle = `background: rgba(79, 70, 229, 0.06); border: 1px solid rgba(79, 70, 229, 0.12); color: #4f46e5;`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'mobile-product-card';
+        card.onclick = () => openBottomSheet(countryName, carrierName);
+        card.innerHTML = `
+          <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
+          <div class="product-info">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span class="product-country-tag">${countryName} eSIM</span>
+              <span style="font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
+            </div>
+            <h4 class="product-title">${countryName} ${carrierName.split(' ')[0]} 요금제</h4>
+            <div class="product-carrier-badge">
+              <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
+              <span>${carrierName}</span>
+            </div>
+          </div>
+          <div class="product-price-section">
+            <span class="product-price-label">최저가</span>
+            <span class="product-price">${minPrice.toLocaleString()}원~</span>\n            <span class="product-perday">하루 ${minPerDay.toLocaleString()}원꼴~</span>
+            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+      if (window.lucide) lucide.createIcons();
+      } catch(err) { console.error('Render error:', err); }
     }
 
     // Bottom Sheet Options Handler
@@ -1695,6 +1660,7 @@
 
       document.getElementById('bottomSheetBackdrop').classList.add('active');
       document.getElementById('bottomSheet').classList.add('active');
+      document.body.style.overflow = 'hidden'; // 시트 열림 시 배경 스크롤 잠금
       history.pushState({ sheet: true }, '', location.hash || '#home');
     }
 
@@ -1702,6 +1668,7 @@
       if (history.state && history.state.sheet) { history.back(); return; }
       document.getElementById('bottomSheetBackdrop').classList.remove('active');
       document.getElementById('bottomSheet').classList.remove('active');
+      document.body.style.overflow = ''; // 배경 스크롤 복원
     }
 
     let selectedPlanType = ""; 
@@ -1711,23 +1678,28 @@
       if (!select) return;
       
       const cleanName = n => String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
-      select.innerHTML = carriers.map(c => {
-        const co = carrierOptions.find(o => o.carrier === c) || {};
-        return `<option value="${c}" data-name="${c}" data-country="${currentSelectedCountry}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${c === selectedCarrier ? 'selected' : ''}>${carrierDisplay(currentSelectedCountry, c).label}</option>`;
+      // 통신사명이 같아도 망 종류·플랜 구성이 다른 그룹을 구분할 수 있도록 인덱스로 선택
+      select.innerHTML = carrierOptions.map((co, i) => {
+        const label = cleanName(co.carrier) + (co.network_type ? ` · ${co.network_type}` : '');
+        return `<option value="${i}" data-name="${co.carrier}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${co === activeCarrier ? 'selected' : ''}>${label}</option>`;
       }).join('');
       
-      if (carriers.length <= 1) {
+      if (carrierOptions.length <= 1) {
         document.getElementById('carrierSection').style.display = 'none';
       } else {
         document.getElementById('carrierSection').style.display = 'block';
       }
       
-      onCarrierChange(selectedCarrier);
+      onCarrierChange(String(Math.max(0, carrierOptions.indexOf(activeCarrier))));
     }
 
     function onCarrierChange(val) {
-      selectedCarrier = val;
-      activeCarrier = carrierOptions.find(co => co.carrier === val) || carrierOptions[0];
+      // val은 carrierOptions 배열 인덱스 (호환을 위해 통신사명 문자열도 허용)
+      const idx = Number(val);
+      activeCarrier = (Number.isInteger(idx) && carrierOptions[idx])
+        ? carrierOptions[idx]
+        : (carrierOptions.find(co => co.carrier === val) || carrierOptions[0]);
+      selectedCarrier = activeCarrier.carrier;
       
       const types = new Set();
       activeCarrier.plans.forEach(p => {
@@ -2148,6 +2120,7 @@
       if (sheet && sheet.classList.contains('active')) {
         document.getElementById('bottomSheetBackdrop').classList.remove('active');
         sheet.classList.remove('active');
+        document.body.style.overflow = ''; // 배경 스크롤 복원
         return;
       }
       const v = (location.hash || '#home').replace('#', '');
