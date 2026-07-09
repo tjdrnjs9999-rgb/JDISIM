@@ -634,6 +634,8 @@
       animation: skShimmer 1.3s infinite linear;
     }
     @keyframes skShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+    @keyframes romiFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @media (prefers-reduced-motion: reduce) { [style*="romiFloat"] { animation: none !important; } }
 
     .store-card-btn {
       margin-top: 8px;
@@ -1151,14 +1153,18 @@
     <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(140% 90% at 50% 30%, #16204a 0%, #0b1020 60%, #070b18 100%);overflow:hidden;padding:40px 20px;">
       <div style="position:absolute;inset:0;background-image:radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0, transparent 100%),radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.4) 0, transparent 100%),radial-gradient(1.5px 1.5px at 85% 70%, rgba(255,255,255,0.3) 0, transparent 100%),radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.35) 0, transparent 100%);"></div>
       <div style="position:relative;text-align:center;">
-        <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#818cf8;">LIVE CONNECTED WORLD</span>
-        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#fff;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#f97316,#f59e0b,#818cf8);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
+        <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#FB923C;">LIVE CONNECTED WORLD</span>
+        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#fff;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
         <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#94a3b8;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#f97316;">직접 탭</strong>하면 요금제가 바로 열려요</p>
       </div>
       <div style="position:relative;">
         <div style="position:absolute;inset:-6%;background:radial-gradient(circle at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 65%);pointer-events:none;"></div>
-        <div id="mGlobe" style="width:100%;height:340px;margin-top:8px;"></div>
-        <div style="text-align:center;font-size:0.68rem;font-weight:700;color:#475569;">👆 돌려보고, 국가 점을 탭해 보세요<br><span style="font-weight:600;color:#3b4767;">🌗 실제 시각 기준 낮과 밤이 표시돼요</span></div>
+        <div id="mGlobe" style="width:100%;height:min(92vw, 420px);margin-top:4px;"></div>
+        <div style="position:absolute;right:2px;bottom:34px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none;animation:romiFloat 3.6s ease-in-out infinite;">
+          <div style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.66rem;font-weight:800;padding:7px 11px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 16px rgba(249,115,22,0.45);">궁금한 나라를 콕! 🌏</div>
+          <img src="images/fox-hello.png" alt="로미" style="width:72px;filter:drop-shadow(0 8px 18px rgba(249,115,22,0.35));" onerror="this.parentNode.style.display='none'">
+        </div>
+        <div style="text-align:center;font-size:0.68rem;font-weight:700;color:#475569;">👆 돌려보고, 국가 점을 탭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져요</span></div>
       </div>
     </section>
 
@@ -1537,7 +1543,7 @@
   <!-- JavaScript imports -->
   <script src="products.js?v=20260709" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
-  <script src="globe.js?v=20260712" defer></script>
+  <script src="globe.js?v=20260713" defer></script>
   
   <script>
 

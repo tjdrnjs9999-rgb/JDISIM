@@ -9,7 +9,7 @@
 (function () {
   'use strict';
   // 배포 버전 확인용 (개발자도구 콘솔에서 확인 가능)
-  try { console.log('%cJDISIM GLOBE v3 — 입체 지구 + 대륙 점묘 + 실시간 낮/밤 + 대기권', 'color:#f97316;font-weight:bold'); } catch (e) {}
+  try { console.log('%cJDISIM GLOBE v4 — NASA 위성 실사 지구 + 실시간 밤 도시불빛 + 구름 + 대기권', 'color:#f97316;font-weight:bold'); } catch (e) {}
 
   var THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
@@ -153,60 +153,121 @@
 
     var R = 1;
 
-    // --- 불투명 내부 구체: 지구 뒷면의 점·아크를 가려 입체감 부여 ---
-    var core = new T.Mesh(
-      new T.SphereGeometry(R * 0.985, 48, 48),
-      new T.MeshBasicMaterial({ color: 0x0c1226 })
-    );
-    globe.add(core);
-
-    // --- 실제 대륙 점묘 + 실시간 낮/밤 음영 ---
+    // ===== 실사 지구: NASA 위성 텍스처 (낮 컬러 + 밤 도시불빛 + 구름) =====
     var sun = subsolarPoint();
     var sunV = latLngToVec3(T, sun.lat, sun.lng, 1).normalize();
-    var sample = mobile ? 6500 : 10500; // 육지(약 30%)만 남김
-    var landPos = [], landCol = [];
-    var golden = Math.PI * (3 - Math.sqrt(5));
-    var cDay = new T.Color(0xb8c7ff);   // 낮: 밝은 페리윙클
-    var cNight = new T.Color(0x222b4d); // 밤: 어두운 네이비
-    for (var i = 0; i < sample; i++) {
-      var y = 1 - (i / (sample - 1)) * 2;
-      var rad = Math.sqrt(1 - y * y);
-      var th = golden * i;
-      var vx = Math.cos(th) * rad, vz = Math.sin(th) * rad;
-      var lat = 90 - Math.acos(y) * 180 / Math.PI;
-      var lng = Math.atan2(vz, -vx) * 180 / Math.PI - 180;
-      if (lng < -180) lng += 360;
-      if (!isLand(lat, lng)) continue;
-      landPos.push(vx * R * 1.002, y * R * 1.002, vz * R * 1.002);
-      // 태양 방향과의 내적 → 새벽/황혼 부드러운 전환
-      var d = vx * sunV.x + y * sunV.y + vz * sunV.z;
-      var tt = Math.max(0, Math.min(1, (d + 0.12) / 0.24));
-      tt = tt * tt * (3 - 2 * tt); // smoothstep
-      var c = cNight.clone().lerp(cDay, tt);
-      landCol.push(c.r, c.g, c.b);
+    var cloudMesh = null;
+
+    function buildTexturedEarth(dayT, nightT, cloudT) {
+      if (renderer.capabilities && renderer.capabilities.getMaxAnisotropy) {
+        dayT.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+      }
+      var earth = new T.Mesh(
+        new T.SphereGeometry(R, 64, 64),
+        new T.ShaderMaterial({
+          uniforms: {
+            dayMap: { value: dayT },
+            nightMap: { value: nightT },
+            sunDir: { value: sunV }
+          },
+          vertexShader: [
+            'varying vec3 vDir; varying vec2 vUv;',
+            'void main() {',
+            '  vDir = normalize(position);', // 지리 좌표계(오브젝트 공간) 노멀 — 자전과 무관하게 태양 고정
+            '  vUv = uv;',
+            '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+            '}'
+          ].join('\n'),
+          fragmentShader: [
+            'uniform sampler2D dayMap; uniform sampler2D nightMap; uniform vec3 sunDir;',
+            'varying vec3 vDir; varying vec2 vUv;',
+            'void main() {',
+            '  float l = dot(vDir, sunDir);',
+            '  float t = smoothstep(-0.08, 0.25, l);', // 새벽/황혼 부드러운 경계
+            '  vec3 day = texture2D(dayMap, vUv).rgb;',
+            '  vec3 lights = texture2D(nightMap, vUv).rgb;',
+            '  vec3 nightSide = lights * vec3(1.0, 0.86, 0.62) * 1.7 + day * 0.06;', // 도시 불빛 + 희미한 지형
+            '  vec3 daySide = day * (0.42 + 0.72 * max(l, 0.0));',
+            '  gl_FragColor = vec4(mix(nightSide, daySide, t), 1.0);',
+            '}'
+          ].join('\n')
+        })
+      );
+      globe.add(earth);
+      if (cloudT) {
+        cloudMesh = new T.Mesh(
+          new T.SphereGeometry(R * 1.012, 48, 48),
+          new T.MeshBasicMaterial({ map: cloudT, transparent: true, opacity: 0.32, depthWrite: false })
+        );
+        globe.add(cloudMesh);
+      }
+      try { console.log('%cGLOBE: 실사 지구 모드 (위성 텍스처 로드 성공)', 'color:#22c55e'); } catch (e) {}
     }
-    var dotGeo = new T.BufferGeometry();
-    dotGeo.setAttribute('position', new T.BufferAttribute(new Float32Array(landPos), 3));
-    dotGeo.setAttribute('color', new T.BufferAttribute(new Float32Array(landCol), 3));
-    var dots = new T.Points(dotGeo, new T.PointsMaterial({
-      vertexColors: true, size: mobile ? 0.015 : 0.016, transparent: true, opacity: 1, sizeAttenuation: true
-    }));
-    globe.add(dots);
+
+    // 텍스처 로드 실패 시 폴백: 대륙 점묘 지구
+    function buildDottedEarth() {
+      try { console.log('%cGLOBE: 텍스처 로드 실패 → 점묘 지구 폴백 (earth-*.jpg/png 업로드 확인 필요)', 'color:#f59e0b'); } catch (e) {}
+      var core = new T.Mesh(
+        new T.SphereGeometry(R * 0.985, 48, 48),
+        new T.MeshBasicMaterial({ color: 0x0c1226 })
+      );
+      globe.add(core);
+      var sample = mobile ? 6500 : 10500;
+      var landPos = [], landCol = [];
+      var golden = Math.PI * (3 - Math.sqrt(5));
+      var cDay = new T.Color(0xb8c7ff), cNight = new T.Color(0x222b4d);
+      for (var i = 0; i < sample; i++) {
+        var y = 1 - (i / (sample - 1)) * 2;
+        var rad = Math.sqrt(1 - y * y);
+        var th = golden * i;
+        var vx = Math.cos(th) * rad, vz = Math.sin(th) * rad;
+        var lat = 90 - Math.acos(y) * 180 / Math.PI;
+        var lng = Math.atan2(vz, -vx) * 180 / Math.PI - 180;
+        if (lng < -180) lng += 360;
+        if (!isLand(lat, lng)) continue;
+        landPos.push(vx * R * 1.002, y * R * 1.002, vz * R * 1.002);
+        var d = vx * sunV.x + y * sunV.y + vz * sunV.z;
+        var tt = Math.max(0, Math.min(1, (d + 0.12) / 0.24));
+        tt = tt * tt * (3 - 2 * tt);
+        var c = cNight.clone().lerp(cDay, tt);
+        landCol.push(c.r, c.g, c.b);
+      }
+      var dotGeo = new T.BufferGeometry();
+      dotGeo.setAttribute('position', new T.BufferAttribute(new Float32Array(landPos), 3));
+      dotGeo.setAttribute('color', new T.BufferAttribute(new Float32Array(landCol), 3));
+      globe.add(new T.Points(dotGeo, new T.PointsMaterial({
+        vertexColors: true, size: mobile ? 0.015 : 0.016, transparent: true, opacity: 1, sizeAttenuation: true
+      })));
+    }
+
+    // 텍스처 로드 (같은 폴더의 earth-day.jpg / earth-night.png / earth-clouds.png)
+    var texBase = opts.texPath || '';
+    var loader = new T.TextureLoader();
+    var texs = {}, pendingCore = 2, coreFailed = false;
+    function coreDone() {
+      pendingCore--;
+      if (pendingCore > 0) return;
+      if (coreFailed) buildDottedEarth();
+      else buildTexturedEarth(texs.day, texs.night, texs.cloud || null);
+    }
+    loader.load(texBase + 'earth-clouds.png', function (t) { texs.cloud = t; }, undefined, function () { texs.cloud = null; });
+    loader.load(texBase + 'earth-day.jpg', function (t) { texs.day = t; coreDone(); }, undefined, function () { coreFailed = true; coreDone(); });
+    loader.load(texBase + 'earth-night.png', function (t) { texs.night = t; coreDone(); }, undefined, function () { coreFailed = true; coreDone(); });
 
     // --- 대기권 글로우 (프레넬 셰이더, 뒷면 렌더) ---
     var atmo = new T.Mesh(
-      new T.SphereGeometry(R * 1.14, 48, 48),
+      new T.SphereGeometry(R * 1.15, 48, 48),
       new T.ShaderMaterial({
         transparent: true,
         blending: T.AdditiveBlending,
         side: T.BackSide,
         depthWrite: false,
-        uniforms: { glowColor: { value: new T.Color(0x5b6cf0) } },
+        uniforms: { glowColor: { value: new T.Color(0x4d7dff) } },
         vertexShader: 'varying vec3 vN; varying vec3 vP; void main(){ vN = normalize(normalMatrix * normal); vP = (modelViewMatrix * vec4(position,1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
         fragmentShader: 'uniform vec3 glowColor; varying vec3 vN; varying vec3 vP; void main(){ float f = pow(max(0.0, 0.72 - dot(vN, normalize(-vP))), 3.5); gl_FragColor = vec4(glowColor, clamp(f, 0.0, 0.85)); }'
       })
     );
-    scene.add(atmo); // 회전과 무관하게 카메라 기준 글로우
+    scene.add(atmo);
 
     // --- 마커 ---
     var texDest = dotTexture(T, 'rgba(249,115,22,1)', 'rgba(249,115,22,0.35)');
@@ -216,7 +277,7 @@
       var sp = new T.Sprite(new T.SpriteMaterial({
         map: isOrigin ? texSeoul : texDest, transparent: true, depthWrite: false
       }));
-      var v = latLngToVec3(T, item.lat, item.lng, R * 1.01);
+      var v = latLngToVec3(T, item.lat, item.lng, R * 1.02);
       sp.position.copy(v);
       var base = isOrigin ? (mobile ? 0.085 : 0.09) : (mobile ? 0.052 : 0.056);
       sp.scale.set(base, base, 1);
@@ -229,7 +290,7 @@
     DEST.forEach(function (d) { addMarker(d, false); });
 
     // --- 연결 아크 (서울 → 목적지, 순환 애니메이션) ---
-    var seoulV = latLngToVec3(T, ORIGIN.lat, ORIGIN.lng, R * 1.01);
+    var seoulV = latLngToVec3(T, ORIGIN.lat, ORIGIN.lng, R * 1.02);
     var ARC_SEG = 72;
     var concurrent = mobile ? 5 : 8;
     var arcs = [];
@@ -259,7 +320,7 @@
     }
     function resetArc(arc) {
       arc.idx = (arc.idx + concurrent) % destOrder.length;
-      var endV = latLngToVec3(T, destOrder[arc.idx].lat, destOrder[arc.idx].lng, R * 1.01);
+      var endV = latLngToVec3(T, destOrder[arc.idx].lat, destOrder[arc.idx].lng, R * 1.02);
       arc.line.geometry.dispose();
       arc.line.geometry = makeArcGeo(endV);
       arc.line.geometry.setDrawRange(0, 0);
@@ -354,6 +415,7 @@
         globe.rotation.y += autoSpeed + vel;
         vel *= 0.95;
       }
+      if (cloudMesh && !reduced) cloudMesh.rotation.y += 0.00035; // 구름은 지구보다 살짝 빠르게
       if (!reduced) {
         markers.forEach(function (m) {
           var s = m.userData.base * (1 + Math.sin(t * 2.2 + m.userData.phase) * 0.18);
