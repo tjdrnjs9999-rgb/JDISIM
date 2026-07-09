@@ -9,7 +9,7 @@
 (function () {
   'use strict';
   // 배포 버전 확인용 (개발자도구 콘솔에서 확인 가능)
-  try { console.log('%cJDISIM GLOBE v5 — NASA 위성 실사 지구 (카메라 초기화 버그 수정)', 'color:#f97316;font-weight:bold'); } catch (e) {}
+  try { console.log('%cJDISIM GLOBE v6 — 실사 지구 + 자가 진단 + CSS 폴백', 'color:#f97316;font-weight:bold'); } catch (e) {}
 
   var THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
@@ -97,12 +97,27 @@
     return tex;
   }
 
-  function loadThree(cb) {
+  // 최후 방어선: three.js 로드 실패/WebGL 불가 시에도 빈 화면 대신 CSS 회전 지구 표시
+  function cssFallback(host, texPath, reason) {
+    try {
+      console.warn('GLOBE 폴백(CSS 2D):', reason);
+      var size = Math.min(host.clientWidth || 300, host.clientHeight || 300) * 0.86;
+      host.innerHTML = '<div style="width:' + size + 'px;height:' + size + 'px;margin:0 auto;border-radius:50%;overflow:hidden;box-shadow:0 0 60px rgba(77,125,255,0.35), inset -28px -18px 50px rgba(0,0,0,0.55);background-image:url(' + (texPath || '') + 'earth-day.jpg);background-size:auto 100%;animation:jdEarthSpin 24s linear infinite;"></div>';
+      if (!document.getElementById('jdEarthSpinKf')) {
+        var st = document.createElement('style');
+        st.id = 'jdEarthSpinKf';
+        st.textContent = '@keyframes jdEarthSpin{from{background-position:0 0}to{background-position:-200% 0}} @media (prefers-reduced-motion: reduce){[style*="jdEarthSpin"]{animation:none !important}}';
+        document.head.appendChild(st);
+      }
+    } catch (e) { console.error('GLOBE 폴백 실패:', e); }
+  }
+
+  function loadThree(cb, onFail) {
     if (window.THREE) return cb();
     var sc = document.createElement('script');
     sc.src = THREE_CDN;
     sc.onload = cb;
-    sc.onerror = function () { /* 로드 실패 시 조용히 포기 */ };
+    sc.onerror = function () { if (onFail) onFail('three.js CDN 로드 실패'); };
     document.head.appendChild(sc);
   }
 
@@ -115,7 +130,10 @@
     var started = false;
     function boot() {
       if (started) return; started = true;
-      loadThree(function () { try { build(host, opts); } catch (e) { console.error('globe error', e); } });
+      loadThree(function () {
+        try { build(host, opts); }
+        catch (e) { console.error('globe build error:', e); cssFallback(host, opts.texPath, 'WebGL 초기화 실패: ' + e.message); }
+      }, function (reason) { cssFallback(host, opts.texPath, reason); });
     }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
@@ -136,7 +154,7 @@
     var renderer;
     try {
       renderer = new T.WebGLRenderer({ antialias: true, alpha: true });
-    } catch (e) { return; } // WebGL 미지원 → 지구본 없이 섹션 유지
+    } catch (e) { cssFallback(host, opts.texPath, 'WebGL 미지원'); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.7 : 2));
     renderer.setSize(W, H);
     renderer.domElement.style.display = 'block';
@@ -470,5 +488,5 @@
     });
   }
 
-  window.JDISIM_GLOBE = { mount: mount };
+  window.JDISIM_GLOBE = { mount: mount, version: 'v6' };
 })();

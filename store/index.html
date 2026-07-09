@@ -1199,9 +1199,35 @@
   <script src="products.js?v=20260708"></script>
   <script src="reviews_data.js?v=20260708"></script>
   <script src="app.js?v=20260708"></script>
-  <script src="globe.js?v=20260716" defer></script>
+  <script src="globe.js?v=20260718" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
+      var GLOBE_HOST_ID = 'pcGlobe';
+      // 지구본 자가 진단: 주소 끝에 #globedebug 를 붙이고 새로고침하면 상태 카드 표시
+      if (location.hash.indexOf('globedebug') !== -1) {
+        setTimeout(function () {
+          var host = document.getElementById(GLOBE_HOST_ID);
+          var lines = [];
+          lines.push('globe.js: ' + (window.JDISIM_GLOBE ? '로드됨 (' + (window.JDISIM_GLOBE.version || '구버전') + ')' : '❌ 로드 안 됨 — 파일 404 또는 캐시'));
+          lines.push('three.js: ' + (window.THREE ? '로드됨 (r' + window.THREE.REVISION + ')' : '❌ 로드 안 됨 — CDN 차단 가능성'));
+          try {
+            var c = document.createElement('canvas');
+            lines.push('WebGL: ' + ((c.getContext('webgl') || c.getContext('experimental-webgl')) ? '지원' : '❌ 미지원'));
+          } catch (e) { lines.push('WebGL: ❌ 오류'); }
+          ['earth-day.jpg', 'earth-night.png', 'earth-clouds.png'].forEach(function (f) {
+            var im = new Image();
+            im.onload = function () { box.innerHTML += '<div>images/' + f + ': 있음 (' + im.naturalWidth + 'px)</div>'; };
+            im.onerror = function () { box.innerHTML += '<div>images/' + f + ': ❌ 404</div>'; };
+            im.src = 'images/' + f + '?d=' + Date.now();
+          });
+          var box = document.createElement('div');
+          box.style.cssText = 'position:fixed;left:10px;bottom:80px;z-index:999999;background:rgba(15,23,42,0.95);color:#4ade80;font-size:12px;font-weight:700;padding:14px 16px;border-radius:12px;line-height:1.8;max-width:320px;font-family:monospace;';
+          box.innerHTML = '<div style="color:#f97316;margin-bottom:4px;">🌏 지구본 진단</div>' + lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
+          document.body.appendChild(box);
+        }, 2500);
+      }
+
+      if (!window.JDISIM_GLOBE) { console.error('❌ globe.js가 로드되지 않았습니다 — 서버에 파일이 있는지, 캐시를 지웠는지 확인'); }
       if (window.JDISIM_GLOBE) {
         JDISIM_GLOBE.mount('pcGlobe', {
           mobile: false,
