@@ -8,6 +8,8 @@
    ===================================================================== */
 (function () {
   'use strict';
+  // 배포 버전 확인용 (개발자도구 콘솔에서 확인 가능)
+  try { console.log('%cJDISIM GLOBE v2 — 대륙 점묘 + 실시간 낮/밤 + 대기권', 'color:#f97316;font-weight:bold'); } catch (e) {}
 
   var THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
@@ -157,8 +159,8 @@
     var sample = mobile ? 6500 : 10500; // 육지(약 30%)만 남김
     var landPos = [], landCol = [];
     var golden = Math.PI * (3 - Math.sqrt(5));
-    var cDay = new T.Color(0x9db0ea);   // 낮: 밝은 페리윙클
-    var cNight = new T.Color(0x323e66); // 밤: 어두운 네이비
+    var cDay = new T.Color(0xb8c7ff);   // 낮: 밝은 페리윙클
+    var cNight = new T.Color(0x222b4d); // 밤: 어두운 네이비
     for (var i = 0; i < sample; i++) {
       var y = 1 - (i / (sample - 1)) * 2;
       var rad = Math.sqrt(1 - y * y);
@@ -180,7 +182,7 @@
     dotGeo.setAttribute('position', new T.BufferAttribute(new Float32Array(landPos), 3));
     dotGeo.setAttribute('color', new T.BufferAttribute(new Float32Array(landCol), 3));
     var dots = new T.Points(dotGeo, new T.PointsMaterial({
-      vertexColors: true, size: mobile ? 0.0135 : 0.0145, transparent: true, opacity: 0.95, sizeAttenuation: true
+      vertexColors: true, size: mobile ? 0.015 : 0.016, transparent: true, opacity: 1, sizeAttenuation: true
     }));
     globe.add(dots);
 

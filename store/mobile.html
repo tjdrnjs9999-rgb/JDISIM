@@ -1503,7 +1503,7 @@
   <!-- JavaScript imports -->
   <script src="products.js?v=20260709" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
-  <script src="globe.js?v=20260710" defer></script>
+  <script src="globe.js?v=20260711" defer></script>
   
   <script>
 
@@ -1595,6 +1595,11 @@
     })();
 
     let suppressHistory = false;
+    // 도매 원본 통신사명의 군더더기 제거: "(1티어 로밍망)", "(현지 로컬망)", "(실속 로밍망)" 등
+    function cleanCarrier(n) {
+      return String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지|실속)[^)]*\)/g, '').trim();
+    }
+
     function switchNav(targetView) {
       // 홈에서만 스냅 스크롤 활성화
       document.documentElement.classList.toggle('home-snap', targetView === 'home');
@@ -1754,10 +1759,10 @@
               <span class="product-country-tag">HOT 추천</span>
               <span style="font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
             </div>
-            <h4 class="product-title">${countryName} ${carrierName.split(' ')[0]} 요금제</h4>
+            <h4 class="product-title">${countryName} ${cleanCarrier(carrierName).split(' ')[0]} 요금제</h4>
             <div class="product-carrier-badge">
               <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
-              <span>${carrierName}</span>
+              <span>${cleanCarrier(carrierName)}</span>
             </div>
           </div>
           <div class="product-price-section">
@@ -1861,9 +1866,10 @@
         const netArr = [...entry.nets];
         const netLabel = netArr.join('·');
         const onlyLocal = netArr.length === 1 && netArr[0] === '로컬망';
-        const carrierLine = entry.carriers.length > 2
-          ? `${entry.carriers.slice(0, 2).join(' · ')} 외 ${entry.carriers.length - 2}곳`
-          : entry.carriers.join(' · ');
+        const cleaned = entry.carriers.map(cleanCarrier);
+        const carrierLine = cleaned.length > 2
+          ? `${cleaned.slice(0, 2).join(' · ')} 외 ${cleaned.length - 2}곳`
+          : cleaned.join(' · ');
 
         const card = document.createElement('div');
         card.className = 'store-card';
@@ -1977,10 +1983,9 @@
       const select = document.getElementById('carrierSelect');
       if (!select) return;
       
-      const cleanName = n => String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
       // 통신사명이 같아도 망 종류·플랜 구성이 다른 그룹을 구분할 수 있도록 인덱스로 선택
       select.innerHTML = carrierOptions.map((co, i) => {
-        const label = cleanName(co.carrier) + (co.network_type ? ` · ${co.network_type}` : '');
+        const label = cleanCarrier(co.carrier) + (co.network_type ? ` · ${co.network_type}` : '');
         return `<option value="${i}" data-name="${co.carrier}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${co === activeCarrier ? 'selected' : ''}>${label}</option>`;
       }).join('');
       
@@ -2210,7 +2215,7 @@
           <h3 style="margin:0 0 14px;font-size:1.05rem;font-weight:800;">🧾 구매 전 최종 확인</h3>
           <div style="background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.25);border-radius:14px;padding:14px;margin-bottom:14px;">
             <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">선택하신 상품 스펙</div>
-            <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${activeCarrier.carrier}</div>
+            <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
             <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.74rem;color:#475569;">
               <div>📶 통신망: <strong>${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}</strong></div>
