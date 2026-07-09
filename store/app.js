@@ -912,6 +912,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   window.cleanCarrierName = cleanCarrierName;
 
+  // 통신사 칸에 통신사가 아닌 값(국가명·커버리지)이 든 경우 분류
+  function carrierDisplay(country, carrier) {
+    const n = cleanCarrierName(carrier);
+    const countrySet = new Set((window.PRODUCTS_DATA || []).map(p => p.country));
+    if (!n || n === '-') return { label: '현지 통신사 자동 연결', coverage: false, none: true };
+    if (/\d+\s*개국$/.test(n)) return { label: '🌍 ' + n + ' 커버', coverage: true, none: true };
+    if (n === '복수국가' || n === '홍콩 마카오' || n === country || countrySet.has(n)) {
+      return { label: '현지 통신사 자동 연결', coverage: false, none: true };
+    }
+    return { label: n, coverage: false, none: false };
+  }
+  window.carrierDisplay = carrierDisplay;
+
   function enhanceOptionSelects(scope) {
     const KIND = { carrierSelect: 'cards', planTypeSelect: 'seg', capacitySelect: 'pills', durationSelect: 'pills', daysSelect: 'pills' };
     scope.querySelectorAll('select').forEach(sel => {
@@ -940,7 +953,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           // 통신사명 + 망종류/속도 배지 (data 속성 우선, 없으면 텍스트 정리)
           const net = opt.getAttribute('data-net') || '';
           const speed = opt.getAttribute('data-speed') || '';
-          const label = cleanCarrierName(opt.getAttribute('data-name') || opt.textContent);
+          const cd = carrierDisplay(opt.getAttribute('data-country') || '', opt.getAttribute('data-name') || opt.textContent);
+          const label = cd.label;
           const netClass = net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming';
           const subHTML = (net || speed)
             ? '<span class="opt-sub">' + (net ? '<em class="opt-net ' + netClass + '">' + net + '</em>' : '') + (speed ? '<em class="opt-speed">' + speed + '</em>' : '') + '</span>'
@@ -1046,16 +1060,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="modal-category">${p.category}</div>
           <h2 class="modal-title">
             ${p.country} eSIM 
-            <span class="card-carrier" style="font-size:0.95rem; padding: 4px 12px; margin-top:2px;">${window.cleanCarrierName(p.carrier)}</span>
+            ${window.carrierDisplay(p.country, p.carrier).none ? '' : `<span class="card-carrier" style="font-size:0.95rem; padding: 4px 12px; margin-top:2px;">${window.cleanCarrierName(p.carrier)}</span>`}
           </h2>
         </div>
         
-        <!-- 1. 통신사 및 네트워크망 선택-->
+        <!-- 1. 통신사 · 커버리지 선택-->
         <div class="config-group">
-          <div class="config-section-title">1. 통신사 및 네트워크망 선택</div>
+          <div class="config-section-title">1. 통신사 · 커버리지 선택</div>
           <select id="carrierSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
             ${carrierOptions.map(co => `
-              <option value="${co.carrier}" data-name="${co.carrier}" data-net="${co.network_type}" data-speed="${co.network_speed}" ${co.carrier === p.carrier ? 'selected' : ''}>
+              <option value="${co.carrier}" data-name="${co.carrier}" data-country="${p.country}" data-net="${co.network_type}" data-speed="${co.network_speed}" ${co.carrier === p.carrier ? 'selected' : ''}>
                 ${window.cleanCarrierName(co.carrier)} (${co.network_type} · ${co.network_speed})
               </option>
             `).join('')}

@@ -1174,7 +1174,7 @@
 
     <!-- 1. Carrier -->
     <div id="carrierSection" style="margin-bottom: 12px;">
-      <div class="option-group-title">1. 통신사 선택</div>
+      <div class="option-group-title">1. 통신사 · 커버리지</div>
       <select id="carrierSelect" class="tracker-input" onchange="onCarrierChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
     </div>
@@ -1303,7 +1303,7 @@
           if (kind === 'cards') {
             const net = opt.getAttribute('data-net') || '';
             const speed = opt.getAttribute('data-speed') || '';
-            const label = (opt.getAttribute('data-name') || opt.textContent).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
+            const label = carrierDisplay(opt.getAttribute('data-country') || '', opt.getAttribute('data-name') || opt.textContent).label;
             const netClass = net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming';
             const subHTML = (net || speed)
               ? '<span class="opt-sub">' + (net ? '<em class="opt-net ' + netClass + '">' + net + '</em>' : '') + (speed ? '<em class="opt-speed">' + speed + '</em>' : '') + '</span>'
@@ -1430,6 +1430,18 @@
     }
 
     // Country flags helper
+    // 통신사 칸에 통신사가 아닌 값(국가명·커버리지)이 든 경우 분류
+    function carrierDisplay(country, carrier) {
+      const n = String(carrier).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
+      const countrySet = new Set((window.PRODUCTS_DATA || []).map(p => p.country));
+      if (!n || n === '-') return { label: '현지 통신사 자동 연결', none: true };
+      if (/\d+\s*개국$/.test(n)) return { label: '🌍 ' + n + ' 커버', none: true };
+      if (n === '복수국가' || n === '홍콩 마카오' || n === country || countrySet.has(n)) {
+        return { label: '현지 통신사 자동 연결', none: true };
+      }
+      return { label: n, none: false };
+    }
+
     const flagMap = {
       "일본": "japan.jpg", "베트남": "vietnam.jpg", "태국": "thailand.jpg",
       "대만": "taiwan.jpg", "미국": "usa.jpg", "하와이": "usa.jpg",
@@ -1618,7 +1630,7 @@
             row.onclick = () => openBottomSheet(c, carrierName);
             row.innerHTML = `
               <div class="cg-item-main">
-                <div class="cg-item-name">${cleanName(carrierName)}</div>
+                <div class="cg-item-name">${carrierDisplay(c, carrierName).label}</div>
                 <div class="cg-item-badges">
                   <em class="opt-net ${net === '로컬망' ? 'opt-net-local' : 'opt-net-roaming'}">${net}</em>
                   ${group.network_speed ? '<em class="opt-speed">' + group.network_speed + '</em>' : ''}
@@ -1701,7 +1713,7 @@
       const cleanName = n => String(n).replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '').trim();
       select.innerHTML = carriers.map(c => {
         const co = carrierOptions.find(o => o.carrier === c) || {};
-        return `<option value="${c}" data-name="${c}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${c === selectedCarrier ? 'selected' : ''}>${cleanName(c)}</option>`;
+        return `<option value="${c}" data-name="${c}" data-country="${currentSelectedCountry}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${c === selectedCarrier ? 'selected' : ''}>${carrierDisplay(currentSelectedCountry, c).label}</option>`;
       }).join('');
       
       if (carriers.length <= 1) {
