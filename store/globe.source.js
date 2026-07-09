@@ -9,7 +9,7 @@
 (function () {
   'use strict';
   // 배포 버전 확인용 (개발자도구 콘솔에서 확인 가능)
-  try { console.log('%cJDISIM GLOBE v4 — NASA 위성 실사 지구 + 실시간 밤 도시불빛 + 구름 + 대기권', 'color:#f97316;font-weight:bold'); } catch (e) {}
+  try { console.log('%cJDISIM GLOBE v5 — NASA 위성 실사 지구 (카메라 초기화 버그 수정)', 'color:#f97316;font-weight:bold'); } catch (e) {}
 
   var THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
@@ -130,6 +130,7 @@
     if (!T) return;
     var mobile = !!opts.mobile;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var camZFinal = mobile ? 3.15 : 2.95;
 
     var W = host.clientWidth, H = host.clientHeight || (mobile ? 340 : 560);
     var renderer;
@@ -151,7 +152,6 @@
     // ★ 시네마틱 등장: 우주 저편에서 다가오며 착지 → 아크 연쇄 발사
     var introT = reduced ? 1 : 0;       // 0→1 진행도 (모션 최소화 설정 시 즉시 완료)
     var introStarted = false;
-    var camZFinal = mobile ? 3.15 : 2.95;
     if (!reduced) {
       globe.scale.setScalar(0.4);
       host.style.opacity = '0';
