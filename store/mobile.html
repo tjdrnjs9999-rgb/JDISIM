@@ -1563,8 +1563,10 @@
           const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
           if (!validPlans.length) return;
           const minPrice = Math.min(...validPlans.map(p => p.final_price));
-          const minPerDay = Math.min(...validPlans.map(p => Math.round(p.final_price / (parseInt(p.duration) || 1))));
-          passed.push({ group, countryName, carrierName, minPrice, minPerDay });
+          const durations = validPlans.map(p => parseInt(p.duration) || 1);
+          const minDur = Math.min(...durations);
+          const maxDur = Math.max(...durations);
+          passed.push({ group, countryName, carrierName, minPrice, minDur, maxDur, planCount: validPlans.length });
         });
 
         // 2. 국가별 묶기
@@ -1592,7 +1594,7 @@
         countries.forEach((c, idx) => {
           const items = byCountry.get(c).sort((a, b) => a.minPrice - b.minPrice);
           const gMin = Math.min(...items.map(i => i.minPrice));
-          const gDay = Math.min(...items.map(i => i.minPerDay));
+          const gPlans = items.reduce((s, i) => s + i.planCount, 0);
           const flagSrc = `images/${flagMap[c] || 'global.jpg'}`;
 
           const sec = document.createElement('div');
@@ -1602,14 +1604,14 @@
               <img src="${flagSrc}" class="cg-flag" alt="${c}" onerror="this.style.display='none'">
               <div class="cg-info">
                 <div class="cg-name">${c} <span class="cg-count">통신사 ${items.length}</span></div>
-                <div class="cg-sub">최저 <strong>${gMin.toLocaleString()}원</strong> · 하루 ${gDay.toLocaleString()}원꼴~</div>
+                <div class="cg-sub">최저 <strong>${gMin.toLocaleString()}원</strong>부터 · 요금제 ${gPlans}종</div>
               </div>
               <span class="cg-arr">⌄</span>
             </button>
             <div class="cg-body"><div class="cg-body-in"></div></div>`;
 
           const bodyIn = sec.querySelector('.cg-body-in');
-          items.forEach(({ group, carrierName, minPrice, minPerDay }) => {
+          items.forEach(({ group, carrierName, minPrice, minDur, maxDur, planCount }) => {
             const net = group.network_type || '로밍망';
             const row = document.createElement('div');
             row.className = 'cg-item';
@@ -1624,7 +1626,7 @@
               </div>
               <div class="cg-item-price">
                 <strong>${minPrice.toLocaleString()}원~</strong>
-                <span>하루 ${minPerDay.toLocaleString()}원~</span>
+                <span>${minDur === maxDur ? minDur + '일' : minDur + '~' + maxDur + '일'} · ${planCount}개 플랜</span>
               </div>
               <span class="cg-item-go">›</span>`;
             bodyIn.appendChild(row);
