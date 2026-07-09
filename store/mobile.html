@@ -3,19 +3,8 @@
 <head>
   <script>
     window.onerror = function(msg, url, lineNo, columnNo, error) {
-      var div = document.createElement('div');
-      div.style.position = 'fixed';
-      div.style.top = '0';
-      div.style.left = '0';
-      div.style.width = '100%';
-      div.style.background = 'red';
-      div.style.color = 'white';
-      div.style.zIndex = '100000';
-      div.style.padding = '10px';
-      div.style.fontSize = '12px';
-      div.style.wordBreak = 'break-all';
-      div.innerHTML = '🚨 ERROR: ' + msg + '<br>Line: ' + lineNo;
-      document.body.appendChild(div);
+      // 운영 모드: 방문자 화면에 에러를 띄우지 않고 콘솔에만 기록
+      try { console.error('JDISIM error:', msg, 'line', lineNo); } catch (e) {}
       return false;
     };
     console.log("Diagnostic script loaded");
@@ -634,6 +623,40 @@
       animation: skShimmer 1.3s infinite linear;
     }
     @keyframes skShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+    /* 지구본 섹션: 별똥별 */
+    .shooting-star {
+      position: absolute;
+      width: 130px; height: 1.5px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
+      border-radius: 2px;
+      opacity: 0;
+      transform: rotate(-32deg);
+      animation: shoot 9s linear infinite;
+      pointer-events: none;
+    }
+    .shooting-star.s2 { animation-delay: 4.7s; animation-duration: 11s; }
+    @keyframes shoot {
+      0%, 88% { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
+      89% { opacity: 1; }
+      94% { opacity: 0; transform: translate(-340px, 210px) rotate(-32deg); }
+      100% { opacity: 0; }
+    }
+    /* 주요 CTA: 은은한 광택 흐름 */
+    .cta-sheen { position: relative; overflow: hidden; }
+    .cta-sheen::after {
+      content: '';
+      position: absolute; top: 0; left: -80%;
+      width: 55%; height: 100%;
+      background: linear-gradient(105deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-20deg);
+      animation: sheen 4.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes sheen { 0%, 55% { left: -80%; } 75%, 100% { left: 130%; } }
+    @media (prefers-reduced-motion: reduce) {
+      .shooting-star, .cta-sheen::after { animation: none !important; opacity: 0 !important; }
+    }
     @keyframes romiFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     @media (prefers-reduced-motion: reduce) { [style*="romiFloat"] { animation: none !important; } }
 
@@ -1134,7 +1157,7 @@
         <h1 class="m-hero-title">전 세계 150개국,<br>닿는 순간 <em>연결</em>됩니다</h1>
         <p class="m-hero-sub">유심 교체도, 공항 대기도 없이.<br>QR 스캔 한 번으로 현지 로컬망에 다이렉트.</p>
         <div class="m-hero-ctas">
-          <button class="m-hero-cta-primary" onclick="switchNav('store')">eSIM 스토어 입장하기 →</button>
+          <button class="m-hero-cta-primary cta-sheen" onclick="switchNav('store')">eSIM 스토어 입장하기 →</button>
           <button class="m-hero-cta-ghost" onclick="scrollToRomi()">🦊 로미에게 3초 추천받기</button>
         </div>
         <div class="m-hero-stats">
@@ -1152,6 +1175,8 @@
     <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
     <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(140% 90% at 50% 30%, #16204a 0%, #0b1020 60%, #070b18 100%);overflow:hidden;padding:40px 20px;">
       <div style="position:absolute;inset:0;background-image:radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0, transparent 100%),radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.4) 0, transparent 100%),radial-gradient(1.5px 1.5px at 85% 70%, rgba(255,255,255,0.3) 0, transparent 100%),radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.35) 0, transparent 100%);"></div>
+      <span class="shooting-star" style="top:10%;right:6%;"></span>
+      <span class="shooting-star s2" style="top:26%;right:40%;"></span>
       <div style="position:relative;text-align:center;">
         <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#FB923C;">LIVE CONNECTED WORLD</span>
         <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#fff;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
@@ -1419,7 +1444,7 @@
         <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">반드시 기기 설정에서 [데이터 로밍 ON]이 활성화되어 있는지 확인해 주세요. 로컬 회선 설정 완료에 1~3분 정도 시간이 걸릴 수 있습니다.</p>
       </div>
 
-      <a href="http://pf.kakao.com/_xxxxxx" target="_blank" class="order-action-btn" style="text-align: center; text-decoration: none; display: block; box-sizing: border-box;">
+      <a href="http://pf.kakao.com/_xxxxxx" target="_blank" class="order-action-btn cta-sheen" style="text-align: center; text-decoration: none; display: block; box-sizing: border-box;">
         💬 카카오톡 1:1 실시간 문의하기
       </a>
       <div style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
@@ -1543,7 +1568,7 @@
   <!-- JavaScript imports -->
   <script src="products.js?v=20260709" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
-  <script src="globe.js?v=20260714" defer></script>
+  <script src="globe.js?v=20260715" defer></script>
   
   <script>
 
@@ -2783,5 +2808,27 @@
   <a href="http://pf.kakao.com/_xxxxxx" target="_blank" rel="noopener" class="kakao-float-btn" aria-label="카카오톡 1:1 상담">
     <span class="kf-icon">💬</span> 카톡 상담
   </a>
+  <script>
+    // ===== 콘텐츠 보호 (우클릭/단축키/드래그 억제 — 완전 차단은 아님) =====
+    (function () {
+      document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+      document.addEventListener('keydown', function (e) {
+        var k = (e.key || '').toUpperCase();
+        if (k === 'F12' ||
+            (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C')) ||
+            (e.metaKey && e.altKey && (k === 'I' || k === 'J' || k === 'C')) ||
+            ((e.ctrlKey || e.metaKey) && (k === 'U' || k === 'S'))) {
+          e.preventDefault();
+        }
+      });
+      document.addEventListener('dragstart', function (e) {
+        if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+      });
+      try {
+        console.log('%c⚠️ 잠깐!', 'color:#F97316;font-size:28px;font-weight:900;');
+        console.log('%c본 사이트의 코드·디자인·데이터는 JDISIM의 자산입니다.\n무단 복제 및 크롤링은 저작권법에 따라 법적 책임이 따를 수 있습니다.', 'font-size:13px;color:#334155;');
+      } catch (e) {}
+    })();
+  </script>
 </body>
 </html>
