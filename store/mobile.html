@@ -68,6 +68,9 @@
   <meta property="og:url" content="https://jdisim.co.kr">
   <meta name="twitter:card" content="summary">
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
+  <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260708">
   <link rel="stylesheet" href="premium.css?v=20260708">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -805,6 +808,7 @@
     .rv.rv-in { opacity: 1; transform: none; }
     @media (prefers-reduced-motion: reduce) { .rv { opacity: 1 !important; transform: none !important; transition: none !important; } }
     @keyframes romiFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes agreeShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 50% { transform: translateX(7px); } 75% { transform: translateX(-4px); } }
     @media (prefers-reduced-motion: reduce) { [style*="romiFloat"] { animation: none !important; } }
 
     .store-card-btn {
@@ -1722,6 +1726,8 @@
   </div>
 
   <!-- JavaScript imports -->
+  <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
+  <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="products-lite.js?v=20260710" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="globe.js?v=20260719" defer></script>
@@ -2219,6 +2225,16 @@
       if (board && board.offsetParent !== null) renderDepartureBoard();
     }, 3200);
 
+    function showAgreeToast() {
+      if (document.getElementById('agreeToast')) return;
+      const t = document.createElement('div');
+      t.id = 'agreeToast';
+      t.textContent = '✅ 약관 동의에 체크해 주세요';
+      t.style.cssText = 'position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:rgba(239,68,68,0.95);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 20px;border-radius:24px;z-index:1000000;box-shadow:0 8px 20px rgba(239,68,68,0.35);';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2200);
+    }
+
     function showDataLoadingToast() {
       if (document.getElementById('dataToast')) return;
       const t = document.createElement('div');
@@ -2402,7 +2418,9 @@
       const yt = gb * 1;          // 유튜브 HD ≈ 1GB/시간
       const insta = gb * 1.4;     // 인스타·릴스 ≈ 0.7GB/시간
       const fmt = h => h >= 10 ? Math.round(h) + '시간' : (Math.round(h * 10) / 10) + '시간';
-      box.innerHTML = `💡 <strong>${prefix} ${val}</strong>이면 이 정도예요<br>📺 유튜브 약 ${fmt(yt)} · 📸 인스타 약 ${fmt(insta)} · 🗺️ 지도·카톡은 부담 없이`;
+      const chip = t => `<span style="display:inline-block;white-space:nowrap;background:#fff;border:1px solid rgba(249,115,22,0.25);border-radius:20px;padding:3px 10px;margin:3px 4px 0 0;">${t}</span>`;
+      box.innerHTML = `<div style="margin-bottom:2px;">💡 <strong style="white-space:nowrap;">${prefix} ${val}</strong>이면 이 정도예요</div>`
+        + chip(`📺 유튜브 약 ${fmt(yt)}`) + chip(`📸 인스타 약 ${fmt(insta)}`) + chip('🗺️ 지도·카톡 부담없이');
       box.style.display = 'block';
     }
 
@@ -2553,9 +2571,9 @@
       layer.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:99999;display:flex;align-items:flex-end;';
       layer.innerHTML = `
         <div style="background:#fff;width:100%;border-radius:24px 24px 0 0;padding:24px 20px 28px;max-height:82vh;overflow-y:auto;">
-          <h3 style="margin:0 0 14px;font-size:1.05rem;font-weight:800;">🧾 구매 전 최종 확인</h3>
-          <div style="background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.25);border-radius:14px;padding:14px;margin-bottom:14px;">
-            <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">선택하신 상품 스펙</div>
+          <h3 style="margin:0 0 14px;font-size:1.05rem;font-weight:800;">🎫 발권 전 최종 확인</h3>
+          <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.3);border-radius:16px;padding:14px 14px 12px;margin-bottom:14px;box-shadow:0 8px 24px rgba(242,117,31,0.1);position:relative;">
+            <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">여행 티켓 · 선택하신 상품</div>
             <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
             <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.74rem;color:#475569;">
@@ -2567,8 +2585,9 @@
               <div style="grid-column:1/-1;">📅 유효기간: <strong>${activeCarrier.validity || '-'}</strong></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
-              <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;">${priceVal.toLocaleString()}원</span>
+              <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;font-size:1.05rem;">${priceVal.toLocaleString()}원</span>
             </div>
+            <div style="height:15px;margin-top:11px;border-radius:2px;opacity:0.8;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
           </div>
           <div style="font-size:0.8rem;color:#334155;line-height:1.65;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:14px;">
             <div style="font-weight:800;margin-bottom:6px;color:#0f172a;">⚠️ 필수 주의사항</div>
@@ -2599,9 +2618,9 @@
               · 세부 사항은 각 결제대행사 표준 이용약관을 따릅니다
             </div>
           </div>
-          <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;cursor:pointer;">
-            <input type="checkbox" id="mobileAgreeCheck" style="width:19px;height:19px;accent-color:#F2751F;">
-            <span style="font-size:0.85rem;font-weight:700;color:#0f172a;">주문 내용을 확인하였으며, 약관 및 결제에 동의합니다</span>
+          <label id="mobileAgreeBox" style="display:flex;align-items:center;gap:11px;margin-bottom:16px;cursor:pointer;padding:13px 14px;background:rgba(242,117,31,0.06);border:1.5px solid rgba(242,117,31,0.35);border-radius:14px;transition:all 0.2s;">
+            <input type="checkbox" id="mobileAgreeCheck" style="width:21px;height:21px;accent-color:#F2751F;flex-shrink:0;">
+            <span style="font-size:0.84rem;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고, 이용약관 및 결제에 동의합니다 <span style="color:#F2751F;">(필수)</span></span>
           </label>
           <div style="display:flex;gap:10px;">
             <button onclick="document.getElementById('mobileConfirmLayer').remove()" style="flex:1;padding:15px;border-radius:14px;border:1px solid #e2e8f0;background:#f1f5f9;font-weight:800;color:#334155;">취소</button>
@@ -2611,11 +2630,26 @@
       document.body.appendChild(layer);
       const check = layer.querySelector('#mobileAgreeCheck');
       const payBtn = layer.querySelector('#mobileConfirmPayBtn');
+      const agreeBox = layer.querySelector('#mobileAgreeBox');
       check.addEventListener('change', () => {
         payBtn.disabled = !check.checked;
         payBtn.style.opacity = check.checked ? '1' : '0.5';
+        agreeBox.style.borderColor = check.checked ? '#22c55e' : 'rgba(242,117,31,0.35)';
+        agreeBox.style.background = check.checked ? 'rgba(34,197,94,0.07)' : 'rgba(242,117,31,0.06)';
+      });
+      // 미체크 상태에서 결제 버튼 영역을 눌러도 명확히 안내 (버튼이 disabled여도 부모에서 감지)
+      payBtn.parentElement.addEventListener('click', (e) => {
+        if (!payBtn.disabled) return;
+        if (e.target === payBtn || payBtn.contains(e.target)) {
+          agreeBox.style.animation = 'none';
+          void agreeBox.offsetWidth; // 리플로우로 애니메이션 재시작
+          agreeBox.style.animation = 'agreeShake 0.4s ease';
+          agreeBox.style.borderColor = '#ef4444';
+          showAgreeToast();
+        }
       });
       payBtn.addEventListener('click', () => {
+        if (payBtn.disabled) return;
         layer.remove();
         proceedMockCheckout();
       });
@@ -2725,6 +2759,9 @@
           }
         });
       } else if (window.IMP) {
+        if (PORTONE_MERCHANT_ID && !window.__impInited) {
+          try { window.IMP.init(PORTONE_MERCHANT_ID); window.__impInited = true; } catch (e) { console.error('IMP init 실패', e); }
+        }
         const confirmPay = confirm(`🔗 [안전 결제 테스트 모드]\n\n상품: ${paymentName}\n결제 금액: ${priceVal.toLocaleString()}원\n\n결제를 진행할까요?`);
         if (!confirmPay) return;
 
@@ -2746,7 +2783,8 @@
           }
         });
       } else {
-        submitRealOrder();
+        // 결제 SDK가 없으면 주문을 만들지 않고 명확히 안내 (무결제 주문 방지)
+        alert('결제 모듈을 불러오지 못했어요.\n네트워크 확인 후 새로고침하고 다시 시도해 주세요.');
       }
     }
 
