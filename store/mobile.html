@@ -657,6 +657,11 @@
     @media (prefers-reduced-motion: reduce) {
       .shooting-star, .cta-sheen::after { animation: none !important; opacity: 0 !important; }
     }
+
+    /* ===== 전역 스크롤 리빌: 모든 섹션이 안무처럼 떠오르는 연출 ===== */
+    .rv { opacity: 0; transform: translateY(34px); transition: opacity 0.75s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+    .rv.rv-in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .rv { opacity: 1 !important; transform: none !important; transition: none !important; } }
     @keyframes romiFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     @media (prefers-reduced-motion: reduce) { [style*="romiFloat"] { animation: none !important; } }
 
@@ -2595,6 +2600,32 @@
           switchNav(initView);
           suppressHistory = false;
         }
+
+    // ===== 전역 스크롤 리빌 시스템 =====
+    (function () {
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (!('IntersectionObserver' in window)) return;
+      function armReveal(selector) {
+        var els = document.querySelectorAll(selector);
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('rv-in'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+        els.forEach(function (el, i) {
+          el.classList.add('rv');
+          el.style.transitionDelay = (Math.min(i % 4, 3) * 70) + 'ms';
+          io.observe(el);
+        });
+      }
+      window.__armReveal = armReveal;
+    })();
+
+        // 스냅 구간 이후 콘텐츠(인기상품·리뷰·가이드) 리빌
+        if (window.__armReveal) {
+          window.__armReveal('#view-home .snap-tail > *, #view-home .snap-tail section > div');
+        }
+
         // 시그니처 3D 지구본: 국가 탭 → 해당 국가 옵션 시트 바로 열기
         if (window.JDISIM_GLOBE) {
           JDISIM_GLOBE.mount('mGlobe', {
