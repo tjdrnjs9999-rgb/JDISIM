@@ -19,6 +19,22 @@
       return false;
     };
     console.log("Diagnostic script loaded");
+
+    // ===== 로딩 가드: products.js(대용량) 로딩 중 버튼을 탭해도 에러 없이 동작하도록 =====
+    // 메인 스크립트가 아직 실행되지 않았을 때의 호출을 큐에 저장했다가, 로딩 완료 후 실행합니다.
+    (function () {
+      window.__earlyCalls = [];
+      var stubs = ['switchNav', 'openBottomSheet', 'closeBottomSheet', 'goToStoreSearch',
+        'closeModal', 'openDeviceCheck', 'quickSelectCountry', 'romiOpenPlan', 'scrollToRomi',
+        'searchOrders', 'toggleFaqAccordion', 'changeQty', 'processMockCheckout', 'onCarrierChange'];
+      stubs.forEach(function (fn) {
+        if (!window[fn]) {
+          window[fn] = function () {
+            window.__earlyCalls.push([fn, Array.prototype.slice.call(arguments)]);
+          };
+        }
+      });
+    })();
   </script>
 
   <meta name="impact-site-verification" value="aacb94f9-36f7-40f0-a6f3-76e5515e0401">
@@ -507,6 +523,86 @@
       font-weight: 700;
       color: #4f46e5;
     }
+    .trust-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0 4px;
+      padding: 9px 12px;
+      background: linear-gradient(135deg, rgba(242,117,31,0.06), rgba(245,158,11,0.06));
+      border: 1px solid rgba(242,117,31,0.16);
+      border-radius: 14px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #b45309;
+      white-space: nowrap;
+    }
+    .trust-strip i {
+      width: 1px; height: 10px;
+      background: rgba(180, 83, 9, 0.25);
+    }
+    .recent-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 2px;
+    }
+    .recent-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #94a3b8;
+      flex-shrink: 0;
+    }
+    .recent-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .recent-chips::-webkit-scrollbar { display: none; }
+    .recent-chip {
+      flex-shrink: 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+    }
+    .store-best-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.58rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #F97316, #F59E0B);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+    }
+    /* 데이터 로딩 중 스켈레톤 카드 */
+    .store-skel {
+      background: #fff;
+      border: 1px solid #eef2f7;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .store-skel .sk-media { aspect-ratio: 4/3; }
+    .store-skel .sk-line { height: 12px; border-radius: 6px; margin: 10px 12px 0; }
+    .store-skel .sk-line.short { width: 55%; }
+    .store-skel .sk-line:last-child { margin-bottom: 14px; height: 30px; border-radius: 10px; }
+    .store-skel .sk-media, .store-skel .sk-line {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e8edf3 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: skShimmer 1.3s infinite linear;
+    }
+    @keyframes skShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
     .store-card-btn {
       margin-top: 8px;
       width: 100%;
@@ -1019,6 +1115,21 @@
       <div class="m-hero-scroll-cue">⌄</div>
     </section>
 
+    <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
+    <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(140% 90% at 50% 30%, #16204a 0%, #0b1020 60%, #070b18 100%);overflow:hidden;padding:40px 20px;">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0, transparent 100%),radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.4) 0, transparent 100%),radial-gradient(1.5px 1.5px at 85% 70%, rgba(255,255,255,0.3) 0, transparent 100%),radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.35) 0, transparent 100%);"></div>
+      <div style="position:relative;text-align:center;">
+        <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#818cf8;">LIVE CONNECTED WORLD</span>
+        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#fff;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#f97316,#f59e0b,#818cf8);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
+        <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#94a3b8;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#f97316;">직접 탭</strong>하면 요금제가 바로 열려요</p>
+      </div>
+      <div style="position:relative;">
+        <div style="position:absolute;inset:-6%;background:radial-gradient(circle at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 65%);pointer-events:none;"></div>
+        <div id="mGlobe" style="width:100%;height:340px;margin-top:8px;"></div>
+        <div style="text-align:center;font-size:0.68rem;font-weight:700;color:#475569;">👆 돌려보고, 국가 점을 탭해 보세요<br><span style="font-weight:600;color:#3b4767;">🌗 실제 시각 기준 낮과 밤이 표시돼요</span></div>
+      </div>
+    </section>
+
     <!-- 국가 바로가기 칩 (가로 스크롤) -->
     <!-- WHY 01: 속도 -->
     <section class="snap-panel why-panel why-1" data-num="01">
@@ -1208,6 +1319,17 @@
       <input type="text" id="storeSearchInput" class="search-input" placeholder="국가명, 통신사명으로 검색...">
     </div>
 
+    <!-- 구매 보장 신뢰 스트립 -->
+    <div class="trust-strip">
+      <span>⚡ 평균 1분 QR 발송</span><i></i><span>🛡️ 미개통 100% 환불</span><i></i><span>💬 24시간 카톡 상담</span>
+    </div>
+
+    <!-- 최근 본 국가 -->
+    <div class="recent-row" id="recentRow" style="display:none;">
+      <span class="recent-label">최근 본</span>
+      <div class="recent-chips" id="recentChips"></div>
+    </div>
+
     <!-- Category Scroller -->
     <div class="category-scroller" id="categoryScroller">
       <div class="category-tab active" data-country="all">전체보기</div>
@@ -1345,6 +1467,18 @@
       <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
     </div>
 
+    <!-- 구매 여정 3단계 & 보장 -->
+    <div style="margin-top:18px;padding:12px 14px;background:linear-gradient(135deg,rgba(242,117,31,0.05),rgba(245,158,11,0.05));border:1px solid rgba(242,117,31,0.15);border-radius:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.68rem;font-weight:800;color:#0f172a;text-align:center;">
+        <span style="flex:1;">💳<br>결제 완료</span>
+        <span style="color:#F2751F;font-weight:900;">→</span>
+        <span style="flex:1.2;">⚡<br>평균 1분 내<br>QR 발송</span>
+        <span style="color:#F2751F;font-weight:900;">→</span>
+        <span style="flex:1;">📶<br>현지 도착 시<br>자동 개통</span>
+      </div>
+      <div style="margin-top:9px;padding-top:9px;border-top:1px dashed rgba(242,117,31,0.25);font-size:0.68rem;font-weight:700;color:#b45309;text-align:center;">🛡️ 미개통 시 100% 환불 · 💬 24시간 카카오톡 상담</div>
+    </div>
+
     <button class="order-action-btn" onclick="processMockCheckout()">🛒 즉시 결제 완료 및 개통하기</button>
     <a id="smartstoreAltBtn" href="#" target="_blank" rel="noopener" class="smartstore-alt-btn" style="display:none;">🟢 네이버 스마트스토어에서 구매하기</a>
   </div>
@@ -1367,8 +1501,9 @@
   </div>
 
   <!-- JavaScript imports -->
-  <script src="products.js?v=20260708"></script>
-  <script src="reviews_data.js?v=20260708"></script>
+  <script src="products.js?v=20260709" defer></script>
+  <script src="reviews_data.js?v=20260709" defer></script>
+  <script src="globe.js?v=20260710" defer></script>
   
   <script>
 
@@ -1660,74 +1795,96 @@
     function renderStoreProducts(countryFilter = 'all', searchQuery = '') {
       try {
       const listContainer = document.getElementById('storeProductList');
-      if (!listContainer || !window.PRODUCTS_DATA) return;
+      if (!listContainer) return;
 
+      // 데이터 로딩 전이면 스켈레톤 표시 (로딩 완료 시 onload에서 다시 렌더됨)
+      if (!window.PRODUCTS_DATA) {
+        listContainer.innerHTML = Array.from({ length: 6 }).map(() => `
+          <div class="store-skel">
+            <div class="sk-media"></div>
+            <div class="sk-line"></div>
+            <div class="sk-line short"></div>
+            <div class="sk-line"></div>
+          </div>`).join('');
+        return;
+      }
+
+      renderRecentChips();
       listContainer.innerHTML = '';
       const lowercaseQuery = searchQuery.toLowerCase().trim();
+      const BEST_COUNTRIES = ['일본', '베트남', '태국', '대만', '미국'];
 
+      // 같은 나라 상품을 하나로 묶기 (PC와 동일한 방식)
+      const countryMap = new Map();
       window.PRODUCTS_DATA.forEach(group => {
-        const countryName = group.country;
-        const carrierName = group.carrier;
-        const categoryName = group.category;
-        const networkType = group.network_type || '로밍망';
+        const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
+        if (validPlans.length === 0) return;
+        let entry = countryMap.get(group.country);
+        if (!entry) {
+          entry = { country: group.country, category: group.category || '', carriers: [], nets: new Set(), speeds: new Set(), planCount: 0, minPrice: Infinity, minPerDay: Infinity };
+          countryMap.set(group.country, entry);
+        }
+        if (!entry.carriers.includes(group.carrier)) entry.carriers.push(group.carrier);
+        entry.nets.add(group.network_type || '로밍망');
+        entry.speeds.add(group.network_speed || '5G/LTE');
+        entry.planCount += validPlans.length;
+        validPlans.forEach(p => {
+          if (p.final_price < entry.minPrice) entry.minPrice = p.final_price;
+          const perDay = Math.round(p.final_price / (parseInt(p.duration) || 1));
+          if (perDay < entry.minPerDay) entry.minPerDay = perDay;
+        });
+      });
 
-        // Apply Country Tab filter
+      countryMap.forEach(entry => {
+        const countryName = entry.country;
+
+        // 국가 탭 필터
         let matchFilter = false;
         if (countryFilter === 'all') {
           matchFilter = true;
         } else if (countryFilter === countryName) {
           matchFilter = true;
-        } else if (countryFilter === '유럽' && (categoryName.includes('유럽') || countryName.includes('유럽'))) {
+        } else if (countryFilter === '유럽' && (entry.category.includes('유럽') || countryName.includes('유럽'))) {
           matchFilter = true;
         } else if (countryFilter === '미국' && (countryName.includes('미국') || countryName.includes('하와이'))) {
           matchFilter = true;
         }
-
         if (!matchFilter) return;
 
-        // Apply search query
-        const matchesSearch = countryName.toLowerCase().includes(lowercaseQuery) || 
-                              carrierName.toLowerCase().includes(lowercaseQuery) ||
-                              categoryName.toLowerCase().includes(lowercaseQuery);
-        
+        // 검색: 국가명, 카테고리, 소속 통신사 전체에서 매칭
+        const matchesSearch = countryName.toLowerCase().includes(lowercaseQuery) ||
+                              entry.category.toLowerCase().includes(lowercaseQuery) ||
+                              entry.carriers.some(c => c.toLowerCase().includes(lowercaseQuery));
         if (searchQuery && !matchesSearch) return;
 
-        // Find min price
-        if (!group.plans || group.plans.length === 0) return;
-        const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
-        if (validPlans.length === 0) return;
-        const minPrice = Math.min(...validPlans.map(p => p.final_price));
-        const minPerDay = Math.min(...validPlans.map(p => Math.round(p.final_price / (parseInt(p.duration) || 1))));
-
         const flagSrc = `images/${flagMap[countryName] || 'global.jpg'}`;
-
-        // Network Type Badge Styling
-        let networkBadgeStyle = '';
-        if (networkType === '로컬망') {
-          networkBadgeStyle = `background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.16); color: #16a34a;`;
-        } else {
-          networkBadgeStyle = `background: rgba(79, 70, 229, 0.06); border: 1px solid rgba(79, 70, 229, 0.12); color: #4f46e5;`;
-        }
+        const netArr = [...entry.nets];
+        const netLabel = netArr.join('·');
+        const onlyLocal = netArr.length === 1 && netArr[0] === '로컬망';
+        const carrierLine = entry.carriers.length > 2
+          ? `${entry.carriers.slice(0, 2).join(' · ')} 외 ${entry.carriers.length - 2}곳`
+          : entry.carriers.join(' · ');
 
         const card = document.createElement('div');
         card.className = 'store-card';
         card.style.animationDelay = `${(listContainer.children.length % 8) * 45}ms`;
-        card.onclick = () => openBottomSheet(countryName, carrierName);
+        card.onclick = () => openBottomSheet(countryName);
         card.innerHTML = `
           <div class="store-card-media">
             <img src="${flagSrc}" class="store-card-img" loading="lazy" alt="${countryName}">
             <div class="store-card-scrim"></div>
-            <span class="store-net-badge${networkType === '로컬망' ? ' local' : ''}">${networkType}</span>
+            <span class="store-net-badge${onlyLocal ? ' local' : ''}">${netLabel}</span>
+            ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
             <span class="store-card-country">${countryName} eSIM</span>
           </div>
           <div class="store-card-body">
-            <h4 class="store-card-title">${carrierName}</h4>
-            <div class="store-card-meta">요금제 ${validPlans.length}종 · ${group.network_speed || '5G/LTE'}</div>
+            <h4 class="store-card-title">${carrierLine}</h4>
+            <div class="store-card-meta">통신사 ${entry.carriers.length}곳 · 요금제 ${entry.planCount}종</div>
             <div class="store-card-price-row">
-              <span class="store-card-price">${minPrice.toLocaleString()}원~</span>
-              <span class="store-card-perday">하루 ${minPerDay.toLocaleString()}원꼴</span>
+              <span class="store-card-price">${entry.minPrice.toLocaleString()}원~</span>
+              <span class="store-card-perday">하루 ${entry.minPerDay.toLocaleString()}원꼴</span>
             </div>
-            <button class="store-card-btn" type="button">구매하기</button>
+            <button class="store-card-btn" type="button">상품 보기</button>
           </div>
         `;
         listContainer.appendChild(card);
@@ -1765,8 +1922,30 @@
     };
 
 
+    function saveRecentCountry(countryName) {
+      try {
+        let arr = JSON.parse(localStorage.getItem('jdisim_recent') || '[]');
+        arr = [countryName, ...arr.filter(c => c !== countryName)].slice(0, 6);
+        localStorage.setItem('jdisim_recent', JSON.stringify(arr));
+      } catch (e) { /* 사생활 보호 모드 등에서 무시 */ }
+    }
+
+    function renderRecentChips() {
+      try {
+        const row = document.getElementById('recentRow');
+        const box = document.getElementById('recentChips');
+        if (!row || !box) return;
+        const arr = JSON.parse(localStorage.getItem('jdisim_recent') || '[]')
+          .filter(c => (window.PRODUCTS_DATA || []).some(g => g.country === c));
+        if (!arr.length) { row.style.display = 'none'; return; }
+        row.style.display = 'flex';
+        box.innerHTML = arr.map(c => `<button class="recent-chip" type="button" onclick="openBottomSheet('${c}')">${c}</button>`).join('');
+      } catch (e) { /* 무시 */ }
+    }
+
     function openBottomSheet(countryName, defaultCarrier = '') {
       currentSelectedCountry = countryName;
+      saveRecentCountry(countryName);
       
       carrierOptions = window.PRODUCTS_DATA.filter(g => g.country === countryName);
       if (carrierOptions.length === 0) return;
@@ -1937,6 +2116,72 @@
       }
     }
 
+    // 국가/통신사별 맞춤 주의사항 (PC 버전과 동일한 규칙)
+    function getCustomPrecautions(country, carrier) {
+      const list = [];
+      const nc = String(country).toLowerCase();
+      const nk = String(carrier).toLowerCase();
+
+      if (nc.includes('일본')) {
+        if (nk.includes('소프트뱅크')) list.push("<strong>소프트뱅크 실시간 사용량 조회 불가:</strong> 소프트뱅크망 특성상 실시간 데이터 사용량 조회가 불가하며, 현지 통신사 집계 지연으로 2일 전 누적 사용량 기준으로 지연 반영됩니다.");
+        else if (nk.includes('도코모')) list.push("<strong>도코모 APN 수동 설정:</strong> 자동 연결 실패 시 셀룰러 네트워크 설정에서 APN(spmode.ne.jp)을 수동 등록해야 개통됩니다.");
+      }
+      if (nc.includes('베트남')) {
+        list.push("<strong>베트남 시간 기준 일일 리셋:</strong> 매일 23:00(베트남 시간)에 일일 사용 용량이 자동 리셋됩니다.");
+        list.push("<strong>비엣텔망 수동 고정:</strong> 속도가 느린 Vietnamobile로 자동 연결되는 경우 셀룰러 설정에서 'Viettel'망을 수동 고정해 주세요.");
+        list.push("<strong>ChatGPT 접속 제한 안내:</strong> 본 상품은 홍콩 IP를 경유하므로 ChatGPT 등 일부 해외 서비스 접속이 원활하지 않을 수 있습니다.");
+        list.push("<strong>15일 유효기간 준수:</strong> 발급일로부터 15일 이내에 현지 신호 연결로 최초 활성화해야 정상 작동합니다.");
+      }
+      if (nc.includes('대만')) {
+        list.push("<strong>실명 인증(KYC) 등록 필수:</strong> 대만 통신법에 따라 eSIM 스캔 직후 수신되는 문자 링크로 여권 실명 등록을 완료해야 데이터 차단이 해제됩니다.");
+      }
+      if (nc.includes('미국') || nc.includes('캐나다') || nc.includes('괌') || nc.includes('사이판')) {
+        list.push("<strong>사전 개통 희망일 지정 필수:</strong> 결제 후 전송되는 링크/안내 메일로 <strong>출국 최소 1~2일 전 개통 날짜를 등록</strong>해야 정상 활성화됩니다.");
+        list.push("<strong>단말기 컨트리락 해제 확인:</strong> 컨트리락이 해제된 기기에서만 사용 가능하므로 출국 전 통신사에 락 해제 여부를 확인하세요.");
+      }
+      if (nc.includes('몰디브')) {
+        list.push("<strong>eSIM 프로필 삭제 절대 금지:</strong> 몰디브 디라구(Dhiraagu) 이심은 삭제 시 재등록이 기술적으로 차단됩니다.");
+        list.push("<strong>통화/문자 한도:</strong> 20GB 요금제(통화 150분/문자 150건), 30GB 요금제(통화 300분/문자 300건) 무료 제공");
+        list.push("<strong>번호/사용량 조회:</strong> 다이얼러에서 *2# 입력 후 통화 시 번호 확인, 727 번호로 'myusage' 문자 발송 시 잔량 확인이 가능합니다.");
+      }
+      if (nc.includes('몽골')) {
+        list.push("<strong>통화 및 수신 전용 SMS:</strong> 요금제별 현지 무료 통화(10분~150분) 발신이 제공되며, SMS는 수신만 가능합니다.");
+        list.push("<strong>잔여 데이터 조회:</strong> 다이얼러에서 *1411# 입력 후 통화 버튼을 누르면 문자로 실시간 사용량이 회신됩니다.");
+      }
+      if (nc.includes('유럽')) {
+        list.push("<strong>국경 통과 이동 시 재부팅:</strong> 유럽 다국가 횡단 중 국경에서 신호가 끊기면 기기를 재부팅하면 로컬 로밍 파트너망으로 자동 갱신됩니다.");
+      }
+      if (nc.includes('한국') || nc.includes('대한민국')) {
+        list.push("<strong>QR 스캔 즉시 일수 카운트:</strong> 등록/QR 스캔 즉시 사용 기한이 차감되므로 출국 시나 사용 개시일에 등록해 주세요.");
+      }
+      if (nc.includes('인도')) {
+        list.push("<strong>주(State) 이동 시 재부팅:</strong> 주 경계를 넘으며 망이 불안정해지면 기기 재부팅 또는 비행기 모드를 껐다 켜 주세요.");
+      }
+      if (nc.includes('글로벌') || nc.includes('복수국가') || nc.includes('남미') || nc.includes('중동') || nc.includes('아프리카')) {
+        list.push("<strong>다국가 환승 시 대처법:</strong> 국가 경유 시 5~10초간 비행기 모드를 켰다 끄거나 재부팅하여 파트너 로밍망을 다시 잡아 주세요.");
+      }
+      if (nc.includes('중국') || nc.includes('홍콩') || nc.includes('마카오')) {
+        list.push("<strong>중국 현지 구매 아이폰 사용 불가:</strong> 중국/홍콩/마카오에서 구매한 아이폰은 eSIM 기능이 비활성화되어 사용이 불가합니다.");
+      }
+      if (nk.includes('보다폰') || nk.includes('vodafone')) {
+        list.push("<strong>QR 발송 즉시 사용일 시작 (Vodafone):</strong> QR이 이메일로 <strong>발송되는 순간 개통이 시작</strong>되므로 일정 확인 후 구매해 주세요.");
+        list.push("<strong>eSIM 프로필 삭제 금지:</strong> 삭제 시 재등록이 불가하니 설치 후 절대 지우지 마세요.");
+      }
+      if (nk.includes('오렌지스페인')) {
+        list.push("<strong>개통 예약 신청 필수 (Orange):</strong> 결제란에 <strong>실제 도착 예정일 하루 전날</strong>을 개통일로 기입해 주세요.");
+      }
+      if (nk.includes('오렌지프랑스')) {
+        list.push("<strong>한국 무료 발신 혜택:</strong> 요금제에 따라 한국 발신 통화(30분~120분)와 국제문자(200건~1000건)가 무료 탑재되어 있습니다.");
+        list.push("<strong>번호 및 잔량 조회:</strong> 현지에서 225 다이얼 후 통화 버튼을 누르면 번호와 잔량이 문자로 전송됩니다.");
+        list.push("<strong>500GB 장기 요금제 실명인증:</strong> 90일 상품은 30일 이내 수신 링크로 여권 인증을 완료해야 회선이 유지됩니다.");
+      }
+      if (nk.includes('쓰리') || nk.includes('three')) {
+        list.push("<strong>QR 스캔 즉시 개통 시작 (Three):</strong> QR 등록 순간 개통되므로 출국 직전 또는 현지 공항에서 설치를 권장합니다.");
+        list.push("<strong>eSIM 프로필 삭제 금지:</strong> 임의 삭제 시 복구되지 않습니다.");
+      }
+      return list;
+    }
+
     // [1단계] 결제 버튼 → 스펙 & 주의사항 최종 확인 레이어
     function processMockCheckout() {
       const name = document.getElementById('buyerName').value.trim();
@@ -1967,12 +2212,21 @@
             <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">선택하신 상품 스펙</div>
             <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${activeCarrier.carrier}</div>
             <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.74rem;color:#475569;">
+              <div>📶 통신망: <strong>${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}</strong></div>
+              <div>📞 전화/문자: <strong>${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}</strong></div>
+              <div>📡 핫스팟: <strong>${activeCarrier.hotspot || '-'}</strong></div>
+              <div>🔋 충전/연장: <strong>${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}</strong></div>
+              <div style="grid-column:1/-1;">⏱️ 개통: <strong>${activeCarrier.activation || '-'}</strong></div>
+              <div style="grid-column:1/-1;">📅 유효기간: <strong>${activeCarrier.validity || '-'}</strong></div>
+            </div>
             <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
               <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;">${priceVal.toLocaleString()}원</span>
             </div>
           </div>
           <div style="font-size:0.8rem;color:#334155;line-height:1.65;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:14px;">
             <div style="font-weight:800;margin-bottom:6px;color:#0f172a;">⚠️ 필수 주의사항</div>
+            ${getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).map(p => `• ${p}<br>`).join('')}
             • <strong>기종 확인:</strong> 키패드에 *#06# 입력 시 <strong>EID 번호</strong>가 보여야 사용 가능해요 (중국/홍콩/마카오 구매 아이폰 불가)<br>
             • <strong>단순 변심:</strong> QR코드 발송 후에는 디지털 상품 특성상 취소/환불이 불가해요<br>
             • <strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 카톡 고객센터로 접수 시 미해결 100% 환불 보장
@@ -2270,6 +2524,21 @@
           suppressHistory = true;
           switchNav(initView);
           suppressHistory = false;
+        }
+        // 시그니처 3D 지구본: 국가 탭 → 해당 국가 옵션 시트 바로 열기
+        if (window.JDISIM_GLOBE) {
+          JDISIM_GLOBE.mount('mGlobe', {
+            mobile: true,
+            onCountry: function (country) { openBottomSheet(country); }
+          });
+        }
+
+        // 로딩 중 큐에 쌓인 탭(스텁 호출)을 이제 실제 함수로 실행
+        if (window.__earlyCalls && window.__earlyCalls.length) {
+          const queued = window.__earlyCalls.splice(0);
+          queued.forEach(c => {
+            try { if (typeof window[c[0]] === 'function') window[c[0]].apply(null, c[1]); } catch (err) { console.error(err); }
+          });
         }
       } catch(e) {
         window.onerror(e.message, null, "init");

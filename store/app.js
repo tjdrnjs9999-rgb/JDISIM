@@ -1130,6 +1130,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         
         <div class="modal-cta-zone">
+          <div style="display:flex;justify-content:center;gap:10px;font-size:0.7rem;font-weight:800;color:#b45309;background:linear-gradient(135deg,rgba(242,117,31,0.07),rgba(245,158,11,0.07));border:1px solid rgba(242,117,31,0.18);border-radius:12px;padding:8px 10px;margin-bottom:10px;white-space:nowrap;">
+            <span>⚡ 평균 1분 QR 발송</span><span style="opacity:0.35;">|</span><span>🛡️ 미개통 100% 환불</span><span style="opacity:0.35;">|</span><span>💬 24h 카톡 상담</span>
+          </div>
           <button class="cta-buy" id="buyNowBtn">
             <span class="cta-buy-main">⚡ 즉시 구매하기</span>
             <span class="cta-buy-sub">${finalPriceVal.toLocaleString()}원 · 카카오페이/카드</span>
@@ -2804,6 +2807,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function initPremiumUI() {
     // 1. 국가 해시태그 마퀴 렌더링 (2벌 복제로 무한 스크롤)
+    // 지구본/마퀴 공용: 국가명으로 스토어 이동
+    window.jdisimGoCountry = function (country) {
+      const input = document.getElementById('storeSearchInput');
+      if (input) input.value = country;
+      searchQuery = String(country).toLowerCase();
+      switchView('store');
+      renderGrid();
+    };
+
     const marquee = document.getElementById('countryMarquee');
     if (marquee && productsData.length) {
       const countries = [...new Set(productsData.map(p => p.country))].slice(0, 14);
@@ -2812,11 +2824,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       marquee.addEventListener('click', (e) => {
         const tag = e.target.closest('.marquee-tag');
         if (!tag) return;
-        const input = document.getElementById('storeSearchInput');
-        if (input) input.value = tag.getAttribute('data-country');
-        searchQuery = tag.getAttribute('data-country').toLowerCase();
-        switchView('store');
-        renderGrid();
+        window.jdisimGoCountry(tag.getAttribute('data-country'));
       });
     }
 
