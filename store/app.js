@@ -2613,37 +2613,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderReviews() {
     const reviewTrack = document.getElementById('reviewTrack');
     if (!reviewTrack || !window.REVIEWS_DATA) return;
-    
+
+    // 요약 지표 주입 (평균 평점 · 후기 수)
+    const countEl = document.querySelector('.review-track-count');
+    if (countEl && window.REVIEWS_META) {
+      countEl.innerHTML = '★★★★★ <span class="review-meta-line">' + window.REVIEWS_META.avg.toFixed(1) + ' / 5.0 · 실구매 후기 ' + window.REVIEWS_META.total + '건</span>';
+    }
+
+    const FLAG = { '일본': '🇯🇵', '베트남': '🇻🇳', '태국': '🇹🇭', '대만': '🇹🇼', '미국': '🇺🇸', '중국': '🇨🇳', '유럽': '🇪🇺', '뉴질랜드': '🇳🇿', '인도네시아': '🇮🇩' };
     reviewTrack.innerHTML = '';
     window.REVIEWS_DATA.forEach(rev => {
-      let badgeText = '';
-      let badgeClass = '';
-      if (rev.category === 'price') {
-        badgeText = '💸 저렴한 가격';
-        badgeClass = 'review-badge-green';
-      } else if (rev.category === 'service') {
-        badgeText = '🛡️ 믿음직한 서비스';
-        badgeClass = 'review-badge-blue';
-      } else if (rev.category === 'speed') {
-        badgeText = '⚡ 안정적인 데이터';
-        badgeClass = 'review-badge-purple';
-      } else if (rev.category === 'support') {
-        badgeText = '📞 친절한 고객센터';
-        badgeClass = 'review-badge-orange';
-      }
-      
       const card = document.createElement('div');
-      card.className = 'review-track-card';
-      card.setAttribute('data-category', rev.category);
+      card.className = 'review-track-card rv-card';
+      card.setAttribute('data-category', rev.country);
+      if (rev.photo) card.setAttribute('data-photo', '1');
+      if (rev.best) card.setAttribute('data-best', '1');
+      const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
       card.innerHTML = `
-        <div>
-          <span class="review-card-badge ${badgeClass}">${badgeText}</span>
-          <!-- 임의로 가공/절삭한 제목을 제거하고 고객 원본 본문 그대로 출력 -->
-          <p class="review-card-body" style="margin-top: 14px; font-weight: 600; line-height: 1.6; color: var(--text-main); font-size: 0.95rem;">${rev.body}</p>
+        <div class="rv-top">
+          <span class="rv-stars">${stars}</span>
+          ${rev.best ? '<span class="rv-best">👑 BEST</span>' : ''}
         </div>
-        <div class="review-card-footer" style="margin-top: 20px;">
-          <span class="review-card-author">${rev.author}</span>
-          <span class="review-card-date">${rev.date}</span>
+        <div class="rv-chips">
+          <span class="rv-chip rv-chip-country">${FLAG[rev.country] || '🌏'} ${rev.country}</span>
+          ${rev.type ? '<span class="rv-chip rv-chip-type">⏱ ' + rev.type + '</span>' : ''}
+        </div>
+        ${rev.photo ? '<img class="rv-photo" loading="lazy" src="' + rev.photo + '" alt="구매 후기 사진" onerror="this.remove()">' : ''}
+        <p class="rv-body">${rev.body}</p>
+        <div class="rv-foot">
+          <span class="rv-author">✅ ${rev.author} <em>구매 확정</em></span>
+          <span class="rv-date">${rev.date}</span>
         </div>
       `;
       reviewTrack.appendChild(card);
@@ -2668,12 +2667,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 카드 필터링 처리
         reviewCards.forEach(card => {
-          const category = card.getAttribute('data-category');
-          if (filterVal === 'all' || category === filterVal) {
-            card.style.display = 'flex';
-          } else {
-            card.style.display = 'none';
-          }
+          let show;
+          if (filterVal === 'all') show = true;
+          else if (filterVal === 'photo') show = card.hasAttribute('data-photo');
+          else if (filterVal === 'best') show = card.hasAttribute('data-best');
+          else show = card.getAttribute('data-category') === filterVal;
+          card.style.display = show ? 'flex' : 'none';
         });
       });
     });
