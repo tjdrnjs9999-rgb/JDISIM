@@ -770,7 +770,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="card-specs">
             <div class="card-spec-item">📶 ${speedsStr}</div>
             <div class="card-spec-item">📞 ${callsStr}</div>
-            <div class="card-spec-item">⚡ 1분 개통</div>
+            <div class="card-spec-item">⚡ 즉시 개통</div>
           </div>
           <div class="card-footer">
             <div>
@@ -884,7 +884,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="card-specs">
             <div class="card-spec-item">📶 ${speedsStr}</div>
             <div class="card-spec-item">📞 ${callsStr}</div>
-            <div class="card-spec-item">⚡ 1분 개통</div>
+            <div class="card-spec-item">⚡ 즉시 개통</div>
           </div>
           <div class="card-footer">
             <div>
@@ -1155,7 +1155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         <div class="modal-cta-zone">
           <div style="display:flex;justify-content:center;gap:10px;font-size:0.7rem;font-weight:800;color:#b45309;background:linear-gradient(135deg,rgba(242,117,31,0.07),rgba(245,158,11,0.07));border:1px solid rgba(242,117,31,0.18);border-radius:12px;padding:8px 10px;margin-bottom:10px;white-space:nowrap;">
-            <span>⚡ 평균 1분 QR 발송</span><span style="opacity:0.35;">|</span><span>🛡️ 미개통 100% 환불</span><span style="opacity:0.35;">|</span><span>💬 24h 카톡 상담</span>
+            <span>⚡ 평균 5~15분 QR 발송</span><span style="opacity:0.35;">|</span><span>🛡️ 미개통 100% 환불</span><span style="opacity:0.35;">|</span><span>💬 24h 카톡 상담</span>
           </div>
           <button class="cta-buy" id="buyNowBtn">
             <span class="cta-buy-main">⚡ 즉시 구매하기</span>
@@ -1798,6 +1798,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     .catch(err => console.warn('[플레이오토 웹훅 전송 불가]', err.message));
   }
 
+
+  // 🧳 국가별 여행 준비물 & 알아두면 좋은 이슈 (결제 완료 화면용)
+  const TRAVEL_TIPS = {
+    '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용'] },
+    '베트남': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['모기 기피제', '얇은 긴팔 — 실내 냉방이 강해요', '소액 현금(동) — 시장·로컬 식당용'], issues: ['전자담배 반입·사용 전면 금지(2025년~) — 적발 시 처벌', '이동은 그랩(Grab) 앱이 필수 — 미리 설치하세요'] },
+    '태국': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['자외선 차단제', '사원 방문용 무릎 덮는 하의', '모기 기피제'], issues: ['전자담배 반입·소지 금지 — 벌금·처벌 사례가 많아요', '왕실 관련 언행은 법적 처벌 대상 — 주의'] },
+    '대만': { power: '110V · A타입 (돼지코 어댑터)', items: ['A타입 어댑터', '접이식 우산 — 스콜성 비가 잦아요', '교통은 이지카드 하나로 해결'], issues: ['전자담배 전면 금지(2023년~)', '지하철 안 음식물 섭취 금지 — 벌금'] },
+    '필리핀': { power: '220V · 한국 플러그 대부분 호환', items: ['모기 기피제', '방수팩 — 섬·액티비티용'], issues: ['전자담배는 성인 1인 소량만 반입 가능', '야간 이동 시 소지품 주의'] },
+    '싱가포르': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '얇은 겉옷 — 실내 냉방이 아주 강해요'], issues: ['껌 반입 금지 · 전자담배 소지 벌금', '무단횡단·쓰레기 투기 벌금 — 엄격해요'] },
+    '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
+    '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
+    '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅'] },
+    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 1~2일 전 개통일 등록이 필요해요'] },
+    '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
+    '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
+    '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },
+    '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)'] },
+    '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요'] },
+    '오렌지프랑스': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의 — 특히 지하철·에펠탑 인근'] },
+    '오렌지스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
+    '보다폰스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
+    '쓰리(THREE)': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '우산 또는 방수 자켓'], issues: ['교통은 컨택리스 카드 태그가 가장 편해요'] }
+  };
+
+  function buildTravelTipsHTML(country) {
+    const t = TRAVEL_TIPS[country];
+    const li = arr => arr.map(x => `<div style="display:flex;gap:8px;padding:5px 0;font-size:0.76rem;line-height:1.55;color:#334155;"><span style="flex-shrink:0;width:4.5px;height:4.5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${x}</span></div>`).join('');
+    const box = (title, inner, open) => `
+      <details ${open ? 'open' : ''} style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin-top:9px;overflow:hidden;width:100%;">
+        <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기 ▾</span></summary>
+        <div style="padding:2px 14px 12px;">${inner}</div>
+      </details>`;
+    let html = '';
+    if (t) {
+      html += box(`🧳 ${country} 여행 준비물`,
+        `<div style="font-size:0.72rem;font-weight:800;color:#F2751F;padding:3px 0 4px;">🔌 ${t.power}</div>` + li(t.items), false);
+      if (t.issues && t.issues.length) {
+        html += box(`📌 ${country}, 이건 알고 가세요`, li(t.issues), false);
+      }
+    }
+    html += box('🔋 모든 여행 공통',
+      li(['보조배터리는 위탁수하물 금지 — 반드시 기내 가방에!', '여권 유효기간 6개월 이상 남았는지 확인', 'QR 도착 전 eSIM 지원 기종인지 한 번 더 확인(*#06# → EID)']), false);
+    return html;
+  }
+
   function submitPayment(orderCode, finalPriceVal) {
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
@@ -1963,8 +2008,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     checkoutStepInput.style.display = 'none';
     checkoutStepReceipt.style.display = 'block';
+
+    // 🧳 해당 국가 여행 준비물·이슈 드롭다운 채우기
+    const tipsBox = document.getElementById('receiptTravelTips');
+    if (tipsBox && checkoutItems.length) {
+      const firstCountry = checkoutItems[0].country || (checkoutItems[0].product && checkoutItems[0].product.country) || '';
+      tipsBox.innerHTML = buildTravelTipsHTML(firstCountry);
+    }
     
-    let successMsg = `🎉 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 개통용 QR코드가 즉시 발송되었습니다.`;
+    let successMsg = `🎉 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 개통용 QR코드가 발송돼요. (도착까지 평균 5~15분)`;
     const requiresActivation = checkoutActivationDate.required && checkoutActivationDate.value;
     if (requiresActivation) {
       successMsg = `🎉 예약 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 안내 메일이 발송되었습니다.\n(지정하신 개통일 [${checkoutActivationDate.value}]에 맞춰 현지망 활성화가 순차 진행됩니다.)`;

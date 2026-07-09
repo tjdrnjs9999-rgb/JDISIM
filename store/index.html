@@ -113,8 +113,8 @@
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(15,23,42,0.06); border: 1px solid rgba(15,23,42,0.06); border-radius: 20px; overflow: hidden; box-shadow: 0 14px 40px rgba(15,23,42,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
           <div style="background: rgba(255,255,255,0.92); padding: 20px 16px; text-align: center;">
             <div style="font-size: 1.35rem;">⚡</div>
-            <div style="font-weight: 800; font-size: 0.92rem; color: #0f172a; margin-top: 4px;">평균 1분 QR 발송</div>
-            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">결제 즉시 카톡·문자 자동 전송</div>
+            <div style="font-weight: 800; font-size: 0.92rem; color: #0f172a; margin-top: 4px;">평균 5~15분 QR 발송</div>
+            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">결제 후 카톡·문자 자동 전송</div>
           </div>
           <div style="background: rgba(255,255,255,0.92); padding: 20px 16px; text-align: center;">
             <div style="font-size: 1.35rem;">🛡️</div>
@@ -1068,7 +1068,7 @@
         <div class="receipt-header">
           <div class="success-icon">✓</div>
           <h3 class="checkout-title" style="margin-bottom: 4px;">결제가 완료되었습니다! 🛫</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">입력하신 이메일과 휴대폰 문자로 개통용 QR코드 발송을 마쳤습니다.</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">개통용 QR코드가 이메일·문자로 발송돼요 — 도착까지 평균 <strong style="color: var(--accent);">5~15분</strong>이면 충분합니다.</p>
         </div>
         
         <!-- Dynamic purchased items list with their QR codes -->
@@ -1091,7 +1091,10 @@
           </div>
         </div>
 
-        <button class="action-btn" id="receiptCloseBtn">스토어로 돌아가기</button>
+        <!-- 🧳 국가별 여행 준비물 & 이슈 (접이식) -->
+        <div id="receiptTravelTips" style="margin-top: 16px;"></div>
+
+        <button class="action-btn" id="receiptCloseBtn" style="margin-top: 18px;">스토어로 돌아가기</button>
       </div>
     </div>
   </div>
