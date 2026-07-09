@@ -1414,3 +1414,151 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
   .hero-video-badge, .hero-video-title, .hero-video-sub, .hero-video-buttons,
   .pc-hero-stats, .pc-hero-cue { animation: none !important; }
 }
+
+/* ================= 모바일 스냅 스크롤 홈 (로케비 스타일 + α) ================= */
+html.home-snap { scroll-snap-type: y proximity; }
+.snap-panel { scroll-snap-align: start; scroll-margin-top: 56px; }
+
+/* WHY 풀스크린 패널 공통 */
+.why-panel {
+  position: relative;
+  min-height: calc(100vh - 138px);
+  min-height: calc(100svh - 138px);
+  margin: 18px -16px;
+  padding: 44px 26px;
+  border-radius: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+.why-panel::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 7.5rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  opacity: 0.07;
+  line-height: 1;
+  pointer-events: none;
+}
+.wp-eyebrow {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+  padding: 6px 13px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  width: fit-content;
+}
+.wp-title { font-size: clamp(1.6rem, 7.6vw, 2rem); font-weight: 800; line-height: 1.26; letter-spacing: -0.035em; margin: 0 0 14px; }
+.wp-title em { font-style: normal; }
+.wp-copy { font-size: 0.88rem; line-height: 1.7; font-weight: 500; margin: 0 0 22px; opacity: 0.82; }
+.wp-stat { display: flex; flex-direction: column; gap: 3px; }
+.wp-stat strong { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.wp-stat > span { font-size: 0.74rem; font-weight: 700; opacity: 0.7; }
+.wp-fox {
+  position: absolute;
+  right: -14px;
+  bottom: -10px;
+  width: 158px;
+  filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.28));
+  animation: foxFloat 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 등장 연출 (스냅되면 순차 상승) */
+.why-panel .wp-el { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.why-panel.in-view .wp-el { opacity: 1; transform: translateY(0); }
+.why-panel.in-view .wp-fox { opacity: 1; }
+.wp-d1 { transition-delay: .05s; }
+.wp-d2 { transition-delay: .14s; }
+.wp-d3 { transition-delay: .23s; }
+.wp-d4 { transition-delay: .32s; }
+
+/* 패널별 테마 */
+.why-1 {
+  background:
+    radial-gradient(120% 80% at 85% 100%, rgba(242, 117, 31, 0.28) 0%, transparent 55%),
+    linear-gradient(160deg, #1d1109 0%, #3b2110 60%, #4a2a12 100%);
+  color: #fff;
+}
+.why-1 .wp-eyebrow { background: rgba(255, 170, 90, 0.14); color: #FFB56B; border: 1px solid rgba(255, 170, 90, 0.3); }
+.why-1 .wp-title em, .why-1 .wp-stat strong {
+  background: linear-gradient(120deg, #FFD9A0, #FF9A4D);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.why-2 {
+  background:
+    radial-gradient(110% 70% at 12% 0%, rgba(255, 255, 255, 0.85) 0%, transparent 55%),
+    linear-gradient(165deg, #FFF8F0 0%, #FFE9D2 100%);
+  color: var(--ink-warm);
+  border: 1px solid rgba(242, 117, 31, 0.16);
+}
+.why-2 .wp-eyebrow { background: rgba(242, 117, 31, 0.1); color: var(--accent); border: 1px solid rgba(242, 117, 31, 0.28); }
+.why-2 .wp-title em, .why-2 .wp-stat strong { color: var(--accent); }
+.why-2 .wp-copy { color: var(--text-muted); opacity: 1; }
+.why-3 {
+  background:
+    radial-gradient(120% 80% at 80% 0%, rgba(43, 179, 163, 0.26) 0%, transparent 55%),
+    linear-gradient(160deg, #0b2320 0%, #113f38 65%, #14514a 100%);
+  color: #fff;
+}
+.why-3 .wp-eyebrow { background: rgba(64, 205, 190, 0.14); color: #6FE3D4; border: 1px solid rgba(64, 205, 190, 0.32); }
+.why-3 .wp-title em, .why-3 .wp-stat strong {
+  background: linear-gradient(120deg, #A7F3E9, #40CDBE);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 로미 매칭 풀스크린 패널 */
+.finder-panel {
+  min-height: calc(100vh - 138px);
+  min-height: calc(100svh - 138px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 0;
+}
+.fp-head { text-align: left; margin-bottom: 14px; }
+.fp-head .wp-eyebrow { background: rgba(242, 117, 31, 0.1); color: var(--accent); border: 1px solid rgba(242, 117, 31, 0.28); margin-bottom: 10px; }
+.fp-title { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink-warm); margin: 0; }
+.fp-title em { font-style: normal; color: var(--accent); }
+.finder-panel .romi-finder { margin-bottom: 0; }
+
+/* 우측 진행 인디케이터 */
+.snap-dots {
+  display: none;
+  position: fixed;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 900;
+  flex-direction: column;
+  gap: 9px;
+}
+html.home-snap .snap-dots { display: flex; }
+.snap-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(120, 100, 85, 0.32);
+  padding: 0;
+  cursor: pointer;
+  transition: height .3s cubic-bezier(.22,1,.36,1), background .3s ease;
+}
+.snap-dot.active { height: 22px; background: var(--accent); box-shadow: 0 2px 8px rgba(242, 117, 31, 0.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .why-panel .wp-el { transition: none; opacity: 1; transform: none; }
+  .wp-fox { animation: none; }
+}

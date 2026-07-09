@@ -870,7 +870,7 @@
   <!-- ================= VIEW 1: HOME VIEW ================= -->
     <main id="view-home" class="mobile-view active">
     <!-- 시네마틱 풀스크린 히어로 -->
-    <section class="m-hero">
+    <section class="m-hero snap-panel">
       <video class="m-hero-video" id="mHeroVideo" autoplay muted loop playsinline preload="metadata">
         <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
       </video>
@@ -896,10 +896,43 @@
     </section>
 
     <!-- 국가 바로가기 칩 (가로 스크롤) -->
-    <div class="mobile-marquee" id="mobileCountryChips"></div>
+    <!-- WHY 01: 속도 -->
+    <section class="snap-panel why-panel why-1" data-num="01">
+      <span class="wp-eyebrow wp-el wp-d1">01 · SPEED</span>
+      <h2 class="wp-title wp-el wp-d2">로밍 중계 없이<br><em>현지 로컬망</em> 다이렉트</h2>
+      <p class="wp-copy wp-el wp-d3">한국 서버를 한 바퀴 돌아오는 반쪽짜리 로밍과 달라요.<br>현지 통신사 망에 바로 붙어서 지도도, 유튜브도, 영상통화도 끊김 없이.</p>
+      <div class="wp-stat wp-el wp-d4"><strong><span data-count="150">0</span>+</strong><span>개국 로컬망 커버리지 · 5G/LTE</span></div>
+      <img src="images/fox-phone.png" class="wp-fox wp-el wp-d4" alt="양손에 폰을 든 로미">
+    </section>
 
-    <!-- 로미의 3초 요금제 매칭 (차별화 핵심 기능) -->
-    <div class="romi-finder">
+    <!-- WHY 02: 개통 -->
+    <section class="snap-panel why-panel why-2" data-num="02">
+      <span class="wp-eyebrow wp-el wp-d1">02 · INSTANT</span>
+      <h2 class="wp-title wp-el wp-d2">유심 교체 없이<br>QR 스캔 <em>10초 개통</em></h2>
+      <p class="wp-copy wp-el wp-d3">공항 유심 부스 줄서기, 뾰족한 핀으로 유심 갈아끼우기 — 이제 안 해도 돼요.<br>카톡·메일로 받은 QR을 카메라로 비추면 끝.</p>
+      <div class="wp-stat wp-el wp-d4"><strong><span data-count="10">0</span>초</strong><span>평균 개통 소요 시간</span></div>
+      <img src="images/fox-qr.png" class="wp-fox wp-el wp-d4" alt="QR코드를 든 로미">
+    </section>
+
+    <!-- WHY 03: 케어 -->
+    <section class="snap-panel why-panel why-3" data-num="03">
+      <span class="wp-eyebrow wp-el wp-d1">03 · CARE</span>
+      <h2 class="wp-title wp-el wp-d2">여행 내내 곁에,<br><em>24시간 로미 케어</em></h2>
+      <p class="wp-copy wp-el wp-d3">현지에서 데이터가 안 잡히면 카톡 한 줄만 보내세요.<br>새벽에도 1:1로 잡아드리고, 그래도 안 되면 전액 돌려드립니다.</p>
+      <div class="wp-stat wp-el wp-d4"><strong><span data-count="100">0</span>%</strong><span>미개통 시 환불 보장</span></div>
+      <img src="images/fox-thumbsup.png" class="wp-fox wp-el wp-d4" alt="엄지척 로미">
+    </section>
+
+    <!-- 로미 매칭 (풀스크린 스냅 패널) -->
+    <section class="snap-panel finder-panel">
+      <div class="fp-head">
+        <span class="wp-eyebrow">04 · MATCH</span>
+        <h2 class="fp-title">이 모든 걸, <em>3초</em> 만에 골라드려요</h2>
+      </div>
+      <div class="mobile-marquee" id="mobileCountryChips"></div>
+
+      <!-- 로미의 3초 요금제 매칭 (차별화 핵심 기능) -->
+      <div class="romi-finder">
       <div class="rf-head">
         <img src="images/fox-thinking.png" alt="고민하는 로미" class="rf-fox">
         <div>
@@ -916,7 +949,8 @@
       </div>
       <button class="rf-go" id="rfGoBtn">🦊 로미에게 추천받기</button>
       <div class="rf-results" id="rfResults"></div>
-    </div>
+      </div>
+    </section>
 
     <!-- Search container (click to navigate to store view) -->
     <div class="search-container" onclick="goToStoreSearch()">
@@ -1303,6 +1337,8 @@
 
     let suppressHistory = false;
     function switchNav(targetView) {
+      // 홈에서만 스냅 스크롤 활성화
+      document.documentElement.classList.toggle('home-snap', targetView === 'home');
       // 브라우저 히스토리 기록 (뒤로가기 지원)
       if (!suppressHistory && location.hash !== '#' + targetView) {
         history.pushState({ view: targetView }, '', '#' + targetView);
@@ -2077,6 +2113,7 @@
         renderStoreProducts();
         renderCountryChips();
         initRomiFinder();
+        initSnapExperience();
         if (SMARTSTORE_URL) {
           const sb = document.getElementById('smartstoreAltBtn');
           if (sb) { sb.href = SMARTSTORE_URL; sb.style.display = 'flex'; }
@@ -2156,6 +2193,62 @@
         delay += 160;
       });
     }
+    // ===== 스냅 스크롤 경험: 진행 인디케이터 + 등장 연출 + 카운트업 =====
+    function initSnapExperience() {
+      if (document.querySelector('.snap-dots')) return; // 중복 초기화 방지
+      document.documentElement.classList.add('home-snap');
+      const panels = [...document.querySelectorAll('#view-home .snap-panel')];
+      if (!panels.length) return;
+      // 우측 진행 점 생성
+      const dots = document.createElement('div');
+      dots.className = 'snap-dots';
+      panels.forEach((p) => {
+        const d = document.createElement('button');
+        d.className = 'snap-dot';
+        d.type = 'button';
+        d.addEventListener('click', () => { try { p.scrollIntoView({ behavior: 'smooth' }); } catch (e) {} });
+        dots.appendChild(d);
+      });
+      document.body.appendChild(dots);
+      const dotEls = [...dots.children];
+      if (dotEls[0]) dotEls[0].classList.add('active');
+      // 숫자 카운트업
+      function countUp(el) {
+        if (el.dataset.done) return;
+        el.dataset.done = '1';
+        const target = parseInt(el.getAttribute('data-count')) || 0;
+        if (!window.requestAnimationFrame || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+          el.textContent = target.toLocaleString();
+          return;
+        }
+        const t0 = performance.now();
+        const dur = 1100;
+        (function tick(t) {
+          const k = Math.min(1, (t - t0) / dur);
+          el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3))).toLocaleString();
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      }
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((en) => {
+            if (!en.isIntersecting) return;
+            en.target.classList.add('in-view');
+            en.target.querySelectorAll('[data-count]').forEach(countUp);
+            const idx = panels.indexOf(en.target);
+            dotEls.forEach((d, i) => d.classList.toggle('active', i === idx));
+          });
+        }, { threshold: 0.5 });
+        panels.forEach((p) => io.observe(p));
+      } else {
+        // 미지원 환경: 전부 표시 + 숫자 즉시 채움
+        panels.forEach((p) => {
+          p.classList.add('in-view');
+          p.querySelectorAll('[data-count]').forEach((el) => { el.textContent = parseInt(el.getAttribute('data-count')).toLocaleString(); });
+        });
+      }
+    }
+
     function initRomiFinder() {
       const input = document.getElementById('rfCountry');
       const suggest = document.getElementById('rfSuggest');
