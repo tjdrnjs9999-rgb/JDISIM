@@ -9,7 +9,7 @@
 (function () {
   'use strict';
   // 배포 버전 확인용 (개발자도구 콘솔에서 확인 가능)
-  try { console.log('%cJDISIM GLOBE v2 — 대륙 점묘 + 실시간 낮/밤 + 대기권', 'color:#f97316;font-weight:bold'); } catch (e) {}
+  try { console.log('%cJDISIM GLOBE v3 — 입체 지구 + 대륙 점묘 + 실시간 낮/밤 + 대기권', 'color:#f97316;font-weight:bold'); } catch (e) {}
 
   var THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
@@ -153,6 +153,13 @@
 
     var R = 1;
 
+    // --- 불투명 내부 구체: 지구 뒷면의 점·아크를 가려 입체감 부여 ---
+    var core = new T.Mesh(
+      new T.SphereGeometry(R * 0.985, 48, 48),
+      new T.MeshBasicMaterial({ color: 0x0c1226 })
+    );
+    globe.add(core);
+
     // --- 실제 대륙 점묘 + 실시간 낮/밤 음영 ---
     var sun = subsolarPoint();
     var sunV = latLngToVec3(T, sun.lat, sun.lng, 1).normalize();
@@ -170,7 +177,7 @@
       var lng = Math.atan2(vz, -vx) * 180 / Math.PI - 180;
       if (lng < -180) lng += 360;
       if (!isLand(lat, lng)) continue;
-      landPos.push(vx * R, y * R, vz * R);
+      landPos.push(vx * R * 1.002, y * R * 1.002, vz * R * 1.002);
       // 태양 방향과의 내적 → 새벽/황혼 부드러운 전환
       var d = vx * sunV.x + y * sunV.y + vz * sunV.z;
       var tt = Math.max(0, Math.min(1, (d + 0.12) / 0.24));
@@ -196,7 +203,7 @@
         depthWrite: false,
         uniforms: { glowColor: { value: new T.Color(0x5b6cf0) } },
         vertexShader: 'varying vec3 vN; varying vec3 vP; void main(){ vN = normalize(normalMatrix * normal); vP = (modelViewMatrix * vec4(position,1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-        fragmentShader: 'uniform vec3 glowColor; varying vec3 vN; varying vec3 vP; void main(){ float f = pow(0.72 - dot(vN, normalize(-vP)), 3.5); gl_FragColor = vec4(glowColor, clamp(f, 0.0, 0.85)); }'
+        fragmentShader: 'uniform vec3 glowColor; varying vec3 vN; varying vec3 vP; void main(){ float f = pow(max(0.0, 0.72 - dot(vN, normalize(-vP))), 3.5); gl_FragColor = vec4(glowColor, clamp(f, 0.0, 0.85)); }'
       })
     );
     scene.add(atmo); // 회전과 무관하게 카메라 기준 글로우
