@@ -541,6 +541,17 @@
       font-weight: 700;
       color: #4f46e5;
     }
+    /* 폼 포커스: 브랜드 오렌지 링 */
+    #carrierSelect:focus, #capacitySelect:focus, #daysSelect:focus, #planTypeSelect:focus,
+    .bottom-sheet .tracker-input:focus, #storeSearchInput:focus {
+      border-color: #F97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14) !important;
+    }
+
+    /* 히어로 중앙 하단 스크롤 유도선(세로선) 제거 */
+    .m-hero-scroll-cue { display: none !important; }
+    .m-hero-stats::before, .m-hero-stats::after { display: none !important; content: none !important; }
+
     /* 히어로 스탯: 한 줄 고정 (구분선이 줄바꿈되어 세로선으로 보이던 문제 해결) */
     .m-hero-stats {
       display: flex !important;
@@ -1618,7 +1629,10 @@
   <div class="bottom-sheet-backdrop" id="bottomSheetBackdrop" onclick="closeBottomSheet()"></div>
   <div class="bottom-sheet" id="bottomSheet">
     <div class="bottom-sheet-header">
-      <h3 class="bottom-sheet-title" id="sheetProductTitle">상품 옵션 선택</h3>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img id="sheetFlagImg" src="" alt="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;box-shadow:0 3px 10px rgba(15,23,42,0.15);display:none;">
+        <h3 class="bottom-sheet-title" id="sheetProductTitle" style="margin:0;">상품 옵션 선택</h3>
+      </div>
       <button class="bottom-sheet-close" onclick="closeBottomSheet()">
         <i data-lucide="x" style="width: 18px; height: 18px;"></i>
       </button>
@@ -1643,6 +1657,7 @@
       <div class="option-group-title">3. 데이터 용량 선택</div>
       <select id="capacitySelect" class="tracker-input" onchange="onCapacityChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
+      <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.74rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
     </div>
 
     <!-- 4. Duration -->
@@ -2092,7 +2107,6 @@
           ? `${cleaned.slice(0, 2).join(' · ')} 외 ${cleaned.length - 2}곳`
           : cleaned.join(' · ');
 
-        const destCode = AIRPORT_CODES[countryName] || 'INT';
         const card = document.createElement('div');
         card.className = 'store-card';
         card.style.animationDelay = `${(listContainer.children.length % 8) * 45}ms`;
@@ -2105,12 +2119,7 @@
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
             <span class="store-card-country">${countryName} eSIM</span>
           </div>
-          <div class="bp-label">BOARDING PASS</div>
-          <div class="bp-route">
-            <span>ICN</span>
-            <span class="bp-plane">✈</span>
-            <span>${destCode}</span>
-          </div>
+          <div style="height: 9px;"></div>
           <div class="bp-perf"></div>
           <div class="store-card-body">
             <h4 class="store-card-title">${carrierLine}</h4>
@@ -2189,11 +2198,19 @@
       const row = document.getElementById('mDbRow');
       const board = document.getElementById('mDepBoard');
       if (!row || !board) return;
-      const [flag, name, code] = DB_ROTATION[dbIdx % DB_ROTATION.length];
+      const [flag, name] = DB_ROTATION[dbIdx % DB_ROTATION.length];
       const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // 해당 국가 실시간 최저가
+      let minP = Infinity;
+      (window.PRODUCTS_DATA || []).forEach(g => {
+        if (g.country !== name) return;
+        const p = (g.plans && g.plans.length) ? Math.min(...g.plans.filter(x => typeof x.final_price === 'number').map(x => x.final_price)) : (g.min_price || Infinity);
+        if (p < minP) minP = p;
+      });
+      const priceStr = isFinite(minP) ? `최저 ${minP.toLocaleString()}원~` : '';
       row.innerHTML = `<span class="db-flag">${flag}</span>` +
         name.split('').map((ch, i) => `<span class="db-cell${reduced ? '' : ' flip'}" style="animation-delay:${i * 55}ms">${ch}</span>`).join('') +
-        `<span class="db-code">${code}</span><span class="db-status">● NOW BOARDING</span>`;
+        `<span class="db-code">${priceStr}</span><span class="db-status">● 탑승 중</span>`;
       board.onclick = () => openBottomSheet(name);
       dbIdx++;
     }
@@ -2225,6 +2242,12 @@
       if (carrierOptions.length === 0) return;
 
       document.getElementById('sheetProductTitle').innerText = `${countryName} 데이터 요금제 선택`;
+      const flagEl = document.getElementById('sheetFlagImg');
+      if (flagEl) {
+        flagEl.src = `images/${flagMap[countryName] || 'global.jpg'}`;
+        flagEl.style.display = 'block';
+      }
+      __lastTotal = 0; // 시트 열릴 때 가격이 0부터 촤르륵 올라오게
       
       activeCarrier = carrierOptions.find(co => co.carrier === defaultCarrier) || carrierOptions[0];
       selectedCarrier = activeCarrier.carrier;
@@ -2245,7 +2268,31 @@
       document.body.style.overflow = ''; // 배경 스크롤 복원
     }
 
-    let selectedPlanType = ""; 
+    let selectedPlanType = "";
+    let __lastTotal = 0, __priceRaf = null;
+    function setTotalPriceAnimated(total) {
+      const el = document.getElementById('checkoutTotalPrice');
+      if (!el) return;
+      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced || !window.requestAnimationFrame) {
+        el.innerText = `${total.toLocaleString()}원`;
+        __lastTotal = total;
+        return;
+      }
+      const from = __lastTotal || 0;
+      __lastTotal = total;
+      if (__priceRaf) cancelAnimationFrame(__priceRaf);
+      el.style.transition = 'transform 0.18s ease';
+      el.style.transform = 'scale(1.07)';
+      setTimeout(() => { el.style.transform = 'scale(1)'; }, 190);
+      const t0 = performance.now(), dur = 430;
+      (function step(t) {
+        const k = Math.min(1, (t - t0) / dur);
+        const v = Math.round(from + (total - from) * (1 - Math.pow(1 - k, 3)));
+        el.innerText = `${v.toLocaleString()}원`;
+        if (k < 1) __priceRaf = requestAnimationFrame(step);
+      })(t0);
+    } 
 
     function renderCarrierPills(carriers) {
       const select = document.getElementById('carrierSelect');
@@ -2325,12 +2372,38 @@
       const daysSelect = document.getElementById('daysSelect');
       daysSelect.innerHTML = days.map(d => `<option value="${d}">${d}일</option>`).join('');
       
+      renderCapacityFeel(val, isDaily);
       onDaysChange(selectedDays);
     }
 
     function onDaysChange(val) {
       selectedDays = parseInt(val);
       updatePricing();
+    }
+
+    // 데이터 체감 번역기: "2GB"를 "유튜브 2시간·인스타 3시간"으로 번역
+    function renderCapacityFeel(val, isDaily) {
+      const box = document.getElementById('capacityFeel');
+      if (!box) return;
+      const prefix = isDaily ? '매일' : '기간 내 총';
+      const mbpsMatch = String(val).match(/([\d.]+)\s*Mbps/i);
+      if (mbpsMatch || /무제한/.test(val)) {
+        const spd = mbpsMatch ? mbpsMatch[1] + 'Mbps 속도로 ' : '';
+        box.innerHTML = `♾️ <strong>${prefix} 데이터 무제한</strong> — ${spd}영상·지도·핫스팟 마음껏 쓰세요`;
+        box.style.display = 'block';
+        return;
+      }
+      let gb = 0;
+      const g = String(val).match(/([\d.]+)\s*GB/i);
+      const mb = String(val).match(/([\d.]+)\s*MB/i);
+      if (g) gb = parseFloat(g[1]);
+      else if (mb) gb = parseFloat(mb[1]) / 1000;
+      if (!gb) { box.style.display = 'none'; return; }
+      const yt = gb * 1;          // 유튜브 HD ≈ 1GB/시간
+      const insta = gb * 1.4;     // 인스타·릴스 ≈ 0.7GB/시간
+      const fmt = h => h >= 10 ? Math.round(h) + '시간' : (Math.round(h * 10) / 10) + '시간';
+      box.innerHTML = `💡 <strong>${prefix} ${val}</strong>이면 이 정도예요<br>📺 유튜브 약 ${fmt(yt)} · 📸 인스타 약 ${fmt(insta)} · 🗺️ 지도·카톡은 부담 없이`;
+      box.style.display = 'block';
     }
 
     function updatePricing() {
@@ -2346,7 +2419,7 @@
 
       if (activePlan) {
         const total = activePlan.final_price * purchaseQty;
-        document.getElementById('checkoutTotalPrice').innerText = `${total.toLocaleString()}원`;
+        setTotalPriceAnimated(total);
         const perDayEl = document.getElementById('perDayPrice');
         if (perDayEl) {
           const days = parseInt(activePlan.duration) || selectedDays || 1;
