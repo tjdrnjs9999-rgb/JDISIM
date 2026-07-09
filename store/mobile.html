@@ -393,9 +393,131 @@
 
     /* Product Grid */
     .product-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    /* ===== Store Card v2: 국기 이미지 상단 배치형 박스 카드 (한 행 2개) ===== */
+    .store-card {
+      background: #ffffff;
+      border: 1px solid #eef2f7;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      animation: storeCardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .store-card:active {
+      transform: scale(0.965);
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+    }
+    @keyframes storeCardIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .store-card { animation: none; }
+    }
+
+    .store-card-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #e2e8f0;
+    }
+    .store-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .store-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0) 45%, rgba(15,23,42,0.55) 100%);
+    }
+    .store-net-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: #4f46e5;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+    }
+    .store-net-badge.local { color: #16a34a; }
+    .store-card-country {
+      position: absolute;
+      left: 10px;
+      bottom: 8px;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 4px rgba(15, 23, 42, 0.4);
+    }
+
+    .store-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 12px 12px;
+      flex: 1;
+    }
+    .store-card-title {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: calc(0.8rem * 1.35 * 2); /* 1줄 카드도 높이 정렬 */
+    }
+    .store-card-meta {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .store-card-price-row {
+      margin-top: auto;
+      padding-top: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .store-card-price {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .store-card-perday {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #4f46e5;
+    }
+    .store-card-btn {
+      margin-top: 8px;
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      border: none;
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 9px 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.22);
     }
 
     /* Old Card */ .old-card {
@@ -829,12 +951,12 @@
     }
     
   /* Click Fix */
-    .mobile-product-card {
+    .mobile-product-card, .store-card {
       cursor: pointer !important;
       pointer-events: auto !important;
       -webkit-tap-highlight-color: transparent;
     }
-    .mobile-product-card * {
+    .mobile-product-card *, .store-card * {
       pointer-events: none !important; /* Let the parent handle the click */
     }
 
@@ -1588,25 +1710,24 @@
         }
 
         const card = document.createElement('div');
-        card.className = 'mobile-product-card';
+        card.className = 'store-card';
+        card.style.animationDelay = `${(listContainer.children.length % 8) * 45}ms`;
         card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
-          <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
-          <div class="product-info">
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <span class="product-country-tag">${countryName} eSIM</span>
-              <span style="font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
-            </div>
-            <h4 class="product-title">${countryName} ${carrierName.split(' ')[0]} 요금제</h4>
-            <div class="product-carrier-badge">
-              <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
-              <span>${carrierName}</span>
-            </div>
+          <div class="store-card-media">
+            <img src="${flagSrc}" class="store-card-img" loading="lazy" alt="${countryName}">
+            <div class="store-card-scrim"></div>
+            <span class="store-net-badge${networkType === '로컬망' ? ' local' : ''}">${networkType}</span>
+            <span class="store-card-country">${countryName} eSIM</span>
           </div>
-          <div class="product-price-section">
-            <span class="product-price-label">최저가</span>
-            <span class="product-price">${minPrice.toLocaleString()}원~</span>\n            <span class="product-perday">하루 ${minPerDay.toLocaleString()}원꼴~</span>
-            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+          <div class="store-card-body">
+            <h4 class="store-card-title">${carrierName}</h4>
+            <div class="store-card-meta">요금제 ${validPlans.length}종 · ${group.network_speed || '5G/LTE'}</div>
+            <div class="store-card-price-row">
+              <span class="store-card-price">${minPrice.toLocaleString()}원~</span>
+              <span class="store-card-perday">하루 ${minPerDay.toLocaleString()}원꼴</span>
+            </div>
+            <button class="store-card-btn" type="button">구매하기</button>
           </div>
         `;
         listContainer.appendChild(card);
