@@ -1,619 +1,546 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JDISIM 가이드 센터 - 이심의 모든 것</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이심 사용 가이드 | JDISIM — 로미가 알려주는 가장 쉬운 eSIM</title>
+  <meta name="description" content="eSIM 기종 확인부터 QR 설치, 회선 설정, 현지 개통, 문제 해결까지. JDISIM 로미가 단계별로 알려드려요.">
   <link rel="icon" type="image/png" href="images/favicon.png">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="JDISIM 이심">
-  <meta property="og:title" content="해외여행 데이터는 JDISIM 이심 | 10초 QR 개통">
-  <meta property="og:description" content="전 세계 150개국 eSIM, 결제 즉시 QR코드 발송. 공항 대기 없이 스캔 한 번으로 현지 데이터 개통!">
-  <meta property="og:image" content="https://jdisim.co.kr/images/fox-hello.png">
-  <meta property="og:url" content="https://jdisim.co.kr">
-  <meta name="twitter:card" content="summary">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-light: #eef2ff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --border: rgba(15, 23, 42, 0.08);
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-        }
+  <meta property="og:title" content="이심 사용 가이드 | 로미가 알려주는 가장 쉬운 eSIM">
+  <meta property="og:description" content="기종 확인 → QR 설치 → 회선 설정 → 현지 개통까지, 5분이면 끝나는 JDISIM 이심 가이드.">
+  <meta property="og:image" content="https://jdisim.co.kr/images/fox-qr.png">
+  <meta property="og:url" content="https://jdisim.co.kr/guide.html">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="premium.css?v=20260708">
+  <style>
+    :root {
+      --brand: #F2751F;
+      --brand-deep: #E8590C;
+      --teal: #2BB3A3;
+      --ink: #221510;
+      --muted: #64748b;
+      --dim: #94a3b8;
+      --line: #ece5dd;
+      --cream: #FFF8F2;
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Noto Sans KR', sans-serif; word-break: keep-all; }
+    body { background: #FDFBF8; color: var(--ink); line-height: 1.6; }
+    img { max-width: 100%; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+    /* 헤더 */
+    .g-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253, 251, 248, 0.86);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(242, 117, 31, 0.12);
+    }
+    .g-header-in { max-width: 760px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .g-back {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--line); background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: var(--ink); font-weight: 800; font-size: 1rem;
+    }
+    .g-header-title { font-weight: 800; font-size: 1.02rem; flex: 1; }
+    .g-store-btn {
+      background: linear-gradient(135deg, #F97316, #F59E0B);
+      color: #fff; text-decoration: none; font-weight: 800; font-size: 0.8rem;
+      padding: 9px 16px; border-radius: 999px;
+      box-shadow: 0 6px 14px rgba(242, 117, 31, 0.3);
+    }
 
-        body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            line-height: 1.6;
-        }
+    /* 히어로 */
+    .g-hero {
+      position: relative; overflow: hidden;
+      background:
+        radial-gradient(120% 90% at 85% 10%, rgba(43, 179, 163, 0.14) 0%, transparent 50%),
+        linear-gradient(160deg, #FFF6EC 0%, #FFE9D3 100%);
+      border-bottom: 1px solid rgba(242, 117, 31, 0.14);
+      padding: 44px 0 30px;
+    }
+    .g-hero .wrap { position: relative; }
+    .g-hero-eyebrow {
+      display: inline-block; font-size: 0.66rem; font-weight: 800;
+      letter-spacing: 0.22em; text-indent: 0.22em; text-transform: uppercase;
+      color: var(--brand); background: rgba(242, 117, 31, 0.1);
+      border: 1px solid rgba(242, 117, 31, 0.28);
+      padding: 6px 13px; border-radius: 999px; margin-bottom: 14px;
+    }
+    .g-hero h1 { font-size: clamp(1.7rem, 6.4vw, 2.3rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.22; }
+    .g-hero h1 em { font-style: normal; color: var(--brand); }
+    .g-hero p { color: var(--muted); font-weight: 500; margin: 12px 0 20px; font-size: 0.94rem; max-width: 430px; }
+    .g-hero-fox {
+      position: absolute; right: -6px; bottom: -34px;
+      width: min(160px, 34vw);
+      filter: drop-shadow(0 14px 20px rgba(34, 21, 16, 0.2));
+      animation: foxFloat 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .g-toc { display: flex; gap: 8px; flex-wrap: wrap; max-width: 78%; }
+    .g-toc a {
+      font-size: 0.78rem; font-weight: 800; text-decoration: none;
+      color: var(--muted); background: #fff;
+      border: 1.5px solid var(--line);
+      padding: 8px 14px; border-radius: 999px;
+      transition: all .16s ease;
+    }
+    .g-toc a:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-2px); }
 
-        /* Header */
-        header {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            padding: 12px 20px;
-        }
+    /* 섹션 공통 */
+    .g-sec { padding: 42px 0 8px; }
+    .g-sec-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.2em; text-indent: 0.2em; text-transform: uppercase; color: var(--teal); }
+    .g-sec-title { font-size: clamp(1.35rem, 5vw, 1.65rem); font-weight: 800; letter-spacing: -0.03em; margin: 8px 0 20px; line-height: 1.3; }
+    .g-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; }
 
-        .header-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* 빠른 점검 */
+    .g-check-grid { display: grid; gap: 12px; }
+    .g-check {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px;
+    }
+    .g-check-num {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 13px;
+      background: var(--cream); border: 1px solid rgba(242, 117, 31, 0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .g-check h3 { font-size: 0.98rem; font-weight: 800; margin-bottom: 4px; }
+    .g-check p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .g-check code {
+      background: var(--ink); color: #FFB56B; font-weight: 800;
+      padding: 2px 9px; border-radius: 7px; font-size: 0.85rem; font-family: inherit;
+    }
 
-        .logo {
-            font-weight: 900;
-            font-size: 1.4rem;
-            color: var(--primary);
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
+    /* 기종 탭 */
+    .g-tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      background: #f1ece6; border-radius: 15px; padding: 5px; margin-bottom: 16px;
+    }
+    .g-tab {
+      border: none; background: transparent; font-family: inherit;
+      padding: 12px; font-size: 0.92rem; font-weight: 800; color: var(--muted);
+      border-radius: 11px; cursor: pointer; transition: all .18s ease;
+    }
+    .g-tab.active { background: #fff; color: var(--brand); box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1); }
+    .g-device-pane { display: none; }
+    .g-device-pane.active { display: block; }
+    .g-step { display: flex; gap: 14px; padding: 15px 0; border-bottom: 1px dashed var(--line); }
+    .g-step:last-child { border-bottom: none; }
+    .g-step-n {
+      flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%;
+      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800;
+    }
+    .g-step h4 { font-size: 0.94rem; font-weight: 800; margin-bottom: 3px; }
+    .g-step p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+    .g-path {
+      display: inline-block; background: var(--cream);
+      border: 1px solid rgba(242, 117, 31, 0.22); color: var(--brand-deep);
+      font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; margin-top: 6px;
+    }
 
-        .back-btn {
-            background: var(--primary-light);
-            color: var(--primary);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            text-decoration: none;
-        }
+    /* 회선 설정 */
+    .g-line-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 13px 0; border-bottom: 1px dashed var(--line);
+    }
+    .g-line-row:last-child { border-bottom: none; }
+    .g-line-row .k { font-size: 0.88rem; font-weight: 700; color: var(--ink); }
+    .g-line-row .k small { display: block; font-weight: 600; color: var(--dim); font-size: 0.72rem; margin-top: 1px; }
+    .g-pill { flex-shrink: 0; font-size: 0.78rem; font-weight: 800; padding: 6px 13px; border-radius: 999px; }
+    .g-pill.main { background: rgba(79, 70, 229, 0.08); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); }
+    .g-pill.jd { background: var(--cream); color: var(--brand-deep); border: 1px solid rgba(242, 117, 31, 0.3); }
+    .g-pill.on { background: rgba(3, 169, 78, 0.08); color: #03A94E; border: 1px solid rgba(3, 169, 78, 0.28); }
+    .g-pill.off { background: rgba(220, 38, 38, 0.06); color: #DC2626; border: 1px solid rgba(220, 38, 38, 0.22); }
+    .g-warn {
+      background: #FFF7ED; border: 1px solid rgba(242, 117, 31, 0.3);
+      border-radius: 14px; padding: 14px 16px; margin-top: 14px;
+      font-size: 0.82rem; color: #9A3412; font-weight: 600; line-height: 1.65;
+    }
 
-        /* Hero Section */
-        .hero {
-            padding: 40px 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
+    /* 체크리스트 */
+    .g-progress-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .g-progress { flex: 1; height: 8px; background: #f1ece6; border-radius: 999px; overflow: hidden; }
+    .g-progress-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #F97316, #F59E0B);
+      border-radius: 999px; transition: width .4s cubic-bezier(.22,1,.36,1);
+    }
+    .g-progress-txt { font-size: 0.8rem; font-weight: 800; color: var(--brand); min-width: 64px; text-align: right; }
+    .g-todo {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 13px 14px; border-radius: 14px; cursor: pointer;
+      border: 1.5px solid var(--line); background: #fff; margin-bottom: 9px;
+      transition: all .18s ease;
+    }
+    .g-todo input { width: 19px; height: 19px; accent-color: var(--brand); margin-top: 2px; flex-shrink: 0; }
+    .g-todo .t { font-size: 0.88rem; font-weight: 700; }
+    .g-todo .t small { display: block; font-weight: 600; color: var(--dim); font-size: 0.74rem; margin-top: 2px; }
+    .g-todo:has(input:checked) { background: var(--cream); border-color: rgba(242, 117, 31, 0.35); }
+    .g-todo:has(input:checked) .t { text-decoration: line-through; color: var(--dim); }
+    .g-todo-phase { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; color: var(--teal); margin: 18px 0 9px; }
+    .g-todo-phase:first-of-type { margin-top: 0; }
+    .g-done-msg {
+      display: none; text-align: center; padding: 16px;
+      background: linear-gradient(135deg, #FFF6EC, #FFE9D3);
+      border: 1px solid rgba(242, 117, 31, 0.3); border-radius: 16px;
+      font-weight: 800; color: var(--brand-deep); margin-top: 8px;
+    }
+    .g-done-msg.show { display: block; animation: heroRise .5s ease both; }
 
-        .hero h1 {
-            font-size: 1.8rem;
-            font-weight: 900;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
+    /* 문제 해결 */
+    .g-fix { border-left: 3px solid var(--brand); padding: 4px 0 4px 16px; margin-bottom: 18px; }
+    .g-fix h4 { font-size: 0.94rem; font-weight: 800; margin-bottom: 4px; }
+    .g-fix p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
 
-        .hero p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 24px;
-        }
+    /* FAQ */
+    .g-faq { border-bottom: 1px solid var(--line); }
+    .g-faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      font-family: inherit; font-size: 0.92rem; font-weight: 800; color: var(--ink);
+      padding: 17px 4px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .g-faq-q .arr { color: var(--brand); font-weight: 800; transition: transform .25s ease; flex-shrink: 0; }
+    .g-faq.open .arr { transform: rotate(180deg); }
+    .g-faq-a {
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+      font-size: 0.86rem; color: var(--muted); line-height: 1.7;
+    }
+    .g-faq.open .g-faq-a { max-height: 280px; padding-bottom: 17px; }
 
-        .search-box {
-            position: relative;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+    /* CTA */
+    .g-cta {
+      text-align: center;
+      background:
+        radial-gradient(120% 90% at 80% 0%, rgba(255, 170, 90, 0.2) 0%, transparent 55%),
+        linear-gradient(160deg, #221510 0%, #46280f 100%);
+      color: #fff; border-radius: 26px; padding: 38px 24px; margin: 40px 0 30px;
+    }
+    .g-cta h3 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .g-cta p { font-size: 0.86rem; opacity: 0.82; margin-bottom: 20px; }
+    .g-cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .g-cta-kakao {
+      background: #FEE500; color: #191919; text-decoration: none;
+      font-weight: 800; font-size: 0.9rem; padding: 13px 22px; border-radius: 999px;
+    }
+    .g-cta-store {
+      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; text-decoration: none;
+      font-weight: 800; font-size: 0.9rem; padding: 13px 22px; border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(242, 117, 31, 0.4);
+    }
+    .g-footer { text-align: center; font-size: 0.7rem; color: var(--dim); padding: 0 0 40px; line-height: 1.8; }
 
-        .search-input {
-            width: 100%;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 16px 20px 16px 50px;
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-            box-shadow: var(--shadow);
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
-
-        /* Main Content */
-        .content-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin: 24px 0 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Category Grid */
-        .category-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .category-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.2s;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .category-card:active {
-            transform: scale(0.97);
-        }
-
-        .category-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-light);
-            color: var(--primary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .category-card h3 {
-            font-size: 1rem;
-            font-weight: 800;
-        }
-
-        .category-card p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        /* Article List */
-        .article-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            text-decoration: none;
-            color: inherit;
-            box-shadow: var(--shadow);
-            transition: all 0.2s;
-        }
-
-        .article-card:hover {
-            border-color: var(--primary);
-        }
-
-        .article-thumb {
-            width: 80px;
-            height: 60px;
-            background: #eee;
-            border-radius: 8px;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .article-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .article-info {
-            flex-grow: 1;
-        }
-
-        .article-info h4 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .article-info p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Banner Card */
-        .banner-card {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            border-radius: var(--radius-md);
-            padding: 24px;
-            color: white;
-            margin-bottom: 32px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .banner-card h2 {
-            font-size: 1.3rem;
-            font-weight: 900;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .banner-card p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .banner-img {
-            position: absolute;
-            right: -20px;
-            bottom: -20px;
-            width: 140px;
-            opacity: 0.3;
-            z-index: 1;
-        }
-
-        .btn-white {
-            background: white;
-            color: var(--primary);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 800;
-            font-size: 0.85rem;
-            cursor: pointer;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Modal Styles */
-        .guide-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: white;
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .guide-modal.active {
-            display: flex;
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
-
-        .modal-close {
-            background: var(--bg-body);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 24px 20px;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .modal-body h2 {
-            font-size: 1.6rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1.3;
-        }
-
-        .modal-body .meta {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 30px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .modal-content {
-            font-size: 1rem;
-            color: #334155;
-            line-height: 1.8;
-        }
-
-        .modal-content img {
-            width: 100%;
-            border-radius: 16px;
-            margin: 24px 0;
-            box-shadow: var(--shadow);
-        }
-
-        .modal-content h3 {
-            margin-top: 32px;
-            margin-bottom: 12px;
-            color: var(--text-main);
-        }
-
-        .step-box {
-            background: var(--bg-body);
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-        }
-
-        .step-num {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 24px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 480px) {
-            .category-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    @keyframes foxFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes heroRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .g-hero-fox { animation: none; } }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-container">
-            <a href="#" class="logo" onclick="window.history.back()">JDISIM</a>
-            <a href="index.html" class="back-btn">스토어로 이동</a>
-        </div>
-    </header>
+  <header class="g-header">
+    <div class="g-header-in">
+      <a href="index.html" class="g-back" aria-label="홈으로">←</a>
+      <div class="g-header-title">🦊 이심 사용 가이드</div>
+      <a href="index.html#store" class="g-store-btn">스토어 →</a>
+    </div>
+  </header>
 
-    <div class="hero">
-        <h1>JDISIM 가이드 센터</h1>
-        <p>이심 구매 전 확인부터 장애 해결까지, 무엇이든 물어보세요!</p>
-        <div class="search-box">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" class="search-input" placeholder="궁금한 내용을 검색해 보세요 (예: 아이폰 설정, 결제 취소)">
+  <section class="g-hero">
+    <div class="wrap">
+      <span class="g-hero-eyebrow">Romi's Guide</span>
+      <h1>처음이라도 괜찮아요,<br><em>로미</em>가 5분 만에 알려드릴게요</h1>
+      <p>기종 확인부터 설치, 현지 개통, 문제 해결까지 — 이 페이지 하나면 끝.</p>
+      <nav class="g-toc">
+        <a href="#check">✅ 출발 전 점검</a>
+        <a href="#install">📲 설치 방법</a>
+        <a href="#lines">⚙️ 회선 설정</a>
+        <a href="#todo">🧳 체크리스트</a>
+        <a href="#fix">🔧 문제 해결</a>
+        <a href="#faq">💬 자주 묻는 질문</a>
+      </nav>
+      <img src="images/fox-qr.png" alt="QR코드를 든 로미" class="g-hero-fox">
+    </div>
+  </section>
+
+  <main class="wrap">
+
+    <!-- 1. 출발 전 점검 -->
+    <section class="g-sec" id="check">
+      <span class="g-sec-label">Step 01 · Before You Buy</span>
+      <h2 class="g-sec-title">구매 전, 딱 3가지만 확인하세요</h2>
+      <div class="g-check-grid">
+        <div class="g-check">
+          <div class="g-check-num">📱</div>
+          <div>
+            <h3>내 폰이 eSIM을 지원하나요?</h3>
+            <p>전화 키패드에 <code>*#06#</code>을 입력해 보세요. 뜨는 정보 중에 <strong>EID</strong>라는 항목이 보이면 지원 기종입니다. 3초면 확인 끝!</p>
+          </div>
         </div>
+        <div class="g-check">
+          <div class="g-check-num">🔓</div>
+          <div>
+            <h3>해외 구매폰이라면 컨트리락 확인</h3>
+            <p>중국·홍콩·마카오 내수용으로 구매한 아이폰은 eSIM 기능 자체가 막혀 있어 사용할 수 없어요. 국내 정식 발매·자급제 폰은 걱정 없습니다.</p>
+          </div>
+        </div>
+        <div class="g-check">
+          <div class="g-check-num">📶</div>
+          <div>
+            <h3>설치는 와이파이 환경에서</h3>
+            <p>QR 스캔으로 eSIM 프로필을 내려받으려면 인터넷이 필요해요. 집이나 공항 와이파이에서 <strong>출국 전에 미리 설치</strong>하는 게 가장 마음 편합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 기종별 설치 -->
+    <section class="g-sec" id="install">
+      <span class="g-sec-label">Step 02 · Install</span>
+      <h2 class="g-sec-title">기종별 설치, 그대로 따라만 하세요</h2>
+      <div class="g-tabs" role="tablist">
+        <button class="g-tab active" data-device="iphone">🍎 아이폰</button>
+        <button class="g-tab" data-device="galaxy">🤖 갤럭시</button>
+      </div>
+
+      <div class="g-card g-device-pane active" id="pane-iphone">
+        <div class="g-step">
+          <div class="g-step-n">1</div>
+          <div>
+            <h4>QR코드 준비하기</h4>
+            <p>결제 후 이메일·알림톡으로 받은 QR코드를 다른 기기 화면에 띄우거나 종이로 출력해 주세요. 같은 폰에 저장된 QR이라면 아래 4번의 직접 입력 방식을 쓰면 됩니다.</p>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">2</div>
+          <div>
+            <h4>eSIM 추가 메뉴 열기</h4>
+            <p>설정 앱에서 셀룰러로 들어가 eSIM 추가를 누르세요.</p>
+            <span class="g-path">설정 → 셀룰러 → eSIM 추가 → QR 코드 사용</span>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">3</div>
+          <div>
+            <h4>카메라로 QR 스캔</h4>
+            <p>카메라가 켜지면 QR코드를 비추세요. "셀룰러 요금제 추가" 안내가 뜨면 계속을 눌러 1~2분 기다리면 설치 완료!</p>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">4</div>
+          <div>
+            <h4>QR 스캔이 어렵다면 직접 입력</h4>
+            <p>QR 화면 하단의 <strong>"세부사항 직접 입력"</strong>을 누르고, 함께 보내드린 SM-DP+ 주소와 활성화 코드를 붙여넣으면 똑같이 설치됩니다.</p>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">5</div>
+          <div>
+            <h4>회선 이름 붙이기</h4>
+            <p>새 회선의 레이블을 <strong>"여행"</strong>이나 국가명(일본, 베트남…)으로 바꿔두면 다음 단계 설정이 훨씬 쉬워져요.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-card g-device-pane" id="pane-galaxy">
+        <div class="g-step">
+          <div class="g-step-n">1</div>
+          <div>
+            <h4>QR코드 준비하기</h4>
+            <p>결제 후 이메일·알림톡으로 받은 QR코드를 다른 기기 화면에 띄우거나 출력해 주세요.</p>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">2</div>
+          <div>
+            <h4>SIM 관리자 열기</h4>
+            <p>설정에서 연결로 들어가 SIM 관리자를 누르세요.</p>
+            <span class="g-path">설정 → 연결 → SIM 관리자 → eSIM 추가</span>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">3</div>
+          <div>
+            <h4>QR 코드 스캔 선택</h4>
+            <p>"QR 코드 스캔"을 누르고 카메라로 QR을 비추면 요금제 추가가 시작됩니다. 1~2분이면 설치 완료!</p>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">4</div>
+          <div>
+            <h4>QR 스캔이 어렵다면 직접 입력</h4>
+            <p>스캔 화면 하단의 <strong>"활성화 코드 입력"</strong>을 눌러 함께 보내드린 코드를 붙여넣어도 똑같이 설치됩니다.</p>
+          </div>
+        </div>
+        <div class="g-step">
+          <div class="g-step-n">5</div>
+          <div>
+            <h4>회선 이름 붙이기</h4>
+            <p>SIM 관리자에서 새 eSIM의 이름을 <strong>"여행"</strong>이나 국가명으로 바꿔두면 다음 단계 설정이 쉬워져요.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 회선 설정 -->
+    <section class="g-sec" id="lines">
+      <span class="g-sec-label">Step 03 · Line Setup</span>
+      <h2 class="g-sec-title">요금 폭탄 막는 회선 설정 4줄 요약</h2>
+      <div class="g-card">
+        <div class="g-line-row">
+          <div class="k">통화 · 문자 (기본 음성 회선)<small>한국 번호로 오는 전화·문자·카톡 인증 유지</small></div>
+          <span class="g-pill main">한국 메인 회선</span>
+        </div>
+        <div class="g-line-row">
+          <div class="k">모바일 데이터<small>지도, 검색, SNS 등 데이터는 전부 이쪽으로</small></div>
+          <span class="g-pill jd">JDISIM eSIM</span>
+        </div>
+        <div class="g-line-row">
+          <div class="k">셀룰러 데이터 전환 허용<small>켜두면 신호 약할 때 한국 회선으로 몰래 넘어가 로밍 요금 발생</small></div>
+          <span class="g-pill off">반드시 끄기</span>
+        </div>
+        <div class="g-line-row">
+          <div class="k">데이터 로밍<small>JDISIM 회선만 켜기 · 한국 메인 회선은 끄기</small></div>
+          <span class="g-pill on">JDISIM만 켜기</span>
+        </div>
+        <div class="g-warn">
+          ⚠️ "로밍은 끄는 거 아닌가요?" — 한국 통신사 로밍은 끄는 게 맞지만, JDISIM 같은 <strong>여행용 eSIM은 현지 망에 접속하기 위해 로밍을 켜야</strong> 해요. 선불 요금제라 추가 요금은 발생하지 않으니 안심하세요.
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 여행 체크리스트 -->
+    <section class="g-sec" id="todo">
+      <span class="g-sec-label">Step 04 · Checklist</span>
+      <h2 class="g-sec-title">출발부터 도착까지, 탭하며 체크하세요</h2>
+      <div class="g-card">
+        <div class="g-progress-wrap">
+          <div class="g-progress"><div class="g-progress-bar" id="gProgressBar"></div></div>
+          <span class="g-progress-txt" id="gProgressTxt">0 / 7</span>
+        </div>
+
+        <div class="g-todo-phase">🏠 출국 전 (한국에서)</div>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">기종 확인 (*#06# → EID)<small>3초면 끝나요</small></span></label>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">와이파이에서 QR 스캔으로 eSIM 설치<small>출국 전날 밤 추천</small></span></label>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">회선 설정 (데이터=JDISIM, 전환 허용 OFF)<small>위 4줄 요약대로</small></span></label>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">한국 메인 회선의 데이터 로밍 끄기<small>요금 폭탄 방지 핵심</small></span></label>
+
+        <div class="g-todo-phase">🛬 현지 도착 후</div>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">비행기 모드 해제<small>착륙 후 게이트로 이동하며</small></span></label>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">JDISIM 회선의 데이터 로밍 켜기<small>이건 켜야 현지 망에 붙어요</small></span></label>
+        <label class="g-todo"><input type="checkbox" class="g-todo-check"><span class="t">1~2분 기다려 상단바에 LTE/5G 확인<small>안 잡히면 비행기 모드 껐다 켜기</small></span></label>
+
+        <div class="g-done-msg" id="gDoneMsg">🦊 완벽해요! 로미가 보장하는 순조로운 여행 되세요 🧡</div>
+      </div>
+    </section>
+
+    <!-- 5. 문제 해결 -->
+    <section class="g-sec" id="fix">
+      <span class="g-sec-label">Step 05 · Troubleshooting</span>
+      <h2 class="g-sec-title">데이터가 안 터질 때, 순서대로 해보세요</h2>
+      <div class="g-card">
+        <div class="g-fix">
+          <h4>1. 비행기 모드 껐다 켜기 (성공률 최고)</h4>
+          <p>현지 망을 처음 잡을 땐 시간이 걸릴 수 있어요. 비행기 모드를 켰다 끄기를 2~3번 반복하면 대부분 붙습니다.</p>
+        </div>
+        <div class="g-fix">
+          <h4>2. 데이터 회선과 로밍 스위치 재확인</h4>
+          <p>모바일 데이터가 JDISIM 회선으로 선택돼 있는지, 그 회선의 데이터 로밍이 켜져 있는지 다시 확인해 주세요. 가장 흔한 원인이에요.</p>
+        </div>
+        <div class="g-fix">
+          <h4>3. 통신사 자동 선택 확인 후 재부팅</h4>
+          <p>네트워크 선택이 "자동"인지 확인하고 휴대폰을 한 번 재부팅해 보세요. 여기까지 해도 안 되면 바로 카톡 주세요 — <strong>절대 eSIM 프로필을 삭제하지 마세요!</strong> 삭제하면 재발급이 필요합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FAQ -->
+    <section class="g-sec" id="faq">
+      <span class="g-sec-label">FAQ</span>
+      <h2 class="g-sec-title">자주 묻는 질문</h2>
+      <div class="g-card" style="padding: 6px 20px;">
+        <div class="g-faq">
+          <button class="g-faq-q">한국 번호로 오는 전화·문자·카톡은 어떻게 되나요? <span class="arr">⌄</span></button>
+          <div class="g-faq-a">그대로 유지됩니다! 한국 회선을 '메인'으로 켜두면 전화·문자는 한국 번호로 받고, 데이터만 JDISIM 이심으로 쓰는 듀얼심 구조예요. 카카오톡도 번호가 그대로라 아무 영향 없습니다.</div>
+        </div>
+        <div class="g-faq">
+          <button class="g-faq-q">언제 설치하는 게 가장 좋나요? <span class="arr">⌄</span></button>
+          <div class="g-faq-a">출국 전날 밤, 집 와이파이에서 설치해 두는 걸 추천해요. 설치만 해두면 데이터는 소모되지 않고, 현지 도착 후 로밍 스위치만 켜면 바로 개통됩니다. 급하면 공항 와이파이에서도 충분해요.</div>
+        </div>
+        <div class="g-faq">
+          <button class="g-faq-q">가족·친구와 데이터를 나눠 쓸 수 있나요? <span class="arr">⌄</span></button>
+          <div class="g-faq-a">네! 핫스팟(테더링)을 지원하는 상품이 대부분이라 일행과 공유할 수 있어요. 다만 여러 명이 함께 쓰면 데이터가 빨리 줄어드니 넉넉한 용량을 추천드립니다. 상품별 핫스팟 지원 여부는 상세 옵션에서 확인하세요.</div>
+        </div>
+        <div class="g-faq">
+          <button class="g-faq-q">쓰다가 데이터를 다 쓰면 어떻게 되나요? <span class="arr">⌄</span></button>
+          <div class="g-faq-a">데일리형은 매일 용량이 리셋되고, 제공량 소진 후엔 저속으로 계속 이용 가능한 상품이 많아요. 총용량형은 소진 시 이용이 중지되니, 스토어에서 새 이심을 구매해 갈아타면 됩니다.</div>
+        </div>
+        <div class="g-faq">
+          <button class="g-faq-q">여행이 끝나면 eSIM은 어떻게 하나요? <span class="arr">⌄</span></button>
+          <div class="g-faq-a">기간이 만료된 프로필은 설정에서 삭제하면 깔끔합니다. 단, <strong>여행 중에는 절대 삭제하지 마세요</strong> — 삭제한 프로필은 복구되지 않아 재발급이 필요해요.</div>
+        </div>
+        <div class="g-faq">
+          <button class="g-faq-q">환불은 어떤 경우에 가능한가요? <span class="arr">⌄</span></button>
+          <div class="g-faq-a">QR 발송 전에는 언제든 전액 취소 가능해요. 발송 후에는 디지털 상품 특성상 단순 변심 환불이 어렵지만, 기기 호환 문제나 개통 불가 등 저희가 해결하지 못한 문제는 100% 환불해 드립니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="g-cta">
+      <h3>여기까지 읽었는데도 막히셨나요?</h3>
+      <p>로미의 24시간 카톡 상담팀이 화면을 보며 같이 해결해 드려요.</p>
+      <div class="g-cta-row">
+        <a href="http://pf.kakao.com/_xxxxxx" target="_blank" rel="noopener" class="g-cta-kakao">💬 카톡 1:1 상담</a>
+        <a href="index.html#store" class="g-cta-store">🦊 eSIM 스토어 가기</a>
+      </div>
     </div>
 
-    <div class="content-container">
-        <!-- Banner Card -->
-        <div class="banner-card">
-            <h2>📢 처음 오셨나요?</h2>
-            <p>JDISIM 이심을 선택해주셔서 감사합니다. 1분 만에 끝나는 초간단 이심 설치 가이드를 확인하세요.</p>
-            <button class="btn-white" onclick="openGuide('intro')">가이드 보기</button>
-            <i data-lucide="info" class="banner-img"></i>
-        </div>
-
-        <h2 class="section-title"><i data-lucide="layers" style="color:var(--primary)"></i> 전체 카테고리</h2>
-        <div class="category-grid">
-            <a href="#" class="category-card" onclick="filterCategory('setup')">
-                <div class="category-icon"><i data-lucide="smartphone"></i></div>
-                <h3>eSIM 설정</h3>
-                <p>구매한 이심을 단말기에 등록하고 개통하는 방법</p>
-            </a>
-            <a href="#" class="category-card" onclick="filterCategory('product')">
-                <div class="category-icon"><i data-lucide="globe"></i></div>
-                <h3>로컬망 상품</h3>
-                <p>국가별 현지 망 상품의 상세 특징과 주의사항</p>
-            </a>
-            <a href="#" class="category-card" onclick="filterCategory('trouble')">
-                <div class="category-icon"><i data-lucide="alert-circle"></i></div>
-                <h3>장애 해결</h3>
-                <p>데이터가 안 터질 때, QR 오류 등 긴급 대처법</p>
-            </a>
-            <a href="#" class="category-card" onclick="filterCategory('refund')">
-                <div class="category-icon"><i data-lucide="rotate-ccw"></i></div>
-                <h3>취소 및 환불</h3>
-                <p>결제 취소 조건 및 환불 절차 안내</p>
-            </a>
-        </div>
-
-        <h2 class="section-title"><i data-lucide="book-open" style="color:var(--primary)"></i> 추천 아티클</h2>
-        <div id="articleList">
-            <!-- Articles will be rendered here -->
-        </div>
+    <div class="g-footer">
+      상호명: 버튼(Butt'on) | 대표자: 김성권 | 사업자등록번호: 760-15-01594<br>
+      대표전화: 010-9969-3248 | 이메일: jdisim@naver.com<br>
+      © 2026 JDISIM. All Rights Reserved.
     </div>
+  </main>
 
-    <!-- Article Modal -->
-    <div id="guideModal" class="guide-modal">
-        <div class="modal-header">
-            <button class="modal-close" onclick="closeGuide()"><i data-lucide="chevron-left"></i></button>
-            <span style="font-weight: 700; font-size: 0.9rem;">도움말</span>
-        </div>
-        <div class="modal-body" id="modalBody">
-            <!-- Article content will be injected here -->
-        </div>
-    </div>
+  <script>
+    // 기종 탭 전환
+    document.querySelectorAll('.g-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.g-tab').forEach(function (t) { t.classList.remove('active'); });
+        document.querySelectorAll('.g-device-pane').forEach(function (p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById('pane-' + tab.getAttribute('data-device')).classList.add('active');
+      });
+    });
 
-    <script>
-        // Initialize icons
-        if (window.lucide) lucide.createIcons();
+    // FAQ 아코디언
+    document.querySelectorAll('.g-faq-q').forEach(function (q) {
+      q.addEventListener('click', function () {
+        q.parentElement.classList.toggle('open');
+      });
+    });
 
-        const ARTICLES = [
-            {
-                id: 'intro',
-                category: 'setup',
-                title: '📢 JDISIM 이심을 소개합니다',
-                desc: '가장 빠르고 정직한 이심 서비스를 지향하는 JDISIM의 철학',
-                thumb: 'https://images.unsplash.com/photo-1544006659-f0b21f04cb1d?auto=format&fit=crop&q=80&w=200',
-                content: `
-                    <h2>단 1분이면 끝나는 자유로운 여행의 시작</h2>
-                    <div class="meta">작성일: 2024.03.01 • 조회수: 12,402</div>
-                    <div class="modal-content">
-                        <img src="guide_hero_minimalist_1783414665548.jpg" alt="Hero">
-                        <p>JDISIM은 불필요한 마케팅 비용을 줄여 고객님들께 <b>업계 최저가</b>의 데이터를 공급합니다. 미끼 상품 없이 정직한 가격으로 승부합니다.</p>
-                        <h3>깡심만의 3대 약속</h3>
-                        <div class="step-box">
-                            <h4>➊ 최저가 집착</h4>
-                            <p>광고비와 오프라인 대리점 마진을 걷어내고 정말 가치 있는 통신비만 남겼습니다.</p>
-                        </div>
-                        <div class="step-box">
-                            <h4>➋ 광고 없는 정직함</h4>
-                            <p>연예인 모델 대신 서비스 품질과 가격 경쟁력으로 승부합니다.</p>
-                        </div>
-                        <div class="step-box">
-                            <h4>➌ 미끼 상품 금지</h4>
-                            <p>하루 500MB짜리 싼 가격으로 유혹한 뒤 실제 쓸만한 상품은 비싸게 파는 행위를 하지 않습니다.</p>
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 'iphone-setup',
-                category: 'setup',
-                title: '📱 아이폰(iOS) eSIM 등록 가이드',
-                desc: '아이폰 모든 기종에서 이심을 등록하고 설정하는 방법입니다.',
-                thumb: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba3f21?auto=format&fit=crop&q=80&w=200',
-                content: `
-                    <h2>아이폰 eSIM 설정하기</h2>
-                    <div class="meta">작성일: 2024.03.05 • 조회수: 8,921</div>
-                    <div class="modal-content">
-                        <div class="step-box">
-                            <span class="step-num">1</span>
-                            <p>설정 -> 셀룰러 -> <b>eSIM 추가</b> 메뉴를 선택합니다.</p>
-                        </div>
-                        <div class="step-box">
-                            <span class="step-num">2</span>
-                            <p><b>QR 코드 사용</b>을 누르고 이메일로 받은 QR코드를 스캔합니다.</p>
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1556656793-062ff987b50d?auto=format&fit=crop&q=80&w=600" alt="Scanning QR">
-                        <div class="step-box">
-                            <span class="step-num">3</span>
-                            <p><b>데이터 로밍</b>을 반드시 켭니다. (현지망 접속 필수 단계)</p>
-                        </div>
-                        <p style="color:red; font-size:0.85rem; margin-top:10px;">※ 주의: 절대 등록 도중 뒤로가기를 누르거나 창을 끄지 마세요.</p>
-                    </div>
-                `
-            },
-            {
-                id: 'trouble-data',
-                category: 'trouble',
-                title: '🚨 데이터가 안 터질 때 대처법',
-                desc: '현지 도착 후 인터넷 연결이 안 되는 경우 해결 방법입니다.',
-                thumb: 'https://images.unsplash.com/photo-1590333746438-2831a2939f37?auto=format&fit=crop&q=80&w=200',
-                content: `
-                    <h2>데이터 접속 불가 해결 가이드</h2>
-                    <div class="meta">작성일: 2024.03.10 • 조회수: 5,120</div>
-                    <div class="modal-content">
-                        <h3>먼저 체크해보세요!</h3>
-                        <div class="step-box">
-                            <h4>1. 데이터 로밍이 켜져 있나요?</h4>
-                            <p>설정 -> 셀룰러 -> 해당 이심 선택 -> 데이터 로밍 'ON' 확인</p>
-                        </div>
-                        <div class="step-box">
-                            <h4>2. 네트워크 선택이 수동인가요?</h4>
-                            <p>자동으로 되어 있다면 잠시 껐다가 현지 추천 통신사를 직접 선택해 보세요.</p>
-                        </div>
-                        <div class="step-box">
-                            <h4>3. 비행기 모드 3초 실행</h4>
-                            <p>네트워크를 재검색하도록 비행기 모드를 켰다가 다시 끕니다.</p>
-                        </div>
-                    </div>
-                `
-            }
-        ];
-
-        function renderArticles(list = ARTICLES) {
-            const container = document.getElementById('articleList');
-            container.innerHTML = list.map(art => `
-                <a href="#" class="article-card" onclick="openGuide('${art.id}')">
-                    <div class="article-thumb"><img src="${art.thumb}" alt="Thumb"></div>
-                    <div class="article-info">
-                        <h4>${art.title}</h4>
-                        <p>${art.desc}</p>
-                    </div>
-                    <i data-lucide="chevron-right" style="color:var(--text-muted); width:18px;"></i>
-                </a>
-            `).join('');
-            if (window.lucide) lucide.createIcons();
-        }
-
-        function openGuide(id) {
-            const art = ARTICLES.find(a => a.id === id);
-            if (!art) return;
-            document.getElementById('modalBody').innerHTML = art.content;
-            document.getElementById('guideModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            if (window.lucide) lucide.createIcons();
-        }
-
-        function closeGuide() {
-            document.getElementById('guideModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function filterCategory(cat) {
-            const filtered = ARTICLES.filter(a => a.category === cat);
-            renderArticles(filtered);
-        }
-
-        // Search logic
-        const searchInput = document.querySelector('.search-input');
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = ARTICLES.filter(a => 
-                a.title.toLowerCase().includes(query) || 
-                a.desc.toLowerCase().includes(query)
-            );
-            renderArticles(filtered);
-        });
-
-        renderArticles();
-    </script>
+    // 체크리스트 진행률
+    (function () {
+      var checks = document.querySelectorAll('.g-todo-check');
+      var bar = document.getElementById('gProgressBar');
+      var txt = document.getElementById('gProgressTxt');
+      var done = document.getElementById('gDoneMsg');
+      function update() {
+        var n = 0;
+        checks.forEach(function (c) { if (c.checked) n++; });
+        bar.style.width = (n / checks.length * 100) + '%';
+        txt.textContent = n + ' / ' + checks.length;
+        done.classList.toggle('show', n === checks.length);
+      }
+      checks.forEach(function (c) { c.addEventListener('change', update); });
+      update();
+    })();
+  </script>
 </body>
 </html>
