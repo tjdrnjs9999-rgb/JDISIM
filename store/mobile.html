@@ -34,8 +34,8 @@
   <meta property="og:url" content="https://jdisim.co.kr">
   <meta name="twitter:card" content="summary">
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
-  <link rel="stylesheet" href="styles.css?v=1783416304">
-  <link rel="stylesheet" href="premium.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=20260708">
+  <link rel="stylesheet" href="premium.css?v=20260708">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -1243,8 +1243,8 @@
   </div>
 
   <!-- JavaScript imports -->
-  <script src="products.js?v=1783416304"></script>
-  <script src="reviews_data.js?v=1783416304"></script>
+  <script src="products.js?v=20260708"></script>
+  <script src="reviews_data.js?v=20260708"></script>
   
   <script>
 
@@ -1401,17 +1401,32 @@
     function renderMiniReviews() {
       const container = document.getElementById('miniReviewContainer');
       if (!container || !window.REVIEWS_DATA) return;
-
-      const randomReviews = [...window.REVIEWS_DATA].sort(() => 0.5 - Math.random()).slice(0, 3);
-      container.innerHTML = randomReviews.map(r => `
-        <div class="review-mini-card">
-          <div class="review-header">
-            <span style="font-weight: 700;">${r.author} (${r.category})</span>
-            <span>⭐ 5/5</span>
-          </div>
-          <div class="review-body">${r.body}</div>
+      const FLAG = { '일본': '🇯🇵', '베트남': '🇻🇳', '태국': '🇹🇭', '대만': '🇹🇼', '미국': '🇺🇸', '중국': '🇨🇳', '유럽': '🇪🇺', '뉴질랜드': '🇳🇿', '인도네시아': '🇮🇩' };
+      const meta = window.REVIEWS_META || { avg: 5.0, total: window.REVIEWS_DATA.length };
+      // 포토/베스트 우선 8건
+      const picks = [...window.REVIEWS_DATA]
+        .sort((a, b) => (b.best - a.best) || (!!b.photo - !!a.photo))
+        .slice(0, 8);
+      container.innerHTML = `
+        <div class="m-rv-summary">
+          <div class="m-rv-score"><strong>${meta.avg.toFixed(1)}</strong><span>★★★★★</span></div>
+          <div class="m-rv-count">네이버 스마트스토어<br><strong>실구매 후기 ${meta.total}건</strong></div>
         </div>
-      `).join('');
+        <div class="m-rv-track">
+          ${picks.map(r => `
+            <div class="m-rv-card">
+              <div class="m-rv-top">
+                <span class="rv-stars">${'★'.repeat(r.rating)}</span>
+                ${r.best ? '<span class="rv-best">👑</span>' : ''}
+              </div>
+              ${r.photo ? '<img class="m-rv-photo" loading="lazy" src="' + r.photo + '" alt="후기 사진" onerror="this.remove()">' : ''}
+              <p class="m-rv-body">${r.body}</p>
+              <div class="m-rv-foot">
+                <span>${FLAG[r.country] || '🌏'} ${r.country}${r.type ? ' · ' + r.type : ''}</span>
+                <span>✅ ${r.author}</span>
+              </div>
+            </div>`).join('')}
+        </div>`;
     }
 
     // Country flags helper

@@ -1562,3 +1562,149 @@ html.home-snap .snap-dots { display: flex; }
   .why-panel .wp-el { transition: none; opacity: 1; transform: none; }
   .wp-fox { animation: none; }
 }
+
+/* ================= 리뷰 섹션 고급화 (실구매 후기) ================= */
+.review-meta-line {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  -webkit-text-fill-color: initial;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.rv-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 18px;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s;
+}
+.rv-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(34, 21, 16, 0.1);
+  border-color: rgba(242, 117, 31, 0.3);
+}
+.rv-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.rv-stars { color: #F59E0B; font-size: 0.9rem; letter-spacing: 2px; }
+.rv-best {
+  font-size: 0.64rem;
+  font-weight: 800;
+  background: linear-gradient(120deg, #FFF3D6, #FFE3AE);
+  color: #B45309;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.rv-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.rv-chip { font-size: 0.68rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.rv-chip-country { background: var(--fox-cream); color: var(--accent); border: 1px solid rgba(242, 117, 31, 0.22); }
+.rv-chip-type { background: rgba(43, 179, 163, 0.1); color: #0E8074; border: 1px solid rgba(43, 179, 163, 0.28); }
+.rv-photo {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+}
+.rv-body {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.62;
+  color: var(--text-main);
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rv-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 11px;
+  border-top: 1px dashed var(--border-color);
+  font-size: 0.72rem;
+}
+.rv-author { font-weight: 800; color: var(--text-muted); }
+.rv-author em { font-style: normal; font-weight: 700; color: #03A94E; margin-left: 2px; }
+.rv-date { color: var(--text-dim); font-weight: 600; }
+
+/* 모바일 리뷰: 요약 배너 + 가로 스와이프 */
+.m-rv-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #FFF9F2, #FFEEDD);
+  border: 1px solid rgba(242, 117, 31, 0.2);
+  border-radius: 18px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+}
+.m-rv-score { display: flex; flex-direction: column; align-items: center; }
+.m-rv-score strong {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(120deg, #F2751F, #E8590C);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.m-rv-score span { color: #F59E0B; font-size: 0.7rem; letter-spacing: 1px; margin-top: 3px; }
+.m-rv-count { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; line-height: 1.5; }
+.m-rv-count strong { color: var(--ink-warm); font-weight: 800; font-size: 0.88rem; }
+.m-rv-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.m-rv-track::-webkit-scrollbar { display: none; }
+.m-rv-card {
+  flex: 0 0 78%;
+  scroll-snap-align: start;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 14px 15px;
+  display: flex;
+  flex-direction: column;
+}
+.m-rv-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.m-rv-photo {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 11px;
+  margin-bottom: 9px;
+  border: 1px solid var(--border-color);
+}
+.m-rv-body {
+  flex: 1;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text-main);
+  margin: 0 0 11px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.m-rv-foot {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 9px;
+  border-top: 1px dashed var(--border-color);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
