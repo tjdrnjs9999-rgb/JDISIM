@@ -68,6 +68,7 @@
   <meta property="og:url" content="https://jdisim.co.kr">
   <meta name="twitter:card" content="summary">
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
+  <meta name="theme-color" content="#fdfefe">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
@@ -544,6 +545,98 @@
       font-weight: 700;
       color: #4f46e5;
     }
+
+    /* ===== 전역 마이크로 디테일 ===== */
+    ::selection { background: rgba(249, 115, 22, 0.22); }
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    button, .nav-item, .category-tab, .store-card, .recent-chip { touch-action: manipulation; }
+    html { -webkit-text-size-adjust: 100%; }
+    /* ===== 프리미엄 옵션 시트 ===== */
+    .bottom-sheet::before {
+      content: '';
+      display: block;
+      width: 42px; height: 4.5px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      margin: -14px auto 14px;
+    }
+    .bottom-sheet {
+      overscroll-behavior: contain;
+      background: linear-gradient(180deg, #fdfefe 0%, #f7f9fc 100%) !important;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 21px; height: 21px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F97316, #F59E0B);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 900;
+      box-shadow: 0 3px 8px rgba(249, 115, 22, 0.3);
+      flex-shrink: 0;
+    }
+    .option-group-title { align-items: center; color: #1e293b; }
+    /* 셀렉트: 커스텀 셰브런 + 여유 있는 높이 */
+    .bottom-sheet select.tracker-input {
+      height: 52px !important;
+      border-radius: 14px !important;
+      border: 1px solid #e5eaf2 !important;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1.5L7 7.5L13 1.5' stroke='%23F97316' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 16px center !important;
+      padding-right: 42px !important;
+    }
+    /* 수량 스테퍼 */
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      background: #0f172a;
+      padding: 5px 6px;
+      border-radius: 26px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.22);
+    }
+    .qty-stepper span { color: #fff; font-weight: 800; font-size: 0.95rem; min-width: 16px; text-align: center; }
+    .qty-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #fff;
+      color: #0f172a;
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .qty-btn:active { transform: scale(0.88); }
+    /* 총액 영역: 카드화 */
+    .checkout-footer {
+      background: #fff;
+      border: 1px solid #eef2f7 !important;
+      border-radius: 16px;
+      padding: 14px 16px !important;
+      margin-top: 20px !important;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    }
+    .checkout-total-price { color: #F2751F !important; }
+    /* 수령 정보 입력 */
+    .bottom-sheet input.tracker-input {
+      height: 50px !important;
+      border-radius: 14px !important;
+      border: 1px solid #e5eaf2 !important;
+      background: #fff !important;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      padding: 0 16px !important;
+      font-weight: 600;
+    }
+
     /* 폼 포커스: 브랜드 오렌지 링 */
     #carrierSelect:focus, #capacitySelect:focus, #daysSelect:focus, #planTypeSelect:focus,
     .bottom-sheet .tracker-input:focus, #storeSearchInput:focus {
@@ -1644,21 +1737,21 @@
 
     <!-- 1. Carrier -->
     <div id="carrierSection" style="margin-bottom: 12px;">
-      <div class="option-group-title">1. 통신사 선택</div>
+      <div class="option-group-title"><span class="step-num">1</span>통신사 선택</div>
       <select id="carrierSelect" class="tracker-input" onchange="onCarrierChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
     </div>
 
     <!-- 2. Plan Type -->
     <div style="margin-bottom: 12px;">
-      <div class="option-group-title">2. 플랜 타입 (제공 방식)</div>
+      <div class="option-group-title"><span class="step-num">2</span>제공 방식 선택</div>
       <select id="planTypeSelect" class="tracker-input" onchange="onPlanTypeChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
     </div>
 
     <!-- 3. Capacity -->
     <div style="margin-bottom: 12px;">
-      <div class="option-group-title">3. 데이터 용량 선택</div>
+      <div class="option-group-title"><span class="step-num">3</span>데이터 용량 선택</div>
       <select id="capacitySelect" class="tracker-input" onchange="onCapacityChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
       <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.74rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
@@ -1666,7 +1759,7 @@
 
     <!-- 4. Duration -->
     <div style="margin-bottom: 16px;">
-      <div class="option-group-title">4. 사용 기간(일수) 선택</div>
+      <div class="option-group-title"><span class="step-num">4</span>사용 기간 선택</div>
       <select id="daysSelect" class="tracker-input" onchange="onDaysChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
     </div>
@@ -1678,15 +1771,16 @@
         <div class="checkout-total-price" id="checkoutTotalPrice">0원</div>
         <div id="perDayPrice" style="font-size:0.72rem;color:#94a3b8;font-weight:700;margin-top:2px;"></div>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 20px;">
-        <button onclick="changeQty(-1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">-</button>
-        <span id="checkoutQty" style="font-weight:700; font-size:0.95rem;">1</span>
-        <button onclick="changeQty(1)" style="background:none; border:none; color:white; font-size:1.1rem; font-weight:700; cursor:pointer;">+</button>
+      <div class="qty-stepper">
+        <button class="qty-btn" type="button" onclick="changeQty(-1)" aria-label="수량 줄이기">−</button>
+        <span id="checkoutQty">1</span>
+        <button class="qty-btn" type="button" onclick="changeQty(1)" aria-label="수량 늘리기">+</button>
       </div>
     </div>
 
     <!-- Contact & Email Inputs for checkout -->
-    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+    <div class="option-group-title" style="margin-top:20px;"><span class="step-num">✉</span>수령 정보 <em style="font-style:normal;font-weight:600;color:#94a3b8;font-size:0.72rem;">QR코드가 발송될 곳이에요</em></div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
       <input type="text" id="buyerName" class="tracker-input" placeholder="수령인 이름 (한글)">
       <input type="tel" id="buyerPhone" class="tracker-input" placeholder="수령인 연락처 (예: 01012345678)">
       <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
@@ -2576,25 +2670,33 @@
             <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">여행 티켓 · 선택하신 상품</div>
             <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
             <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.74rem;color:#475569;">
-              <div>📶 통신망: <strong>${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}</strong></div>
-              <div>📞 전화/문자: <strong>${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}</strong></div>
-              <div>📡 핫스팟: <strong>${activeCarrier.hotspot || '-'}</strong></div>
-              <div>🔋 충전/연장: <strong>${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}</strong></div>
-              <div style="grid-column:1/-1;">⏱️ 개통: <strong>${activeCarrier.activation || '-'}</strong></div>
-              <div style="grid-column:1/-1;">📅 유효기간: <strong>${activeCarrier.validity || '-'}</strong></div>
-            </div>
+            ${(() => {
+              const row = (icon, label, value) => `<div style="display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid rgba(15,23,42,0.05);font-size:0.78rem;"><span>${icon}</span><span style="color:#64748b;font-weight:600;flex-shrink:0;">${label}</span><strong style="margin-left:auto;text-align:right;color:#0f172a;">${value}</strong></div>`;
+              return '<div style="margin-top:10px;border-top:1px dashed rgba(242,117,31,0.3);padding-top:4px;">'
+                + row('📶', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)
+                + row('📞', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)
+                + row('📡', '핫스팟', activeCarrier.hotspot || '-')
+                + row('🔋', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)
+                + row('⏱️', '개통 방식', activeCarrier.activation || '-')
+                + row('📅', '유효기간', activeCarrier.validity || '-').replace('border-bottom:1px solid rgba(15,23,42,0.05);', '')
+                + '</div>';
+            })()}
             <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
               <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;font-size:1.05rem;">${priceVal.toLocaleString()}원</span>
             </div>
             <div style="height:15px;margin-top:11px;border-radius:2px;opacity:0.8;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
           </div>
-          <div style="font-size:0.8rem;color:#334155;line-height:1.65;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:14px;">
-            <div style="font-weight:800;margin-bottom:6px;color:#0f172a;">⚠️ 필수 주의사항</div>
-            ${getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).map(p => `• ${p}<br>`).join('')}
-            • <strong>기종 확인:</strong> 키패드에 *#06# 입력 시 <strong>EID 번호</strong>가 보여야 사용 가능해요 (중국/홍콩/마카오 구매 아이폰 불가)<br>
-            • <strong>단순 변심:</strong> QR코드 발송 후에는 디지털 상품 특성상 취소/환불이 불가해요<br>
-            • <strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 카톡 고객센터로 접수 시 미해결 100% 환불 보장
+          <div style="font-size:0.79rem;color:#334155;line-height:1.6;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 15px;margin-bottom:14px;box-shadow:0 4px 14px rgba(15,23,42,0.04);">
+            <div style="font-weight:800;margin-bottom:8px;color:#0f172a;display:flex;align-items:center;gap:7px;"><span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:rgba(239,68,68,0.1);align-items:center;justify-content:center;font-size:0.7rem;">⚠️</span>꼭 확인해 주세요</div>
+            ${(() => {
+              const item = (t, first) => `<div style="display:flex;gap:9px;padding:8px 0;${first ? '' : 'border-top:1px solid rgba(15,23,42,0.05);'}"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${t}</span></div>`;
+              const list = getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).concat([
+                '<strong>기종 확인:</strong> 키패드에 *#06# 입력 시 <strong>EID 번호</strong>가 보여야 사용 가능해요 (중국/홍콩/마카오 구매 아이폰 불가)',
+                '<strong>단순 변심:</strong> QR코드 발송 후에는 디지털 상품 특성상 취소/환불이 불가해요',
+                '<strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 카톡 고객센터로 접수 시 미해결 100% 환불 보장'
+              ]);
+              return list.map((t, i) => item(t, i === 0)).join('');
+            })()}
           </div>
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:0.78rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#334155;font-weight:600;">

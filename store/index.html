@@ -20,6 +20,7 @@
   <meta property="og:url" content="https://jdisim.co.kr">
   <meta name="twitter:card" content="summary">
   <meta name="description" content="전 세계 150개국 데이터를 공항 대기 없이 QR코드로 간편하게 로밍하세요. 속도 저하 없는 1등 로컬망 요금제를 가장 합리적인 가격에 선보입니다.">
+  <meta name="theme-color" content="#ffffff">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
@@ -214,6 +215,14 @@
     @keyframes heroFoxIn { from { opacity: 0; transform: translateY(24px) scale(0.94); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: reduce) { .hero-video-badge, .hero-video-title, .hero-video-sub, .hero-video-buttons, .hero-fox-col, .hero-video-content .hero-text-col > div:last-child { animation: none !important; } }
 
+
+    /* ===== 전역 마이크로 디테일 ===== */
+    ::selection { background: rgba(249, 115, 22, 0.22); }
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; border: 2.5px solid #f8fafc; }
+    ::-webkit-scrollbar-thumb:hover { background: #F97316; }
     /* ===== 상품 카드: 호버 리프트 + 이미지 줌 ===== */
     .product-card { transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease !important; }
     .product-card:hover { transform: translateY(-7px); box-shadow: 0 22px 48px rgba(15, 23, 42, 0.14) !important; }
