@@ -1851,6 +1851,7 @@
       <div class="option-group-title"><span class="step-num">4</span>사용 기간 선택</div>
       <select id="daysSelect" class="tracker-input" onchange="onDaysChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
+      <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.72rem;font-weight:700;color:#64748b;line-height:1.55;padding:0 2px;"></div>
     </div>
 
     <!-- Quantity & Price Calculator -->
@@ -2392,6 +2393,10 @@
     // 국가별 대표 시간대 (현지 시간 위젯용)
     const COUNTRY_TZ = { '일본': ['Asia/Tokyo', '도쿄'], '베트남': ['Asia/Ho_Chi_Minh', '다낭'], '태국': ['Asia/Bangkok', '방콕'], '대만': ['Asia/Taipei', '타이베이'], '필리핀': ['Asia/Manila', '마닐라'], '싱가포르': ['Asia/Singapore', '싱가포르'], '말레이시아': ['Asia/Kuala_Lumpur', '쿠알라룸푸르'], '인도네시아': ['Asia/Makassar', '발리'], '미국': ['America/Los_Angeles', 'LA'], '괌': ['Pacific/Guam', '괌'], '사이판': ['Pacific/Saipan', '사이판'], '중국': ['Asia/Shanghai', '베이징'], '홍콩': ['Asia/Hong_Kong', '홍콩'], '마카오': ['Asia/Macau', '마카오'], '호주': ['Australia/Sydney', '시드니'], '뉴질랜드': ['Pacific/Auckland', '오클랜드'], '튀르키예': ['Europe/Istanbul', '이스탄불'], '캐나다': ['America/Toronto', '토론토'], '몽골': ['Asia/Ulaanbaatar', '울란바토르'], '인도': ['Asia/Kolkata', '델리'], '몰디브': ['Indian/Maldives', '말레'], '라오스': ['Asia/Vientiane', '비엔티안'], '캄보디아': ['Asia/Phnom_Penh', '프놈펜'], '스리랑카': ['Asia/Colombo', '콜롬보'], '방글라데시': ['Asia/Dhaka', '다카'], '파키스탄': ['Asia/Karachi', '카라치'], '러시아': ['Europe/Moscow', '모스크바'], '멕시코': ['America/Mexico_City', '멕시코시티'], '브라질': ['America/Sao_Paulo', '상파울루'], '칠레': ['America/Santiago', '산티아고'], '모로코': ['Africa/Casablanca', '카사블랑카'], '남아프리카공화국': ['Africa/Johannesburg', '요하네스버그'], '이집트': ['Africa/Cairo', '카이로'], '케냐': ['Africa/Nairobi', '나이로비'], '나이지리아': ['Africa/Lagos', '라고스'], '튀니지': ['Africa/Tunis', '튀니스'], '알제리': ['Africa/Algiers', '알제'], '사우디아라비아': ['Asia/Riyadh', '리야드'], '아랍에미레이트 (UAE)': ['Asia/Dubai', '두바이'], '카타르': ['Asia/Qatar', '도하'], '쿠웨이트': ['Asia/Kuwait', '쿠웨이트시티'], '바레인': ['Asia/Bahrain', '마나마'], '오만': ['Asia/Muscat', '무스카트'], '아프가니스탄': ['Asia/Kabul', '카불'], '오렌지프랑스': ['Europe/Paris', '파리'], '오렌지스페인': ['Europe/Madrid', '마드리드'], '보다폰스페인': ['Europe/Madrid', '바르셀로나'], '쓰리(THREE)': ['Europe/London', '런던'], '한국': ['Asia/Seoul', '서울'] };
 
+    // 주요 도시 좌표 (실시간 날씨용)
+    const COUNTRY_GEO = { '일본': [35.68, 139.69], '베트남': [16.05, 108.2], '태국': [13.76, 100.5], '대만': [25.03, 121.57], '필리핀': [14.6, 120.98], '싱가포르': [1.35, 103.82], '말레이시아': [3.14, 101.69], '인도네시아': [-8.65, 115.22], '미국': [34.05, -118.24], '괌': [13.44, 144.79], '사이판': [15.21, 145.75], '중국': [39.9, 116.4], '홍콩': [22.32, 114.17], '마카오': [22.2, 113.55], '호주': [-33.87, 151.21], '뉴질랜드': [-36.85, 174.76], '튀르키예': [41.01, 28.98], '캐나다': [43.65, -79.38], '몽골': [47.89, 106.91], '인도': [28.61, 77.21], '몰디브': [4.17, 73.51], '오렌지프랑스': [48.86, 2.35], '오렌지스페인': [40.42, -3.7], '보다폰스페인': [41.39, 2.17], '쓰리(THREE)': [51.51, -0.13] };
+    const WMO_EMOJI = c => c === 0 ? '☀️' : c <= 2 ? '🌤️' : c === 3 ? '☁️' : c <= 48 ? '🌫️' : c <= 67 ? '🌧️' : c <= 77 ? '❄️' : c <= 82 ? '🌦️' : '⛈️';
+
     function renderSheetLocalTime(countryName) {
       const el = document.getElementById('sheetLocalTime');
       if (!el) return;
@@ -2402,8 +2407,41 @@
         const timeStr = new Intl.DateTimeFormat('ko-KR', { timeZone: tz[0], hour: 'numeric', minute: '2-digit' }).format(now);
         const hour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: tz[0], hour: 'numeric', hour12: false }).format(now), 10);
         const mood = (hour >= 6 && hour < 17) ? '☀️' : (hour >= 17 && hour < 20) ? '🌆' : '🌙';
-        el.textContent = `지금 ${tz[1]}은(는) ${timeStr} ${mood}`;
+        // 한국과의 시차 계산
+        let diffTxt = '';
+        try {
+          const there = new Date(now.toLocaleString('en-US', { timeZone: tz[0] }));
+          const seoul = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+          const diffMin = Math.round((there - seoul) / 60000);
+          if (diffMin === 0) diffTxt = ' · 한국과 시차 없음';
+          else {
+            const h = Math.floor(Math.abs(diffMin) / 60), mm = Math.abs(diffMin) % 60;
+            diffTxt = ` · 한국보다 ${h ? h + '시간' : ''}${mm ? ' ' + mm + '분' : ''} ${diffMin > 0 ? '빨라요' : '느려요'}`.replace('  ', ' ');
+          }
+        } catch (e) {}
+        el.innerHTML = `지금 ${tz[1]}은(는) ${timeStr} ${mood}<span id="sheetWeather"></span>${diffTxt}`;
         el.style.display = 'block';
+        // 실시간 날씨 (실패해도 조용히 생략, 국가별 30분 캐시)
+        const geo = COUNTRY_GEO[countryName];
+        if (!geo || !window.fetch) return;
+        const cacheKey = 'jd_wx_' + countryName;
+        try {
+          const cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+          if (cached && Date.now() - cached.t < 1800000) {
+            const w = document.getElementById('sheetWeather');
+            if (w) w.textContent = ` · ${Math.round(cached.temp)}°C ${WMO_EMOJI(cached.code)}`;
+            return;
+          }
+        } catch (e) {}
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geo[0]}&longitude=${geo[1]}&current_weather=true`)
+          .then(r => r.json())
+          .then(d => {
+            if (!d || !d.current_weather) return;
+            const w = document.getElementById('sheetWeather');
+            if (w) w.textContent = ` · ${Math.round(d.current_weather.temperature)}°C ${WMO_EMOJI(d.current_weather.weathercode)}`;
+            try { sessionStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), temp: d.current_weather.temperature, code: d.current_weather.weathercode })); } catch (e) {}
+          })
+          .catch(() => {});
       } catch (e) { el.style.display = 'none'; }
     }
 
@@ -2439,21 +2477,21 @@
 
     // 🧳 국가별 여행 준비물 & 알아두면 좋은 이슈 (결제 완료 화면용)
     const TRAVEL_TIPS = {
-      '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용'] },
-      '베트남': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['모기 기피제', '얇은 긴팔 — 실내 냉방이 강해요', '소액 현금(동) — 시장·로컬 식당용'], issues: ['전자담배 반입·사용 전면 금지(2025년~) — 적발 시 처벌', '이동은 그랩(Grab) 앱이 필수 — 미리 설치하세요'] },
-      '태국': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['자외선 차단제', '사원 방문용 무릎 덮는 하의', '모기 기피제'], issues: ['전자담배 반입·소지 금지 — 벌금·처벌 사례가 많아요', '왕실 관련 언행은 법적 처벌 대상 — 주의'] },
+      '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용', '🛂 무비자 90일 — Visit Japan Web을 미리 작성하면 입국 심사가 빨라요'] },
+      '베트남': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['모기 기피제', '얇은 긴팔 — 실내 냉방이 강해요', '소액 현금(동) — 시장·로컬 식당용'], issues: ['전자담배 반입·사용 전면 금지(2025년~) — 적발 시 처벌', '이동은 그랩(Grab) 앱이 필수 — 미리 설치하세요', '🛂 무비자 45일 — 여권 유효기간 6개월 이상 필수'] },
+      '태국': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['자외선 차단제', '사원 방문용 무릎 덮는 하의', '모기 기피제'], issues: ['전자담배 반입·소지 금지 — 벌금·처벌 사례가 많아요', '왕실 관련 언행은 법적 처벌 대상 — 주의', '🛂 무비자 입국이지만 디지털 입국카드(TDAC)를 출국 전 온라인으로 작성해야 해요'] },
       '대만': { power: '110V · A타입 (돼지코 어댑터)', items: ['A타입 어댑터', '접이식 우산 — 스콜성 비가 잦아요', '교통은 이지카드 하나로 해결'], issues: ['전자담배 전면 금지(2023년~)', '지하철 안 음식물 섭취 금지 — 벌금'] },
       '필리핀': { power: '220V · 한국 플러그 대부분 호환', items: ['모기 기피제', '방수팩 — 섬·액티비티용'], issues: ['전자담배는 성인 1인 소량만 반입 가능', '야간 이동 시 소지품 주의'] },
-      '싱가포르': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '얇은 겉옷 — 실내 냉방이 아주 강해요'], issues: ['껌 반입 금지 · 전자담배 소지 벌금', '무단횡단·쓰레기 투기 벌금 — 엄격해요'] },
+      '싱가포르': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '얇은 겉옷 — 실내 냉방이 아주 강해요'], issues: ['껌 반입 금지 · 전자담배 소지 벌금', '무단횡단·쓰레기 투기 벌금 — 엄격해요', '🛂 입국 3일 전부터 SG 입국카드(SG Arrival Card) 온라인 제출 필수'] },
       '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
       '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
-      '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅'] },
-      '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 1~2일 전 개통일 등록이 필요해요'] },
+      '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅', '🛂 비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
+      '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 1~2일 전 개통일 등록이 필요해요', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
       '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
       '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
       '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },
-      '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)'] },
-      '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요'] },
+      '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)', '🛂 발리는 도착비자(VOA) — e-VOA로 미리 신청하면 줄이 짧아요'] },
+      '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요', '🛂 ETA(전자여행허가)를 앱으로 사전 신청해야 해요'] },
       '오렌지프랑스': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의 — 특히 지하철·에펠탑 인근'] },
       '오렌지스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
       '보다폰스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
@@ -2722,7 +2760,18 @@
 
     function onDaysChange(val) {
       selectedDays = parseInt(val);
+      renderDaysFeel(selectedDays);
       updatePricing();
+    }
+
+    // 일수 계산 도우미: "4일권 = 3박 4일" — 잘못 산 일수를 미리 방지
+    function renderDaysFeel(d) {
+      const el = document.getElementById('daysFeel');
+      if (!el) return;
+      if (!d || isNaN(d)) { el.style.display = 'none'; return; }
+      const trip = d === 1 ? '당일치기·짧은 경유에 좋아요' : `${d - 1}박 ${d}일 일정에 딱 맞아요`;
+      el.innerHTML = `✈️ ${d}일권은 <strong style="color:#0f172a;">${trip}</strong> · 사용일은 개통 시점부터 계산돼요`;
+      el.style.display = 'block';
     }
 
     // 데이터 체감 번역기: "2GB"를 "유튜브 2시간·인스타 3시간"으로 번역
