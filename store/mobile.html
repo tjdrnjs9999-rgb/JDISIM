@@ -36,6 +36,54 @@
     // 첫 화면 렌더 후 여유 시간에 미리 로드
     window.addEventListener('load', function () { setTimeout(function () { window.ensureFullProducts(); }, 900); });
 
+    // ===== PWA: 서비스워커 등록 + 홈 화면 설치 유도 (한 번만, 닫으면 다시 안 뜸) =====
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('SW 등록 실패', e); });
+      });
+    }
+    (function () {
+      var isStandalone = window.matchMedia && matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      var dismissed = false;
+      try { dismissed = !!localStorage.getItem('jd_pwa_hint'); } catch (e) {}
+      if (isStandalone || dismissed) return;
+      var deferredPrompt = null;
+      function showBanner(html, onAction) {
+        if (document.getElementById('pwaBanner')) return;
+        var b = document.createElement('div');
+        b.id = 'pwaBanner';
+        b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:99998;background:#0f172a;color:#fff;border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 14px 34px rgba(15,23,42,0.4);font-size:0.78rem;font-weight:700;line-height:1.5;';
+        b.innerHTML = '<img src="icon-192.png" style="width:36px;height:36px;border-radius:10px;flex-shrink:0;" alt="">' +
+          '<div style="min-width:0;">' + html + '</div>' +
+          (onAction ? '<button id="pwaGo" style="flex-shrink:0;margin-left:auto;background:linear-gradient(135deg,#F97316,#F59E0B);border:none;color:#fff;font-weight:800;font-size:0.74rem;padding:9px 13px;border-radius:20px;">설치</button>' : '') +
+          '<button id="pwaX" style="flex-shrink:0;background:none;border:none;color:#64748b;font-size:1rem;font-weight:800;padding:4px;' + (onAction ? '' : 'margin-left:auto;') + '">✕</button>';
+        document.body.appendChild(b);
+        document.getElementById('pwaX').onclick = function () { b.remove(); try { localStorage.setItem('jd_pwa_hint', '1'); } catch (e) {} };
+        if (onAction) document.getElementById('pwaGo').onclick = onAction;
+      }
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        setTimeout(function () {
+          showBanner('<strong>JDISIM 앱으로 설치할까요?</strong><br><span style="color:#94a3b8;">홈 화면에서 한 번에 열어요</span>', function () {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            var b = document.getElementById('pwaBanner');
+            if (b) b.remove();
+            try { localStorage.setItem('jd_pwa_hint', '1'); } catch (e2) {}
+          });
+        }, 6000);
+      });
+      // iOS 사파리: 설치 프롬프트가 없어 안내만
+      var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      var isSafari = /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+      if (isIOS && isSafari) {
+        setTimeout(function () {
+          showBanner('<strong>홈 화면에 JDISIM 추가하기</strong><br><span style="color:#94a3b8;">공유 버튼 <span style="color:#60a5fa;">⬆︎</span> → \'홈 화면에 추가\'를 누르세요</span>', null);
+        }, 9000);
+      }
+    })();
+
     console.log("Diagnostic script loaded");
 
     // ===== 로딩 가드: products.js(대용량) 로딩 중 버튼을 탭해도 에러 없이 동작하도록 =====
@@ -68,7 +116,12 @@
   <meta property="og:url" content="https://jdisim.co.kr">
   <meta name="twitter:card" content="summary">
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
-  <meta name="theme-color" content="#fdfefe">
+  <meta name="theme-color" content="#F97316">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="JDISIM">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
@@ -1749,6 +1802,27 @@
     <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 6px 0;">주문 및 eSIM QR코드 조회</h3>
     <p style="font-size: 0.8rem; color: #475569; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다.</p>
 
+    <!-- 📡 로미 닥터: eSIM 장애 자가진단 -->
+    <div class="device-check-banner" onclick="openRomiDoctor()" role="button" tabindex="0" style="margin: 0 0 14px;">
+      <div class="dcb-icon">🩺</div>
+      <div class="dcb-text">
+        <strong>이심이 안 되나요? 로미 닥터</strong>
+        <span>증상만 고르면 1분 안에 해결법을 찾아드려요</span>
+      </div>
+      <div class="dcb-arrow">진단 시작</div>
+    </div>
+
+    <!-- 📊 사용량 확인 방법 (접이식) -->
+    <details style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin:0 0 16px;overflow:hidden;">
+      <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">📊 데이터 사용량 확인하는 법<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기 ▾</span></summary>
+      <div style="padding:2px 14px 13px;font-size:0.76rem;line-height:1.7;color:#334155;">
+        <strong style="color:#F2751F;">아이폰</strong> — 설정 → 셀룰러 → 여행 eSIM 회선 선택 → '현재 기간' 사용량 확인 (여행 시작 때 '통계 재설정'을 눌러두면 정확해요)<br>
+        <strong style="color:#F2751F;">갤럭시</strong> — 설정 → 연결 → 데이터 사용 → 해당 SIM 선택<br>
+        <strong style="color:#F2751F;">통신사 직접 조회</strong> — 몰디브: 727번으로 'myusage' 문자 · 몽골: *1411# 통화 · 프랑스 오렌지: 225 통화<br>
+        <span style="color:#94a3b8;">💡 실시간 잔여량 자동 조회 기능은 준비 중이에요</span>
+      </div>
+    </details>
+
     <div class="order-tracker-form">
       <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
       <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 입력 (숫자만)">
@@ -2558,6 +2632,108 @@
         }
       }
       document.getElementById('tcDoneBtn').onclick = () => { layer.remove(); if (onDone) onDone(); };
+    }
+
+    // ===== 🩺 로미 닥터: eSIM 장애 자가진단 마법사 =====
+    const DOCTOR_TREE = {
+      'no-qr': { title: 'QR코드가 안 왔어요', steps: [
+        '결제 후 <strong>평균 5~15분</strong> 걸려요 — 조금만 기다려 주세요',
+        '문자함과 <strong>카카오톡 차단 메시지함</strong>, 이메일 <strong>스팸함</strong>을 확인해 주세요',
+        '이 페이지의 <strong>주문 조회</strong>에서 이름·연락처로 검색하면 발급 정보를 볼 수 있어요',
+        '주문이 조회되는데 QR만 안 왔다면 발송 오류일 수 있어요 — 바로 상담으로 도와드릴게요'
+      ]},
+      'install-fail': { title: '설치(QR 스캔)가 안 돼요', steps: [
+        'QR을 스캔하려면 <strong>다른 화면에 QR을 띄우고</strong> 폰 카메라로 찍어야 해요 — 폰 한 대뿐이면 QR 아래의 <strong>수동 입력 코드</strong>로 설치하세요 (설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력)',
+        '설치에는 <strong>Wi-Fi 등 인터넷 연결</strong>이 필요해요',
+        '키패드에 <strong>*#06#</strong>을 눌러 <strong>EID</strong>가 보이는지 확인 — 안 보이면 eSIM 미지원 기종이에요',
+        '⚠️ 한 번 설치했다 <strong>삭제한 QR은 재설치가 안 돼요</strong> — 삭제하셨다면 바로 상담 주세요'
+      ]},
+      'no-signal': { title: '현지인데 신호가 안 잡혀요', steps: [
+        '<strong>① 데이터 로밍 켜기</strong> — 설정 → 셀룰러 → 여행 eSIM → <strong>데이터 로밍 ON</strong> (안 되는 원인 1위예요!)',
+        '<strong>② 셀룰러 데이터 회선</strong>이 여행 eSIM으로 선택돼 있는지 확인 (한국 유심이 아니라!)',
+        '<strong>③ 해당 eSIM 회선이 \'켬\'</strong> 상태인지 확인',
+        '<strong>④ 비행기 모드를 5초 켰다 끄기</strong> — 망을 다시 잡아요',
+        '<strong>⑤ 네트워크 선택을 \'자동\'</strong>으로 (설정 → 셀룰러 → 네트워크 선택)',
+        '<strong>⑥ 재부팅</strong> — 그래도 안 되면 상담으로! eSIM 프로필은 <strong>절대 삭제하지 마세요</strong>'
+      ]},
+      'slow': { title: '인터넷이 느리거나 자주 끊겨요', steps: [
+        '일일 고속 용량을 다 쓰면 <strong>저속 모드</strong>로 전환되는 상품이 있어요 — 위 \'사용량 확인하는 법\'으로 오늘 사용량을 체크해 보세요',
+        '설정에서 <strong>5G ↔ LTE를 전환</strong>해 보세요 — 지역에 따라 LTE가 더 안정적이에요',
+        '베트남 등 일부 국가는 <strong>네트워크 수동 선택</strong>으로 주력망(예: Viettel)을 고정하면 빨라져요',
+        '관광지 밀집 지역·지하는 순간 혼잡일 수 있어요 — 자리를 옮겨 재시도'
+      ]},
+      'am-i-ok': { title: '제대로 쓰고 있는 건지 모르겠어요', steps: [
+        '화면 <strong>상단 통신사 이름</strong>이 현지 통신사(또는 로밍 파트너)로 떠 있으면 정상 연결이에요',
+        '설정 → 셀룰러에서 여행 eSIM 회선이 <strong>\'켬\' + 셀룰러 데이터로 선택</strong>되어 있으면 OK',
+        '한국 번호로 전화·문자를 받아야 하면 한국 유심 회선은 켜두되 <strong>셀룰러 데이터만 여행 eSIM</strong>으로 두면 돼요 (한국 회선 데이터 로밍은 꺼두세요 — 요금 폭탄 방지)',
+        '위 \'사용량 확인하는 법\'으로 데이터가 실제로 여행 eSIM에서 나가는지 확인할 수 있어요'
+      ]}
+    };
+
+    function openRomiDoctor() {
+      let layer = document.getElementById('romiDoctor');
+      if (layer) layer.remove();
+      layer = document.createElement('div');
+      layer.id = 'romiDoctor';
+      layer.style.cssText = 'position:fixed;inset:0;background:rgba(11,16,32,0.6);backdrop-filter:blur(4px);z-index:100001;display:flex;align-items:flex-end;';
+      layer.innerHTML = `
+        <div style="background:#fdfefe;width:100%;border-radius:24px 24px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom,0px));max-height:86vh;overflow-y:auto;overscroll-behavior:contain;">
+          <div style="width:42px;height:4.5px;border-radius:4px;background:#e2e8f0;margin:-6px auto 14px;"></div>
+          <div id="rdBody"></div>
+        </div>`;
+      layer.onclick = (e) => { if (e.target === layer) layer.remove(); };
+      document.body.appendChild(layer);
+      renderDoctorHome();
+    }
+
+    function renderDoctorHome() {
+      const body = document.getElementById('rdBody');
+      if (!body) return;
+      body.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <img src="images/fox-hello.png" style="width:44px;" onerror="this.style.display='none'" alt="">
+          <div>
+            <div style="font-weight:800;font-size:1rem;color:#0f172a;">로미 닥터 🩺</div>
+            <div style="font-size:0.74rem;color:#94a3b8;font-weight:600;">어떤 증상인가요? 골라주시면 바로 진단할게요</div>
+          </div>
+        </div>
+        ${Object.entries(DOCTOR_TREE).map(([k, v]) => `
+          <button type="button" onclick="renderDoctorSteps('${k}')" style="display:flex;align-items:center;width:100%;text-align:left;gap:10px;margin-top:9px;padding:14px;border:1px solid #e5eaf2;border-radius:14px;background:#fff;font-size:0.84rem;font-weight:700;color:#0f172a;box-shadow:0 3px 10px rgba(15,23,42,0.04);">
+            ${v.title}<span style="margin-left:auto;color:#F97316;">→</span>
+          </button>`).join('')}`;
+    }
+
+    function renderDoctorSteps(key) {
+      const t = DOCTOR_TREE[key];
+      const body = document.getElementById('rdBody');
+      if (!t || !body) return;
+      body.innerHTML = `
+        <button type="button" onclick="renderDoctorHome()" style="background:none;border:none;color:#64748b;font-weight:800;font-size:0.78rem;padding:0 0 10px;">← 다른 증상 보기</button>
+        <div style="font-weight:800;font-size:0.98rem;color:#0f172a;margin-bottom:10px;">🩺 ${t.title}</div>
+        ${t.steps.map((s, i) => `
+          <div style="display:flex;gap:10px;padding:11px 0;${i ? 'border-top:1px solid rgba(15,23,42,0.05);' : ''}font-size:0.8rem;line-height:1.65;color:#334155;">
+            <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.68rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${i + 1}</span>
+            <span>${s}</span>
+          </div>`).join('')}
+        <div style="display:flex;gap:9px;margin-top:16px;">
+          <button type="button" onclick="document.getElementById('romiDoctor').remove()" style="flex:1;padding:14px;border-radius:14px;border:1px solid #dcfce7;background:#f0fdf4;color:#15803d;font-weight:800;font-size:0.82rem;">해결됐어요 🎉</button>
+          <button type="button" onclick="doctorEscalate('${key}')" style="flex:1.3;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.82rem;box-shadow:0 5px 14px rgba(249,115,22,0.3);">여전히 안 돼요 → 상담</button>
+        </div>`;
+      body.parentElement.scrollTop = 0;
+    }
+
+    function doctorEscalate(key) {
+      const t = DOCTOR_TREE[key];
+      const summary = `[로미 닥터 진단 요약]\n증상: ${t.title}\n안내된 단계를 모두 시도했지만 해결되지 않았습니다.\n기종: ${navigator.userAgent.includes('iPhone') ? '아이폰' : navigator.userAgent.includes('Android') ? '안드로이드' : '기타'}\n주문번호: (여기에 입력해 주세요)`;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(summary);
+          showDataLoadingToast();
+          const dt = document.getElementById('dataToast');
+          if (dt) dt.textContent = '📋 진단 요약이 복사됐어요 — 채팅창에 붙여넣기!';
+        }
+      } catch (e) {}
+      window.open('https://pf.kakao.com/_GSixcn/chat', '_blank');
     }
 
     function showAgreeToast() {
