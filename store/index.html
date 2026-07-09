@@ -657,6 +657,15 @@
             @keyframes dbPulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
             @media (prefers-reduced-motion: reduce) { #pcDbRow .db-cell.flip, #pcDepBoard [style*="dbPulse"], #pcDbRow .db-status { animation: none !important; } }
           </style>
+          <!-- 📱 기종 자가진단 배너 -->
+          <div onclick="var b=document.getElementById('navDeviceCheckBtn'); if(b) b.click();" style="display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:15px 20px;background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,0.05);cursor:pointer;transition:transform 0.18s ease, box-shadow 0.18s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 26px rgba(15,23,42,0.09)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(15,23,42,0.05)';">
+            <div style="width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(249,115,22,0.12),rgba(245,158,11,0.12));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📱</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <strong style="font-size:0.95rem;font-weight:800;color:#0f172a;">내 폰에서 이심이 될까요?</strong>
+              <span style="font-size:0.78rem;font-weight:600;color:#94a3b8;">구매 전 10초 자가진단 — 기종만 고르면 바로 확인돼요</span>
+            </div>
+            <span style="margin-left:auto;flex-shrink:0;font-size:0.82rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#F97316,#F59E0B);padding:10px 18px;border-radius:24px;box-shadow:0 4px 12px rgba(249,115,22,0.3);">진단하기 →</span>
+          </div>
           <div class="product-count">총 <span id="productCountNum">0</span>개의 여행지가 검색됨</div>
         </div>
 
@@ -1263,7 +1272,7 @@
   </script>
   <script src="reviews_data.js?v=20260708"></script>
   <script src="app.js?v=20260708"></script>
-  <script src="globe.js?v=20260719" defer></script>
+  <script src="globe.js?v=20260720" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
       var GLOBE_HOST_ID = 'pcGlobe';

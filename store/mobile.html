@@ -546,6 +546,45 @@
       color: #4f46e5;
     }
 
+    /* 📱 기종 자가진단 배너 */
+    .device-check-banner {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 10px 0 2px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px solid #eef2f7;
+      border-radius: 16px;
+      box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+    .device-check-banner:active { transform: scale(0.98); }
+    .dcb-icon {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(245, 158, 11, 0.12));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .dcb-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .dcb-text strong { font-size: 0.84rem; font-weight: 800; color: #0f172a; }
+    .dcb-text span { font-size: 0.7rem; font-weight: 600; color: #94a3b8; }
+    .dcb-arrow {
+      margin-left: auto;
+      flex-shrink: 0;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #F97316, #F59E0B);
+      padding: 8px 13px;
+      border-radius: 22px;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+      white-space: nowrap;
+    }
+
     /* ===== 전역 마이크로 디테일 ===== */
     ::selection { background: rgba(249, 115, 22, 0.22); }
     body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -1638,6 +1677,16 @@
       <div class="db-row" id="mDbRow"></div>
     </div>
 
+    <!-- 📱 기종 자가진단 배너 -->
+    <div class="device-check-banner" onclick="openDeviceCheck()" role="button" tabindex="0">
+      <div class="dcb-icon">📱</div>
+      <div class="dcb-text">
+        <strong>내 폰에서 이심이 될까요?</strong>
+        <span>구매 전 10초 자가진단으로 확인하세요</span>
+      </div>
+      <div class="dcb-arrow">진단하기 →</div>
+    </div>
+
     <!-- 최근 본 국가 -->
     <div class="recent-row" id="recentRow" style="display:none;">
       <span class="recent-label">최근 본</span>
@@ -1824,7 +1873,7 @@
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="products-lite.js?v=20260710" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
-  <script src="globe.js?v=20260719" defer></script>
+  <script src="globe.js?v=20260720" defer></script>
   
   <script>
 
