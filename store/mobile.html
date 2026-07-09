@@ -1543,7 +1543,7 @@
   <!-- JavaScript imports -->
   <script src="products.js?v=20260709" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
-  <script src="globe.js?v=20260713" defer></script>
+  <script src="globe.js?v=20260714" defer></script>
   
   <script>
 
@@ -2574,6 +2574,7 @@
         if (window.JDISIM_GLOBE) {
           JDISIM_GLOBE.mount('mGlobe', {
             mobile: true,
+            texPath: 'images/', // 텍스처가 images 폴더에 있음
             onCountry: function (country) { openBottomSheet(country); }
           });
         }

@@ -1137,12 +1137,13 @@
   <script src="products.js?v=20260708"></script>
   <script src="reviews_data.js?v=20260708"></script>
   <script src="app.js?v=20260708"></script>
-  <script src="globe.js?v=20260713" defer></script>
+  <script src="globe.js?v=20260714" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
       if (window.JDISIM_GLOBE) {
         JDISIM_GLOBE.mount('pcGlobe', {
           mobile: false,
+            texPath: 'images/', // 텍스처가 images 폴더에 있음
           onCountry: function (country) {
             if (typeof window.jdisimGoCountry === 'function') window.jdisimGoCountry(country);
           }
