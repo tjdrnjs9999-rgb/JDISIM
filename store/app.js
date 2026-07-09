@@ -704,14 +704,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       const g = grouped[p.country];
       g.carriers.push(p);
       
-      p.plans.forEach(pl => {
-        if (pl.final_price < g.minPrice) {
-          g.minPrice = pl.final_price;
-        }
-        if (pl.data_limit === '무제한') {
-          g.has_unlimited = true;
-        }
-      });
+      if (p.plans && p.plans.length) {
+        p.plans.forEach(pl => {
+          if (pl.final_price < g.minPrice) {
+            g.minPrice = pl.final_price;
+          }
+          if (pl.data_limit === '무제한') {
+            g.has_unlimited = true;
+          }
+        });
+      } else {
+        // 요약 데이터(2단 로딩의 1단계) 폴백
+        if (typeof p.min_price === 'number' && p.min_price < g.minPrice) g.minPrice = p.min_price;
+        if (p.has_unlimited) g.has_unlimited = true;
+      }
       g.network_speeds.add(p.network_speed);
       g.network_types.add(p.network_type);
       g.calls_options.add(p.calls);
@@ -781,12 +787,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         let bestCarrier = g.carriers[0];
         let absoluteMin = Infinity;
         g.carriers.forEach(c => {
-          c.plans.forEach(pl => {
-            if (pl.final_price < absoluteMin) {
-              absoluteMin = pl.final_price;
-              bestCarrier = c;
-            }
-          });
+          if (c.plans && c.plans.length) {
+            c.plans.forEach(pl => {
+              if (pl.final_price < absoluteMin) {
+                absoluteMin = pl.final_price;
+                bestCarrier = c;
+              }
+            });
+          } else if (typeof c.min_price === 'number' && c.min_price < absoluteMin) {
+            absoluteMin = c.min_price;
+            bestCarrier = c;
+          }
         });
         openModal(bestCarrier);
       });
@@ -889,12 +900,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         let bestCarrier = g.carriers[0];
         let absoluteMin = Infinity;
         g.carriers.forEach(c => {
-          c.plans.forEach(pl => {
-            if (pl.final_price < absoluteMin) {
-              absoluteMin = pl.final_price;
-              bestCarrier = c;
-            }
-          });
+          if (c.plans && c.plans.length) {
+            c.plans.forEach(pl => {
+              if (pl.final_price < absoluteMin) {
+                absoluteMin = pl.final_price;
+                bestCarrier = c;
+              }
+            });
+          } else if (typeof c.min_price === 'number' && c.min_price < absoluteMin) {
+            absoluteMin = c.min_price;
+            bestCarrier = c;
+          }
         });
         openModal(bestCarrier);
       });
@@ -965,6 +981,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.enhanceOptionSelects = enhanceOptionSelects;
 
   function openModal(prod) {
+    if (!window.__fullReady && (!prod.plans || !prod.plans.length)) {
+      document.body.style.cursor = 'progress';
+      window.ensureFullProducts(function () {
+        document.body.style.cursor = '';
+        openModal(prod);
+      });
+      return;
+    }
     activeProduct = prod;
     
     // 동일 국가의 다른 캐리어(통신사)가 있는지 확인

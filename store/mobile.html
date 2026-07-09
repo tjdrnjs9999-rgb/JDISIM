@@ -7,6 +7,35 @@
       try { console.error('JDISIM error:', msg, 'line', lineNo); } catch (e) {}
       return false;
     };
+
+    // ===== 요금제 데이터 2단 로딩: 요약(64KB) 즉시 → 전체(2.4MB) 백그라운드 =====
+    window.__fullReady = false;
+    window.__fullCallbacks = [];
+    window.ensureFullProducts = function (cb) {
+      if (window.__fullReady) { if (cb) cb(); return; }
+      if (cb) window.__fullCallbacks.push(cb);
+      if (window.__fullLoading) return;
+      window.__fullLoading = true;
+      var lite = window.PRODUCTS_DATA;
+      var sc = document.createElement('script');
+      sc.src = 'products.js?v=20260709';
+      sc.onload = function () {
+        var full = window.PRODUCTS_DATA;
+        if (lite && lite !== full && lite.length) {
+          var key = function (g) { return g.country + '|' + g.carrier + '|' + g.network_type; };
+          var map = {};
+          full.forEach(function (g) { map[key(g)] = g; });
+          lite.forEach(function (g) { var f = map[key(g)]; if (f) g.plans = f.plans; });
+        }
+        window.__fullReady = true;
+        window.__fullCallbacks.splice(0).forEach(function (fn) { try { fn(); } catch (e) { console.error(e); } });
+      };
+      sc.onerror = function () { window.__fullLoading = false; console.error('요금제 전체 데이터 로드 실패'); };
+      document.head.appendChild(sc);
+    };
+    // 첫 화면 렌더 후 여유 시간에 미리 로드
+    window.addEventListener('load', function () { setTimeout(function () { window.ensureFullProducts(); }, 900); });
+
     console.log("Diagnostic script loaded");
 
     // ===== 로딩 가드: products.js(대용량) 로딩 중 버튼을 탭해도 에러 없이 동작하도록 =====
@@ -593,6 +622,108 @@
       border: 1px solid #e2e8f0;
       color: #334155;
     }
+    /* ===== ✈ 공항 출발 전광판 ===== */
+    .departure-board {
+      margin: 12px 0 4px;
+      background: linear-gradient(180deg, #131a2b, #0d1322);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 12px 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(13, 19, 34, 0.35);
+    }
+    .db-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      color: #fbbf24;
+      font-family: 'SF Mono', 'Courier New', monospace;
+    }
+    .db-head em { font-style: normal; letter-spacing: 0; color: #64748b; font-weight: 700; margin-left: auto; }
+    .db-live {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: dbPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes dbPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .db-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 9px;
+      font-family: 'SF Mono', 'Courier New', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .db-flag { font-size: 1.05rem; }
+    .db-cell {
+      display: inline-block;
+      background: linear-gradient(180deg, #222b42 48%, #1a2338 52%);
+      border-radius: 3px;
+      color: #f8fafc;
+      font-weight: 800;
+      font-size: 0.86rem;
+      padding: 4px 5px;
+      min-width: 15px;
+      text-align: center;
+      backface-visibility: hidden;
+    }
+    .db-cell.flip { animation: dbFlip 0.42s cubic-bezier(0.3, 0.9, 0.4, 1) both; }
+    @keyframes dbFlip { 0% { transform: rotateX(-88deg); filter: brightness(1.8); } 100% { transform: rotateX(0); filter: brightness(1); } }
+    .db-code { color: #fbbf24; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
+    .db-status { margin-left: auto; color: #4ade80; font-size: 0.62rem; font-weight: 900; letter-spacing: 1.5px; animation: dbPulse 2.2s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { .db-cell.flip, .db-live, .db-status { animation: none !important; } }
+
+    /* ===== 🎫 보딩패스 카드 ===== */
+    .bp-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px 7px;
+      font-family: 'SF Mono', 'Courier New', monospace;
+      font-weight: 900;
+      font-size: 0.86rem;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .bp-route .bp-plane { flex: 1; display: flex; align-items: center; gap: 3px; margin: 0 7px; color: #cbd5e1; font-size: 0.62rem; }
+    .bp-route .bp-plane::before, .bp-route .bp-plane::after { content: ''; flex: 1; border-top: 1.5px dashed #d7dee9; }
+    .bp-perf {
+      position: relative;
+      border-top: 2px dashed #e2e8f0;
+      margin: 2px 0 0;
+    }
+    .bp-perf::before, .bp-perf::after {
+      content: '';
+      position: absolute;
+      top: -7px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+    .bp-perf::before { left: -7px; }
+    .bp-perf::after { right: -7px; }
+    .bp-barcode {
+      height: 17px;
+      margin: 7px 12px 0;
+      border-radius: 2px;
+      background: repeating-linear-gradient(90deg, #0f172a 0 1.5px, transparent 1.5px 3.5px, #0f172a 3.5px 6px, transparent 6px 7px, #0f172a 7px 8px, transparent 8px 11px);
+      opacity: 0.82;
+    }
+    .bp-label {
+      font-size: 0.56rem;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      color: #94a3b8;
+      padding: 8px 12px 0;
+      font-family: 'SF Mono', 'Courier New', monospace;
+    }
+
     .store-best-badge {
       position: absolute;
       top: 8px;
@@ -1188,7 +1319,6 @@
         <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#94a3b8;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#f97316;">직접 탭</strong>하면 요금제가 바로 열려요</p>
       </div>
       <div style="position:relative;">
-        <div style="position:absolute;inset:-6%;background:radial-gradient(circle at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 65%);pointer-events:none;"></div>
         <div id="mGlobe" style="width:100%;height:min(92vw, 420px);margin-top:4px;"></div>
         <div style="position:absolute;right:2px;bottom:34px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none;animation:romiFloat 3.6s ease-in-out infinite;">
           <div style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.66rem;font-weight:800;padding:7px 11px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 16px rgba(249,115,22,0.45);">궁금한 나라를 콕! 🌏</div>
@@ -1394,6 +1524,12 @@
       <span>⚡ 평균 1분 QR 발송</span><i></i><span>🛡️ 미개통 100% 환불</span><i></i><span>💬 24시간 카톡 상담</span>
     </div>
 
+    <!-- ✈ 공항 출발 전광판 (탭하면 해당 국가로) -->
+    <div class="departure-board" id="mDepBoard">
+      <div class="db-head"><span class="db-live"></span>DEPARTURES<em>실시간 인기 여행지</em></div>
+      <div class="db-row" id="mDbRow"></div>
+    </div>
+
     <!-- 최근 본 국가 -->
     <div class="recent-row" id="recentRow" style="display:none;">
       <span class="recent-label">최근 본</span>
@@ -1571,7 +1707,7 @@
   </div>
 
   <!-- JavaScript imports -->
-  <script src="products.js?v=20260709" defer></script>
+  <script src="products-lite.js?v=20260710" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="globe.js?v=20260719" defer></script>
   
@@ -1888,12 +2024,24 @@
       listContainer.innerHTML = '';
       const lowercaseQuery = searchQuery.toLowerCase().trim();
       const BEST_COUNTRIES = ['일본', '베트남', '태국', '대만', '미국'];
+      // PC와 동일한 인기 여행지 우선 정렬
+      const POPULAR_COUNTRIES = ['일본', '베트남', '태국', '대만', '필리핀', '싱가포르', '말레이시아', '인도네시아', '미국', '괌', '사이판', '중국', '홍콩', '마카오', '복수국가', '쓰리(THREE)', '오렌지월드와이드', '호주', '뉴질랜드', '튀르키예', '캐나다'];
+      // 요약 데이터(plans 비어있음)와 전체 데이터 모두 지원
+      const groupStats = g => {
+        const vp = (g.plans || []).filter(p => p && typeof p.final_price === 'number');
+        if (vp.length) {
+          let mn = Infinity, pd = Infinity;
+          vp.forEach(p => { if (p.final_price < mn) mn = p.final_price; const d = Math.round(p.final_price / (parseInt(p.duration) || 1)); if (d < pd) pd = d; });
+          return { count: vp.length, min: mn, perDay: pd };
+        }
+        return { count: g.plan_count || 0, min: g.min_price || 0, perDay: g.min_per_day || 0 };
+      };
 
       // 같은 나라 상품을 하나로 묶기 (PC와 동일한 방식)
       const countryMap = new Map();
       window.PRODUCTS_DATA.forEach(group => {
-        const validPlans = (group.plans || []).filter(p => p && typeof p.final_price === 'number');
-        if (validPlans.length === 0) return;
+        const st = groupStats(group);
+        if (st.count === 0) return;
         let entry = countryMap.get(group.country);
         if (!entry) {
           entry = { country: group.country, category: group.category || '', carriers: [], nets: new Set(), speeds: new Set(), planCount: 0, minPrice: Infinity, minPerDay: Infinity };
@@ -1902,15 +2050,18 @@
         if (!entry.carriers.includes(group.carrier)) entry.carriers.push(group.carrier);
         entry.nets.add(group.network_type || '로밍망');
         entry.speeds.add(group.network_speed || '5G/LTE');
-        entry.planCount += validPlans.length;
-        validPlans.forEach(p => {
-          if (p.final_price < entry.minPrice) entry.minPrice = p.final_price;
-          const perDay = Math.round(p.final_price / (parseInt(p.duration) || 1));
-          if (perDay < entry.minPerDay) entry.minPerDay = perDay;
-        });
+        entry.planCount += st.count;
+        if (st.min < entry.minPrice) entry.minPrice = st.min;
+        if (st.perDay < entry.minPerDay) entry.minPerDay = st.perDay;
       });
 
-      countryMap.forEach(entry => {
+      const sortedEntries = [...countryMap.values()].sort((a, b) => {
+        let ia = POPULAR_COUNTRIES.indexOf(a.country); if (ia === -1) ia = 9999;
+        let ib = POPULAR_COUNTRIES.indexOf(b.country); if (ib === -1) ib = 9999;
+        if (ia !== ib) return ia - ib;
+        return a.country.localeCompare(b.country, 'ko');
+      });
+      sortedEntries.forEach(entry => {
         const countryName = entry.country;
 
         // 국가 탭 필터
@@ -1941,6 +2092,7 @@
           ? `${cleaned.slice(0, 2).join(' · ')} 외 ${cleaned.length - 2}곳`
           : cleaned.join(' · ');
 
+        const destCode = AIRPORT_CODES[countryName] || 'INT';
         const card = document.createElement('div');
         card.className = 'store-card';
         card.style.animationDelay = `${(listContainer.children.length % 8) * 45}ms`;
@@ -1953,14 +2105,24 @@
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
             <span class="store-card-country">${countryName} eSIM</span>
           </div>
+          <div class="bp-label">BOARDING PASS</div>
+          <div class="bp-route">
+            <span>ICN</span>
+            <span class="bp-plane">✈</span>
+            <span>${destCode}</span>
+          </div>
+          <div class="bp-perf"></div>
           <div class="store-card-body">
             <h4 class="store-card-title">${carrierLine}</h4>
-            <div class="store-card-meta">통신사 ${entry.carriers.length}곳 · 요금제 ${entry.planCount}종</div>
+            <div class="store-card-meta">통신사 ${entry.carriers.length}곳 · 요금제 ${entry.planCount.toLocaleString()}종</div>
             <div class="store-card-price-row">
               <span class="store-card-price">${entry.minPrice.toLocaleString()}원~</span>
               <span class="store-card-perday">하루 ${entry.minPerDay.toLocaleString()}원꼴</span>
             </div>
-            <button class="store-card-btn" type="button">상품 보기</button>
+          </div>
+          <div class="bp-barcode"></div>
+          <div style="padding: 4px 12px 12px;">
+            <button class="store-card-btn" type="button" style="margin-top:6px;">요금제 보기</button>
           </div>
         `;
         listContainer.appendChild(card);
@@ -2019,7 +2181,43 @@
       } catch (e) { /* 무시 */ }
     }
 
+    // 대표 공항 코드 (보딩패스/전광판용)
+    const AIRPORT_CODES = { '일본': 'NRT', '베트남': 'DAD', '태국': 'BKK', '대만': 'TPE', '필리핀': 'MNL', '싱가포르': 'SIN', '말레이시아': 'KUL', '인도네시아': 'DPS', '미국': 'LAX', '괌': 'GUM', '사이판': 'SPN', '중국': 'PEK', '홍콩': 'HKG', '마카오': 'MFM', '호주': 'SYD', '뉴질랜드': 'AKL', '튀르키예': 'IST', '캐나다': 'YYZ', '몽골': 'UBN', '인도': 'DEL', '몰디브': 'MLE', '라오스': 'VTE', '캄보디아': 'PNH', '스리랑카': 'CMB', '방글라데시': 'DAC', '파키스탄': 'ISB', '러시아': 'SVO', '멕시코': 'MEX', '브라질': 'GRU', '칠레': 'SCL', '모로코': 'CMN', '남아프리카공화국': 'CPT', '이집트': 'CAI', '케냐': 'NBO', '나이지리아': 'LOS', '튀니지': 'TUN', '알제리': 'ALG', '사우디아라비아': 'RUH', '아랍에미레이트 (UAE)': 'DXB', '카타르': 'DOH', '쿠웨이트': 'KWI', '바레인': 'BAH', '오만': 'MCT', '오렌지프랑스': 'CDG', '오렌지스페인': 'MAD', '보다폰스페인': 'BCN', '쓰리(THREE)': 'LHR', '한국': 'GMP' };
+    const DB_ROTATION = [['🇯🇵', '일본', 'NRT'], ['🇻🇳', '베트남', 'DAD'], ['🇹🇭', '태국', 'BKK'], ['🇹🇼', '대만', 'TPE'], ['🇺🇸', '미국', 'LAX'], ['🇵🇭', '필리핀', 'MNL'], ['🇸🇬', '싱가포르', 'SIN'], ['🇭🇰', '홍콩', 'HKG']];
+    let dbIdx = 0;
+    function renderDepartureBoard() {
+      const row = document.getElementById('mDbRow');
+      const board = document.getElementById('mDepBoard');
+      if (!row || !board) return;
+      const [flag, name, code] = DB_ROTATION[dbIdx % DB_ROTATION.length];
+      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      row.innerHTML = `<span class="db-flag">${flag}</span>` +
+        name.split('').map((ch, i) => `<span class="db-cell${reduced ? '' : ' flip'}" style="animation-delay:${i * 55}ms">${ch}</span>`).join('') +
+        `<span class="db-code">${code}</span><span class="db-status">● NOW BOARDING</span>`;
+      board.onclick = () => openBottomSheet(name);
+      dbIdx++;
+    }
+    setInterval(function () {
+      const board = document.getElementById('mDepBoard');
+      if (board && board.offsetParent !== null) renderDepartureBoard();
+    }, 3200);
+
+    function showDataLoadingToast() {
+      if (document.getElementById('dataToast')) return;
+      const t = document.createElement('div');
+      t.id = 'dataToast';
+      t.textContent = '요금제 불러오는 중...';
+      t.style.cssText = 'position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:rgba(15,23,42,0.92);color:#fff;font-size:0.8rem;font-weight:700;padding:10px 18px;border-radius:24px;z-index:100000;';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+
     function openBottomSheet(countryName, defaultCarrier = '') {
+      if (!window.__fullReady) {
+        showDataLoadingToast();
+        window.ensureFullProducts(function () { openBottomSheet(countryName, defaultCarrier); });
+        return;
+      }
       currentSelectedCountry = countryName;
       saveRecentCountry(countryName);
       
@@ -2586,6 +2784,7 @@
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
+        renderDepartureBoard();
         renderCountryChips();
         initRomiFinder();
         initSnapExperience();
@@ -2824,6 +3023,11 @@
         const days = parseInt(daysWrap.querySelector('.rf-day.selected').getAttribute('data-d'));
         if (!countries.includes(country)) {
           results.innerHTML = '<div class="rf-empty">🦊 앗, 그 국가는 아직 준비 중이에요. 위 검색으로 지원 국가를 확인해 주세요!</div>';
+          return;
+        }
+        if (!window.__fullReady) {
+          showDataLoadingToast();
+          window.ensureFullProducts(function () { document.getElementById('rfGoBtn') && document.getElementById('rfGoBtn').click(); });
           return;
         }
         const picks = romiMatch(country, days);
