@@ -1403,6 +1403,39 @@
 </head>
 <body>
 
+  <!-- 🦊 로미 스플래시: 로딩 중 빈 화면 대신 브랜드 화면 (세션당 1회) -->
+  <div id="jdSplash" style="position:fixed;inset:0;z-index:2000000;background:linear-gradient(180deg,#ffffff,#fff7f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;transition:opacity 0.45s ease;">
+    <img src="images/fox-hello.png" alt="" style="width:96px;animation:jdSpBounce 1.15s ease-in-out infinite;" onerror="this.style.display='none'">
+    <div style="font-weight:900;font-size:1.2rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
+    <div style="font-size:0.78rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
+    <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F97316,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
+  </div>
+  <style>
+    @keyframes jdSpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes jdSpBar { 0% { transform: translateX(-130%); } 100% { transform: translateX(340%); } }
+    @media (prefers-reduced-motion: reduce) { #jdSplash * { animation: none !important; } }
+  </style>
+  <script>
+    (function () {
+      var s = document.getElementById('jdSplash');
+      if (!s) return;
+      try {
+        if (sessionStorage.getItem('jd_splash')) { s.remove(); return; } // 같은 세션에선 다시 안 뜸
+        sessionStorage.setItem('jd_splash', '1');
+      } catch (e) {}
+      var hidden = false;
+      function hide() {
+        if (hidden || !s) return;
+        hidden = true;
+        s.style.opacity = '0';
+        setTimeout(function () { if (s) { s.remove(); s = null; } }, 480);
+      }
+      window.addEventListener('load', function () { setTimeout(hide, 250); });
+      setTimeout(hide, 4000); // 어떤 경우에도 4초를 넘기지 않음
+    })();
+  </script>
+
+
   
   
   
@@ -1459,7 +1492,7 @@
     </section>
 
     <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
-    <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(140% 90% at 50% 30%, #16204a 0%, #0b1020 60%, #070b18 100%);overflow:hidden;padding:40px 20px;">
+    <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;margin-left:-16px;margin-right:-16px;background:radial-gradient(140% 90% at 50% 30%, #16204a 0%, #0b1020 60%, #070b18 100%);overflow:hidden;padding:40px 20px;">
       <div style="position:absolute;inset:0;background-image:radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0, transparent 100%),radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.4) 0, transparent 100%),radial-gradient(1.5px 1.5px at 85% 70%, rgba(255,255,255,0.3) 0, transparent 100%),radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.35) 0, transparent 100%);"></div>
       <span class="shooting-star" style="top:10%;right:6%;"></span>
       <span class="shooting-star s2" style="top:26%;right:40%;"></span>
@@ -1795,6 +1828,7 @@
       <div class="option-group-title"><span class="step-num">1</span>통신사 선택</div>
       <select id="carrierSelect" class="tracker-input" onchange="onCarrierChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
+      <div id="activationNotice" style="display:none;margin-top:8px;padding:10px 12px;border-radius:12px;font-size:0.74rem;font-weight:700;line-height:1.6;"></div>
     </div>
 
     <!-- 2. Plan Type -->
@@ -2593,6 +2627,35 @@
       onCarrierChange(String(Math.max(0, carrierOptions.indexOf(activeCarrier))));
     }
 
+    // 개통 방식에 따라 언제 사야 하는지 자동 안내
+    function renderActivationNotice() {
+      const el = document.getElementById('activationNotice');
+      if (!el || !activeCarrier) return;
+      const act = String(activeCarrier.activation || '');
+      let html = '', bg = '', border = '', color = '';
+      if (act.includes('희망일')) {
+        html = '📆 <strong>희망 개통일 지정 상품</strong> — 결제 시 입력한 날짜에 개통돼요. <strong>출국 1~2일 전 구매</strong>를 추천!';
+        bg = 'rgba(249,115,22,0.07)'; border = 'rgba(249,115,22,0.3)'; color = '#9a5b16';
+      } else if (act.includes('즉시 개통')) {
+        html = '🚨 <strong>QR 발급·설치 즉시 사용일 시작</strong> — 출국 직전이나 현지 도착 후에 설치하세요!';
+        bg = 'rgba(239,68,68,0.06)'; border = 'rgba(239,68,68,0.3)'; color = '#b91c1c';
+      } else if (act.includes('개통문자')) {
+        html = '💬 현지 도착 후 <strong>개통 문자 발송 시</strong> 사용일이 시작돼요 — 미리 사두셔도 괜찮아요';
+        bg = 'rgba(59,130,246,0.06)'; border = 'rgba(59,130,246,0.25)'; color = '#1d4ed8';
+      } else if (act.includes('자동')) {
+        html = '✅ 현지 도착해 <strong>신호가 잡히는 순간 자동 개통</strong> — 미리 사두셔도 안심이에요';
+        bg = 'rgba(34,197,94,0.07)'; border = 'rgba(34,197,94,0.25)'; color = '#15803d';
+      } else {
+        el.style.display = 'none';
+        return;
+      }
+      el.innerHTML = html;
+      el.style.background = bg;
+      el.style.border = '1px solid ' + border;
+      el.style.color = color;
+      el.style.display = 'block';
+    }
+
     function onCarrierChange(val) {
       // val은 carrierOptions 배열 인덱스 (호환을 위해 통신사명 문자열도 허용)
       const idx = Number(val);
@@ -2600,6 +2663,7 @@
         ? carrierOptions[idx]
         : (carrierOptions.find(co => co.carrier === val) || carrierOptions[0]);
       selectedCarrier = activeCarrier.carrier;
+      renderActivationNotice();
       
       const types = new Set();
       activeCarrier.plans.forEach(p => {

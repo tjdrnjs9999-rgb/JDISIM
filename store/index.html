@@ -29,6 +29,39 @@
 </head>
 <body>
 
+  <!-- 🦊 로미 스플래시: 로딩 중 빈 화면 대신 브랜드 화면 (세션당 1회) -->
+  <div id="jdSplash" style="position:fixed;inset:0;z-index:2000000;background:linear-gradient(180deg,#ffffff,#fff7f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;transition:opacity 0.45s ease;">
+    <img src="images/fox-hello.png" alt="" style="width:96px;animation:jdSpBounce 1.15s ease-in-out infinite;" onerror="this.style.display='none'">
+    <div style="font-weight:900;font-size:1.2rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
+    <div style="font-size:0.78rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
+    <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F97316,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
+  </div>
+  <style>
+    @keyframes jdSpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes jdSpBar { 0% { transform: translateX(-130%); } 100% { transform: translateX(340%); } }
+    @media (prefers-reduced-motion: reduce) { #jdSplash * { animation: none !important; } }
+  </style>
+  <script>
+    (function () {
+      var s = document.getElementById('jdSplash');
+      if (!s) return;
+      try {
+        if (sessionStorage.getItem('jd_splash')) { s.remove(); return; } // 같은 세션에선 다시 안 뜸
+        sessionStorage.setItem('jd_splash', '1');
+      } catch (e) {}
+      var hidden = false;
+      function hide() {
+        if (hidden || !s) return;
+        hidden = true;
+        s.style.opacity = '0';
+        setTimeout(function () { if (s) { s.remove(); s = null; } }, 480);
+      }
+      window.addEventListener('load', function () { setTimeout(hide, 250); });
+      setTimeout(hide, 4000); // 어떤 경우에도 4초를 넘기지 않음
+    })();
+  </script>
+
+
 
   <!-- Background Video -->
   <div class="video-bg-container">
