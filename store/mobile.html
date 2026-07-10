@@ -2688,16 +2688,7 @@
           <div style="height:16px;margin:8px 16px 0;border-radius:2px;opacity:0.85;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
           <div style="text-align:center;font-size:0.72rem;font-weight:700;color:#64748b;padding:10px 16px 16px;line-height:1.6;">📩 카카오톡으로 <strong style="color:#F2751F;">eSIM 발급 링크</strong>를 보내드려요<br>링크에서 원하시는 시점에 발급하세요 (발급 전 100% 환불 가능)</div>
         </div>
-        ${(() => {
-          const it = (order.items && order.items[0]) || {};
-          if (!it.iccid && !it.lpa) return '';
-          const lpa = it.lpa || ('LPA:1$rsp.truphone.com$' + it.iccid);
-          const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-          return `<div style="width:100%;max-width:330px;margin-top:14px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.55s both;'}">
-            ${isIOS ? `<a href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${encodeURIComponent(lpa)}" style="display:block;text-align:center;padding:14px;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,0.25);">⚡ 지금 바로 탭 한 번으로 설치 (iOS)</a>` : ''}
-            <button type="button" onclick="openInstallGuide('${lpa}')" style="display:block;width:100%;margin-top:8px;padding:13px;border:1.5px solid rgba(255,255,255,0.35);border-radius:14px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.8rem;font-weight:800;">📲 QR 스캔·수동 설치 방법 보기</button>
-          </div>`;
-        })()}
+        <a href="issue.html?local=${encodeURIComponent(order.orderCode || '')}" style="display:block;width:100%;max-width:330px;margin-top:14px;text-align:center;padding:14px;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,0.25);${reduced ? '' : 'animation:tcFade 0.5s ease 0.55s both;'}">🎫 발급 페이지 열기 — 원하는 시점에 발급</a>
         <div style="width:100%;max-width:330px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.7s both;'}">${buildTravelTipsHTML(country)}</div>
         <button id="tcShareBtn" style="margin-top:18px;padding:12px 22px;border:1.5px solid rgba(255,255,255,0.35);border-radius:24px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.8rem;font-weight:800;${reduced ? '' : 'animation:tcFade 0.5s ease 1.05s both;'}">📤 여행 메이트에게 공유하기</button>
         <button id="tcDoneBtn" style="margin:12px 0 8px;padding:14px 34px;border:none;border-radius:26px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.9rem;font-weight:800;box-shadow:0 10px 26px rgba(249,115,22,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.9s both;'}">주문 내역 확인하기 →</button>
@@ -3686,7 +3677,7 @@
         const it = (o.items && o.items[0]) || {};
         const lpa = it.lpa || ''; // ★ 실제 발급 데이터가 있을 때만 설치 UI 노출
         const issued = !!lpa;
-        const issueUrl = o.issueUrl || (o.issueToken ? ('issue.html?t=' + encodeURIComponent(o.issueToken)) : '');
+        const issueUrl = o.issueUrl || (o.issueToken ? ('issue.html?t=' + encodeURIComponent(o.issueToken)) : (o.orderCode ? ('issue.html?local=' + encodeURIComponent(o.orderCode)) : ''));
         const steps = ['결제 완료', 'QR 발급', '기기에 설치', '여행지에서 개통'];
         const doneUpto = issued ? 1 : 0;
         return `

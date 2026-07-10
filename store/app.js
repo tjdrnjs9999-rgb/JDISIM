@@ -1951,65 +1951,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const card = document.createElement('div');
       card.className = 'receipt-item-card';
       
-      const mockCode = item.plan.product_code || 'LS2026-eSIM-00000';
-      
       card.innerHTML = `
         <div class="receipt-item-header">
           <div class="receipt-item-title">${item.product.country} eSIM</div>
-          <div class="receipt-item-code">${mockCode}</div>
+          <div class="receipt-item-code">${item.quantity}개 · ${itemPrice.toLocaleString()}원</div>
         </div>
-        <div class="receipt-item-qr-layout">
-          <div class="receipt-item-qr-box">
-            <svg class="receipt-item-qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <rect width="100" height="100" fill="#fff" />
-              <rect x="10" y="10" width="20" height="20" fill="#000" />
-              <rect x="12" y="12" width="16" height="16" fill="#fff" />
-              <rect x="14" y="14" width="12" height="12" fill="#000" />
-              <rect x="70" y="10" width="20" height="20" fill="#000" />
-              <rect x="72" y="12" width="16" height="16" fill="#fff" />
-              <rect x="74" y="14" width="12" height="12" fill="#000" />
-              <rect x="10" y="70" width="20" height="20" fill="#000" />
-              <rect x="12" y="72" width="16" height="16" fill="#fff" />
-              <rect x="14" y="74" width="12" height="12" fill="#000" />
-              <rect x="78" y="78" width="12" height="12" fill="#000" />
-              <rect x="40" y="20" width="8" height="8" fill="#000" />
-              <rect x="52" y="12" width="6" height="10" fill="#000" />
-              <rect x="45" y="35" width="12" height="6" fill="#000" />
-              <rect x="15" y="45" width="8" height="12" fill="#000" />
-              <rect x="35" y="55" width="20" height="10" fill="#000" />
-              <rect x="65" y="45" width="10" height="20" fill="#000" />
-              <rect x="75" y="35" width="8" height="8" fill="#000" />
-              <rect x="25" y="75" width="10" height="10" fill="#000" />
-              <rect x="45" y="75" width="8" height="12" fill="#000" />
-              <rect x="58" y="70" width="10" height="8" fill="#000" />
-              <rect x="58" y="82" width="12" height="8" fill="#000" />
-            </svg>
-          </div>
-          <div class="receipt-item-info-table">
-            <div class="receipt-item-info-row">
-              <span>통신사</span>
-              <span>${item.product.carrier}</span>
-            </div>
-            <div class="receipt-item-info-row">
-              <span>선택 요금제</span>
-              <span>${item.plan.data_limit} / ${item.plan.duration}일</span>
-            </div>
-            <div class="receipt-item-info-row">
-              <span>구매 수량</span>
-              <span>${item.quantity}개</span>
-            </div>
-            ${item.addon ? `
-            <div class="receipt-item-info-row" style="color: #10b981;">
-              <span>📍 가이드북</span>
-              <span>추가됨</span>
-            </div>` : ''}
-            ${activationDateVal ? `
-            <div class="receipt-item-info-row" style="color: var(--accent-warning);">
-              <span>📅 개통일</span>
-              <span>${activationDateVal}</span>
-            </div>` : ''}
-          </div>
-        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);padding:6px 2px 2px;">${item.plan.data_limit || ''} / ${item.days || item.plan.duration || ''}일 ${item.addon ? '· 국제전화 추가' : ''}</div>
       `;
       receiptItemsContainer.appendChild(card);
     });
@@ -2027,6 +1974,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     checkoutStepInput.style.display = 'none';
     checkoutStepReceipt.style.display = 'block';
+
+    // 🎫 발급 링크 CTA (서버 연동 전엔 이 기기 테스트 주문으로 흐름 체험)
+    const tipsBox0 = document.getElementById('receiptTravelTips');
+    if (tipsBox0) {
+      tipsBox0.insertAdjacentHTML('beforebegin', `
+        <a href="issue.html?local=${encodeURIComponent(orderCode)}" target="_blank" rel="noopener"
+           style="display:block;text-align:center;margin-top:16px;padding:15px;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.92rem;text-decoration:none;box-shadow:0 8px 20px rgba(249,115,22,0.3);">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
+        <div style="font-size:0.74rem;color:var(--text-muted);text-align:center;margin-top:8px;">실서비스에서는 이 링크가 카카오톡 알림톡으로 발송돼요</div>`);
+    }
 
     // 🧳 해당 국가 여행 준비물·이슈 드롭다운 채우기
     const tipsBox = document.getElementById('receiptTravelTips');
@@ -2346,7 +2302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const it = (order.items && order.items[0]) || {};
       const lpa = it.lpa || ''; // ★ 실제 발급 데이터가 있을 때만 QR·설치 UI 노출
       const issued = !!lpa;
-      const issueUrl = order.issueUrl || (order.issueToken ? ('issue.html?t=' + encodeURIComponent(order.issueToken)) : '');
+      const issueUrl = order.issueUrl || (order.issueToken ? ('issue.html?t=' + encodeURIComponent(order.issueToken)) : (order.orderCode ? ('issue.html?local=' + encodeURIComponent(order.orderCode)) : ''));
       return `
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 26px; margin-bottom: 16px; box-shadow: var(--shadow-md);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">

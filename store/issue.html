@@ -91,6 +91,7 @@ var CONFIG = {
 // =======================================================================
 var token = new URLSearchParams(location.search).get('t') || '';
 var DEMO = location.hash.indexOf('demo') !== -1;
+var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var order = null;
 
 function $(id){ return document.getElementById(id); }
@@ -103,7 +104,41 @@ function parseLpa(lpa){ var p=String(lpa||'').split('$'); return { smdp:p[1]||''
 function gb(mb){ return (Math.round(mb/1024*100)/100); }
 
 // ---------------- 주문 로드 ----------------
+// 로컬 테스트 모드: 서버 연동 전, 이 기기에 저장된 테스트 주문으로 흐름 체험
+function findLocalOrder(code){
+  var keys = ['jdisim_orders', 'esim_orders'];
+  for (var k = 0; k < keys.length; k++) {
+    try {
+      var arr = JSON.parse(localStorage.getItem(keys[k]) || '[]');
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] && arr[i].orderCode === code) return { store: keys[k], idx: i, o: arr[i] };
+      }
+    } catch (e) {}
+  }
+  return null;
+}
+function localBanner(){
+  return '<div class="notice" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.3);color:#4338ca;margin-bottom:12px;">🧪 <strong>테스트 모드</strong> — 서버 연동 전이라 이 기기의 테스트 주문으로 흐름을 체험 중이에요. 실제 통신사 발급이 아닙니다.</div>';
+}
+function loadLocal(){
+  var found = findLocalOrder(LOCAL);
+  if (!found) return renderError('이 기기에서 주문을 찾지 못했어요', '테스트 주문은 결제했던 그 브라우저에서만 보여요. 실서비스에서는 카카오톡 링크로 어디서든 열립니다.');
+  var o = found.o, it = (o.items && o.items[0]) || {};
+  var created = o.createdAt ? new Date(o.createdAt) : new Date();
+  order = {
+    orderCode: o.orderCode, buyerName: o.buyerName || '', productName: it.productName || '',
+    quantity: it.quantity || 1, country: (it.productName || '').split(' ')[0],
+    validity: '구매일로부터 30일', status: it.lpa ? 'ISSUED' : 'PAID',
+    autoIssueAt: new Date(created.getTime() + 7 * 86400000).toISOString(),
+    iccid: it.iccid || '', lpa: it.lpa || ''
+  };
+  if (order.status === 'ISSUED') renderIssued(order.lpa, true);
+  else renderPreIssue();
+  document.getElementById('app').insertAdjacentHTML('afterbegin', localBanner());
+}
+
 function loadOrder(){
+  if (LOCAL) return loadLocal();
   if (DEMO) {
     order = { orderCode:'JD-20260710-DEMO', buyerName:'김여행', phoneMasked:'010-77**-73**', productName:'일본 소프트뱅크 매일 2GB / 5일', quantity:1, country:'일본',
       validity:'구매일로부터 30일', status:'PAID', autoIssueAt:new Date(Date.now()+6.5*86400000).toISOString() };
@@ -155,6 +190,25 @@ function renderPreIssue(){
 
 function doIssue(){
   h('<div class="card center"><div class="spin"></div><div style="font-weight:800;font-size:0.9rem;">통신사에서 QR코드를 만들고 있어요</div><div class="muted" style="margin-top:4px;">보통 수 초, 길면 몇 분 — 화면을 닫지 마세요</div></div>');
+  if (LOCAL){
+    setTimeout(function(){
+      var found = findLocalOrder(LOCAL);
+      var lpa = 'LPA:1$rsp.test.jdisim$' + (order.iccid || String(Date.now()));
+      if (found) {
+        try {
+          var arr = JSON.parse(localStorage.getItem(found.store) || '[]');
+          if (arr[found.idx] && arr[found.idx].items && arr[found.idx].items[0]) {
+            arr[found.idx].items[0].lpa = lpa;
+            localStorage.setItem(found.store, JSON.stringify(arr));
+          }
+        } catch (e) {}
+      }
+      order.status = 'ISSUED';
+      renderIssued(lpa, false);
+      document.getElementById('app').insertAdjacentHTML('afterbegin', localBanner());
+    }, 1600);
+    return;
+  }
   if (DEMO){ setTimeout(function(){ order.status='ISSUED'; renderIssued('LPA:1$rsp.billionconnect.com$F8B7C1B0B68F4AB889460F568F1F13D7', false); },1600); return; }
   fetch(CONFIG.ISSUE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,agreedNoRefund:true,agreedDevice:true,agreedAt:new Date().toISOString()})})
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
