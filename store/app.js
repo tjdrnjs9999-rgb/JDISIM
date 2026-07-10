@@ -214,6 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const checkoutModal = document.getElementById('checkoutModal');
   const checkoutStepInput = document.getElementById('checkoutStepInput');
   const checkoutStepReceipt = document.getElementById('checkoutStepReceipt');
+  const checkoutNameInput = document.getElementById('checkoutName');
   const checkoutEmailInput = document.getElementById('checkoutEmail');
   const checkoutPhoneInput = document.getElementById('checkoutPhone');
   const paySubmitBtn = document.getElementById('paySubmitBtn');
@@ -1606,6 +1607,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeCartDrawer();
     
     checkoutItems = items;
+    if (checkoutNameInput) checkoutNameInput.value = '';
     checkoutEmailInput.value = '';
     checkoutPhoneInput.value = '';
     
@@ -1706,9 +1708,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       alert('약관 및 결제 동의에 체크해 주셔야 결제를 진행할 수 있습니다.');
       return;
     }
+    const buyerName = checkoutNameInput ? checkoutNameInput.value.trim() : '';
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
     
+    if (!buyerName) {
+      alert('수령인 이름을 입력해 주세요. 주문 조회에 사용됩니다.');
+      return;
+    }
     if (!email || !phone) {
       alert('이메일 주소와 휴대폰 번호를 모두 입력해 주셔야 이심 QR코드를 정확하게 발송해 드릴 수 있어요.');
       return;
@@ -1863,6 +1870,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function submitPayment(orderCode, finalPriceVal) {
+    const buyerName = checkoutNameInput ? checkoutNameInput.value.trim() : '';
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
     const activationDateVal = checkoutActivationDate.value;
@@ -1870,6 +1878,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 주문 내역 로컬 스토리지 저장
     const newOrder = {
       orderCode: orderCode,
+      buyerName: buyerName,
       date: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
       email: email,
       phone: phone,
@@ -1979,8 +1988,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tipsBox0 = document.getElementById('receiptTravelTips');
     if (tipsBox0) {
       tipsBox0.insertAdjacentHTML('beforebegin', `
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          ${[['💬','카톡으로','발급 링크 도착'],['🎫','원하는 때','링크에서 발급'],['🛬','현지 도착 후','로밍 켜면 개통']].map((s,i)=>`
+          <div style="flex:1;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.18);border-radius:14px;padding:13px 8px;text-align:center;">
+            <div style="font-size:1.2rem;">${s[0]}</div>
+            <div style="font-size:0.66rem;font-weight:700;color:var(--text-muted);margin-top:5px;">STEP ${i+1} · ${s[1]}</div>
+            <div style="font-size:0.76rem;font-weight:800;color:var(--text-main);margin-top:2px;">${s[2]}</div>
+          </div>`).join('')}
+        </div>
         <a href="issue.html?local=${encodeURIComponent(orderCode)}" target="_blank" rel="noopener"
-           style="display:block;text-align:center;margin-top:16px;padding:15px;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.92rem;text-decoration:none;box-shadow:0 8px 20px rgba(249,115,22,0.3);">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
+           style="display:block;text-align:center;margin-top:14px;padding:15px;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.92rem;text-decoration:none;box-shadow:0 8px 20px rgba(249,115,22,0.3);">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
         <div style="font-size:0.74rem;color:var(--text-muted);text-align:center;margin-top:8px;">실서비스에서는 이 링크가 카카오톡 알림톡으로 발송돼요</div>`);
     }
 

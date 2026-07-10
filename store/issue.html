@@ -71,7 +71,37 @@
   .shake { animation:shk 0.4s ease; border-color:#ef4444 !important; }
   @keyframes shk { 25% { transform:translateX(-7px); } 50% { transform:translateX(7px); } 75% { transform:translateX(-4px); } }
   .kakao-float { position:fixed; right:16px; bottom:calc(18px + env(safe-area-inset-bottom,0px)); z-index:50; display:flex; align-items:center; gap:7px; background:#FEE500; color:#191919; font-weight:800; font-size:0.78rem; padding:12px 16px; border-radius:26px; text-decoration:none; box-shadow:0 10px 26px rgba(0,0,0,0.18); }
-  @media (prefers-reduced-motion:reduce) { .card,.spin,.shake { animation:none !important; } .donut-fg { transition:none; } }
+  /* 진행 스트립 */
+  .flow { display:flex; align-items:flex-start; margin:2px 2px 16px; }
+  .flow .fs { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; }
+  .flow .dot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:900; background:#fff; border:2px solid #e2e8f0; color:#cbd5e1; }
+  .flow .fs.done .dot { background:linear-gradient(135deg,#F97316,#F59E0B); border:none; color:#fff; box-shadow:0 4px 10px rgba(249,115,22,0.35); }
+  .flow .fs.now .dot { border-color:#F97316; color:#F97316; box-shadow:0 0 0 4px rgba(249,115,22,0.14); }
+  .flow .lb { font-size:0.6rem; font-weight:800; color:#94a3b8; white-space:nowrap; }
+  .flow .fs.done .lb, .flow .fs.now .lb { color:#F2751F; }
+  .flow .ln { flex:1; height:2.5px; background:#e2e8f0; margin:12px 4px 0; border-radius:2px; }
+  .flow .ln.done { background:linear-gradient(90deg,#F97316,#F59E0B); }
+  /* 로미 웰컴 */
+  .romi { display:flex; align-items:center; gap:11px; margin-bottom:12px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  .romi img { width:52px; height:52px; object-fit:contain; }
+  .romi .bub { background:#fff; border:1px solid #ffe0c7; border-radius:14px 14px 14px 4px; padding:10px 13px; font-size:0.78rem; font-weight:700; color:#334155; box-shadow:0 6px 16px rgba(249,115,22,0.1); line-height:1.5; }
+  /* 티켓 절취선 */
+  .perf { position:relative; border-top:2px dashed #f3d9c2; margin:11px -16px 0; }
+  .perf::before, .perf::after { content:''; position:absolute; top:-8px; width:16px; height:16px; border-radius:50%; background:#f4f6fa; }
+  .perf::before { left:-8px; } .perf::after { right:-8px; }
+  /* CTA 광택 */
+  .btn-primary { position:relative; overflow:hidden; }
+  .btn-primary::after { content:''; position:absolute; top:0; left:-80%; width:50%; height:100%; background:linear-gradient(105deg,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-20deg); animation:sheen 3.8s ease-in-out infinite; }
+  @keyframes sheen { 0%,60% { left:-80%; } 80%,100% { left:130%; } }
+  /* 설치 후 체크리스트 */
+  .chk { display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border:1px solid #eef2f7; border-radius:13px; margin-top:8px; cursor:pointer; font-size:0.79rem; font-weight:700; line-height:1.55; background:#fff; transition:all 0.2s; }
+  .chk input { width:19px; height:19px; accent-color:#22c55e; flex-shrink:0; margin-top:1px; }
+  .chk.on { border-color:rgba(34,197,94,0.4); background:rgba(34,197,94,0.05); }
+  .chk.on span { color:#15803d; }
+  /* 콘페티 */
+  .cf { position:fixed; top:-14px; border-radius:2px; z-index:9999; pointer-events:none; animation:cfall linear both; }
+  @keyframes cfall { to { transform:translateY(105vh) rotate(640deg); opacity:0.6; } }
+  @media (prefers-reduced-motion:reduce) { .card,.spin,.shake,.cf,.romi { animation:none !important; } .donut-fg { transition:none; } .btn-primary::after { animation:none; display:none; } }
 </style>
 </head>
 <body>
@@ -94,6 +124,8 @@ var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var order = null;
 
+var FLAG_EMOJI = { '일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭','대만':'🇹🇼','필리핀':'🇵🇭','싱가포르':'🇸🇬','말레이시아':'🇲🇾','인도네시아':'🇮🇩','미국':'🇺🇸','괌':'🇬🇺','사이판':'🇲🇵','중국':'🇨🇳','홍콩':'🇭🇰','마카오':'🇲🇴','호주':'🇦🇺','뉴질랜드':'🇳🇿','튀르키예':'🇹🇷','캐나다':'🇨🇦','몽골':'🇲🇳','인도':'🇮🇳','몰디브':'🇲🇻','라오스':'🇱🇦','캄보디아':'🇰🇭','스리랑카':'🇱🇰','러시아':'🇷🇺','멕시코':'🇲🇽','브라질':'🇧🇷','오렌지프랑스':'🇫🇷','오렌지스페인':'🇪🇸','보다폰스페인':'🇪🇸','쓰리(THREE)':'🇬🇧','한국':'🇰🇷' };
+
 function $(id){ return document.getElementById(id); }
 function h(html){ $('app').innerHTML = html; }
 function esc(s){ return String(s || '').replace(/[<>&"]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
@@ -102,6 +134,92 @@ function copy(v,msg){ if(navigator.clipboard&&navigator.clipboard.writeText){ na
 function fmtDate(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var w=['일','월','화','수','목','금','토']; return (d.getMonth()+1)+'월 '+d.getDate()+'일('+w[d.getDay()]+')'; }catch(e){ return ''; } }
 function parseLpa(lpa){ var p=String(lpa||'').split('$'); return { smdp:p[1]||'', code:p[2]||'', confirm:p[3]||'' }; }
 function gb(mb){ return (Math.round(mb/1024*100)/100); }
+
+const TRAVEL_TIPS = {
+  '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용', '🛂 무비자 90일 — Visit Japan Web을 미리 작성하면 입국 심사가 빨라요'] },
+  '베트남': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['모기 기피제', '얇은 긴팔 — 실내 냉방이 강해요', '소액 현금(동) — 시장·로컬 식당용'], issues: ['전자담배 반입·사용 전면 금지(2025년~) — 적발 시 처벌', '이동은 그랩(Grab) 앱이 필수 — 미리 설치하세요', '🛂 무비자 45일 — 여권 유효기간 6개월 이상 필수'] },
+  '태국': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['자외선 차단제', '사원 방문용 무릎 덮는 하의', '모기 기피제'], issues: ['전자담배 반입·소지 금지 — 벌금·처벌 사례가 많아요', '왕실 관련 언행은 법적 처벌 대상 — 주의', '🛂 무비자 입국이지만 디지털 입국카드(TDAC)를 출국 전 온라인으로 작성해야 해요'] },
+  '대만': { power: '110V · A타입 (돼지코 어댑터)', items: ['A타입 어댑터', '접이식 우산 — 스콜성 비가 잦아요', '교통은 이지카드 하나로 해결'], issues: ['전자담배 전면 금지(2023년~)', '지하철 안 음식물 섭취 금지 — 벌금'] },
+  '필리핀': { power: '220V · 한국 플러그 대부분 호환', items: ['모기 기피제', '방수팩 — 섬·액티비티용'], issues: ['전자담배는 성인 1인 소량만 반입 가능', '야간 이동 시 소지품 주의'] },
+  '싱가포르': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '얇은 겉옷 — 실내 냉방이 아주 강해요'], issues: ['껌 반입 금지 · 전자담배 소지 벌금', '무단횡단·쓰레기 투기 벌금 — 엄격해요', '🛂 입국 3일 전부터 SG 입국카드(SG Arrival Card) 온라인 제출 필수'] },
+  '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
+  '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
+  '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅', '🛂 비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
+  '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 1~2일 전 개통일 등록이 필요해요', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
+  '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
+  '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
+  '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },
+  '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)', '🛂 발리는 도착비자(VOA) — e-VOA로 미리 신청하면 줄이 짧아요'] },
+  '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요', '🛂 ETA(전자여행허가)를 앱으로 사전 신청해야 해요'] },
+  '오렌지프랑스': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의 — 특히 지하철·에펠탑 인근'] },
+  '오렌지스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
+  '보다폰스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
+  '쓰리(THREE)': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '우산 또는 방수 자켓'], issues: ['교통은 컨택리스 카드 태그가 가장 편해요'] }
+};
+
+function buildTravelTipsHTML(country) {
+  const t = TRAVEL_TIPS[country];
+  const li = arr => arr.map(x => `<div style="display:flex;gap:8px;padding:5px 0;font-size:0.76rem;line-height:1.55;color:#334155;"><span style="flex-shrink:0;width:4.5px;height:4.5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${x}</span></div>`).join('');
+  const box = (title, inner, open) => `
+    <details ${open ? 'open' : ''} style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin-top:9px;overflow:hidden;width:100%;">
+      <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기 ▾</span></summary>
+      <div style="padding:2px 14px 12px;">${inner}</div>
+    </details>`;
+  let html = '';
+  if (t) {
+    html += box(`🧳 ${country} 여행 준비물`,
+      `<div style="font-size:0.72rem;font-weight:800;color:#F2751F;padding:3px 0 4px;">🔌 ${t.power}</div>` + li(t.items), false);
+    if (t.issues && t.issues.length) {
+      html += box(`📌 ${country}, 이건 알고 가세요`, li(t.issues), false);
+    }
+  }
+  html += box('🔋 모든 여행 공통',
+    li(['보조배터리는 위탁수하물 금지 — 반드시 기내 가방에!', '여권 유효기간 6개월 이상 남았는지 확인', 'QR 도착 전 eSIM 지원 기종인지 한 번 더 확인(*#06# → EID)']), false);
+  return html;
+}
+
+// 진행 스트립 (0=결제,1=발급,2=설치,3=개통)
+function flowStrip(step){
+  var labels=['결제 완료','eSIM 발급','기기에 설치','현지 개통'];
+  var out='<div class="flow">';
+  for(var i=0;i<4;i++){
+    var cls = i<step?'done':(i===step?'now':'');
+    if(i) out += '<div class="ln '+(i<=step-0? (i<step?'done':''):'')+'"></div>';
+    out += '<div class="fs '+cls+'"><div class="dot">'+(i<step?'✓':(i+1))+'</div><div class="lb">'+labels[i]+'</div></div>';
+  }
+  return out+'</div>';
+}
+function romiSay(msg){
+  return '<div class="romi"><img src="images/fox-hello.png" alt="" onerror="this.style.display=\'none\'"><div class="bub">'+msg+'</div></div>';
+}
+// 콘페티 (발급 성공 세리머니)
+function confetti(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var colors=['#F97316','#F59E0B','#fbbf24','#fff','#4ade80'];
+  for(var i=0;i<30;i++){
+    var c=document.createElement('span');
+    c.className='cf';
+    c.style.cssText+='left:'+Math.random()*100+'%;width:'+(6+Math.random()*5)+'px;height:'+(9+Math.random()*6)+'px;background:'+colors[i%colors.length]+';animation-duration:'+(2.2+Math.random()*1.5)+'s;animation-delay:'+Math.random()*0.7+'s;';
+    document.body.appendChild(c);
+    setTimeout(function(el){ return function(){ el.remove(); }; }(c), 4500);
+  }
+}
+// 📱 기종 자가진단 (EID 중심 3분기)
+function deviceCheckHTML(){
+  return '<details class="g" id="devCheck"><summary>📱 우리 폰, 이심 되는지 30초 진단</summary><div style="padding:2px 14px 14px;">' +
+    '<div style="font-size:0.78rem;font-weight:700;color:#334155;line-height:1.65;">전화 키패드에 <strong style="color:#F2751F;">*#06#</strong> 을 눌러보세요.<br><strong>EID</strong>라는 32자리 번호가 보이나요?</div>' +
+    '<div style="display:flex;gap:8px;margin-top:10px;">' +
+    '<button type="button" class="btn btn-ghost" style="flex:1;" onclick="devResult(1)">네, 보여요</button>' +
+    '<button type="button" class="btn btn-ghost" style="flex:1;" onclick="devResult(0)">안 보여요</button>' +
+    '<button type="button" class="btn btn-ghost" style="flex:1;" onclick="devResult(2)">모르겠어요</button></div>' +
+    '<div id="devVerdict"></div></div></details>';
+}
+function devResult(r){
+  var v=$('devVerdict'); if(!v) return;
+  if(r===1) v.innerHTML='<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>eSIM 사용 가능 기종이에요!</strong> 안심하고 발급하세요.<br><span style="color:#334155;">단, 중국·홍콩·마카오에서 구매한 아이폰은 EID가 보여도 eSIM이 막혀 있어요.</span></div>';
+  else if(r===0) v.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.3);color:#b91c1c;">🚫 <strong>eSIM 미지원 기종일 가능성이 높아요.</strong> 발급하지 마시고 카톡으로 문의해 주세요 — 발급 전이라 100% 환불됩니다.</div>';
+  else v.innerHTML='<div class="notice" style="background:#f8fafc;border:1px solid #e5eaf2;color:#334155;">참고 기준: 아이폰은 <strong>XS(2018) 이후</strong>, 갤럭시는 <strong>S23 이후 국내판·폴드4/플립4 이후</strong>가 지원돼요. 가장 확실한 건 *#06# → EID 확인! 애매하면 카톡으로 기종명을 보내주세요.</div>';
+}
 
 // ---------------- 주문 로드 ----------------
 // 로컬 테스트 모드: 서버 연동 전, 이 기기에 저장된 테스트 주문으로 흐름 체험
@@ -160,12 +278,16 @@ function loadOrder(){
 
 // ---------------- 발급 전 ----------------
 function renderPreIssue(){
-  h('<div class="card ticket">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.72rem;font-weight:800;color:#F2751F;">🎫 발급 대기 중인 여행 티켓</span><span class="badge wait">발급 대기</span></div>' +
+  var fl = FLAG_EMOJI[order.country] || '✈️';
+  h(flowStrip(1) +
+    romiSay('안녕, 난 <strong style="color:#F2751F;">로미</strong>! ' + fl + ' <strong>' + esc(order.country || '여행') + '</strong> 갈 준비 도와줄게. 원하는 때에 발급 버튼만 누르면 돼!') +
+    '<div class="card ticket">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.72rem;font-weight:800;color:#F2751F;">' + fl + ' 발급 대기 중인 여행 티켓</span><span class="badge wait">발급 대기</span></div>' +
     '<div class="row"><span>상품</span><strong>'+esc(order.productName)+(order.quantity>1?' × '+order.quantity:'')+'</strong></div>' +
     '<div class="row"><span>주문번호</span><strong>'+esc(order.orderCode)+'</strong></div>' +
     '<div class="row"><span>수령인</span><strong>'+esc(order.buyerName)+'</strong></div>' +
-    '<div class="barcode"></div></div>' +
+    '<div class="perf"></div><div class="barcode"></div></div>' +
+    deviceCheckHTML() +
 
     '<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>발급해도 사용일은 아직 시작되지 않아요</strong><br>설치 후 <strong>현지 통신사 신호를 잡는 순간</strong>부터 카운트되는 바우처 방식 — 출국 전 미리 발급·설치해 두셔도 괜찮아요.</div>' +
     '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ 단, <strong>'+esc(order.validity||'유효기간 내 활성화 필요 (기간은 QR 안내문 참조)')+'</strong> — 기간 안에 활성화하지 않으면 만료돼요.</div>' +
@@ -178,7 +300,9 @@ function renderPreIssue(){
     '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후 <strong>취소·환불 불가</strong> 및 <strong>유효기간 내 활성화</strong> 필요함을 확인했어요 <span style="color:#F2751F;">(필수)</span></span></label>' +
     '<div style="height:14px;"></div>' +
     '<button class="btn btn-primary" id="issueBtn">🎫 eSIM 발급하기</button>' +
-    '<div class="center" style="margin-top:9px;"><span class="muted">QR 생성은 수 초~수 분 · 사용일은 현지에서 신호를 잡는 순간부터</span></div>');
+    '<div class="center" style="margin-top:9px;"><span class="muted">QR 생성은 수 초~수 분 · 사용일은 현지에서 신호를 잡는 순간부터</span></div>' +
+    '<div style="margin-top:16px;font-weight:800;font-size:0.88rem;">🧳 ' + esc(order.country || '') + ' 여행 준비, 미리 볼까요?</div>' +
+    buildTravelTipsHTML(order.country || ''));
   var boxes=[$('agDevice'),$('agRefund')];
   boxes.forEach(function(b){ b.querySelector('input').addEventListener('change',function(){ b.classList.toggle('ok',this.checked); }); });
   $('issueBtn').addEventListener('click',function(){
@@ -229,8 +353,12 @@ function renderIssued(lpa, revisit){
   var p = parseLpa(lpa);
   var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
   var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&data='+encodeURIComponent(lpa);
-  h('<div class="card ticket">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.72rem;font-weight:800;color:#F2751F;">🎫 내 여행 eSIM</span><span class="badge ok">발급 완료</span></div>' +
+  var fl = FLAG_EMOJI[order && order.country] || '✈️';
+  if (!revisit) confetti();
+  h(flowStrip(2) +
+    (revisit ? '' : romiSay('발급 완료! 🎉 이제 <strong>설치</strong>만 하면 끝 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이야!')) +
+    '<div class="card ticket">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.72rem;font-weight:800;color:#F2751F;">' + fl + ' 내 여행 eSIM</span><span class="badge ok">발급 완료</span></div>' +
     '<div class="row"><span>상품</span><strong>'+esc(order?order.productName:'')+'</strong></div>' +
     '<div class="row"><span>주문번호</span><strong>'+esc(order?order.orderCode:'')+'</strong></div>' +
     '<div class="barcode"></div>' +
@@ -248,6 +376,14 @@ function renderIssued(lpa, revisit){
     // 사용량
     '<div class="card"><div style="font-weight:800;font-size:0.9rem;">📊 데이터 사용량</div><div id="usageBody" class="center"><div class="muted" style="padding:14px 0 6px;">현지에서 개통되면 여기에 실시간 사용량이 떠요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
 
+    '<div class="card"><div style="font-weight:800;font-size:0.9rem;margin-bottom:2px;">✅ 설치 후 마지막 체크</div><div class="muted">체크 상태는 이 기기에 저장돼요</div>' +
+    [['셀룰러(모바일) 데이터 회선을 <strong>여행 eSIM</strong>으로 선택했어요','c1'],
+     ['현지 도착하면 여행 eSIM의 <strong>데이터 로밍 켜기</strong>, 기억하고 있어요','c2'],
+     ['eSIM 프로필은 <strong>여행 끝날 때까지 삭제 금지</strong>인 걸 알아요','c3']].map(function(c){
+       return '<label class="chk" data-k="'+c[1]+'"><input type="checkbox"><span>'+c[0]+'</span></label>';
+     }).join('') + '</div>' +
+    '<div style="font-weight:800;font-size:0.88rem;margin:4px 0 0;">🧳 '+esc((order&&order.country)||'')+' 여행 준비물 · 알아두면 좋아요</div>' +
+    buildTravelTipsHTML((order&&order.country)||'') +
     '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ <strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong> — 기간 내에 현지에서 활성화해 주세요</div>' +
     '<div class="notice" style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;">⚠️ 설치한 eSIM 프로필은 <strong>절대 삭제하지 마세요</strong> — 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</div>');
 
@@ -273,6 +409,19 @@ function renderIssued(lpa, revisit){
   }
   tabs.forEach(function(t,i){ t.onclick=function(){ pick(i); }; });
   pick(isIOS?0:1);
+  var ckey = 'jd_chk_' + ((order && order.orderCode) || 'x');
+  var savedChk = {};
+  try { savedChk = JSON.parse(localStorage.getItem(ckey) || '{}'); } catch (e) {}
+  Array.prototype.forEach.call(document.querySelectorAll('.chk'), function (el) {
+    var k = el.getAttribute('data-k');
+    var inp = el.querySelector('input');
+    if (savedChk[k]) { inp.checked = true; el.classList.add('on'); }
+    inp.addEventListener('change', function () {
+      el.classList.toggle('on', inp.checked);
+      savedChk[k] = inp.checked;
+      try { localStorage.setItem(ckey, JSON.stringify(savedChk)); } catch (e) {}
+    });
+  });
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
 }
 
