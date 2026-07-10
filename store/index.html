@@ -140,8 +140,7 @@
             <img src="images/fox-hello.png" alt="JDISIM 마스코트 여우 로미" class="hero-fox-img">
           </div>
         </div>
-        <div class="pc-hero-cue"></div>
-      </section>
+        </section>
 
       <!-- 구매 보장 신뢰 스트립 -->
       <section class="pc-trust-strip" style="padding: 0 24px; margin: -26px auto 8px; max-width: 1080px; position: relative; z-index: 5;">
@@ -250,6 +249,18 @@
     @keyframes heroFoxIn { from { opacity: 0; transform: translateY(24px) scale(0.94); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: reduce) { .hero-video-badge, .hero-video-title, .hero-video-sub, .hero-video-buttons, .hero-fox-col, .hero-video-content .hero-text-col > div:last-child { animation: none !important; } }
 
+
+    /* PC 스크롤 유도선 제거 */
+    .pc-hero-cue { display: none !important; }
+
+    /* ===== PC 풀페이지 스냅: 한 화면씩 착착 고정 ===== */
+    @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+      html { scroll-snap-type: y mandatory; scroll-padding-top: 64px; }
+      #view-home > section { scroll-snap-align: start; }
+      #view-home > .faq-section, #view-home > .guide-image-section { scroll-snap-align: none; } /* 긴 콘텐츠는 자유 스크롤 */
+      .footer { scroll-snap-align: end; }
+      /* 스토어·주문 등 다른 뷰에서는 자유 스크롤 유지 (해당 뷰엔 snap-align이 없음) */
+    }
 
     /* ===== 전역 마이크로 디테일 ===== */
     ::selection { background: rgba(249, 115, 22, 0.22); }

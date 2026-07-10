@@ -36,6 +36,57 @@
     // 첫 화면 렌더 후 여유 시간에 미리 로드
     window.addEventListener('load', function () { setTimeout(function () { window.ensureFullProducts(); }, 900); });
 
+    // ===== 앱 바로가기 라우팅 (?view=orders/doctor/device) =====
+    window.addEventListener('load', function () {
+      try {
+        var v = new URLSearchParams(location.search).get('view');
+        if (!v) return;
+        setTimeout(function () {
+          if (v === 'orders' && window.switchNav) switchNav('orders');
+          else if (v === 'doctor') { if (window.switchNav) switchNav('orders'); if (window.openRomiDoctor) setTimeout(openRomiDoctor, 350); }
+          else if (v === 'device' && window.openDeviceCheck) openDeviceCheck();
+        }, 250);
+      } catch (e) {}
+    });
+
+    // ===== 앱(스탠드얼론) 첫 실행 환영 =====
+    window.addEventListener('load', function () {
+      var standalone = window.matchMedia && matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (!standalone) return;
+      try {
+        if (localStorage.getItem('jd_app_welcomed')) return;
+        localStorage.setItem('jd_app_welcomed', '1');
+      } catch (e) {}
+      setTimeout(function () {
+        showDataLoadingToast();
+        var t = document.getElementById('dataToast');
+        if (t) t.textContent = '🎉 JDISIM 앱 설치 완료! 여행 준비 끝!';
+      }, 1200);
+    });
+
+    // ===== 오프라인 감지: 끊겨도 티켓은 볼 수 있다는 안심 =====
+    (function () {
+      var bar = null;
+      function showOffline() {
+        if (bar) return;
+        bar = document.createElement('div');
+        bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:1000002;background:#0f172a;color:#fbbf24;font-size:0.74rem;font-weight:800;text-align:center;padding:9px 14px calc(9px + env(safe-area-inset-top,0px));';
+        bar.textContent = '📴 오프라인 — 저장된 주문·QR코드는 계속 볼 수 있어요';
+        document.body.appendChild(bar);
+      }
+      function hideOffline() {
+        if (!bar) return;
+        bar.remove();
+        bar = null;
+        showDataLoadingToast();
+        var t = document.getElementById('dataToast');
+        if (t) t.textContent = '✅ 다시 온라인이에요!';
+      }
+      window.addEventListener('offline', showOffline);
+      window.addEventListener('online', hideOffline);
+      if (navigator.onLine === false) showOffline();
+    })();
+
     // ===== PWA: 서비스워커 등록 + 홈 화면 설치 유도 (한 번만, 닫으면 다시 안 뜸) =====
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
@@ -2630,7 +2681,8 @@
           <div style="text-align:center;font-size:0.72rem;font-weight:700;color:#64748b;padding:10px 16px 16px;line-height:1.6;">📩 QR코드가 카카오톡/문자로 발송돼요<br>도착까지 평균 <strong style="color:#F2751F;">5~15분</strong> 정도 걸려요</div>
         </div>
         <div style="width:100%;max-width:330px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.7s both;'}">${buildTravelTipsHTML(country)}</div>
-        <button id="tcDoneBtn" style="margin:20px 0 8px;padding:14px 34px;border:none;border-radius:26px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.9rem;font-weight:800;box-shadow:0 10px 26px rgba(249,115,22,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.9s both;'}">주문 내역 확인하기 →</button>
+        <button id="tcShareBtn" style="margin-top:18px;padding:12px 22px;border:1.5px solid rgba(255,255,255,0.35);border-radius:24px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.8rem;font-weight:800;${reduced ? '' : 'animation:tcFade 0.5s ease 1.05s both;'}">📤 여행 메이트에게 공유하기</button>
+        <button id="tcDoneBtn" style="margin:12px 0 8px;padding:14px 34px;border:none;border-radius:26px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.9rem;font-weight:800;box-shadow:0 10px 26px rgba(249,115,22,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.9s both;'}">주문 내역 확인하기 →</button>
         <div style="margin-bottom:auto;"></div>`;
       document.body.appendChild(layer);
       // 색종이 (모션 최소화 설정 시 생략)
@@ -2643,6 +2695,20 @@
         }
       }
       document.getElementById('tcDoneBtn').onclick = () => { layer.remove(); if (onDone) onDone(); };
+      const shareBtn = document.getElementById('tcShareBtn');
+      if (shareBtn) {
+        shareBtn.onclick = () => {
+          const msg = `✈️ ${country} 여행 eSIM 발권 완료! 나는 JDISIM에서 준비했어 — QR 스캔 한 번이면 현지 개통 끝!`;
+          if (navigator.share) {
+            navigator.share({ title: 'JDISIM 여행 eSIM', text: msg, url: 'https://jdisim.co.kr' }).catch(() => {});
+          } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(msg + ' https://jdisim.co.kr');
+            showDataLoadingToast();
+            const t = document.getElementById('dataToast');
+            if (t) t.textContent = '📋 공유 문구가 복사됐어요';
+          }
+        };
+      }
     }
 
     // ===== 📡 실시간 사용량 조회 (공급사 API 연동 시 URL만 지정하면 작동) =====
@@ -2805,7 +2871,7 @@
           box.innerHTML = `
             <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#1d4ed8;line-height:1.65;">
               📍 지금 <strong>한국</strong> 망으로 접속 중이에요${isp}<br>
-              <span style="color:#334155;">· 아직 출국 전이라면 정상! eSIM은 현지에서 켜져요<br>· <strong>현지인데</strong> 한국으로 뜬다면: 로밍망 상품은 한국·홍콩 경유가 정상이에요. 인터넷이 되고 있다면 문제없어요 ✅<br>· 인터넷이 안 돼서 와이파이로 보고 계시다면 ↓</span>
+              <span style="color:#334155;">· 아직 출국 전이라면 정상이에요! eSIM은 현지에서 켜져요<br>· <strong>⚠️ 해외에 계신데</strong> 한국으로 뜬다면: 데이터가 <strong>한국 유심 회선</strong>으로 나가는 중일 수 있어요 — 로밍 요금 폭탄 주의! 설정 → 셀룰러 → <strong>셀룰러 데이터를 여행 eSIM으로</strong> 바꾸고 한국 회선 데이터 로밍은 꺼주세요<br>· 인터넷이 안 돼서 와이파이로 보고 계시다면 ↓</span>
             </div>
             <button type="button" onclick="renderDoctorSteps('no-signal')" style="width:100%;margin-top:8px;padding:12px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.78rem;font-weight:800;color:#0f172a;">신호가 안 잡힐 때 해결법 보기 →</button>`;
         } else {
@@ -3526,7 +3592,20 @@
             <span>주문번호: ${o.orderCode}</span>
             <span style="color:#818cf8; font-weight:700;">개통완료</span>
           </div>
-          <div style="font-size:0.85rem; font-weight:600; margin-bottom:12px;">${it.productName} (${it.quantity}개)</div>
+          <div style="font-size:0.85rem; font-weight:600; margin-bottom:10px;">${it.productName} (${it.quantity}개)</div>
+
+          <!-- 진행 타임라인: 결제 → QR 발급 → 설치 → 사용 -->
+          <div style="display:flex;align-items:center;margin:2px 2px 12px;">
+            ${['결제 완료', 'QR 발급', '기기에 설치', '여행지에서 개통'].map((label, i) => {
+              const done = i <= 1; // 결제·발급은 완료, 설치·개통은 고객 단계
+              return `
+              ${i ? `<div style="flex:1;height:2px;background:${done ? 'linear-gradient(90deg,#F97316,#F59E0B)' : '#e2e8f0'};margin:0 3px 14px;"></div>` : ''}
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                <div style="width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;${done ? 'background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;box-shadow:0 2px 6px rgba(249,115,22,0.35);' : 'background:#fff;border:2px solid #e2e8f0;color:#cbd5e1;'}">${done ? '✓' : i + 1}</div>
+                <div style="font-size:0.56rem;font-weight:800;color:${done ? '#F2751F' : '#94a3b8'};white-space:nowrap;">${label}</div>
+              </div>`;
+            }).join('')}
+          </div>
 
           <div style="background:rgba(15, 23, 42, 0.03); padding:12px; border-radius:8px; margin-bottom:10px; text-align:center;">
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">eSIM 기기 등록용 QR코드</div>

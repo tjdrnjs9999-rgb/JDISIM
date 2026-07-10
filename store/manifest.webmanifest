@@ -9,6 +9,11 @@
   "background_color": "#fdfefe",
   "theme_color": "#F97316",
   "lang": "ko",
+  "shortcuts": [
+    { "name": "주문·QR 조회", "url": "/mobile.html?view=orders", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "로미 닥터 (문제 해결)", "url": "/mobile.html?view=doctor", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "기종 자가진단", "url": "/mobile.html?view=device", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ],
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
