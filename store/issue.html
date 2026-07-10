@@ -102,6 +102,25 @@
   .cf { position:fixed; top:-14px; border-radius:2px; z-index:9999; pointer-events:none; animation:cfall linear both; }
   @keyframes cfall { to { transform:translateY(105vh) rotate(640deg); opacity:0.6; } }
   @media (prefers-reduced-motion:reduce) { .card,.spin,.shake,.cf,.romi { animation:none !important; } .donut-fg { transition:none; } .btn-primary::after { animation:none; display:none; } }
+  /* ===== 가독성 리뉴얼: 전체 글자 크기·대비 상향 ===== */
+  html { font-size: 17px; }
+  .muted { font-size: 0.78rem; color: #7e8ba3; }
+  .row { font-size: 0.85rem; }
+  .notice { font-size: 0.81rem; line-height: 1.7; }
+  .agree-box { font-size: 0.84rem; line-height: 1.6; }
+  .btn { font-size: 0.95rem; }
+  .btn-ghost { font-size: 0.86rem; }
+  .tab { font-size: 0.83rem; }
+  .step { font-size: 0.84rem; }
+  details.g summary { font-size: 0.86rem; padding: 13px 14px; }
+  .copyline .val { font-size: 0.82rem; }
+  .copyline .lbl { font-size: 0.68rem; }
+  .romi .bub { font-size: 0.84rem; }
+  .daybar { font-size: 0.79rem; }
+  .pillstat .l { font-size: 0.71rem; }
+  .pillstat .v { font-size: 1rem; }
+  .flow .lb { font-size: 0.64rem; }
+  .brand strong { font-size: 1.08rem; }
 </style>
 </head>
 <body>
@@ -204,21 +223,47 @@ function confetti(){
     setTimeout(function(el){ return function(){ el.remove(); }; }(c), 4500);
   }
 }
-// 📱 기종 자가진단 (EID 중심 3분기)
+// 📱 기종 선택식 자가진단 (탭 몇 번이면 끝)
+var DEVICE_DB = {
+  iphone: { name: ' 아이폰', ok: [
+      ['아이폰 16 시리즈', 1], ['아이폰 15 시리즈', 1], ['아이폰 14 시리즈', 1],
+      ['아이폰 13 시리즈', 1], ['아이폰 12 시리즈', 1], ['아이폰 11 시리즈', 1],
+      ['XS · XS Max · XR', 1], ['SE 2세대 · 3세대', 1],
+      ['아이폰 X', 0], ['아이폰 8 이하', 0], ['SE 1세대', 0]
+    ], note: '⚠️ <strong>중국 본토에서 구매한 아이폰</strong>은 최신 기종도 eSIM이 막혀 있어요 (홍콩·마카오판 일부도 제한)' },
+  galaxy: { name: '🤖 갤럭시', ok: [
+      ['갤럭시 S25 시리즈', 1], ['갤럭시 S24 시리즈', 1], ['갤럭시 S23 시리즈 · FE', 1],
+      ['Z 폴드4 ~ 폴드6', 1], ['Z 플립4 ~ 플립6', 1],
+      ['S22 이하 (국내판)', 0], ['Z 폴드3 · 플립3 (국내판)', 0], ['갤럭시 노트 전 기종', 0], ['갤럭시 A 시리즈 대부분', 0]
+    ], note: '💡 갤럭시는 <strong>해외판</strong>이라면 S21~S22도 eSIM이 있을 수 있어요 — 키패드에 *#06# 을 눌러 EID가 보이면 사용 가능!' },
+  etc: { name: '📟 기타', ok: [
+      ['구글 픽셀 4 이후', 1], ['샤오미 13 이후 (글로벌판)', 1], ['그 외 기종', 2]
+    ], note: '가장 확실한 방법: 키패드에 <strong>*#06#</strong> 입력 → <strong>EID</strong>(32자리)가 보이면 eSIM 지원 기종이에요' }
+};
 function deviceCheckHTML(){
-  return '<details class="g" id="devCheck"><summary>📱 우리 폰, 이심 되는지 30초 진단</summary><div style="padding:2px 14px 14px;">' +
-    '<div style="font-size:0.78rem;font-weight:700;color:#334155;line-height:1.65;">전화 키패드에 <strong style="color:#F2751F;">*#06#</strong> 을 눌러보세요.<br><strong>EID</strong>라는 32자리 번호가 보이나요?</div>' +
-    '<div style="display:flex;gap:8px;margin-top:10px;">' +
-    '<button type="button" class="btn btn-ghost" style="flex:1;" onclick="devResult(1)">네, 보여요</button>' +
-    '<button type="button" class="btn btn-ghost" style="flex:1;" onclick="devResult(0)">안 보여요</button>' +
-    '<button type="button" class="btn btn-ghost" style="flex:1;" onclick="devResult(2)">모르겠어요</button></div>' +
-    '<div id="devVerdict"></div></div></details>';
+  return '<details class="g" id="devCheck"><summary>📱 내 기종, 이심 되는지 바로 확인</summary><div style="padding:2px 14px 14px;">' +
+    '<div class="tabs" style="margin-top:6px;">' + Object.keys(DEVICE_DB).map(function(k, i){
+      return '<button type="button" class="tab' + (i === 0 ? ' on' : '') + '" id="dvt-' + k + '" onclick="devBrand(\'' + k + '\')">' + DEVICE_DB[k].name + '</button>';
+    }).join('') + '</div>' +
+    '<div id="devModels"></div><div id="devVerdict"></div></div></details>';
 }
-function devResult(r){
-  var v=$('devVerdict'); if(!v) return;
-  if(r===1) v.innerHTML='<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>eSIM 사용 가능 기종이에요!</strong> 안심하고 발급하세요.<br><span style="color:#334155;">단, 중국·홍콩·마카오에서 구매한 아이폰은 EID가 보여도 eSIM이 막혀 있어요.</span></div>';
-  else if(r===0) v.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.3);color:#b91c1c;">🚫 <strong>eSIM 미지원 기종일 가능성이 높아요.</strong> 발급하지 마시고 카톡으로 문의해 주세요 — 발급 전이라 100% 환불됩니다.</div>';
-  else v.innerHTML='<div class="notice" style="background:#f8fafc;border:1px solid #e5eaf2;color:#334155;">참고 기준: 아이폰은 <strong>XS(2018) 이후</strong>, 갤럭시는 <strong>S23 이후 국내판·폴드4/플립4 이후</strong>가 지원돼요. 가장 확실한 건 *#06# → EID 확인! 애매하면 카톡으로 기종명을 보내주세요.</div>';
+function devBrand(k){
+  ['iphone','galaxy','etc'].forEach(function(b){
+    var t = $('dvt-' + b); if (t) t.classList.toggle('on', b === k);
+  });
+  var box = $('devModels'); if (!box) return;
+  box.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;">' +
+    DEVICE_DB[k].ok.map(function(m, i){
+      return '<button type="button" onclick="devPick(\'' + k + '\',' + i + ')" style="padding:9px 13px;border:1px solid #e5eaf2;border-radius:20px;background:#fff;font-size:0.82rem;font-weight:700;color:#0f172a;cursor:pointer;">' + m[0] + '</button>';
+    }).join('') + '</div>';
+  var v = $('devVerdict'); if (v) v.innerHTML = '';
+}
+function devPick(k, i){
+  var m = DEVICE_DB[k].ok[i], v = $('devVerdict'); if (!v) return;
+  var note = '<div style="margin-top:7px;font-weight:600;color:#64748b;font-size:0.78rem;line-height:1.6;">' + DEVICE_DB[k].note + '</div>';
+  if (m[1] === 1) v.innerHTML = '<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>' + m[0] + '</strong> — eSIM 사용 가능 기종이에요! 안심하고 발급하세요.' + note + '</div>';
+  else if (m[1] === 0) v.innerHTML = '<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.3);color:#b91c1c;">🚫 <strong>' + m[0] + '</strong> — eSIM 미지원이에요. 발급하지 마시고 카톡으로 문의해 주세요 (발급 전이라 <strong>100% 환불</strong>됩니다).' + note + '</div>';
+  else v.innerHTML = '<div class="notice" style="background:#f8fafc;border:1px solid #e5eaf2;color:#334155;">키패드에 <strong>*#06#</strong> 을 눌러 <strong>EID</strong>가 보이면 사용 가능한 기종이에요. 애매하면 카톡으로 기종명을 보내주세요!</div>';
 }
 
 // ---------------- 주문 로드 ----------------
@@ -304,6 +349,8 @@ function renderPreIssue(){
     '<button class="btn btn-primary" id="issueBtn">🎫 eSIM 발급하기</button>' +
     '<div class="center" style="margin-top:9px;"><span class="muted">QR 생성은 수 초~수 분 · 사용일은 현지에서 신호를 잡는 순간부터</span></div>' +
     buildTravelTipsHTML(order.country || ''));
+  var dv = document.getElementById('devCheck');
+  if (dv) dv.addEventListener('toggle', function(){ if (dv.open && !document.querySelector('#devModels button')) devBrand(/iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iphone' : /Android/.test(navigator.userAgent) ? 'galaxy' : 'iphone'); });
   var boxes=[$('agDevice'),$('agRefund')];
   boxes.forEach(function(b){ b.querySelector('input').addEventListener('change',function(){ b.classList.toggle('ok',this.checked); }); });
   $('issueBtn').addEventListener('click',function(){

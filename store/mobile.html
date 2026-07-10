@@ -796,6 +796,18 @@
     }
 
     /* 히어로 중앙 하단 스크롤 유도선(세로선) 제거 */
+    /* ===== 가독성 리뉴얼: 루트 글자 크기 상향 (rem 기반 전체에 적용) ===== */
+    html { font-size: 17px; }
+    body { -webkit-text-size-adjust: 100%; }
+    /* 최소 가독 하한: 초소형 텍스트 계열 살짝 상향 */
+    .m-rv-body { font-size: 0.8rem !important; line-height: 1.6 !important; }
+    .m-rv-foot { font-size: 0.7rem !important; }
+    .bp-meta, .bp-sub { font-size: 0.74rem !important; }
+    .order-card-header { font-size: 0.8rem !important; }
+    .tracker-input { font-size: 0.92rem !important; }
+    .m-hero-stats strong { font-size: 1.06rem !important; }
+    .m-hero-stats span { font-size: 0.7rem !important; }
+
     .m-hero-scroll-cue { display: none !important; }
     /* 히어로를 '실제 보이는 화면'(svh) 안에 맞춰 150+/10초/24h 스탯까지 첫 화면에 노출 */
     .m-hero { height: 100svh !important; min-height: 100svh !important; max-height: 100svh !important; padding-top: max(52px, env(safe-area-inset-top, 0px)) !important; padding-bottom: 14px !important; box-sizing: border-box !important; }
