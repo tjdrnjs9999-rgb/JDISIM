@@ -1823,6 +1823,17 @@
       </div>
     </details>
 
+    <!-- 📡 실시간 사용량 조회 (ICCID) -->
+    <div style="background:#fff;border:1px solid #eef2f7;border-radius:14px;padding:14px;margin:0 0 16px;box-shadow:0 4px 12px rgba(15,23,42,0.04);">
+      <div style="font-size:0.8rem;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:7px;">📡 실시간 사용량 조회 <span style="font-size:0.62rem;font-weight:800;color:#F2751F;background:rgba(249,115,22,0.1);padding:3px 8px;border-radius:10px;">BETA</span></div>
+      <div style="font-size:0.7rem;color:#94a3b8;font-weight:600;margin:3px 0 9px;">아래에서 주문을 조회하면 ICCID가 자동으로 채워져요</div>
+      <div style="display:flex;gap:8px;">
+        <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID 번호 (89로 시작)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;">
+        <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 4px 12px rgba(249,115,22,0.25);">조회</button>
+      </div>
+      <div id="usageResult" style="display:none;margin-top:11px;"></div>
+    </div>
+
     <div class="order-tracker-form">
       <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
       <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 입력 (숫자만)">
@@ -2634,6 +2645,67 @@
       document.getElementById('tcDoneBtn').onclick = () => { layer.remove(); if (onDone) onDone(); };
     }
 
+    // ===== 📡 실시간 사용량 조회 (공급사 API 연동 시 URL만 지정하면 작동) =====
+    window.USAGE_API_URL = ''; // 예: '/api/usage' (Flask 연동 시)
+
+    function checkUsage() {
+      const inp = document.getElementById('usageIccid');
+      const box = document.getElementById('usageResult');
+      if (!inp || !box) return;
+      const iccid = inp.value.replace(/[^0-9]/g, '');
+      if (iccid.length < 15) {
+        box.style.display = 'block';
+        box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px 12px;">ICCID는 89로 시작하는 18~20자리 숫자예요 — 주문 조회 결과나 QR 아래에서 확인할 수 있어요</div>';
+        return;
+      }
+      // 데모 모드: 주소 끝에 #usagedemo 를 붙이면 완성 화면 미리보기
+      if (location.hash.indexOf('usagedemo') !== -1) {
+        renderUsageResult({ plan_name: '일본 소프트뱅크 매일 2GB', used_mb: 3480, total_mb: 10240, expires_at: '2026-07-14', status: 'active' });
+        return;
+      }
+      if (!window.USAGE_API_URL) {
+        box.style.display = 'block';
+        box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">🛠️ 실시간 자동 조회는 곧 오픈돼요!<br>지금은 위의 <strong>\'데이터 사용량 확인하는 법\'</strong>으로 기기에서 바로 확인할 수 있어요</div>';
+        return;
+      }
+      box.style.display = 'block';
+      box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#64748b;padding:8px 2px;">⏳ 조회 중...</div>';
+      fetch(window.USAGE_API_URL + '?iccid=' + encodeURIComponent(iccid))
+        .then(r => { if (!r.ok) throw new Error('bad'); return r.json(); })
+        .then(renderUsageResult)
+        .catch(() => {
+          box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border-radius:10px;padding:10px 12px;">조회에 실패했어요 — ICCID를 확인하시거나 잠시 후 다시 시도해 주세요</div>';
+        });
+    }
+
+    function renderUsageResult(d) {
+      const box = document.getElementById('usageResult');
+      if (!box || !d) return;
+      const used = Number(d.used_mb) || 0;
+      const total = Number(d.total_mb) || 0;
+      const pct = total ? Math.min(100, Math.round(used / total * 100)) : 0;
+      const remainGb = total ? Math.max(0, (total - used) / 1024) : 0;
+      const gb = v => (Math.round(v / 1024 * 10) / 10) + 'GB';
+      const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : '#22c55e';
+      box.style.display = 'block';
+      box.innerHTML = `
+        <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.76rem;font-weight:800;color:#0f172a;">
+            <span>${d.plan_name || '내 eSIM'}</span>
+            <span style="color:${d.status === 'active' ? '#15803d' : '#64748b'};font-size:0.66rem;">${d.status === 'active' ? '● 사용 중' : d.status === 'expired' ? '만료됨' : '대기 중'}</span>
+          </div>
+          ${total ? `
+          <div style="margin-top:10px;height:9px;border-radius:6px;background:#f1f5f9;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;border-radius:6px;background:${barColor};transition:width 0.8s cubic-bezier(0.16,1,0.3,1);"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:0.7rem;font-weight:700;color:#64748b;">
+            <span>사용 ${gb(used)} / ${gb(total)}</span>
+            <span style="color:#0f172a;">남은 데이터 <strong style="color:#F2751F;">${Math.round(remainGb * 10) / 10}GB</strong></span>
+          </div>` : '<div style="margin-top:8px;font-size:0.72rem;font-weight:700;color:#15803d;">♾️ 무제한 요금제 — 마음껏 쓰세요!</div>'}
+          ${d.expires_at ? `<div style="margin-top:7px;font-size:0.68rem;font-weight:600;color:#94a3b8;">유효기간: ${d.expires_at} 까지</div>` : ''}
+        </div>`;
+    }
+
     // ===== 🩺 로미 닥터: eSIM 장애 자가진단 마법사 =====
     const DOCTOR_TREE = {
       'no-qr': { title: 'QR코드가 안 왔어요', steps: [
@@ -2697,10 +2769,59 @@
             <div style="font-size:0.74rem;color:#94a3b8;font-weight:600;">어떤 증상인가요? 골라주시면 바로 진단할게요</div>
           </div>
         </div>
+        <button type="button" onclick="runSmartCheck()" style="display:block;width:100%;text-align:left;margin-top:4px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;box-shadow:0 8px 20px rgba(249,115,22,0.3);">
+          <div style="font-size:0.88rem;font-weight:800;">🔎 스마트 연결 점검 (자동)</div>
+          <div style="font-size:0.7rem;font-weight:700;opacity:0.9;margin-top:2px;">지금 어떤 나라·어떤 망으로 접속 중인지 바로 판정해요</div>
+        </button>
+        <div id="smartCheckResult" style="display:none;margin-top:9px;"></div>
+        <div style="font-size:0.68rem;font-weight:700;color:#94a3b8;margin:8px 2px 2px;">또는 증상을 직접 골라주세요</div>
         ${Object.entries(DOCTOR_TREE).map(([k, v]) => `
           <button type="button" onclick="renderDoctorSteps('${k}')" style="display:flex;align-items:center;width:100%;text-align:left;gap:10px;margin-top:9px;padding:14px;border:1px solid #e5eaf2;border-radius:14px;background:#fff;font-size:0.84rem;font-weight:700;color:#0f172a;box-shadow:0 3px 10px rgba(15,23,42,0.04);">
             ${v.title}<span style="margin-left:auto;color:#F97316;">→</span>
           </button>`).join('')}`;
+    }
+
+    // 🔎 스마트 연결 점검: IP 기반으로 현재 접속 국가·통신망 자동 판정
+    const CC_KO = { KR: '한국', JP: '일본', VN: '베트남', TH: '태국', TW: '대만', PH: '필리핀', SG: '싱가포르', MY: '말레이시아', ID: '인도네시아', US: '미국', GU: '괌', MP: '사이판', CN: '중국', HK: '홍콩', MO: '마카오', AU: '호주', NZ: '뉴질랜드', TR: '튀르키예', CA: '캐나다', FR: '프랑스', ES: '스페인', GB: '영국', MN: '몽골', IN: '인도', MV: '몰디브' };
+
+    function runSmartCheck() {
+      const box = document.getElementById('smartCheckResult');
+      if (!box) return;
+      box.style.display = 'block';
+      box.innerHTML = '<div style="font-size:0.76rem;font-weight:700;color:#64748b;padding:10px 4px;">⏳ 접속 망을 판정하는 중...  <span style="color:#94a3b8;">(정확한 판정을 위해 와이파이는 끄고 점검하세요)</span></div>';
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000));
+      Promise.race([
+        fetch('https://ipwho.is/').then(r => r.json()).then(d => {
+          if (!d || d.success === false) throw new Error('fail');
+          return { cc: d.country_code, isp: (d.connection && (d.connection.isp || d.connection.org)) || '' };
+        }),
+        timeout
+      ]).catch(() =>
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => ({ cc: d.country_code, isp: d.org || '' }))
+      ).then(res => {
+        const nation = CC_KO[res.cc] || res.cc || '알 수 없는 지역';
+        const isp = res.isp ? ` · <strong>${res.isp}</strong>` : '';
+        if (res.cc === 'KR') {
+          box.innerHTML = `
+            <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#1d4ed8;line-height:1.65;">
+              📍 지금 <strong>한국</strong> 망으로 접속 중이에요${isp}<br>
+              <span style="color:#334155;">· 아직 출국 전이라면 정상! eSIM은 현지에서 켜져요<br>· <strong>현지인데</strong> 한국으로 뜬다면: 로밍망 상품은 한국·홍콩 경유가 정상이에요. 인터넷이 되고 있다면 문제없어요 ✅<br>· 인터넷이 안 돼서 와이파이로 보고 계시다면 ↓</span>
+            </div>
+            <button type="button" onclick="renderDoctorSteps('no-signal')" style="width:100%;margin-top:8px;padding:12px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.78rem;font-weight:800;color:#0f172a;">신호가 안 잡힐 때 해결법 보기 →</button>`;
+        } else {
+          box.innerHTML = `
+            <div style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#15803d;line-height:1.65;">
+              ✅ 지금 <strong>${nation}</strong> 망으로 인터넷이 잘 나가고 있어요${isp}<br>
+              <span style="color:#334155;">이 판정이 보인다는 것 자체가 데이터가 작동 중이라는 뜻이에요. 와이파이를 끄고도 이 화면이 뜨면 eSIM 완벽 작동! 🎉</span>
+            </div>`;
+        }
+      }).catch(() => {
+        box.innerHTML = `
+          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#b91c1c;line-height:1.65;">
+            ⚠️ 판정 서버에 연결하지 못했어요 — 인터넷 자체가 안 되는 상태일 수 있어요<br><span style="color:#334155;">아래 순서로 확인해 보세요 ↓</span>
+          </div>
+          <button type="button" onclick="renderDoctorSteps('no-signal')" style="width:100%;margin-top:8px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.78rem;font-weight:800;">신호 문제 해결하기 →</button>`;
+      });
     }
 
     function renderDoctorSteps(key) {
@@ -3395,26 +3516,43 @@
         return;
       }
 
-      resultsContainer.innerHTML = filtered.map(o => `
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      resultsContainer.innerHTML = filtered.map(o => {
+        const it = o.items[0];
+        const lpa = it.lpa || `LPA:1$rsp.truphone.com$${it.iccid}`; // 발송 시스템이 실제 활성화 코드를 저장하면 it.lpa 사용
+        return `
         <div class="order-card">
           <div class="order-card-header">
             <span>주문번호: ${o.orderCode}</span>
             <span style="color:#818cf8; font-weight:700;">개통완료</span>
           </div>
-          <div style="font-size:0.85rem; font-weight:600; margin-bottom:12px;">${o.items[0].productName} (${o.items[0].quantity}개)</div>
-          
-          <div style="background:rgba(15, 23, 42, 0.03); padding:12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+          <div style="font-size:0.85rem; font-weight:600; margin-bottom:12px;">${it.productName} (${it.quantity}개)</div>
+
+          <div style="background:rgba(15, 23, 42, 0.03); padding:12px; border-radius:8px; margin-bottom:10px; text-align:center;">
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">eSIM 기기 등록용 QR코드</div>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=LPA:1$rsp.truphone.com$${o.items[0].iccid}" 
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(lpa)}"
                  style="width:120px; height:120px; border-radius:6px; border:4px solid white; margin:4px 0;" alt="eSIM QR">
-            <div style="font-size:0.75rem; color:#475569; margin-top:4px; font-family:monospace;">ICCID: ${o.items[0].iccid}</div>
+            <div style="font-size:0.75rem; color:#475569; margin-top:4px; font-family:monospace;">ICCID: ${it.iccid}</div>
           </div>
-          
-          <div style="font-size:0.75rem; color:#475569; line-height:1.4;">
-            ※ 위 QR코드를 휴대폰 카메라 또는 설정 -> 셀룰러 요금제 추가에서 스캔하시면 즉시 사용 개통됩니다.
+
+          ${isIOS ? `
+          <a href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${encodeURIComponent(lpa)}"
+             style="display:block;text-align:center;padding:13px;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.84rem;text-decoration:none;box-shadow:0 5px 14px rgba(249,115,22,0.3);margin-bottom:8px;">⚡ 탭 한 번으로 eSIM 설치 (iOS 17.4+)</a>` : ''}
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='📋 설치 코드가 복사됐어요';})"
+              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">설치 코드 복사</button>
+            <button type="button" onclick="var u=document.getElementById('usageIccid');if(u){u.value='${it.iccid}';}checkUsage();window.scrollTo({top:0,behavior:'smooth'});"
+              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">📡 사용량 조회</button>
           </div>
-        </div>
-      `).join('');
+
+          <div style="font-size:0.72rem; color:#64748b; line-height:1.55;">
+            ${isIOS ? '※ 버튼이 안 되면 QR을 다른 화면에 띄워 스캔하거나, 설치 코드를 복사해 설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력에 붙여넣으세요.' : '※ 설정 → 연결 → SIM 관리자 → eSIM 추가에서 QR 스캔 또는 복사한 코드로 등록하세요.'}
+          </div>
+        </div>`;
+      }).join('');
+      // 사용량 조회 ICCID 자동 입력
+      const u = document.getElementById('usageIccid');
+      if (u && filtered[0] && filtered[0].items[0]) u.value = filtered[0].items[0].iccid || '';
     }
 
     // Category click handler
