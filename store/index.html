@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="snap-on">
 <head>
   <meta name="impact-site-verification" value="aacb94f9-36f7-40f0-a6f3-76e5515e0401">
   <script>
@@ -255,10 +255,10 @@
 
     /* ===== PC 풀페이지 스냅: 한 화면씩 착착 고정 ===== */
     @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-      html { scroll-snap-type: y mandatory; scroll-padding-top: 64px; }
-      #view-home > section { scroll-snap-align: start; }
-      #view-home > .faq-section, #view-home > .guide-image-section { scroll-snap-align: none; } /* 긴 콘텐츠는 자유 스크롤 */
-      .footer { scroll-snap-align: end; }
+      html.snap-on { scroll-snap-type: y mandatory; scroll-padding-top: 64px; }
+      html.snap-on #view-home > section { scroll-snap-align: start; }
+      html.snap-on #view-home > .faq-section, html.snap-on #view-home > .guide-image-section { scroll-snap-align: none; } /* 긴 콘텐츠는 자유 스크롤 */
+      html.snap-on .footer { scroll-snap-align: end; }
       /* 스토어·주문 등 다른 뷰에서는 자유 스크롤 유지 (해당 뷰엔 snap-align이 없음) */
     }
 
@@ -1114,7 +1114,7 @@
         <div class="receipt-header">
           <div class="success-icon">✓</div>
           <h3 class="checkout-title" style="margin-bottom: 4px;">결제가 완료되었습니다! 🛫</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">개통용 QR코드가 이메일·문자로 발송돼요 — 도착까지 평균 <strong style="color: var(--accent);">5~15분</strong>이면 충분합니다.</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">카카오톡으로 <strong style="color: var(--accent);">eSIM 발급 링크</strong>를 보내드려요.<br>링크에서 원하시는 시점에 발급하시면 됩니다 — 발급 전에는 100% 환불 가능해요.</p>
         </div>
         
         <!-- Dynamic purchased items list with their QR codes -->

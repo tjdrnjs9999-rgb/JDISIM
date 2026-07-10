@@ -487,6 +487,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
+    // 풀페이지 스냅은 홈에서만 (다른 뷰에서 스크롤 락 방지)
+    document.documentElement.classList.toggle('snap-on', viewId === 'home');
+    // 뷰 전환 시 항상 맨 위에서 시작
+    window.scrollTo(0, 0);
+
     // 모든 뷰 숨기기 (안전 가드 처리)
     const allViews = [viewHome, viewStore, viewOrders, viewTerms, viewPrivacy, viewRefunds, viewPartnership];
     allViews.forEach(v => {
@@ -496,6 +501,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 선택한 뷰 활성화
     if (viewId === 'home') {
       if (viewHome) viewHome.classList.add('active');
+      // 지구본에서 걸었던 검색은 홈 복귀 시 초기화 (뒤로가기 잔상 방지)
+      if (window.__globeSearch) {
+        window.__globeSearch = false;
+        const si = document.getElementById('storeSearchInput');
+        if (si) si.value = '';
+        searchQuery = '';
+      }
     } else if (viewId === 'store') {
       if (viewStore) {
         viewStore.classList.add('active');
@@ -1575,6 +1587,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 13. 모달 닫기
   function closeModal() {
+    if (window.__globeSearch) {
+      window.__globeSearch = false;
+      const si = document.getElementById('storeSearchInput');
+      if (si) si.value = '';
+      searchQuery = '';
+      renderGrid();
+    }
     productModal.classList.remove('active');
     document.body.style.overflow = 'auto'; // 스크롤 복구
     if (history.state && history.state.modal) history.back(); // 히스토리 정리
@@ -2016,7 +2035,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       tipsBox.innerHTML = buildTravelTipsHTML(firstCountry);
     }
     
-    let successMsg = `🎉 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 개통용 QR코드가 발송돼요. (도착까지 평균 5~15분)`;
+    let successMsg = `🎉 결제가 정상 처리되었습니다!\n카카오톡으로 eSIM 발급 링크를 보내드려요. 링크에서 원하시는 시점에 발급하시면 됩니다.`;
     const requiresActivation = checkoutActivationDate.required && checkoutActivationDate.value;
     if (requiresActivation) {
       successMsg = `🎉 예약 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 안내 메일이 발송되었습니다.\n(지정하신 개통일 [${checkoutActivationDate.value}]에 맞춰 현지망 활성화가 순차 진행됩니다.)`;
@@ -2767,6 +2786,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (productModal && productModal.classList.contains('active')) {
       productModal.classList.remove('active');
       document.body.style.overflow = 'auto';
+      if (window.__globeSearch) {
+        window.__globeSearch = false;
+        const si = document.getElementById('storeSearchInput');
+        if (si) si.value = '';
+        searchQuery = '';
+        renderGrid();
+      }
       return;
     }
     const v = (location.hash || '#home').replace('#', '');
@@ -2888,6 +2914,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const input = document.getElementById('storeSearchInput');
       if (input) input.value = country;
       searchQuery = String(country).toLowerCase();
+      window.__globeSearch = true; // 지구본/전광판/마퀴에서 건 검색 표시
       switchView('store');
       renderGrid();
     };
