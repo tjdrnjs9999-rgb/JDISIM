@@ -3654,42 +3654,53 @@
     }
 
     // Search Order Logic
+    // 주문 조회: 서버 API가 있으면 서버에서, 없으면 이 기기의 구매 기록(localStorage)에서
+    window.ORDERS_API = ''; // Flask 연동 시 예: '/api/orders' (GET ?name=&phone= → {orders:[...]})
+
     function searchOrders() {
       const name = document.getElementById('orderSearchName').value.trim();
       const phone = document.getElementById('orderSearchPhone').value.trim();
       const resultsContainer = document.getElementById('orderSearchResults');
+      if (!name || !phone) { alert("이름과 연락처를 입력해 주세요."); return; }
 
-      if (!name || !phone) {
-        alert("이름과 연락처를 입력해 주세요.");
+      if (window.ORDERS_API) {
+        resultsContainer.innerHTML = '<div style="text-align:center;padding:26px;color:#64748b;font-size:0.85rem;">⏳ 조회 중...</div>';
+        fetch(window.ORDERS_API + '?name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone.replace(/[^0-9]/g, '')))
+          .then(r => { if (!r.ok) throw 0; return r.json(); })
+          .then(d => renderOrderCards((d && d.orders) || []))
+          .catch(() => { resultsContainer.innerHTML = '<div style="text-align:center;padding:26px;color:#b91c1c;font-size:0.85rem;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
         return;
       }
-
       const orders = JSON.parse(localStorage.getItem('jdisim_orders') || '[]');
-      const filtered = orders.filter(o => o.buyerName === name && o.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''));
+      renderOrderCards(orders.filter(o => o.buyerName === name && o.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '')));
+    }
 
-      if (filtered.length === 0) {
+    function renderOrderCards(filtered) {
+      const resultsContainer = document.getElementById('orderSearchResults');
+      if (!filtered.length) {
         resultsContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:0.9rem;">일치하는 주문 내역이 존재하지 않습니다.</div>`;
         return;
       }
-
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
       resultsContainer.innerHTML = filtered.map(o => {
-        const it = o.items[0];
-        const lpa = it.lpa || `LPA:1$rsp.truphone.com$${it.iccid}`; // 발송 시스템이 실제 활성화 코드를 저장하면 it.lpa 사용
+        const it = (o.items && o.items[0]) || {};
+        const lpa = it.lpa || ''; // ★ 실제 발급 데이터가 있을 때만 설치 UI 노출
+        const issued = !!lpa;
+        const issueUrl = o.issueUrl || (o.issueToken ? ('issue.html?t=' + encodeURIComponent(o.issueToken)) : '');
+        const steps = ['결제 완료', 'QR 발급', '기기에 설치', '여행지에서 개통'];
+        const doneUpto = issued ? 1 : 0;
         return `
         <div class="order-card">
           <div class="order-card-header">
             <span>주문번호: ${o.orderCode}</span>
-            <span style="color:#818cf8; font-weight:700;">개통완료</span>
+            <span style="color:${issued ? '#15803d' : '#b45309'}; font-weight:800;">${issued ? '발급 완료' : '발급 대기'}</span>
           </div>
-          <div style="font-size:0.85rem; font-weight:600; margin-bottom:10px;">${it.productName} (${it.quantity}개)</div>
+          <div style="font-size:0.85rem; font-weight:600; margin-bottom:10px;">${it.productName || ''} ${it.quantity ? `(${it.quantity}개)` : ''}</div>
 
-          <!-- 진행 타임라인: 결제 → QR 발급 → 설치 → 사용 -->
           <div style="display:flex;align-items:center;margin:2px 2px 12px;">
-            ${['결제 완료', 'QR 발급', '기기에 설치', '여행지에서 개통'].map((label, i) => {
-              const done = i <= 1; // 결제·발급은 완료, 설치·개통은 고객 단계
-              return `
-              ${i ? `<div style="flex:1;height:2px;background:${done ? 'linear-gradient(90deg,#F97316,#F59E0B)' : '#e2e8f0'};margin:0 3px 14px;"></div>` : ''}
+            ${steps.map((label, i) => {
+              const done = i <= doneUpto;
+              return `${i ? `<div style="flex:1;height:2px;background:${done ? 'linear-gradient(90deg,#F97316,#F59E0B)' : '#e2e8f0'};margin:0 3px 14px;"></div>` : ''}
               <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
                 <div style="width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;${done ? 'background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;box-shadow:0 2px 6px rgba(249,115,22,0.35);' : 'background:#fff;border:2px solid #e2e8f0;color:#cbd5e1;'}">${done ? '✓' : i + 1}</div>
                 <div style="font-size:0.56rem;font-weight:800;color:${done ? '#F2751F' : '#94a3b8'};white-space:nowrap;">${label}</div>
@@ -3697,37 +3708,46 @@
             }).join('')}
           </div>
 
+          ${issued ? `
           <div style="background:rgba(15, 23, 42, 0.03); padding:12px; border-radius:8px; margin-bottom:10px; text-align:center;">
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">eSIM 기기 등록용 QR코드</div>
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(lpa)}"
                  style="width:120px; height:120px; border-radius:6px; border:4px solid white; margin:4px 0;" alt="eSIM QR">
-            <div style="font-size:0.75rem; color:#475569; margin-top:4px; font-family:monospace;">ICCID: ${it.iccid}</div>
+            ${it.iccid ? `<div style="font-size:0.75rem; color:#475569; margin-top:4px; font-family:monospace;">ICCID: ${it.iccid}</div>` : ''}
           </div>
-
           ${isIOS ? `
           <a href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${encodeURIComponent(lpa)}"
              style="display:block;text-align:center;padding:13px;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.84rem;text-decoration:none;box-shadow:0 5px 14px rgba(249,115,22,0.3);margin-bottom:8px;">⚡ 탭 한 번으로 eSIM 설치 (iOS 17.4+)</a>` : ''}
-          <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
             <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='📋 설치 코드가 복사됐어요';})"
               style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">설치 코드 복사</button>
-            <button type="button" onclick="var u=document.getElementById('usageIccid');if(u){u.value='${it.iccid}';}checkUsage();window.scrollTo({top:0,behavior:'smooth'});"
-              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">📡 사용량 조회</button>
-          </div>
-          <div style="display:flex;gap:8px;margin-bottom:10px;">
             <button type="button" onclick="openInstallGuide('${lpa}')"
               style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">📲 설치 방법</button>
-            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[QR 재발송 요청] 주문번호: ${o.orderCode}');showDataLoadingToast();var t=document.getElementById('dataToast');if(t)t.textContent='📋 주문번호 복사됨 — 채팅창에 붙여넣으세요';window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
-              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">🔁 QR 재발송 요청</button>
           </div>
-
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <button type="button" onclick="var u=document.getElementById('usageIccid');if(u){u.value='${it.iccid || ''}';}checkUsage();window.scrollTo({top:0,behavior:'smooth'});"
+              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">📡 사용량 조회</button>
+            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[QR 재발송 요청] 주문번호: ${o.orderCode}');showDataLoadingToast();var t=document.getElementById('dataToast');if(t)t.textContent='📋 주문번호 복사됨 — 채팅창에 붙여넣으세요';window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
+              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">🔁 재발송 요청</button>
+          </div>
+          ${issueUrl ? `<a href="${issueUrl}" style="display:block;text-align:center;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;text-decoration:none;margin-bottom:10px;">🎫 발급 페이지에서 자세히 보기 (사용량·설치확인)</a>` : ''}
           <div style="font-size:0.72rem; color:#64748b; line-height:1.55;">
             ${isIOS ? '※ 버튼이 안 되면 QR을 다른 화면에 띄워 스캔하거나, 설치 코드를 복사해 설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력에 붙여넣으세요.' : '※ 설정 → 연결 → SIM 관리자 → eSIM 추가에서 QR 스캔 또는 복사한 코드로 등록하세요.'}
-          </div>
+          </div>`
+          : `
+          ${issueUrl ? `
+          <a href="${issueUrl}" style="display:block;text-align:center;padding:14px;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 5px 14px rgba(249,115,22,0.3);margin-bottom:8px;">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.55;">발급 전에는 100% 환불 가능 · 발급 후 취소 불가 · 사용일은 현지 활성화부터 카운트</div>`
+          : `
+          <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#9a5b16;line-height:1.6;">🛠️ 발급 정보를 준비 중이에요 — 준비되면 <strong>카카오톡으로 발급 링크</strong>를 보내드려요. 링크가 안 왔다면 아래로 문의해 주세요.</div>
+          <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[발급 링크 요청] 주문번호: ${o.orderCode}');window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
+            style="width:100%;margin-top:8px;padding:12px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">💬 발급 링크 다시 받기 (카톡)</button>`}`}
         </div>`;
       }).join('');
-      // 사용량 조회 ICCID 자동 입력
+      // 사용량 조회 ICCID 자동 입력 (발급된 주문이 있을 때만)
+      const first = filtered.find(o => o.items && o.items[0] && o.items[0].lpa);
       const u = document.getElementById('usageIccid');
-      if (u && filtered[0] && filtered[0].items[0]) u.value = filtered[0].items[0].iccid || '';
+      if (u && first) u.value = first.items[0].iccid || '';
     }
 
     // Category click handler

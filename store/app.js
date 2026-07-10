@@ -2296,37 +2296,42 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 19. eSIM 주문 내역 조회 및 마이 QR코드 렌더링 로직
+  // 주문 조회: 서버 API가 있으면 서버에서, 없으면 이 기기의 구매 기록에서
+  window.ORDERS_API = ''; // Flask 연동 시 예: '/api/orders' (GET ?email=&phone= → {orders:[...]})
+
   function handleOrderLookup() {
     const emailInput = document.getElementById('lookupEmail').value.trim();
     const phoneInput = document.getElementById('lookupPhone').value.trim();
     const resultsContainer = document.getElementById('orderLookupResults');
-    
+
     if (!emailInput || !phoneInput) {
       alert('주문 당시 입력하셨던 이메일 주소와 휴대폰 번호를 모두 채워주셔야 내역을 안전하게 불러올 수 있습니다.');
       return;
     }
-    
     if (!emailInput.includes('@')) {
       alert('올바른 이메일 주소 형식이 아닙니다. 이메일을 다시 한번 확인해 주세요!');
       return;
     }
 
-    // 불러올 로컬 스토리지 주문 목록
+    if (window.ORDERS_API) {
+      resultsContainer.style.display = 'block';
+      resultsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">⏳ 조회 중...</div>';
+      fetch(window.ORDERS_API + '?email=' + encodeURIComponent(emailInput.toLowerCase()) + '&phone=' + encodeURIComponent(phoneInput.replace(/[^0-9]/g, '')))
+        .then(r => { if (!r.ok) throw 0; return r.json(); })
+        .then(d => renderPcOrderCards((d && d.orders) || []))
+        .catch(() => { resultsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;font-weight:700;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
+      return;
+    }
     const savedOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
-    
-    // 이메일과 전화번호 매칭 필터링 (공백 제거, 대소문자 무시)
-    const normalizedEmail = emailInput.toLowerCase();
-    const normalizedPhone = phoneInput.replace(/[^0-9]/g, ''); // 숫자만 대조
-    
-    const matchedOrders = savedOrders.filter(order => {
-      const orderEmail = order.email.toLowerCase();
-      const orderPhone = order.phone.replace(/[^0-9]/g, '');
-      return orderEmail === normalizedEmail && orderPhone === normalizedPhone;
-    });
+    const ne = emailInput.toLowerCase();
+    const np = phoneInput.replace(/[^0-9]/g, '');
+    renderPcOrderCards(savedOrders.filter(o => (o.email || '').toLowerCase() === ne && (o.phone || '').replace(/[^0-9]/g, '') === np));
+  }
 
-    resultsContainer.innerHTML = '';
-
-    if (matchedOrders.length === 0) {
+  function renderPcOrderCards(matchedOrders) {
+    const resultsContainer = document.getElementById('orderLookupResults');
+    resultsContainer.style.display = 'block';
+    if (!matchedOrders.length) {
       resultsContainer.innerHTML = `
         <div style="text-align: center; padding: 50px 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
           <div style="font-size: 2.5rem; margin-bottom: 16px;">🔍</div>
@@ -2334,165 +2339,42 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; max-width: 400px; margin: 0 auto;">
             구매 시 입력하셨던 정보가 맞는지 다시 확인해 주세요. 특히 이메일 오타나 휴대폰 하이픈(-) 입력 여부에 유의해 주시기 바랍니다.
           </div>
-        </div>
-      `;
-      resultsContainer.style.display = 'block';
+        </div>`;
       return;
     }
-
-    // 주문 리스트 출력
-    matchedOrders.forEach(order => {
-      const card = document.createElement('div');
-      card.className = 'order-history-card';
-      
-      let itemsHTML = '';
-      order.items.forEach((item, idx) => {
-        const itemPrice = order.totalPrice; // For simplicity in mock
-        const itemMockCode = item.productCode || 'LS2026-eSIM-00000';
-        
-        // 국가별 맞춤 APN 정보 및 가이드
-        let apnInfo = 'APN: spmode.ne.jp (자동 설정이 안 될 시 APN 프로필 수동 설치 요망)';
-        if (item.country.includes('베트남')) {
-          apnInfo = 'APN: internet (Viettel망 수동 강제 고정 권장)';
-        } else if (item.country.includes('대만')) {
-          apnInfo = 'APN: internet / 대만 현지 도착 직후 SMS 여권 실명인증(KYC) 필수';
-        } else if (item.country.includes('유럽')) {
-          apnInfo = 'APN: mobile.three.co.uk / 국가 경유 시 2~3회 재부팅 권장';
-        } else if (item.country.includes('미국') || item.country.includes('캐나다')) {
-          apnInfo = 'APN: wholesale / 북미 전용 T-Mobile 로컬 개통망 연결';
-        }
-        
-        itemsHTML += `
-          <div class="order-history-item-row">
-            <div class="order-history-item-meta">
-              <div>
-                <div class="order-history-item-title">${item.country} eSIM</div>
-                <div class="order-history-item-sub">
-                  ${item.carrier} | ${item.planLimit} / ${item.planDuration}일 | 수량 ${item.quantity}개
-                </div>
-                <div style="font-size: 0.72rem; color: var(--accent); margin-top: 4px; font-weight: 700; letter-spacing: 0.5px;">
-                  ICCID: ${item.iccid || '8982300000000000000'}
-                </div>
-              </div>
-              <div class="order-history-item-price">
-                ${itemMockCode}
-              </div>
-            </div>
-            
-            <button class="order-history-qr-btn" data-toggle-idx="${order.orderCode}-${idx}">
-              📱 개통 QR코드 및 설치 안내 열기 ▾
-            </button>
-            <button class="order-history-sim-btn" data-iccid="${item.iccid || ''}" style="border: 1px solid #10b981; color: #10b981; background: rgba(16,185,129,0.03); padding: 8px 16px; font-size: 0.78rem; font-weight: 700; border-radius: var(--radius-sm); cursor: pointer; margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; transition: var(--transition-fast); margin-left: 8px;">
-              📊 실시간 데이터 사용량 조회 (App 연동)
-            </button>
-            
-            <!-- Collapsible QR Code view -->
-            <div class="order-history-qr-expanded" id="qr-panel-${order.orderCode}-${idx}">
-              <div class="receipt-item-qr-layout" style="margin-top: 10px;">
-                <div class="receipt-item-qr-box">
-                  <svg class="receipt-item-qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100" height="100" fill="#fff" />
-                    <rect x="10" y="10" width="20" height="20" fill="#000" />
-                    <rect x="12" y="12" width="16" height="16" fill="#fff" />
-                    <rect x="14" y="14" width="12" height="12" fill="#000" />
-                    <rect x="70" y="10" width="20" height="20" fill="#000" />
-                    <rect x="72" y="12" width="16" height="16" fill="#fff" />
-                    <rect x="74" y="14" width="12" height="12" fill="#000" />
-                    <rect x="10" y="70" width="20" height="20" fill="#000" />
-                    <rect x="12" y="72" width="16" height="16" fill="#fff" />
-                    <rect x="14" y="74" width="12" height="12" fill="#000" />
-                    <rect x="78" y="78" width="12" height="12" fill="#000" />
-                    <rect x="40" y="20" width="8" height="8" fill="#000" />
-                    <rect x="52" y="12" width="6" height="10" fill="#000" />
-                    <rect x="45" y="35" width="12" height="6" fill="#000" />
-                    <rect x="15" y="45" width="8" height="12" fill="#000" />
-                    <rect x="35" y="55" width="20" height="10" fill="#000" />
-                    <rect x="65" y="45" width="10" height="20" fill="#000" />
-                    <rect x="75" y="35" width="8" height="8" fill="#000" />
-                    <rect x="25" y="75" width="10" height="10" fill="#000" />
-                    <rect x="45" y="75" width="8" height="12" fill="#000" />
-                    <rect x="58" y="70" width="10" height="8" fill="#000" />
-                    <rect x="58" y="82" width="12" height="8" fill="#000" />
-                  </svg>
-                </div>
-                <div class="receipt-item-info-table" style="flex: 1.2;">
-                  <div class="receipt-item-info-row">
-                    <span>APN 설정</span>
-                    <span style="font-size: 0.72rem; text-align: right; color: var(--accent); font-weight: 700;">${apnInfo}</span>
-                  </div>
-                  <div class="receipt-item-info-row">
-                    <span>설치 상태</span>
-                    <span>개통 대기 (스캔 시 활성화)</span>
-                  </div>
-                  ${order.activationDate ? `
-                  <div class="receipt-item-info-row">
-                    <span>예약 개통일</span>
-                    <span style="color: var(--accent-warning); font-weight: bold;">${order.activationDate}</span>
-                  </div>` : ''}
-                  ${item.addon ? `
-                  <div class="receipt-item-info-row" style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 6px; margin-top: 6px;">
-                    <span>📍 가이드북</span>
-                    <a href="JDISIM_Guidebook.pdf" download style="color:#10b981; font-weight:700; text-decoration:underline; font-size:0.75rem;">다운로드 📥</a>
-                  </div>` : ''}
-                </div>
-              </div>
-            </div>
+    resultsContainer.innerHTML = matchedOrders.map(order => {
+      const it = (order.items && order.items[0]) || {};
+      const lpa = it.lpa || ''; // ★ 실제 발급 데이터가 있을 때만 QR·설치 UI 노출
+      const issued = !!lpa;
+      const issueUrl = order.issueUrl || (order.issueToken ? ('issue.html?t=' + encodeURIComponent(order.issueToken)) : '');
+      return `
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 26px; margin-bottom: 16px; box-shadow: var(--shadow-md);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:0.8rem;color:var(--text-muted);font-weight:700;">주문번호 ${order.orderCode || ''}</span>
+          <span style="font-size:0.72rem;font-weight:900;padding:5px 11px;border-radius:12px;${issued ? 'color:#15803d;background:rgba(34,197,94,0.1);' : 'color:#b45309;background:rgba(245,158,11,0.12);'}">${issued ? '발급 완료' : '발급 대기'}</span>
+        </div>
+        <div style="font-weight:800;font-size:0.98rem;color:var(--text-main);margin-bottom:14px;">${it.productName || order.productName || ''} ${it.quantity ? '(' + it.quantity + '개)' : ''}</div>
+        ${issued ? `
+        <div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;">
+          <div style="background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 22px rgba(15,23,42,0.1);">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(lpa)}" width="150" height="150" alt="eSIM QR" style="display:block;">
           </div>
-        `;
-      });
-
-      card.innerHTML = `
-        <div class="order-history-card-header">
-          <div class="order-history-date">주문일자: ${order.date}</div>
-          <div class="order-history-code">${order.orderCode}</div>
-        </div>
-        <div class="order-history-items-list">
-          ${itemsHTML}
-        </div>
-        <div class="order-history-total-row">
-          <span class="order-history-total-label">총 결제액</span>
-          <span class="order-history-total-price">${order.totalPrice.toLocaleString()}원</span>
-        </div>
-      `;
-      
-      resultsContainer.appendChild(card);
-    });
-
-    // 아코디언 토글 클릭 이벤트 위임
-    resultsContainer.querySelectorAll('.order-history-qr-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const toggleIdx = btn.getAttribute('data-toggle-idx');
-        const panel = document.getElementById(`qr-panel-${toggleIdx}`);
-        if (panel) {
-          panel.classList.toggle('active');
-          const isActive = panel.classList.contains('active');
-          btn.innerHTML = isActive ? '📱 개통 QR코드 및 설치 안내 닫기 ▴' : '📱 개통 QR코드 및 설치 안내 열기 ▾';
-        }
-      });
-    });
-
-    // 실시간 사용량 앱 시뮬레이터 바인딩
-    resultsContainer.querySelectorAll('.order-history-sim-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const iccid = btn.getAttribute('data-iccid');
-        openAppSimulator(iccid);
-      });
-    });
-
-    resultsContainer.style.display = 'block';
+          <div style="flex:1;min-width:240px;">
+            ${it.iccid ? `<div style="font-size:0.76rem;color:var(--text-muted);font-family:monospace;margin-bottom:10px;">ICCID: ${it.iccid}</div>` : ''}
+            <button class="action-btn" style="width:100%;margin-bottom:8px;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>alert('📋 설치 코드가 복사됐어요 — 폰의 설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력에 붙여넣으세요'))">📋 설치 코드 복사</button>
+            ${issueUrl ? `<a href="${issueUrl}" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;">🎫 발급 페이지 열기 (설치·사용량 확인)</a>` : ''}
+            <div style="font-size:0.72rem;color:var(--text-muted);line-height:1.6;margin-top:10px;">📱 폰 카메라로 위 QR을 스캔하거나, 발급 페이지를 폰에서 열면 탭 한 번 설치(iOS)도 가능해요.</div>
+          </div>
+        </div>`
+        : (issueUrl ? `
+        <a href="${issueUrl}" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;border:none;">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
+        <div style="font-size:0.74rem;color:var(--text-muted);line-height:1.6;margin-top:10px;">발급 전에는 100% 환불 가능 · 발급 후 취소 불가 · 사용일은 현지 활성화부터 카운트돼요. 카카오톡으로 받으신 발급 링크와 동일한 페이지입니다.</div>`
+        : `
+        <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;font-size:0.8rem;font-weight:700;color:#9a5b16;line-height:1.6;">🛠️ 발급 정보를 준비 중이에요 — 준비되면 카카오톡으로 발급 링크를 보내드려요.</div>
+        <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;margin-top:10px;">💬 발급 링크 다시 받기 (카톡 상담)</a>`)}
+      </div>`;
+    }).join('');
   }
-
-  // JDISIM 실시간 사용량 모바일 시뮬레이터 상태 및 DOM 캐싱
-  const appSimulatorModal = document.getElementById('appSimulatorModal');
-  const appSimulatorCloseBtn = document.getElementById('appSimulatorCloseBtn');
-  const simGaugeCircle = document.getElementById('simGaugeCircle');
-  const simGaugeValue = document.getElementById('simGaugeValue');
-  const simGaugeTotal = document.getElementById('simGaugeTotal');
-  const simPushAlert = document.getElementById('simPushAlert');
-  const simPushAlertDesc = document.getElementById('simPushAlertDesc');
-  const simChartBarToday = document.getElementById('simChartBarToday');
-  
-  let activeSimIccid = null;
 
   function openAppSimulator(iccid) {
     activeSimIccid = iccid;
