@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F97316">
+<title>eSIM 발급하기 — JDISIM</title>
+<meta name="robots" content="noindex">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; background:linear-gradient(180deg,#fdfefe,#f4f6fa); min-height:100dvh; color:#0f172a; -webkit-font-smoothing:antialiased; }
+  ::selection { background:rgba(249,115,22,0.22); }
+  .wrap { max-width:430px; margin:0 auto; padding:18px 18px calc(30px + env(safe-area-inset-bottom,0px)); }
+  .brand { display:flex; align-items:center; gap:9px; padding:6px 2px 16px; }
+  .brand-badge { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; font-weight:900; font-size:1.05rem; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 14px rgba(249,115,22,0.3); }
+  .brand strong { font-size:1.02rem; letter-spacing:0.5px; }
+  .card { background:#fff; border:1px solid #eef2f7; border-radius:18px; padding:16px; box-shadow:0 8px 24px rgba(15,23,42,0.05); margin-bottom:12px; }
+  .ticket { background:linear-gradient(180deg,#fff,#fffaf5); border:1px solid rgba(242,117,31,0.3); }
+  .row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:7px 0; font-size:0.8rem; border-bottom:1px solid rgba(15,23,42,0.05); }
+  .row:last-child { border-bottom:none; }
+  .row span { color:#64748b; font-weight:600; flex-shrink:0; }
+  .row strong { text-align:right; }
+  .barcode { height:15px; margin-top:11px; border-radius:2px; opacity:0.82; background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px); }
+  .btn { display:block; width:100%; text-align:center; padding:15px; border:none; border-radius:14px; font-size:0.9rem; font-weight:800; cursor:pointer; text-decoration:none; }
+  .btn-primary { background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; box-shadow:0 8px 20px rgba(249,115,22,0.3); }
+  .btn-primary:disabled { opacity:0.45; box-shadow:none; }
+  .btn-ghost { background:#fff; border:1px solid #e5eaf2; color:#0f172a; font-size:0.8rem; padding:12px; }
+  .notice { border-radius:12px; padding:11px 13px; font-size:0.75rem; font-weight:700; line-height:1.65; margin-top:10px; }
+  .agree-box { display:flex; align-items:flex-start; gap:10px; padding:12px 13px; border:1.5px solid rgba(242,117,31,0.35); background:rgba(242,117,31,0.05); border-radius:13px; margin-top:9px; cursor:pointer; font-size:0.78rem; font-weight:700; line-height:1.55; transition:all 0.2s; }
+  .agree-box input { width:20px; height:20px; accent-color:#F2751F; flex-shrink:0; margin-top:1px; }
+  .agree-box.ok { border-color:#22c55e; background:rgba(34,197,94,0.06); }
+  .center { text-align:center; }
+  .muted { color:#94a3b8; font-size:0.72rem; font-weight:600; }
+  .spin { width:34px; height:34px; border-radius:50%; border:4px solid #ffe3cf; border-top-color:#F97316; margin:16px auto; animation:sp 0.9s linear infinite; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+  .qr-frame { background:#fff; border-radius:14px; padding:12px; display:inline-block; box-shadow:0 10px 26px rgba(15,23,42,0.1); margin:8px 0 4px; }
+  .step { display:flex; gap:10px; padding:8px 0; font-size:0.78rem; line-height:1.6; color:#334155; }
+  .step b { flex-shrink:0; width:21px; height:21px; border-radius:50%; background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; font-size:0.66rem; font-weight:900; display:flex; align-items:center; justify-content:center; }
+  details { margin-top:9px; background:#fff; border:1px solid #eef2f7; border-radius:13px; overflow:hidden; }
+  summary { list-style:none; padding:12px 14px; font-size:0.79rem; font-weight:800; cursor:pointer; display:flex; }
+  summary::after { content:'▾'; margin-left:auto; color:#94a3b8; }
+  .shake { animation:shk 0.4s ease; border-color:#ef4444 !important; }
+  @keyframes shk { 25% { transform:translateX(-7px); } 50% { transform:translateX(7px); } 75% { transform:translateX(-4px); } }
+  @media (prefers-reduced-motion:reduce) { .spin,.shake { animation:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="brand-badge">J</div><strong>JDISIM · eSIM 발급</strong></div>
+  <div id="app"><div class="card center"><div class="spin"></div><div class="muted">주문 정보를 불러오는 중...</div></div></div>
+  <div class="center" style="margin-top:14px;">
+    <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="font-size:0.74rem;font-weight:800;color:#64748b;text-decoration:none;">💬 막히면 24시간 카톡 상담 →</a>
+  </div>
+</div>
+<script>
+// ================== 서버 연동 설정 (Flask/Vercel 연결 시 여기만 수정) ==================
+var CONFIG = {
+  ORDER_API: '',   // 예: '/api/order'  → GET ?token=...  주문 조회
+  ISSUE_API: ''    // 예: '/api/issue'  → POST {token}    발급 실행 (서버는 중복 발급 방지 필수)
+};
+// ====================================================================================
+var token = new URLSearchParams(location.search).get('t') || '';
+var DEMO = location.hash.indexOf('demo') !== -1;
+var order = null;
+
+function h(html) { document.getElementById('app').innerHTML = html; }
+function esc(s) { return String(s || '').replace(/[<>&"]/g, function (c) { return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]; }); }
+
+function fmtDate(iso) {
+  try {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var days = ['일', '월', '화', '수', '목', '금', '토'];
+    return (d.getMonth() + 1) + '월 ' + d.getDate() + '일(' + days[d.getDay()] + ')';
+  } catch (e) { return ''; }
+}
+
+function loadOrder() {
+  if (DEMO) {
+    order = { orderCode: 'JD-20260710-DEMO', buyerName: '김여행', productName: '일본 소프트뱅크 매일 2GB / 5일', quantity: 1, country: '일본', activation: '현지통신망 연결시 자동 날짜 시작', validity: 'QR 발급 후 30일 이내 개통', status: 'PAID', autoIssueAt: new Date(Date.now() + 6.5 * 86400000).toISOString() };
+    return renderPreIssue();
+  }
+  if (!token) return renderError('링크가 올바르지 않아요', '카카오톡으로 받으신 발급 링크를 다시 확인해 주세요.');
+  if (!CONFIG.ORDER_API) return renderError('발급 시스템 준비 중이에요', '곧 오픈됩니다! 급하시면 카톡 상담으로 도와드릴게요.');
+  fetch(CONFIG.ORDER_API + '?token=' + encodeURIComponent(token))
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (d) {
+      order = d;
+      if (d.status === 'ISSUED' && d.lpa) renderIssued(d.lpa, true);
+      else if (d.status === 'PAID') renderPreIssue();
+      else if (d.status === 'REFUNDED') renderError('환불 처리된 주문이에요', '이미 환불이 완료되어 발급할 수 없어요.');
+      else renderError('발급을 진행할 수 없는 상태예요', '카톡 상담으로 문의해 주시면 바로 확인해 드릴게요.');
+    })
+    .catch(function () { renderError('주문을 찾지 못했어요', '링크가 만료되었거나 잘못되었을 수 있어요. 카톡 상담으로 문의해 주세요.'); });
+}
+
+function renderPreIssue() {
+  h('<div class="card ticket">' +
+    '<div style="font-size:0.72rem;font-weight:800;color:#F2751F;margin-bottom:6px;">🎫 발급 대기 중인 여행 티켓</div>' +
+    '<div class="row"><span>상품</span><strong>' + esc(order.productName) + (order.quantity > 1 ? ' × ' + order.quantity : '') + '</strong></div>' +
+    '<div class="row"><span>주문번호</span><strong>' + esc(order.orderCode) + '</strong></div>' +
+    '<div class="row"><span>수령인</span><strong>' + esc(order.buyerName) + '</strong></div>' +
+    '<div class="barcode"></div></div>' +
+    '<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>발급해도 사용일은 아직 시작되지 않아요</strong><br>eSIM을 설치하고 <strong>현지 통신사 신호를 잡는 순간</strong>부터 사용일이 카운트되는 바우처 방식이에요. 출국 전에 미리 발급·설치해 두셔도 괜찮아요.</div>' +
+    '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ 단, <strong>' + esc(order.validity || '발급 후 30일 이내 개통') + '</strong> — 이 기간 안에 현지에서 활성화하지 않으면 만료돼요. 여행이 한 달 넘게 남았다면 발급을 미뤄주세요.</div>' +
+    (String(order.activation || '').indexOf('희망일') !== -1 ? '<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;">📆 <strong>개통 예정일 지정 상품</strong> — 발급하기를 누르지 않아도 등록하신 개통 예정일 <strong>전날에 자동으로 발급</strong>해 드려요. 미리 받고 싶을 때만 아래 버튼을 누르세요.</div>' : '') +
+    '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">' +
+      '<strong>발급 전 30초 체크 ✍️</strong><br>' +
+      '① 키패드에 <strong>*#06#</strong> 입력 → <strong>EID</strong> 번호가 보이면 eSIM 지원 기종이에요<br>' +
+      '② 발급 후에는 디지털 상품 특성상 <strong>취소·환불이 불가</strong>해요 (발급 전인 지금은 100% 환불 가능)' +
+      (order.autoIssueAt && fmtDate(order.autoIssueAt) ? '<br>③ 발급하기를 누르지 않아도 <strong style="color:#b45309;">' + fmtDate(order.autoIssueAt) + '에 자동 발급</strong>돼요 — 환불을 원하시면 반드시 그 전에 카톡으로 알려주세요' : '') + '</div>' +
+    (order.autoIssueAt && fmtDate(order.autoIssueAt) ? '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">⏰ <strong>' + fmtDate(order.autoIssueAt) + '에 자동 발급 예정</strong> — 발급돼도 사용일은 현지 활성화부터지만, <strong>유효기간은 발급일부터</strong> 계산돼요. 출국이 그보다 한참 뒤라면 카톡으로 알려주세요.</div>' : '') +
+    '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, 제 기기가 eSIM 지원 기종이 맞아요 <span style="color:#F2751F;">(필수)</span></span></label>' +
+    '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후에는 <strong>취소·환불이 불가</strong>하며, <strong>유효기간 내 활성화</strong>해야 함을 확인했어요 <span style="color:#F2751F;">(필수)</span></span></label>' +
+    '<div style="height:14px;"></div>' +
+    '<button class="btn btn-primary" id="issueBtn">🎫 eSIM 발급하기</button>' +
+    '<div class="center" style="margin-top:9px;"><span class="muted">QR 생성은 수 초~수 분 · 사용일은 현지에서 신호를 잡는 순간부터</span></div>');
+  var boxes = [document.getElementById('agDevice'), document.getElementById('agRefund')];
+  boxes.forEach(function (b) {
+    b.querySelector('input').addEventListener('change', function () { b.classList.toggle('ok', this.checked); });
+  });
+  document.getElementById('issueBtn').addEventListener('click', function () {
+    var missing = boxes.filter(function (b) { return !b.querySelector('input').checked; });
+    if (missing.length) {
+      missing.forEach(function (b) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); });
+      return;
+    }
+    doIssue(this);
+  });
+}
+
+function doIssue(btn) {
+  btn.disabled = true;
+  h('<div class="card center"><div class="spin"></div><div style="font-weight:800;font-size:0.9rem;">통신사에서 QR코드를 만들고 있어요</div><div class="muted" style="margin-top:4px;">보통 수 초, 길면 몇 분 걸려요 — 화면을 닫지 마세요</div></div>');
+  if (DEMO) { setTimeout(function () { renderIssued('LPA:1$rsp.example.com$89000000000000000000', false); }, 1800); return; }
+  fetch(CONFIG.ISSUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token, agreedNoRefund: true, agreedDevice: true, agreedAt: new Date().toISOString() }) })
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (d) {
+      if (d.lpa) renderIssued(d.lpa, false);
+      else if (d.status === 'PENDING') pollIssue(0);
+      else throw 0;
+    })
+    .catch(function () {
+      renderError('발급 중 문제가 생겼어요', '결제는 안전하게 보존되어 있어요. 잠시 후 이 링크로 다시 시도하시거나, 카톡 상담을 눌러주시면 바로 처리해 드릴게요.');
+    });
+}
+
+function pollIssue(n) {
+  if (n > 40) return renderError('발급이 지연되고 있어요', '통신사 응답이 늦어지고 있어요. 완료되면 카톡으로 다시 알려드릴게요 — 결제는 안전하게 보존됩니다.');
+  setTimeout(function () {
+    fetch(CONFIG.ORDER_API + '?token=' + encodeURIComponent(token))
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d.status === 'ISSUED' && d.lpa) renderIssued(d.lpa, false); else pollIssue(n + 1); })
+      .catch(function () { pollIssue(n + 1); });
+  }, 3000);
+}
+
+function renderIssued(lpa, revisit) {
+  var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  var qr = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(lpa);
+  h('<div class="card center" style="border-color:rgba(34,197,94,0.35);">' +
+    '<div style="font-size:0.72rem;font-weight:900;letter-spacing:2px;color:#15803d;">✓ ' + (revisit ? '발급 완료된 eSIM이에요' : '발급 완료! 사용일은 현지에서 신호를 잡는 순간부터') + '</div>' +
+    '<div class="qr-frame"><img src="' + qr + '" width="180" height="180" alt="eSIM QR"></div>' +
+    '<div class="muted">이 화면을 캡처해 두세요 — 이 링크로 언제든 다시 볼 수 있어요</div></div>' +
+    (isIOS ? '<a class="btn btn-primary" href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=' + encodeURIComponent(lpa) + '">⚡ 탭 한 번으로 지금 설치 (iOS)</a><div style="height:8px;"></div>' : '') +
+    '<button class="btn btn-ghost" onclick="navigator.clipboard&&navigator.clipboard.writeText(\'' + lpa + '\').then(function(){alert(\'📋 설치 코드가 복사됐어요\')})">📋 설치 코드 복사 (수동 입력용)</button>' +
+    '<details><summary>📲 ' + (isIOS ? '아이폰' : '갤럭시') + ' 설치 순서 보기</summary><div style="padding:2px 14px 12px;">' +
+    (isIOS
+      ? '<div class="step"><b>1</b><span>설정 → 셀룰러 → <strong>eSIM 추가</strong></span></div><div class="step"><b>2</b><span>QR 스캔(다른 화면에 띄워서) 또는 <strong>세부사항 직접 입력</strong>에 복사한 코드 붙여넣기</span></div><div class="step"><b>3</b><span><strong>셀룰러 데이터 = 여행 eSIM</strong> 선택</span></div><div class="step"><b>4</b><span>현지 도착 후 여행 eSIM <strong>데이터 로밍 ON</strong> → 끝 🎉</span></div>'
+      : '<div class="step"><b>1</b><span>설정 → 연결 → <strong>SIM 관리자 → eSIM 추가</strong></span></div><div class="step"><b>2</b><span>QR 스캔 또는 <strong>활성화 코드 입력</strong>에 복사한 코드 붙여넣기</span></div><div class="step"><b>3</b><span><strong>모바일 데이터 = 여행 eSIM</strong> 선택</span></div><div class="step"><b>4</b><span>현지 도착 후 <strong>데이터 로밍 ON</strong> → 끝 🎉</span></div>') +
+    '</div></details>' +
+    '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ <strong>' + esc((order && order.validity) || '발급 후 30일 이내 개통') + '</strong> — 기간 내에 현지에서 활성화해 주세요</div>' +
+    '<div class="notice" style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;">⚠️ 설치한 eSIM 프로필은 <strong>절대 삭제하지 마세요</strong> — 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</div>');
+}
+
+function renderError(title, msg) {
+  h('<div class="card center"><div style="font-size:2rem;">🦊</div><div style="font-weight:800;margin-top:6px;">' + esc(title) + '</div><div class="muted" style="margin-top:6px;line-height:1.7;">' + esc(msg) + '</div><div style="height:14px;"></div><a class="btn btn-primary" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카톡 상담 바로 연결</a></div>');
+}
+
+loadOrder();
+</script>
+</body>
+</html>
