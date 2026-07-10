@@ -3130,6 +3130,16 @@
         el.style.display = 'none';
         return;
       }
+      // 유효기간 경고: "구매일로부터 N일" 상품은 구매 타이밍이 중요
+      const vm = String(activeCarrier.validity || '').match(/구매일로부터\s*(\d+)일/);
+      if (vm) {
+        const days = parseInt(vm[1], 10);
+        if (days <= 15) {
+          html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);color:#b91c1c;">⏳ <strong>구매일로부터 ${days}일 안에 현지 개통 필수!</strong> 출국 ${days}일 전 이내에 구매하세요</div>`;
+        } else {
+          html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);opacity:0.85;">⏳ 구매일로부터 ${days}일 내 현지 개통 — 여행 ${days}일 전 이내 구매 권장</div>`;
+        }
+      }
       el.innerHTML = html;
       el.style.background = bg;
       el.style.border = '1px solid ' + border;

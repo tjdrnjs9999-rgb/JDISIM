@@ -102,14 +102,14 @@ function renderPreIssue() {
     '<div class="row"><span>수령인</span><strong>' + esc(order.buyerName) + '</strong></div>' +
     '<div class="barcode"></div></div>' +
     '<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>발급해도 사용일은 아직 시작되지 않아요</strong><br>eSIM을 설치하고 <strong>현지 통신사 신호를 잡는 순간</strong>부터 사용일이 카운트되는 바우처 방식이에요. 출국 전에 미리 발급·설치해 두셔도 괜찮아요.</div>' +
-    '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ 단, <strong>' + esc(order.validity || '발급 후 30일 이내 개통') + '</strong> — 이 기간 안에 현지에서 활성화하지 않으면 만료돼요. 여행이 한 달 넘게 남았다면 발급을 미뤄주세요.</div>' +
+    '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ 단, <strong>' + esc(order.validity || '유효기간 내 활성화 필요 (기간은 QR 안내문 참조)') + '</strong> — 이 기간 안에 현지에서 활성화하지 않으면 만료돼요.</div>' +
     (String(order.activation || '').indexOf('희망일') !== -1 ? '<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;">📆 <strong>개통 예정일 지정 상품</strong> — 발급하기를 누르지 않아도 등록하신 개통 예정일 <strong>전날에 자동으로 발급</strong>해 드려요. 미리 받고 싶을 때만 아래 버튼을 누르세요.</div>' : '') +
     '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">' +
       '<strong>발급 전 30초 체크 ✍️</strong><br>' +
       '① 키패드에 <strong>*#06#</strong> 입력 → <strong>EID</strong> 번호가 보이면 eSIM 지원 기종이에요<br>' +
       '② 발급 후에는 디지털 상품 특성상 <strong>취소·환불이 불가</strong>해요 (발급 전인 지금은 100% 환불 가능)' +
       (order.autoIssueAt && fmtDate(order.autoIssueAt) ? '<br>③ 발급하기를 누르지 않아도 <strong style="color:#b45309;">' + fmtDate(order.autoIssueAt) + '에 자동 발급</strong>돼요 — 환불을 원하시면 반드시 그 전에 카톡으로 알려주세요' : '') + '</div>' +
-    (order.autoIssueAt && fmtDate(order.autoIssueAt) ? '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">⏰ <strong>' + fmtDate(order.autoIssueAt) + '에 자동 발급 예정</strong> — 발급돼도 사용일은 현지 활성화부터지만, <strong>유효기간은 발급일부터</strong> 계산돼요. 출국이 그보다 한참 뒤라면 카톡으로 알려주세요.</div>' : '') +
+    (order.autoIssueAt && fmtDate(order.autoIssueAt) ? '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">⏰ <strong>' + fmtDate(order.autoIssueAt) + '에 자동 발급 예정</strong> — 발급돼도 사용일은 현지 활성화부터예요. 다만 <strong>유효기간(대부분 구매일 기준)</strong>은 계속 흐르고 있으니, 출국이 한참 뒤라면 카톡으로 알려주세요.</div>' : '') +
     '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, 제 기기가 eSIM 지원 기종이 맞아요 <span style="color:#F2751F;">(필수)</span></span></label>' +
     '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후에는 <strong>취소·환불이 불가</strong>하며, <strong>유효기간 내 활성화</strong>해야 함을 확인했어요 <span style="color:#F2751F;">(필수)</span></span></label>' +
     '<div style="height:14px;"></div>' +
@@ -169,7 +169,7 @@ function renderIssued(lpa, revisit) {
       ? '<div class="step"><b>1</b><span>설정 → 셀룰러 → <strong>eSIM 추가</strong></span></div><div class="step"><b>2</b><span>QR 스캔(다른 화면에 띄워서) 또는 <strong>세부사항 직접 입력</strong>에 복사한 코드 붙여넣기</span></div><div class="step"><b>3</b><span><strong>셀룰러 데이터 = 여행 eSIM</strong> 선택</span></div><div class="step"><b>4</b><span>현지 도착 후 여행 eSIM <strong>데이터 로밍 ON</strong> → 끝 🎉</span></div>'
       : '<div class="step"><b>1</b><span>설정 → 연결 → <strong>SIM 관리자 → eSIM 추가</strong></span></div><div class="step"><b>2</b><span>QR 스캔 또는 <strong>활성화 코드 입력</strong>에 복사한 코드 붙여넣기</span></div><div class="step"><b>3</b><span><strong>모바일 데이터 = 여행 eSIM</strong> 선택</span></div><div class="step"><b>4</b><span>현지 도착 후 <strong>데이터 로밍 ON</strong> → 끝 🎉</span></div>') +
     '</div></details>' +
-    '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ <strong>' + esc((order && order.validity) || '발급 후 30일 이내 개통') + '</strong> — 기간 내에 현지에서 활성화해 주세요</div>' +
+    '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ <strong>' + esc((order && order.validity) || '유효기간 내 활성화 필요 (QR 안내문 참조)') + '</strong> — 기간 내에 현지에서 활성화해 주세요</div>' +
     '<div class="notice" style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;">⚠️ 설치한 eSIM 프로필은 <strong>절대 삭제하지 마세요</strong> — 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</div>');
 }
 
