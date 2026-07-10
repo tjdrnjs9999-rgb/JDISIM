@@ -797,6 +797,15 @@
 
     /* 히어로 중앙 하단 스크롤 유도선(세로선) 제거 */
     .m-hero-scroll-cue { display: none !important; }
+    /* 히어로를 '실제 보이는 화면'(svh) 안에 맞춰 150+/10초/24h 스탯까지 첫 화면에 노출 */
+    .m-hero { height: 100svh !important; min-height: 100svh !important; max-height: 100svh !important; padding-top: max(52px, env(safe-area-inset-top, 0px)) !important; padding-bottom: 14px !important; box-sizing: border-box !important; }
+    .m-hero-content { justify-content: flex-end !important; padding-bottom: 6px !important; }
+    .m-hero-title { font-size: 1.72rem !important; line-height: 1.28 !important; margin-bottom: 8px !important; }
+    .m-hero-sub { font-size: 0.85rem !important; margin-bottom: 14px !important; }
+    .m-hero-ctas { margin-bottom: 13px !important; gap: 9px !important; }
+    .m-hero-badge { margin-bottom: 10px !important; }
+    .m-hero-stats { margin-top: 0 !important; padding: 11px 4px !important; }
+    .m-hero-fox { height: 88px !important; bottom: auto !important; top: 16% !important; }
     .m-hero-stats::before, .m-hero-stats::after { display: none !important; content: none !important; }
 
     /* 히어로 스탯: 한 줄 고정 (구분선이 줄바꿈되어 세로선으로 보이던 문제 해결) */

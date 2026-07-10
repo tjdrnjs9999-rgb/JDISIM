@@ -132,11 +132,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           </button>
         </div>
         
-        <label class="cart-item-addon-check">
-          <input type="checkbox" class="cart-item-addon-cb" data-index="${index}" ${item.addon ? 'checked' : ''}>
-          <span>맛집 지도 & 가이드북 추가 (+1,900원)</span>
-        </label>
-        
         <div class="cart-item-controls">
           <div class="cart-item-qty">
             <button class="cart-qty-btn minus" data-index="${index}">-</button>
@@ -153,11 +148,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderCartDrawer();
       });
       
-      card.querySelector('.cart-item-addon-cb').addEventListener('change', (e) => {
-        cart[index].addon = e.target.checked;
-        saveCart();
-        renderCartDrawer();
-      });
       
       card.querySelector('.cart-qty-btn.minus').addEventListener('click', () => {
         if (cart[index].quantity > 1) {
@@ -396,13 +386,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     receiptCloseBtn.addEventListener('click', completeCheckoutFlow);
     document.getElementById('orderLookupBtn').addEventListener('click', handleOrderLookup);
 
-    // 부가상품 체크 박스 체인지 리스너
-    checkoutAddon.addEventListener('change', () => {
-      const basePrice = parseInt(paySubmitBtn.getAttribute('data-price'));
-      const isChecked = checkoutAddon.checked;
-      const finalPrice = isChecked ? basePrice + 1900 : basePrice;
-      paySubmitBtn.textContent = `${finalPrice.toLocaleString()}원 결제 완료하기`;
-    });
 
     // 주의사항 동의 체크박스 체인지 리스너 (모달이 돔에 존재하는 경우에만 활성화)
     if (typeof precautionAgreeCheck !== 'undefined' && precautionAgreeCheck) {
@@ -1652,7 +1635,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div>
           <div class="checkout-item-name">${item.product.country} eSIM</div>
           <div class="checkout-item-sub">
-            ${item.product.carrier} | ${item.plan.data_limit} / ${item.plan.duration}일${item.addon ? ' | 📍 가이드북 추가' : ''}
+            ${item.product.carrier} | ${item.plan.data_limit} / ${item.plan.duration}일
           </div>
         </div>
         <div class="checkout-item-qty-price">
@@ -1965,7 +1948,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="receipt-item-title">${item.product.country} eSIM</div>
           <div class="receipt-item-code">${item.quantity}개 · ${itemPrice.toLocaleString()}원</div>
         </div>
-        <div style="font-size:0.8rem;color:var(--text-muted);padding:6px 2px 2px;">${item.plan.data_limit || ''} / ${item.days || item.plan.duration || ''}일 ${item.addon ? '· 국제전화 추가' : ''}</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);padding:6px 2px 2px;">${item.plan.data_limit || ''} / ${item.days || item.plan.duration || ''}일</div>
       `;
       receiptItemsContainer.appendChild(card);
     });
@@ -2012,11 +1995,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const requiresActivation = checkoutActivationDate.required && checkoutActivationDate.value;
     if (requiresActivation) {
       successMsg = `🎉 예약 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 안내 메일이 발송되었습니다.\n(지정하신 개통일 [${checkoutActivationDate.value}]에 맞춰 현지망 활성화가 순차 진행됩니다.)`;
-    }
-    
-    let hasAddon = checkoutItems.some(item => item.addon);
-    if (hasAddon) {
-      successMsg += `\n\n🎁 [추가 혜택] 선택하신 맛집 가이드북 및 구글 맵 맛집 지도 다운로드 링크가 이메일에 함께 첨부되었습니다!`;
     }
     
     successMsg += `\n\n💡 구매하신 내역은 우측 상단의 [주문 조회] 메뉴에서 입력하신 정보(${email} / ${phone})로 언제든지 다시 확인하실 수 있습니다.`;

@@ -289,19 +289,20 @@ function renderPreIssue(){
     '<div class="perf"></div><div class="barcode"></div></div>' +
     deviceCheckHTML() +
 
+    '<details class="g"><summary>ℹ️ 발급 전 꼭 알아두세요 (사용일·유효기간·환불)</summary><div style="padding:0 12px 12px;">' +
     '<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ <strong>발급해도 사용일은 아직 시작되지 않아요</strong><br>설치 후 <strong>현지 통신사 신호를 잡는 순간</strong>부터 카운트되는 바우처 방식 — 출국 전 미리 발급·설치해 두셔도 괜찮아요.</div>' +
     '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ 단, <strong>'+esc(order.validity||'유효기간 내 활성화 필요 (기간은 QR 안내문 참조)')+'</strong> — 기간 안에 활성화하지 않으면 만료돼요.</div>' +
     (String(order.activation||'').indexOf('희망일')!==-1 ? '<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;">📆 <strong>개통 예정일 지정 상품</strong> — 누르지 않아도 예정일 전날 자동 발급해 드려요.</div>' : '') +
+    (order.autoIssueAt&&fmtDate(order.autoIssueAt) ? '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">⏰ <strong>'+fmtDate(order.autoIssueAt)+' 자동 발급 예정</strong> — 발급돼도 사용은 현지 활성화부터지만, 유효기간(대부분 구매일 기준)은 계속 흐르고 있어요.</div>' : '') +
+    '</div></details>' +
     '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;"><strong>발급 전 30초 체크 ✍️</strong><br>① 키패드에 <strong>*#06#</strong> 입력 → <strong>EID</strong>가 보이면 eSIM 지원 기종이에요<br>② 발급 후에는 <strong>취소·환불 불가</strong> (지금은 100% 환불 가능)' +
     (order.autoIssueAt&&fmtDate(order.autoIssueAt) ? '<br>③ 누르지 않아도 <strong style="color:#b45309;">'+fmtDate(order.autoIssueAt)+'에 자동 발급</strong>돼요 — 환불 원하시면 그 전에 카톡 주세요' : '') + '</div>' +
-    (order.autoIssueAt&&fmtDate(order.autoIssueAt) ? '<div class="notice" style="background:#fff;border:1px solid #e5eaf2;color:#334155;">⏰ <strong>'+fmtDate(order.autoIssueAt)+' 자동 발급 예정</strong> — 발급돼도 사용은 현지 활성화부터지만, 유효기간(대부분 구매일 기준)은 계속 흐르고 있어요.</div>' : '') +
 
     '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, eSIM 지원 기종이 맞아요 <span style="color:#F2751F;">(필수)</span></span></label>' +
     '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후 <strong>취소·환불 불가</strong> 및 <strong>유효기간 내 활성화</strong> 필요함을 확인했어요 <span style="color:#F2751F;">(필수)</span></span></label>' +
     '<div style="height:14px;"></div>' +
     '<button class="btn btn-primary" id="issueBtn">🎫 eSIM 발급하기</button>' +
     '<div class="center" style="margin-top:9px;"><span class="muted">QR 생성은 수 초~수 분 · 사용일은 현지에서 신호를 잡는 순간부터</span></div>' +
-    '<div style="margin-top:16px;font-weight:800;font-size:0.88rem;">🧳 ' + esc(order.country || '') + ' 여행 준비, 미리 볼까요?</div>' +
     buildTravelTipsHTML(order.country || ''));
   var boxes=[$('agDevice'),$('agRefund')];
   boxes.forEach(function(b){ b.querySelector('input').addEventListener('change',function(){ b.classList.toggle('ok',this.checked); }); });
@@ -369,23 +370,19 @@ function renderIssued(lpa, revisit){
     '<div class="tabs"><button class="tab" id="tb0">⚡ 원클릭</button><button class="tab" id="tb1">🔳 QR 스캔</button><button class="tab" id="tb2">⌨️ 수동입력</button></div>' +
     '<div id="tbody"></div></div>' +
 
-    // 설치 확인
-    '<div class="card"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;"><div style="font-weight:800;font-size:0.9rem;">🔎 설치됐는지 확인</div><div class="muted">기기에 프로필이 내려갔는지 조회해요</div></div>' +
-    '<button class="copybtn" style="padding:11px 15px;font-size:0.76rem;" onclick="checkInstalled(\''+esc(order&&order.iccid||'')+'\')">확인하기</button></div><div id="instResult"></div></div>' +
+    // 설치 확인 (접이식)
+    '<details class="g"><summary>🔎 설치됐는지 확인</summary><div style="padding:0 12px 12px;">' +
+    '<div class="muted" style="margin-bottom:9px;">기기에 프로필이 내려갔는지 조회해요</div>' +
+    '<button class="btn btn-ghost" onclick="checkInstalled(\''+esc(order&&order.iccid||'')+'\')">확인하기</button><div id="instResult"></div></div></details>' +
 
-    // 사용량
-    '<div class="card"><div style="font-weight:800;font-size:0.9rem;">📊 데이터 사용량</div><div id="usageBody" class="center"><div class="muted" style="padding:14px 0 6px;">현지에서 개통되면 여기에 실시간 사용량이 떠요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
+    // 사용량 (접이식)
+    '<details class="g"><summary>📊 데이터 사용량</summary><div style="padding:0 12px 12px;"><div id="usageBody" class="center"><div class="muted" style="padding:10px 0 6px;">현지에서 개통되면 여기에 실시간 사용량이 떠요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div></details>' +
 
-    '<div class="card"><div style="font-weight:800;font-size:0.9rem;margin-bottom:2px;">✅ 설치 후 마지막 체크</div><div class="muted">체크 상태는 이 기기에 저장돼요</div>' +
-    [['셀룰러(모바일) 데이터 회선을 <strong>여행 eSIM</strong>으로 선택했어요','c1'],
-     ['현지 도착하면 여행 eSIM의 <strong>데이터 로밍 켜기</strong>, 기억하고 있어요','c2'],
-     ['eSIM 프로필은 <strong>여행 끝날 때까지 삭제 금지</strong>인 걸 알아요','c3']].map(function(c){
-       return '<label class="chk" data-k="'+c[1]+'"><input type="checkbox"><span>'+c[0]+'</span></label>';
-     }).join('') + '</div>' +
-    '<div style="font-weight:800;font-size:0.88rem;margin:4px 0 0;">🧳 '+esc((order&&order.country)||'')+' 여행 준비물 · 알아두면 좋아요</div>' +
     buildTravelTipsHTML((order&&order.country)||'') +
+    '<details class="g"><summary>⚠️ 꼭 알아두세요 (유효기간 · 삭제 금지)</summary><div style="padding:0 12px 12px;">' +
     '<div class="notice" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.3);color:#92400e;">⏳ <strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong> — 기간 내에 현지에서 활성화해 주세요</div>' +
-    '<div class="notice" style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;">⚠️ 설치한 eSIM 프로필은 <strong>절대 삭제하지 마세요</strong> — 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</div>');
+    '<div class="notice" style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;">⚠️ 설치한 eSIM 프로필은 <strong>절대 삭제하지 마세요</strong> — 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</div>' +
+    '</div></details>');
 
   var tabs=[$('tb0'),$('tb1'),$('tb2')];
   function pick(i){
@@ -409,19 +406,6 @@ function renderIssued(lpa, revisit){
   }
   tabs.forEach(function(t,i){ t.onclick=function(){ pick(i); }; });
   pick(isIOS?0:1);
-  var ckey = 'jd_chk_' + ((order && order.orderCode) || 'x');
-  var savedChk = {};
-  try { savedChk = JSON.parse(localStorage.getItem(ckey) || '{}'); } catch (e) {}
-  Array.prototype.forEach.call(document.querySelectorAll('.chk'), function (el) {
-    var k = el.getAttribute('data-k');
-    var inp = el.querySelector('input');
-    if (savedChk[k]) { inp.checked = true; el.classList.add('on'); }
-    inp.addEventListener('change', function () {
-      el.classList.toggle('on', inp.checked);
-      savedChk[k] = inp.checked;
-      try { localStorage.setItem(ckey, JSON.stringify(savedChk)); } catch (e) {}
-    });
-  });
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
 }
 
