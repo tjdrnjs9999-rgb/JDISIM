@@ -809,15 +809,17 @@
     .m-hero-stats span { font-size: 0.7rem !important; }
 
     .m-hero-scroll-cue { display: none !important; }
+    /* 전 페이지: 고정 하단바(65px)가 콘텐츠를 가리지 않도록 공통 여백 */
+    .mobile-view { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important; }
     /* 히어로를 '실제 보이는 화면'(svh) 안에 맞춰 150+/10초/24h 스탯까지 첫 화면에 노출 */
-    .m-hero { height: 100svh !important; min-height: 100svh !important; max-height: 100svh !important; padding-top: max(52px, env(safe-area-inset-top, 0px)) !important; padding-bottom: 14px !important; box-sizing: border-box !important; }
+    .m-hero { height: 100svh !important; min-height: 100svh !important; max-height: 100svh !important; padding-top: max(52px, env(safe-area-inset-top, 0px)) !important; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; box-sizing: border-box !important; }
     .m-hero-content { justify-content: flex-end !important; padding-bottom: 6px !important; }
     .m-hero-title { font-size: 1.72rem !important; line-height: 1.28 !important; margin-bottom: 8px !important; }
     .m-hero-sub { font-size: 0.85rem !important; margin-bottom: 14px !important; }
     .m-hero-ctas { margin-bottom: 13px !important; gap: 9px !important; }
     .m-hero-badge { margin-bottom: 10px !important; }
     .m-hero-stats { margin-top: 0 !important; padding: 11px 4px !important; }
-    .m-hero-fox { height: 88px !important; bottom: auto !important; top: 16% !important; }
+    .m-hero-fox { height: 96px !important; width: auto !important; bottom: auto !important; top: 15% !important; object-fit: contain; }
     .m-hero-stats::before, .m-hero-stats::after { display: none !important; content: none !important; }
 
     /* 히어로 스탯: 한 줄 고정 (구분선이 줄바꿈되어 세로선으로 보이던 문제 해결) */
@@ -1830,9 +1832,10 @@
 
   <main id="view-store" class="mobile-view">
     <!-- Search -->
-    <div class="search-container">
+    <div class="search-container" style="display:flex;align-items:center;gap:8px;">
       <i data-lucide="search" class="search-icon"></i>
-      <input type="text" id="storeSearchInput" class="search-input" placeholder="국가명, 통신사명으로 검색...">
+      <input type="text" id="storeSearchInput" class="search-input" placeholder="어디로 가시나요? 국가명이나 통신사를 적어보세요." style="flex:1;">
+      <button id="storeSearchBtn" onclick="renderStoreProducts('all', document.getElementById('storeSearchInput').value); this.blur();" style="flex-shrink:0;height:44px;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.84rem;box-shadow:0 6px 16px rgba(249,115,22,0.3);cursor:pointer;">검색</button>
     </div>
 
     <!-- 구매 보장 신뢰 스트립 -->
@@ -1862,9 +1865,6 @@
       <div class="recent-chips" id="recentChips"></div>
     </div>
 
-    <!-- Category Scroller -->
-    <div class="category-scroller" id="categoryScroller">
-      <div class="category-tab active" data-country="all">전체보기</div>
       <div class="category-tab" data-country="일본">🇯🇵 일본</div>
       <div class="category-tab" data-country="베트남">🇻🇳 베트남</div>
       <div class="category-tab" data-country="태국">🇹🇭 태국</div>
@@ -1905,12 +1905,19 @@
 
     <!-- 📡 실시간 사용량 조회 (ICCID) -->
     <div style="background:#fff;border:1px solid #eef2f7;border-radius:14px;padding:14px;margin:0 0 16px;box-shadow:0 4px 12px rgba(15,23,42,0.04);">
-      <div style="font-size:0.8rem;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:7px;">📡 실시간 사용량 조회 <span style="font-size:0.62rem;font-weight:800;color:#F2751F;background:rgba(249,115,22,0.1);padding:3px 8px;border-radius:10px;">BETA</span></div>
-      <div style="font-size:0.7rem;color:#94a3b8;font-weight:600;margin:3px 0 9px;">아래에서 주문을 조회하면 ICCID가 자동으로 채워져요</div>
+      <div style="font-size:0.8rem;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:7px;">📡 실시간 사용량 조회 <span style="font-size:0.62rem;font-weight:800;color:#15803d;background:rgba(34,197,94,0.1);padding:3px 8px;border-radius:10px;">LIVE</span></div>
+      <div style="font-size:0.7rem;color:#94a3b8;font-weight:600;margin:3px 0 9px;">구매하신 <strong>이름과 전화번호</strong>만 입력하면 바로 조회돼요</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <input type="text" id="usageName" class="tracker-input" placeholder="이름" style="width:34%;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;">
+        <input type="tel" id="usagePhone" class="tracker-input" placeholder="전화번호 (01012345678)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;">
+      </div>
+      <button onclick="lookupUsageByPhone()" style="width:100%;height:48px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.9rem;box-shadow:0 6px 16px rgba(249,115,22,0.28);cursor:pointer;">내 eSIM 사용량 조회</button>
+      <details style="margin-top:10px;"><summary style="list-style:none;font-size:0.68rem;font-weight:700;color:#94a3b8;cursor:pointer;">ICCID로 직접 조회 (고급) ▾</summary>
       <div style="display:flex;gap:8px;">
         <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID 번호 (89로 시작)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;">
         <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 4px 12px rgba(249,115,22,0.25);">조회</button>
       </div>
+      </details>
       <div id="usageResult" style="display:none;margin-top:11px;"></div>
     </div>
 
@@ -2821,8 +2828,57 @@
       }
     }
 
-    // ===== 📡 실시간 사용량 조회 (공급사 API 연동 시 URL만 지정하면 작동) =====
-    window.USAGE_API_URL = ''; // 예: '/api/usage' (Flask 연동 시)
+    // ===== 📡 실시간 사용량 조회 (JDISIM 케어 프록시) =====
+    window.CARE_API = 'https://jdisim-proxy.vercel.app/api/esim';
+    window.USAGE_API_URL = '';
+
+    function lookupUsageByPhone(){
+      var nm = (document.getElementById('usageName')||{}).value || '';
+      var ph = ((document.getElementById('usagePhone')||{}).value || '').replace(/[^0-9]/g,'');
+      var box = document.getElementById('usageResult');
+      if (!box) return;
+      if (ph.length < 10) { box.style.display='block'; box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px 12px;">전화번호를 확인해 주세요 (예: 01012345678)</div>'; return; }
+      box.style.display='block';
+      box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#64748b;padding:8px 2px;">🦊 ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾고 있어요…</div>';
+      fetch(window.CARE_API + '?action=history&phone=' + encodeURIComponent(ph))
+        .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+        .then(function(d){
+          var list = d && (d.esims || d.list || d.orders || d.history || (Array.isArray(d) ? d : []));
+          if (!list || !list.length) throw 1;
+          var pick = null;
+          for (var i = list.length - 1; i >= 0; i--) { var it = list[i]; if (it && (it.iccid || it.ICCID)) { pick = it; break; } }
+          if (!pick) throw 1;
+          var iccid = String(pick.iccid || pick.ICCID);
+          var inp = document.getElementById('usageIccid'); if (inp) inp.value = iccid;
+          box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#64748b;padding:8px 2px;">✅ ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾았어요 — 사용량 불러오는 중…</div>';
+          return fetch(window.CARE_API + '?action=usage&iccid=' + encodeURIComponent(iccid))
+            .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+            .then(function(u){ renderUsageFlexible(u, pick, nm); });
+        })
+        .catch(function(){
+          box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">해당 번호로 등록된 eSIM을 찾지 못했어요.<br>구매 시 입력한 번호가 맞는지 확인하시거나, 발급 카톡의 <strong>내 티켓 열기</strong>에서 바로 확인할 수 있어요. 문제가 계속되면 카톡 상담으로 도와드릴게요.</div>';
+        });
+    }
+
+    function renderUsageFlexible(u, meta, nm){
+      if (u && (u.used_mb !== undefined || u.total_mb !== undefined)) return renderUsageResult(u);
+      var L = u && (u.usageList || u.daily || u.list) || [];
+      var box = document.getElementById('usageResult'); if (!box) return;
+      var totalUsed = 0; L.forEach(function(x){ totalUsed += Number(x.used || x.used_mb || x.usage || 0); });
+      var gb = function(v){ return (Math.round(v/1024*10)/10) + 'GB'; };
+      var rows = L.slice(-3).reverse().map(function(x){
+        return '<div style="display:flex;justify-content:space-between;font-size:0.72rem;font-weight:700;color:#475569;padding:4px 0;"><span>' + (x.date||'') + '</span><span>' + gb(Number(x.used||x.used_mb||0)) + '</span></div>';
+      }).join('');
+      var prod = meta && (meta.prodName || meta.ProdName || meta.Option || meta.option) || '';
+      box.style.display='block';
+      box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;"><img src="images/fox-thumbsup.png" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
+        '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' <span style="font-size:0.62rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span></div>' +
+        (prod ? '<div style="font-size:0.68rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
+        '<div style="margin-top:10px;font-size:0.86rem;font-weight:900;color:#F2751F;">누적 사용 ' + gb(totalUsed) + '</div>' +
+        (rows ? '<div style="margin-top:6px;border-top:1px dashed #f1e6d8;padding-top:6px;">' + rows + '</div>' : '') +
+        '<div style="margin-top:8px;font-size:0.66rem;color:#94a3b8;font-weight:600;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요 ↻</div></div>';
+    }
 
     function checkUsage() {
       const inp = document.getElementById('usageIccid');
@@ -2839,6 +2895,7 @@
         renderUsageResult({ plan_name: '일본 소프트뱅크 매일 2GB', used_mb: 3480, total_mb: 10240, expires_at: '2026-07-14', status: 'active' });
         return;
       }
+      if (window.CARE_API) { box.style.display='block'; box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#64748b;padding:8px 2px;">⏳ 조회 중...</div>'; fetch(window.CARE_API + '?action=usage&iccid=' + encodeURIComponent(iccid)).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(u){ renderUsageFlexible(u, null, ''); }).catch(function(){ box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border-radius:10px;padding:10px 12px;">조회에 실패했어요 — ICCID를 확인하시거나 잠시 후 다시 시도해 주세요</div>'; }); return; }
       if (!window.USAGE_API_URL) {
         box.style.display = 'block';
         box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">🛠️ 실시간 자동 조회는 곧 오픈돼요!<br>지금은 위의 <strong>\'데이터 사용량 확인하는 법\'</strong>으로 기기에서 바로 확인할 수 있어요</div>';
@@ -4190,5 +4247,6 @@
       } catch (e) {}
     })();
   </script>
+  <script src="romi-bot.js" defer></script>
 </body>
 </html>
