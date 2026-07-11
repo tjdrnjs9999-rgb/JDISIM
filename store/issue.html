@@ -143,7 +143,7 @@ var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CARE = new URLSearchParams(location.search).get('care') || '';
 // 케어 모드 사용량/설치/정보 조회 프록시 (CORS 차단 시 Vercel 프록시 주소로 교체)
-window.CARE_API = '';  // 예: 'https://jdisim.co.kr/api/esim' — 비우면 도매처 직접호출 시도
+window.CARE_API = 'https://jdisim-proxy-1ofoazoxg-jdifl.vercel.app/api/esim';
 var order = null;
 
 var FLAG_EMOJI = { '일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭','대만':'🇹🇼','필리핀':'🇵🇭','싱가포르':'🇸🇬','말레이시아':'🇲🇾','인도네시아':'🇮🇩','미국':'🇺🇸','괌':'🇬🇺','사이판':'🇲🇵','중국':'🇨🇳','홍콩':'🇭🇰','마카오':'🇲🇴','호주':'🇦🇺','뉴질랜드':'🇳🇿','튀르키예':'🇹🇷','캐나다':'🇨🇦','몽골':'🇲🇳','인도':'🇮🇳','몰디브':'🇲🇻','라오스':'🇱🇦','캄보디아':'🇰🇭','스리랑카':'🇱🇰','러시아':'🇷🇺','멕시코':'🇲🇽','브라질':'🇧🇷','오렌지프랑스':'🇫🇷','오렌지스페인':'🇪🇸','보다폰스페인':'🇪🇸','쓰리(THREE)':'🇬🇧','한국':'🇰🇷' };
@@ -362,21 +362,15 @@ function loadLocal(){
 }
 
 // 케어 모드: ICCID로 eSIM 정보 조회해 '내 여행 티켓' 표시 (도매처 발급링크와 동일 기능 + 우리 케어)
-function careFetch(path, body){
+function careGet(query){
+  // 프록시 경유 (CORS 안전). window.CARE_API = 'https://.../api/esim'
   var base = window.CARE_API;
-  if (base) {
-    // 우리 프록시 경유 (CORS 안전)
-    return fetch(base + path, body ? {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)} : {})
-      .then(function(r){ if(!r.ok) throw 0; return r.json(); });
-  }
-  // 프록시 미설정: 도매처 직접 호출 시도 (CORS 허용 시에만 작동)
-  var url = 'https://www.ggangsim.com' + path;
-  return fetch(url, body ? {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)} : {})
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); });
+  if (!base) return Promise.reject('no proxy');
+  return fetch(base + '?' + query).then(function(r){ if(!r.ok) throw 0; return r.json(); });
 }
 
 function loadCare(){
-  careFetch('/api/esim-info?iccid=' + encodeURIComponent(CARE))
+  careGet('iccid=' + encodeURIComponent(CARE))
     .then(function(d){
       var e = (d && d.esim) || {};
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
