@@ -103,12 +103,69 @@
   .tkt.printing { animation:printOut 1s cubic-bezier(0.25,0.9,0.3,1) 0.12s both; }
   @keyframes printOut { from { clip-path:inset(0 0 96% 0); transform:translateY(-14px); } to { clip-path:inset(0 0 0 0); transform:none; } }
 
-  /* ── 여행 정보 라인 (현지시간 · 시차 · D-Day) ── */
-  .iline { display:flex; align-items:center; flex-wrap:wrap; gap:7px 10px; padding:2px 6px 14px; font-size:0.76rem; font-weight:700; color:#5B6577; }
-  .iline b { font-variant-numeric:tabular-nums; color:#101623; }
-  .iline .sep { color:#C6CCD8; }
-  .iline .pill { display:inline-flex; align-items:center; gap:5px; padding:7px 12px; border-radius:15px; border:1px solid #E9ECF2; background:#fff; font-family:inherit; font-size:0.74rem; font-weight:800; color:#101623; cursor:pointer; }
-  .iline .pill.hot { border-color:rgba(241,105,13,0.4); color:#F1690D; background:rgba(241,105,13,0.05); }
+  /* ── 스카이 위젯: 목적지의 지금 (시간대 반응 하늘) ── */
+  .skyw { position:relative; border-radius:22px; padding:18px 20px 17px; margin-bottom:12px; overflow:hidden; color:#fff; box-shadow:0 14px 36px rgba(16,22,35,0.18); animation:rise 0.55s cubic-bezier(0.16,1,0.3,1) 0.06s both; transition:background 1s; }
+  .skyw.t-day { background:linear-gradient(160deg,#3F8CE8,#7FBCF5 78%,#A9D4FA); }
+  .skyw.t-dawn { background:linear-gradient(160deg,#2A3B6E,#7A5A9E 55%,#F59E0B); }
+  .skyw.t-dusk { background:linear-gradient(160deg,#41336E,#B04A5A 60%,#F1690D); }
+  .skyw.t-night { background:linear-gradient(160deg,#0B1430,#1B2C55 70%,#26386B); }
+  .skyw.t-night::before { content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:radial-gradient(1.2px 1.2px at 12% 24%, #fff 60%, transparent), radial-gradient(1px 1px at 34% 60%, rgba(255,255,255,0.85) 60%, transparent), radial-gradient(1.4px 1.4px at 58% 18%, #fff 60%, transparent), radial-gradient(1px 1px at 76% 48%, rgba(255,255,255,0.8) 60%, transparent), radial-gradient(1.2px 1.2px at 90% 22%, #fff 60%, transparent);
+    animation:tw 3.8s ease-in-out infinite; }
+  @keyframes tw { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+  .skyw::after { content:''; position:absolute; top:-46px; right:-40px; width:190px; height:150px; background:radial-gradient(closest-side, rgba(255,255,255,0.28), transparent 70%); pointer-events:none; }
+  .skyw > * { position:relative; z-index:1; }
+  .sw-top { display:flex; justify-content:space-between; align-items:center; }
+  .sw-name { font-size:0.8rem; font-weight:800; letter-spacing:0.02em; opacity:0.95; }
+  .sw-wx { display:inline-flex; align-items:center; gap:7px; font-size:0.86rem; font-weight:800; padding:7px 12px; border-radius:16px; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.26); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .sw-wx .we { font-size:1.05rem; line-height:1; }
+  .sw-time { font-size:2.5rem; font-weight:900; letter-spacing:-0.01em; line-height:1.05; margin-top:9px; font-variant-numeric:tabular-nums; text-shadow:0 2px 14px rgba(0,0,0,0.14); }
+  .sw-time small { font-size:0.9rem; font-weight:800; opacity:0.85; margin-left:6px; letter-spacing:0; }
+  .sw-sub { font-size:0.78rem; font-weight:700; opacity:0.9; margin-top:5px; }
+  .sw-dday { margin-top:14px; }
+  .sw-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:50px; border:1px solid rgba(255,255,255,0.4); border-radius:14px; background:rgba(255,255,255,0.18); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); color:#fff; font-family:inherit; font-size:0.92rem; font-weight:900; cursor:pointer; }
+  .sw-btn:active { transform:scale(0.98); }
+  .sw-note { text-align:center; font-size:0.7rem; font-weight:700; opacity:0.78; margin-top:8px; }
+  .sw-chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .swc { display:inline-flex; align-items:center; gap:6px; padding:10px 14px; border-radius:15px; border:1px solid rgba(255,255,255,0.36); background:rgba(255,255,255,0.15); color:#fff; font-family:inherit; font-size:0.78rem; font-weight:900; cursor:pointer; }
+  .swc.hot { background:#fff; color:#101623; border-color:#fff; }
+
+  /* ── 여행 꿀팁 아코디언 ── */
+  .pow-line { display:flex; align-items:center; gap:9px; margin-top:12px; padding:13px 15px; border-radius:14px; background:linear-gradient(120deg,#101623,#25314F); color:#fff; font-size:0.86rem; font-weight:800; }
+  .pow-line .pe { font-size:1.1rem; }
+  .acc { margin-top:9px; border:1.5px solid #ECE8E0; border-radius:15px; overflow:hidden; background:#fff; }
+  .acc + .acc { margin-top:8px; }
+  .acc-h { display:flex; align-items:center; gap:10px; width:100%; padding:14px 15px; border:none; background:#fff; font-family:inherit; font-size:0.88rem; font-weight:800; color:#101623; cursor:pointer; text-align:left; min-height:52px; }
+  .acc-h .ae { font-size:1.15rem; line-height:1; }
+  .acc-h .acnt { margin-left:auto; font-size:0.68rem; font-weight:900; color:#F1690D; background:rgba(241,105,13,0.09); padding:4px 9px; border-radius:10px; font-variant-numeric:tabular-nums; }
+  .acc-h .av { color:#B0B8C6; transition:transform 0.28s; transform:rotate(90deg); }
+  .acc.open .acc-h .av { transform:rotate(-90deg); }
+  .acc.open .acc-h { background:#FDFBF7; }
+  .acc-b { max-height:0; overflow:hidden; transition:max-height 0.34s cubic-bezier(0.2,0.8,0.3,1); }
+  .acc-in { padding:4px 15px 14px; }
+  .tip { display:flex; gap:9px; padding:8px 0; font-size:0.83rem; font-weight:600; line-height:1.7; color:#3D4657; }
+  .tip + .tip { border-top:1px dashed #F0ECE4; }
+  .tip .te { flex-shrink:0; line-height:1.6; }
+
+  /* ── 로미 가이드 ── */
+  .romi { display:flex; align-items:flex-end; gap:11px; margin-bottom:12px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both; }
+  .romi img { width:58px; height:58px; object-fit:contain; animation:romiIn 0.6s cubic-bezier(0.34,1.4,0.5,1) both; }
+  @keyframes romiIn { from { transform:translateY(10px) scale(0.85); opacity:0; } to { transform:none; opacity:1; } }
+  .romi .bub { flex:1; background:#fff; border:1.5px solid #FFE0C4; border-radius:17px 17px 17px 5px; padding:13px 15px; font-size:0.86rem; font-weight:700; color:#3D4657; box-shadow:0 8px 22px rgba(241,105,13,0.09); line-height:1.7; }
+  .romi .bub b.rn { color:#F1690D; }
+  .seq-romi { display:flex; justify-content:center; padding:2px 0 8px; }
+  .seq-romi img { width:74px; height:74px; object-fit:contain; animation:bounce 1.4s ease-in-out infinite; }
+  @keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-9px); } }
+
+  /* ── 티켓 로미 워터마크 ── */
+  .tkt-wm { position:absolute; right:-8px; bottom:34px; width:96px; opacity:0.055; transform:rotate(-11deg); pointer-events:none; }
+
+  /* ── 스크롤 리빌 ── */
+  .rv { opacity:0; transform:translateY(20px); transition:opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); animation:none !important; }
+  .rv.in { opacity:1; transform:none; }
+  /* 스펙 셀 스태거 */
+  .specs > div { animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  .specs > div:nth-child(1){animation-delay:0.16s} .specs > div:nth-child(2){animation-delay:0.24s} .specs > div:nth-child(3){animation-delay:0.32s}
 
   /* ── 트러스트 스트립 ── */
   .trust { display:flex; background:#fff; border:1px solid #ECE8E0; border-radius:18px; margin-bottom:12px; overflow:hidden; box-shadow:0 6px 18px rgba(16,22,35,0.04); }
@@ -234,27 +291,6 @@
   .gauge { margin-top:10px; height:8px; border-radius:6px; background:#F2F4F8; overflow:hidden; }
   .gauge i { display:block; height:100%; border-radius:6px; transition:width 0.8s cubic-bezier(0.16,1,0.3,1); }
 
-  /* ── 브리핑 캐러셀 (뉴트럴) ── */
-  .brief { margin:6px 0 12px; }
-  .brief-h { display:flex; align-items:baseline; gap:8px; padding:0 4px; }
-  .brief-h span { margin-left:auto; font-size:0.68rem; font-weight:700; color:#B0B8C6; }
-  .brief-wrap { position:relative; }
-  .brief-wrap::after { content:''; position:absolute; top:10px; bottom:14px; right:-16px; width:40px; background:linear-gradient(270deg,#F7F8FA 16%,transparent); pointer-events:none; }
-  .brief-scroll { display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; padding:12px 16px 14px; margin:0 -16px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
-  .brief-scroll::-webkit-scrollbar { display:none; }
-  .bcard { scroll-snap-align:start; flex:0 0 196px; background:#fff; border:1px solid #E9ECF2; border-radius:17px; padding:15px; box-shadow:0 4px 14px rgba(16,22,35,0.04); display:flex; flex-direction:column; gap:8px; }
-  .bcard .btag { align-self:flex-start; font-size:0.58rem; font-weight:800; letter-spacing:0.14em; color:#8B94A7; }
-  .bcard.warn .btag, .bcard.entry .btag { color:#F1690D; }
-  .bcard .bic { font-size:1.45rem; line-height:1; }
-  .bcard b { font-size:0.89rem; font-weight:800; line-height:1.5; }
-  .bcard p { font-size:0.78rem; font-weight:600; line-height:1.65; color:#8B94A7; margin-top:auto; }
-  .bcard.power { background:#101623; border:none; }
-  .bcard.power .btag { color:#F1690D; }
-  .bcard.power b { color:#fff; }
-  .bcard.power p { color:#8B94A7; }
-  .bprog { height:4px; background:#E9ECF2; border-radius:4px; margin:0 4px; overflow:hidden; }
-  .bprog i { display:block; height:100%; border-radius:4px; background:#101623; transition:margin-left 0.08s linear; }
-
   /* ── 비상 연락 ── */
   .srow { display:flex; align-items:center; gap:10px; padding:14px 4px; text-decoration:none; color:#101623; font-size:0.88rem; font-weight:700; }
   .srow + .srow { border-top:1px solid #F2F4F8; }
@@ -318,9 +354,10 @@
   /* ── 접근성 ── */
   button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible { outline:2.5px solid #F1690D; outline-offset:2px; }
   /* 성능 */
-  .brief, .warnband, .foot { content-visibility:auto; contain-intrinsic-size:1px 220px; }
+  .warnband, .foot { content-visibility:auto; contain-intrinsic-size:1px 220px; }
   @media (prefers-reduced-motion:reduce) {
-    .card,.tkt,.romi,.cf,.shake,.spin,.skl,.btn.ready,.qrfull { animation:none !important; }
+    .card,.tkt,.romi,.cf,.shake,.spin,.skl,.btn.ready,.qrfull,.seq-romi img,.skyw,.specs > div { animation:none !important; }
+    .rv { opacity:1; transform:none; transition:none; }
     .tkt.printing { animation:none; } .donut-fg,.gauge i { transition:none; }
   }
 </style>
@@ -396,23 +433,61 @@ function ddayText(){
   if (d === 0) return '오늘 출국';
   return '여행 ' + (1 - d) + '일차';
 }
-function renderSkyMeta(){
-  var box = $('infoLine'); if (!box || !order || !order.country) return;
-  var tz = TZONE[order.country];
-  var html = '';
-  if (tz) {
-    try {
-      var t = new Intl.DateTimeFormat('ko-KR', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
-      html += '<span>' + ico('clock', 14) + ' 현지 <b>' + t + '</b></span><span class="sep">·</span><span>' + timeDiffText(tz) + '</span>';
-    } catch(e){}
-  }
-  var dep = getDep();
-  html += '<button type="button" class="pill' + (dep ? ' hot' : '') + '" onclick="openDep()">' + ddayText() + '</button>';
-  if (dep) html += '<button type="button" class="pill" onclick="addToCalendar()" aria-label="캘린더에 추가">' + ico('cal', 14) + ' 캘린더</button>';
-  box.innerHTML = html;
-  if (!clockTimer) clockTimer = setInterval(renderSkyMeta, 30000);
+function renderSkyMeta(){ paintSkyW(); }
+function skyWHTML(){ return '<div class="skyw t-day" id="skyW"></div>'; }
+// 목적지 대표 도시 좌표 (날씨용)
+var GEO = { '일본':[35.68,139.69,'도쿄'],'베트남':[10.82,106.63,'호치민'],'태국':[13.75,100.50,'방콕'],'대만':[25.03,121.56,'타이베이'],'필리핀':[14.60,120.98,'마닐라'],'싱가포르':[1.35,103.82,'싱가포르'],'말레이시아':[3.14,101.69,'쿠알라룸푸르'],'인도네시아':[-8.65,115.22,'발리'],'미국':[34.05,-118.24,'LA'],'괌':[13.44,144.79,'괌'],'사이판':[15.18,145.75,'사이판'],'중국':[31.23,121.47,'상하이'],'홍콩':[22.32,114.17,'홍콩'],'마카오':[22.20,113.55,'마카오'],'호주':[-33.87,151.21,'시드니'],'뉴질랜드':[-36.85,174.76,'오클랜드'],'튀르키예':[41.01,28.98,'이스탄불'],'캐나다':[49.28,-123.12,'밴쿠버'],'몽골':[47.89,106.91,'울란바토르'],'인도':[28.61,77.21,'델리'],'몰디브':[4.18,73.51,'말레'],'라오스':[17.98,102.63,'비엔티안'],'캄보디아':[11.56,104.92,'프놈펜'],'스리랑카':[6.93,79.85,'콜롬보'],'러시아':[55.76,37.62,'모스크바'],'멕시코':[19.43,-99.13,'멕시코시티'],'브라질':[-23.55,-46.63,'상파울루'],'오렌지프랑스':[48.86,2.35,'파리'],'오렌지스페인':[40.42,-3.70,'마드리드'],'보다폰스페인':[40.42,-3.70,'마드리드'],'쓰리(THREE)':[51.51,-0.13,'런던'] };
+function wxEmoji(c){
+  if (c === 0) return '☀️'; if (c <= 2) return '🌤️'; if (c === 3) return '☁️';
+  if (c === 45 || c === 48) return '🌫️'; if (c <= 57) return '🌦️'; if (c <= 67) return '🌧️';
+  if (c <= 77) return '🌨️'; if (c <= 82) return '🌧️'; if (c <= 86) return '🌨️'; return '⛈️';
 }
-function infoLineHTML(){ return '<div class="iline" id="infoLine"></div>'; }
+function wxLabel(c){
+  if (c === 0) return '맑음'; if (c <= 2) return '대체로 맑음'; if (c === 3) return '흐림';
+  if (c === 45 || c === 48) return '안개'; if (c <= 57) return '이슬비'; if (c <= 67) return '비';
+  if (c <= 77) return '눈'; if (c <= 82) return '소나기'; if (c <= 86) return '눈'; return '뇌우';
+}
+var _wx = null;
+function loadWeather(){
+  if (!order || !order.country || typeof fetch === 'undefined') return;
+  var g = GEO[order.country]; if (!g) return;
+  try {
+    var c = JSON.parse(sessionStorage.getItem('jd_wx_' + order.country) || 'null');
+    if (c && Date.now() - c.t < 1800000) { _wx = c.v; return paintSkyW(); }
+  } catch(e){}
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=' + g[0] + '&longitude=' + g[1] + '&current=temperature_2m,weather_code')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d || !d.current) return;
+      _wx = { t: Math.round(d.current.temperature_2m), c: d.current.weather_code };
+      try { sessionStorage.setItem('jd_wx_' + order.country, JSON.stringify({ t: Date.now(), v: _wx })); } catch(e){}
+      paintSkyW();
+    }).catch(function(){});
+}
+function destHour(tz){
+  try { return parseInt(new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', hour12: false }).format(new Date()), 10); } catch(e){ return 12; }
+}
+function skyTone(h){ if (h >= 5 && h < 8) return 't-dawn'; if (h >= 8 && h < 17) return 't-day'; if (h >= 17 && h < 20) return 't-dusk'; return 't-night'; }
+function paintSkyW(){
+  var box = $('skyW'); if (!box || !order || !order.country) return;
+  var tz = TZONE[order.country];
+  var fl = FLAG_EMOJI[order.country] || '';
+  var g = GEO[order.country];
+  var t = '', hh = 12;
+  if (tz) { try { t = new Intl.DateTimeFormat('ko-KR', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()); hh = destHour(tz); } catch(e){} }
+  box.className = 'skyw ' + skyTone(hh);
+  var dep = getDep();
+  var dz = dep
+    ? '<div class="sw-chips"><span class="swc hot">' + ddayText() + '</span><button type="button" class="swc" onclick="addToCalendar()">📆 캘린더 추가</button><button type="button" class="swc" onclick="openDep()">변경</button></div>'
+    : '<button type="button" class="sw-btn" onclick="openDep()">✈️ 출국일 등록하고 D-Day 받기</button><div class="sw-note">등록하지 않아도 이용에는 아무 지장 없어요</div>';
+  box.innerHTML =
+    '<div class="sw-top"><span class="sw-name">' + fl + ' ' + esc(order.country) + (g ? ' · ' + g[2] : '') + ' 지금</span>' +
+    (_wx ? '<span class="sw-wx"><span class="we">' + wxEmoji(_wx.c) + '</span>' + _wx.t + '° ' + wxLabel(_wx.c) + '</span>' : '') + '</div>' +
+    '<div class="sw-time">' + (t || '--:--') + '<small>현지 시간</small></div>' +
+    '<div class="sw-sub">' + (tz ? timeDiffText(tz) : '') + '</div>' +
+    '<div class="sw-dday">' + dz + '</div>';
+  if (!clockTimer) clockTimer = setInterval(paintSkyW, 30000);
+}
 function openDep(){
   var inp = $('depInput'); if (!inp) return;
   var cur = getDep(); if (cur) inp.value = cur;
@@ -490,7 +565,7 @@ function openHelp(pre){
   sh.innerHTML = '<div class="sheet-in">' +
     '<div class="grab"></div>' +
     '<button type="button" class="sx" onclick="closeHelp()" aria-label="닫기">✕</button>' +
-    secHd('chat', 'SUPPORT', '무엇을 도와드릴까요?') +
+    '<div style="display:flex;align-items:center;gap:13px;"><img src="images/fox-phone.png" alt="" style="width:54px;height:54px;object-fit:contain;flex-shrink:0;" onerror="this.remove()"><div style="min-width:0;"><div class="ey">SUPPORT</div><div class="ct">무엇을 도와드릴까요?</div></div></div>' +
     '<div class="muted" style="margin-top:6px;">증상을 고르면 <strong>주문 정보가 자동으로 작성</strong>돼요 — 카톡에서 붙여넣기만 하면 끝!</div>' +
     '<div class="symps">' + SYMPTOMS.map(function(t, i){
       return '<button type="button" class="symp' + (t === _symp ? ' on' : '') + '" id="sy' + i + '" onclick="pickSymp(' + i + ')">' + t + '</button>';
@@ -551,16 +626,18 @@ function parsePlan(name, country){
   name = String(name || '');
   var m = name.match(/(\d+(?:\.\d+)?)\s*(GB|기가|MB)/i);
   var unlimited = /무제한/.test(name);
-  var daily = /매일|데일리|1일\s*(\d|당)/.test(name) || /매일/.test(name);
-  var data = unlimited ? '무제한' : (m ? (m[1] + m[2].toUpperCase().replace('기가','GB')) : '');
+  var daily = /매일|데일리/.test(name);
+  var unit = m ? m[2].toUpperCase().replace('기가','GB') : '';
+  var num = m ? parseFloat(m[1]) : 0;
+  var data = unlimited ? '무제한' : (m ? (m[1] + unit) : '');
   var dm = name.match(/(\d+)\s*일/);
-  var days = dm ? dm[1] : '';
-  var carrier = '';
-  name.replace(country || '', '').split(/[\s/·]+/).some(function(t){
-    if (!t || /GB|MB|기가|일$|^\d|무제한|매일|총|데일리|eSIM|이심/i.test(t)) return false;
-    carrier = t; return true;
-  });
-  return { data: data, daily: daily && !unlimited, days: days, carrier: carrier, unlimited: unlimited };
+  var days = dm ? parseInt(dm[1], 10) : 0;
+  var total = '';
+  if (daily && num && days && unit === 'GB') {
+    var t = Math.round(num * days * 10) / 10;
+    total = (t % 1 ? t.toFixed(1) : String(t)) + 'GB';
+  }
+  return { data: data, daily: daily && !unlimited, days: days, total: total, unlimited: unlimited };
 }
 function secHd(icon, ey, title, sub){
   return '<div class="shd"><span class="cic">' + ico(icon, 18) + '</span><div><div class="ey">' + ey + '</div><div class="ct">' + title + (sub ? '<span>' + sub + '</span>' : '') + '</div></div></div>';
@@ -613,11 +690,18 @@ function addToCalendar(){
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   toast('캘린더 파일 저장 — 열면 일정에 추가돼요');
 }
+function reveal(){
+  if (!('IntersectionObserver' in window)) { document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.rv:not(.in)').forEach(function(el){ io.observe(el); });
+}
 function goInstall(){ var j = $('jny'); if (j) j.scrollIntoView({ behavior:'smooth', block:'start' }); if (window.pickTab) pickTab(1); }
 function goUsage(){ var u = $('usageBody'); if (u) { loadUsage(); u.scrollIntoView({ behavior:'smooth', block:'center' }); } }
 // ===== 브랜드 푸터 (JDISIM 스토리) =====
 function brandFootHTML(){
-  return '<div class="foot">' +
+  return '<div class="foot rv">' +
     '<img src="images/fox-thumbsup.png" alt="" onerror="this.style.display=\'none\'">' +
     '<b>JDIS<i>I</i>M</b>' +
     '<p>여행자의 데이터를 가장 쉽게.<br>150개국+ 여행 eSIM, 결제 즉시 카톡으로.</p>' +
@@ -709,64 +793,56 @@ function splitEmoji(s){
   var em = s.slice(0, i).trim();
   return { emoji: em, text: s.slice(i).trim() };
 }
-function briefCard(cls, tag, icon, text){
+function tipRow(text, defEmoji){
   var sp = splitEmoji(text);
-  var ic = sp.emoji || icon;
-  var parts = sp.text.split(' — ');
-  var title = parts.shift();
-  var desc = parts.join(' — ');
-  return '<div class="bcard '+cls+'"><span class="btag">'+tag+'</span><span class="bic">'+ic+'</span><b>'+esc(title)+'</b>'+(desc?'<p>'+esc(desc)+'</p>':'')+'</div>';
+  return '<div class="tip"><span class="te">' + (sp.emoji || defEmoji) + '</span><span>' + esc(sp.text) + '</span></div>';
+}
+function accSec(emoji, title, rows){
+  if (!rows) return '';
+  var cnt = (rows.match(/class="tip"/g) || []).length;
+  return '<div class="acc"><button type="button" class="acc-h" onclick="accT(this)"><span class="ae">' + emoji + '</span>' + title +
+    '<span class="acnt">' + cnt + '</span>' + ico('chev', 14).replace('class="i"', 'class="i av"') + '</button>' +
+    '<div class="acc-b"><div class="acc-in">' + rows + '</div></div></div>';
+}
+function accT(btn){
+  var acc = btn.parentElement, body = acc.querySelector('.acc-b');
+  var open = acc.classList.toggle('open');
+  body.style.maxHeight = open ? body.scrollHeight + 'px' : '0px';
+  buzz(6);
 }
 function buildBriefHTML(country) {
   var t = TRAVEL_TIPS[country];
-  var cards = '';
+  var html = '<div class="card rv" id="briefBox">' + secHd('cal', 'TRAVEL TIPS', esc(country || '여행') + ' 꿀팁', '출발 전 1분이면 충분해요');
+  if (t && t.power) html += '<div class="pow-line"><span class="pe">🔌</span>' + esc(t.power) + '</div>';
   if (t) {
-    var pw = String(t.power).split(' · ');
-    cards += '<div class="bcard power"><span class="btag">전압 · 플러그</span><span class="bic">🔌</span><b>'+esc(pw[0])+(pw[1]?' · '+esc(pw[1]):'')+'</b><p>'+esc(country)+' 콘센트 기준 — 출발 전 어댑터를 확인하세요</p></div>';
-    (t.items||[]).forEach(function(x){ cards += briefCard('prep','준비물','🧳',x); });
-    (t.issues||[]).forEach(function(x){
-      var isEntry = String(x).indexOf('🛂') === 0;
-      cards += briefCard(isEntry?'entry':'warn', isEntry?'입국 준비':'주의', '📌', x);
+    html += accSec('🧳', '챙겨가면 좋아요', (t.items || []).map(function(x){ return tipRow(x, '✔️'); }).join(''));
+    var warns = '', entries = '';
+    (t.issues || []).forEach(function(x){
+      if (String(x).indexOf('🛂') === 0) entries += tipRow(x, '🛂');
+      else warns += tipRow(x, '📌');
     });
+    html += accSec('📌', '이건 꼭 알아두세요', warns);
+    html += accSec('🛂', '입국 준비', entries);
   }
-  [['🔋','보조배터리는 위탁수하물 금지 — 반드시 기내 가방에!'],
-   ['🛂','여권 유효기간 6개월 이상 남았는지 확인 — 부족하면 출국이 막힐 수 있어요'],
-   ['📱','*#06# → EID가 보이면 eSIM 지원 기종 — 출발 전 한 번 더 확인']].forEach(function(c){
-    cards += briefCard('common','모든 여행 공통', c[0], c[1]);
-  });
-  return '<div class="brief" id="briefBox"><div class="brief-h">' + secHd('cal', 'BRIEFING', esc(country||'여행') + ' 브리핑') + '<span>옆으로 밀어보세요 ' + ico('chev', 12) + '</span></div>' +
-    '<div class="brief-wrap"><div class="brief-scroll" id="bScroll">'+cards+'</div></div>' +
-    '<div class="bprog"><i id="bProg" style="width:34%;"></i></div></div>';
-}
-function briefBind(){
-  var sc = $('bScroll'), pg = $('bProg'), ht = $('bHint');
-  if (!sc || !pg) return;
-  function upd(){
-    var max = sc.scrollWidth - sc.clientWidth;
-    var ratio = sc.scrollWidth ? sc.clientWidth / sc.scrollWidth : 1;
-    pg.style.width = Math.max(12, Math.round(ratio * 100)) + '%';
-    pg.style.marginLeft = (max > 0 ? (sc.scrollLeft / max) * (100 - Math.max(12, ratio * 100)) : 0) + '%';
-    if (ht && sc.scrollLeft > 24) ht.style.display = 'none';
-  }
-  sc.addEventListener('scroll', upd, { passive: true });
-  upd();
-  // 첫 진입 넛지: 화면에 보이면 살짝 밀었다 돌아오기 (한 번만)
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (!('IntersectionObserver' in window)) return;
-  var done = false;
-  var io = new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if (!e.isIntersecting || done) return;
-      done = true; io.disconnect();
-      setTimeout(function(){ sc.scrollTo({ left: 46, behavior: 'smooth' }); }, 350);
-      setTimeout(function(){ sc.scrollTo({ left: 0, behavior: 'smooth' }); }, 1150);
-    });
-  }, { threshold: 0.55 });
-  io.observe(sc);
+  html += accSec('✅', '어디서나 통하는 팁', [
+    '🔋 보조배터리는 위탁수하물 금지 — 반드시 기내 가방에!',
+    '🛂 여권 유효기간 6개월 이상 남았는지 확인 — 부족하면 출국이 막힐 수 있어요',
+    '📱 *#06# → EID가 보이면 eSIM 지원 기종 — 출발 전 한 번 더 확인'
+  ].map(function(x){ return tipRow(x, '✅'); }).join(''));
+  return html + '</div>';
 }
 
 function romiSay(msg, img){
-  return '<div class="romi"><img src="images/'+(img||'fox-hello')+'.png" alt="" onerror="this.style.display=\'none\'"><div class="bub">'+msg+'</div></div>';
+  return '<div class="romi" id="romiSlot"><img src="images/'+(img||'fox-hello')+'.png" alt="로미" onerror="this.style.display=\'none\'"><div class="bub">'+msg+'</div></div>';
+}
+function renderRomi(){
+  var el = $('romiSlot'); if (!el || !order) return;
+  var st = tripState(), msg, img;
+  if (order.status !== 'ISSUED') { msg = '안녕하세요, <b class="rn">로미</b>예요! ' + esc(order.country || '여행') + ' 갈 준비를 도와드릴게요. 아래 확인 후 원하는 때에 발급 버튼만 누르면 돼요.'; img = 'fox-hello'; }
+  else if (st.activatedAt) { msg = '개통 완료! 🎉 즐거운 ' + esc(order.country || '') + ' 여행 되세요. 데이터는 아래에서 실시간으로 확인할 수 있어요.'; img = 'fox-thumbsup'; }
+  else if (st.installedAt) { msg = '설치 확인했어요! 이제 현지에 도착해서 <strong>데이터 로밍</strong>만 켜면 끝 — 도착하면 아래 체크리스트대로만 해주세요.'; img = 'fox-phone'; }
+  else { msg = '발급 완료! 이제 <strong>설치</strong>만 하면 끝이에요. 사용일은 현지 도착부터 시작되니 지금 설치해도 안심!'; img = 'fox-qr'; }
+  el.innerHTML = '<img src="images/' + img + '.png" alt="로미" onerror="this.style.display=\'none\'"><div class="bub">' + msg + '</div>';
 }
 // 콘페티 (발권 세리머니 — 골드 티커 + 비행기)
 function confetti(){
@@ -862,13 +938,13 @@ function tripStep(){
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
   window._reopenInst = false;
-  renderJourney(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
+  renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
 }
 function markActivated(){
   var st = tripState();
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
-  saveTrip(st); renderJourney(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
+  saveTrip(st); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
 }
 // ===== 컴팩트 스테퍼 (진행 + 현재 단계만 크게) =====
 function journeyHTML(){ return '<div class="card" id="jny"></div>'; }
@@ -938,7 +1014,7 @@ function arrTick(inp){
 // ===== 🆘 비상 연락 카드 =====
 function sosHTML(country){
   var e = EMERGENCY[country] || ['112','112'];
-  return '<div class="card" id="sosBox">' + secHd('phone', 'EMERGENCY', '비상 연락처', esc(country || '현지') + ' 기준') +
+  return '<div class="card rv" id="sosBox">' + secHd('phone', 'EMERGENCY', '비상 연락처', esc(country || '현지') + ' 기준') +
     '<div style="margin-top:4px;">' +
     '<a class="srow" href="tel:' + e[0] + '"><span>현지 경찰</span><b>' + ico('phone', 15) + e[0] + '</b></a>' +
     '<a class="srow" href="tel:' + e[1] + '"><span>현지 구급</span><b>' + ico('phone', 15) + e[1] + '</b></a>' +
@@ -958,9 +1034,9 @@ function bpassHTML(o, opts){
     : '<span class="st wait"><i></i>발급 대기</span>';
   // 스펙 셀: 사람들이 실제로 보는 것만 크게
   var cells = '';
-  if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : '') + esc(p.data) + '</div></div>';
-  if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + esc(p.days) + '<small>일</small></div></div>';
-  if (p.carrier) cells += '<div><div class="sk">NETWORK</div><div class="sv" style="font-size:0.88rem;">' + esc(p.carrier) + '</div></div>';
+  if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : (p.unlimited ? '' : '<small>총</small> ')) + esc(p.data) + '</div></div>';
+  if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + p.days + '<small>일</small></div></div>';
+  if (p.total) cells += '<div><div class="sk">TOTAL</div><div class="sv"><small>총</small> ' + esc(p.total) + '</div></div>';
   if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(o.productName || '—') + '</div></div>';
   var qty = o.quantity > 1 ? ' <em>× ' + o.quantity + '</em>' : '';
   var acts = opts.issued
@@ -988,6 +1064,7 @@ function bpassHTML(o, opts){
       '<div class="f"><div class="k">VALID · 유효기간</div><div class="v">'+esc(o.validity || 'QR 안내문 참조')+'</div></div>' +
     '</div>' + acts +
     '<div class="tkt-bar"><div class="barcode"></div></div>' + detail +
+    '<img class="tkt-wm" src="images/fox-hello.png" alt="" onerror="this.remove()">' +
     '</div>';
 }
 function tktMore(btn){
@@ -1086,8 +1163,8 @@ function renderPreIssue(){
     (order.autoIssueAt&&fmtDate(order.autoIssueAt) ? '<div class="irow"><span class="ic">' + ico('bolt', 17) + '</span><span class="tx"><strong>'+fmtDate(order.autoIssueAt)+' 자동 발급 예정</strong> — 환불을 원하시면 그 전에 카톡 주세요</span></div>' : '') +
     '<div class="irow"><span class="ic">' + ico('alert', 17) + '</span><span class="tx">발급 후에는 <strong>취소·환불 불가</strong> — 지금은 100% 환불 가능해요</span></div>';
   h(bpassHTML(order, {issued:false}) +
-    infoLineHTML() +
-    romiSay('안녕하세요, <strong style="color:#F1690D;">로미</strong>예요! ' + esc(order.country || '여행') + ' 갈 준비를 도와드릴게요. 아래 확인 후 원하는 때에 발급 버튼만 누르면 돼요.') +
+    skyWHTML() +
+    romiSay('') +
     deviceCheckHTML() +
     '<div class="card">' + secHd('check', 'BEFORE YOU ISSUE', '발급 전 30초 확인') + '<div style="margin-top:8px;">' + irows + '</div></div>' +
     '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, eSIM 지원 기종이 맞아요 <span style="color:#F1690D;">(필수)</span></span></label>' +
@@ -1095,9 +1172,8 @@ function renderPreIssue(){
     '<div class="center" style="margin:12px 0 4px;"><span class="muted">동의 후 아래 <strong>발급하기</strong> · QR 생성은 수 초~수 분</span></div>' +
     buildBriefHTML(order.country || '') +
     brandFootHTML());
-  renderSkyMeta();
+  paintSkyW(); renderRomi(); reveal(); loadWeather();
   devBrand(/iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iphone' : /Android/.test(navigator.userAgent) ? 'galaxy' : 'iphone');
-  briefBind();
   var boxes=[$('agDevice'),$('agRefund')];
   boxes.forEach(function(b){ b.querySelector('input').addEventListener('change',function(){ b.classList.toggle('ok',this.checked); }); });
   renderBottomBar('pre');
@@ -1117,7 +1193,7 @@ function attemptIssue(){
 // ---------------- 발권 시퀀스 ----------------
 var seqTimers = [];
 function seqUI(){
-  h('<div class="card"><div class="seq-t">발권하고 있어요</div>' +
+  h('<div class="card"><div class="seq-romi"><img src="images/fox-thinking.png" alt="" onerror="this.parentElement.remove()"></div><div class="seq-t">발권하고 있어요</div>' +
     '<div class="sq run" id="sq0"><i></i>주문 확인</div>' +
     '<div class="sq" id="sq1"><i></i>통신사에 eSIM 프로필 요청</div>' +
     '<div class="sq" id="sq2"><i></i>QR 코드 생성</div>' +
@@ -1183,27 +1259,24 @@ function renderIssued(lpa, revisit){
   window._lpa = lpa;
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
-    infoLineHTML() +
+    skyWHTML() +
     '<div class="trust">' +
       '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
       '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
       '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
     '</div>' +
-    (revisit
-      ? ''
-      : romiSay('발급 완료! 이제 <strong>설치</strong>만 하면 끝 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이에요.','fox-qr')) +
+    romiSay('', 'fox-qr') +
     journeyHTML() +
-    '<div class="card" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
+    '<div class="card rv" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
     '<div id="usageBody" class="center" style="margin-top:8px;"><div class="muted" style="padding:4px 0 10px;">현지에서 개통되면 여기에 실시간 사용량이 표시돼요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
     buildBriefHTML((order&&order.country)||'') +
     sosHTML((order&&order.country)||'') +
-    '<div class="warnband">' +
+    '<div class="warnband rv">' +
     '<div class="w red">'+ico('alert',16)+'<span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담</span></div>' +
     '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
     '</div>' +
     brandFootHTML());
-  renderSkyMeta();
-  briefBind();
+  paintSkyW(); renderRomi(); reveal(); loadWeather();
   renderJourney();
   renderBottomBar(tripBarState());
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
