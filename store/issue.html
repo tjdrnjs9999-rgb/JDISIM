@@ -468,6 +468,18 @@ function destHour(tz){
   try { return parseInt(new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', hour12: false }).format(new Date()), 10); } catch(e){ return 12; }
 }
 function skyTone(h){ if (h >= 5 && h < 8) return 't-dawn'; if (h >= 8 && h < 17) return 't-day'; if (h >= 17 && h < 20) return 't-dusk'; return 't-night'; }
+var TONE_LINE = { 't-dawn':'동이 트고 있어요 🌅', 't-day':'한창 활기찬 시간이에요 🌞', 't-dusk':'노을이 지고 있어요 🌆', 't-night':'별이 빛나는 밤이에요 🌙' };
+function destHM(tz){
+  try { var p = new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()).split(':'); return [parseInt(p[0],10), parseInt(p[1],10)]; } catch(e){ return [12, 0]; }
+}
+function resetCountdown(country, tz){
+  var ri = resetInfo(country); if (!ri || ri.h === undefined || !tz) return '';
+  var hm = destHM(tz);
+  var now = hm[0] * 60 + hm[1], target = ri.h * 60;
+  var left = target - now; if (left <= 0) left += 1440;
+  var hh = Math.floor(left / 60), mm = left % 60;
+  return '데이터 리셋까지 ' + (hh ? hh + '시간 ' : '') + mm + '분 ↻';
+}
 function paintSkyW(){
   var box = $('skyW'); if (!box || !order || !order.country) return;
   var tz = TZONE[order.country];
@@ -484,7 +496,8 @@ function paintSkyW(){
     '<div class="sw-top"><span class="sw-name">' + fl + ' ' + esc(order.country) + (g ? ' · ' + g[2] : '') + ' 지금</span>' +
     (_wx ? '<span class="sw-wx"><span class="we">' + wxEmoji(_wx.c) + '</span>' + _wx.t + '° ' + wxLabel(_wx.c) + '</span>' : '') + '</div>' +
     '<div class="sw-time">' + (t || '--:--') + '<small>현지 시간</small></div>' +
-    '<div class="sw-sub">' + (tz ? timeDiffText(tz) : '') + '</div>' +
+    '<div class="sw-sub">' + (TONE_LINE[skyTone(hh)] || '') + (tz ? ' · ' + timeDiffText(tz) : '') + '</div>' +
+    (function(){ var pl = planOf(order); var cd = pl.daily && order.status === 'ISSUED' ? resetCountdown(order.country, tz) : ''; return cd ? '<div class="sw-sub" style="margin-top:3px;font-weight:800;">' + cd + '</div>' : ''; })() +
     '<div class="sw-dday">' + dz + '</div>';
   if (!clockTimer) clockTimer = setInterval(paintSkyW, 30000);
 }
@@ -547,7 +560,7 @@ function helpMsg(){
   var L = ['[JDISIM 상담 요청]'];
   if (_symp) L.push('증상: ' + _symp);
   if (order) {
-    var pl = parsePlan(order.productName, order.country);
+    var pl = planOf(order);
     var spec = [order.country, pl.data ? (pl.daily?'매일 ':'') + pl.data : '', pl.days ? pl.days + '일' : ''].filter(Boolean).join(' · ');
     if (spec) L.push('상품: ' + spec);
     if (order.orderCode) L.push('주문번호: ' + order.orderCode);
@@ -628,17 +641,36 @@ function parsePlan(name, country){
   var unlimited = /무제한/.test(name);
   var daily = /매일|데일리/.test(name);
   var unit = m ? m[2].toUpperCase().replace('기가','GB') : '';
-  var num = m ? parseFloat(m[1]) : 0;
   var data = unlimited ? '무제한' : (m ? (m[1] + unit) : '');
   var dm = name.match(/(\d+)\s*일/);
   var days = dm ? parseInt(dm[1], 10) : 0;
-  var total = '';
-  if (daily && num && days && unit === 'GB') {
-    var t = Math.round(num * days * 10) / 10;
-    total = (t % 1 ? t.toFixed(1) : String(t)) + 'GB';
-  }
-  return { data: data, daily: daily && !unlimited, days: days, total: total, unlimited: unlimited };
+  return { data: data, daily: daily && !unlimited, days: days, unlimited: unlimited };
 }
+// 주문의 모든 소스(스마트스토어 옵션 문자열 · SKU 코드 · 상품명)를 병합해 스펙 확정
+// 예: "데이터 용량: 매일 2GB / 사용일수: KSX_한국_매일2GB_01일 / 수령방법: 구매 후 5~15분 내 QR 발송"
+function planOf(o){
+  o = o || {};
+  var src = '';
+  var opt = String(o.option || o.optionRaw || o.options || '');
+  if (opt) {
+    // "사용일수:" 뒤 SKU와 "데이터 용량:" 뒤 값만 추출 (수령방법 등 잡음 제거)
+    var mSku = opt.match(/사용일수\s*[:：]\s*([^\/|,]+)/);
+    var mData = opt.match(/데이터\s*용량\s*[:：]\s*([^\/|,]+)/);
+    src = ((mData ? mData[1] : '') + ' ' + (mSku ? mSku[1] : '')).trim() || opt;
+  }
+  if (o.sku) src += ' ' + o.sku;
+  var p = parsePlan(src);
+  if (!p.data && !p.days) p = parsePlan(o.productName || '');
+  else {
+    var fb = parsePlan(o.productName || '');
+    if (!p.data) { p.data = fb.data; p.unlimited = fb.unlimited; p.daily = p.daily || fb.daily; }
+    if (!p.days) p.days = fb.days;
+  }
+  return p;
+}
+// 일일 용량 리셋 시각 (도매처 홍콩 00:00 기준 → 현지 환산, app.js convertResetTime 동일 매핑)
+var RESET = { '일본':{h:1,t:'새벽 1시'},'한국':{h:1,t:'새벽 1시'},'베트남':{h:23,t:'밤 11시'},'태국':{h:23,t:'밤 11시'},'라오스':{h:23,t:'밤 11시'},'캄보디아':{h:23,t:'밤 11시'},'중국':{h:0,t:'자정'},'대만':{h:0,t:'자정'},'필리핀':{h:0,t:'자정'},'싱가포르':{h:0,t:'자정'},'말레이시아':{h:0,t:'자정'},'홍콩':{h:0,t:'자정'},'마카오':{h:0,t:'자정'},'몰디브':{h:21,t:'밤 9시'},'괌':{h:2,t:'새벽 2시'},'사이판':{h:2,t:'새벽 2시'},'호주':{h:2,t:'새벽 2시'},'뉴질랜드':{h:4,t:'새벽 4시'},'오렌지프랑스':{h:17,t:'오후 5시'},'오렌지스페인':{h:17,t:'오후 5시'},'보다폰스페인':{h:17,t:'오후 5시'},'쓰리(THREE)':{h:17,t:'오후 5시'},'미국':{t:'서부 08:00 · 동부 11:00'} };
+function resetInfo(country){ return RESET[country] || null; }
 function secHd(icon, ey, title, sub){
   return '<div class="shd"><span class="cic">' + ico(icon, 18) + '</span><div><div class="ey">' + ey + '</div><div class="ct">' + title + (sub ? '<span>' + sub + '</span>' : '') + '</div></div></div>';
 }
@@ -697,7 +729,7 @@ function reveal(){
   }, { threshold: 0.1 });
   document.querySelectorAll('.rv:not(.in)').forEach(function(el){ io.observe(el); });
 }
-function goInstall(){ var j = $('jny'); if (j) j.scrollIntoView({ behavior:'smooth', block:'start' }); if (window.pickTab) pickTab(1); }
+function goInstall(){ var j = $('instCard') || $('jny'); if (j) j.scrollIntoView({ behavior:'smooth', block:'start' }); if (window.pickTab) pickTab(1); }
 function goUsage(){ var u = $('usageBody'); if (u) { loadUsage(); u.scrollIntoView({ behavior:'smooth', block:'center' }); } }
 // ===== 브랜드 푸터 (JDISIM 스토리) =====
 function brandFootHTML(){
@@ -838,10 +870,10 @@ function romiSay(msg, img){
 function renderRomi(){
   var el = $('romiSlot'); if (!el || !order) return;
   var st = tripState(), msg, img;
-  if (order.status !== 'ISSUED') { msg = '안녕하세요, <b class="rn">로미</b>예요! ' + esc(order.country || '여행') + ' 갈 준비를 도와드릴게요. 아래 확인 후 원하는 때에 발급 버튼만 누르면 돼요.'; img = 'fox-hello'; }
-  else if (st.activatedAt) { msg = '개통 완료! 🎉 즐거운 ' + esc(order.country || '') + ' 여행 되세요. 데이터는 아래에서 실시간으로 확인할 수 있어요.'; img = 'fox-thumbsup'; }
+  if (order.status !== 'ISSUED') { msg = '안녕하세요, <b class="rn">로미</b>예요! 🦊 ' + esc(order.country || '여행') + ' 여행, 벌써 설레지 않나요? 아래만 확인하면 발급 준비 끝이에요 ✨'; img = 'fox-hello'; }
+  else if (st.activatedAt) { msg = '개통 완료! 🎉 드디어 ' + esc(order.country || '') + ' 여행 시작이네요. 마음껏 찍고, 검색하고, 공유하세요 — 데이터는 아래에서 확인할 수 있어요 📸'; img = 'fox-thumbsup'; }
   else if (st.installedAt) { msg = '설치 확인했어요! 이제 현지에 도착해서 <strong>데이터 로밍</strong>만 켜면 끝 — 도착하면 아래 체크리스트대로만 해주세요.'; img = 'fox-phone'; }
-  else { msg = '발급 완료! 이제 <strong>설치</strong>만 하면 끝이에요. 사용일은 현지 도착부터 시작되니 지금 설치해도 안심!'; img = 'fox-qr'; }
+  else { msg = '발급 완료! 🎫 이제 바로 위 <strong>설치 카드</strong>에서 설치만 하면 끝이에요. 사용일은 현지 도착부터 시작되니 지금 해도 안심! ✈️'; img = 'fox-qr'; }
   el.innerHTML = '<img src="images/' + img + '.png" alt="로미" onerror="this.style.display=\'none\'"><div class="bub">' + msg + '</div>';
 }
 // 콘페티 (발권 세리머니 — 골드 티커 + 비행기)
@@ -938,13 +970,13 @@ function tripStep(){
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
   window._reopenInst = false;
-  renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
+  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
 }
 function markActivated(){
   var st = tripState();
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
-  saveTrip(st); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
+  saveTrip(st); renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
 }
 // ===== 컴팩트 스테퍼 (진행 + 현재 단계만 크게) =====
 function journeyHTML(){ return '<div class="card" id="jny"></div>'; }
@@ -965,21 +997,15 @@ function renderJourney(){
 
   var body = '';
   if (!st.installedAt) {
-    // ── 현재: 설치
-    body = '<div class="ct" style="margin-top:2px;">기기에 설치하기 <span>셋 중 편한 방법 하나</span></div>' +
-      installTabsHTML() +
-      '<div class="jbtns" style="margin-top:12px;"><button type="button" class="btn btn-ghost" onclick="checkInstalled(\'' + esc(order && order.iccid || '') + '\')">설치 자동 확인</button>' +
-      '<button type="button" class="btn btn-ghost" onclick="markInstalled()">설치 완료로 표시</button></div><div id="jsInstRes"></div>';
+    // ── 현재: 설치 (설치 UI는 최상단 카드가 담당)
+    body = '<div class="jd" style="margin-top:2px;">맨 위의 <strong>eSIM 설치</strong> 카드에서 설치를 진행해 주세요.<br>설치가 확인되면 <strong>현지 개통</strong> 단계가 자동으로 열려요 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이에요 ✈️</div>';
   } else if (!st.activatedAt) {
     // ── 현재: 개통 (설치 완료 라인 + 도착 체크리스트)
     var isI = /iPhone|iPad|iPod/.test(navigator.userAgent);
     var steps = isI
       ? ['설정 → 셀룰러 → 새 eSIM 회선 <strong>켜기</strong>', '그 회선의 <strong>데이터 로밍 ON</strong>', '셀룰러 데이터를 새 회선으로 선택 — 상단에 신호가 뜨면 성공']
       : ['설정 → 연결 → SIM 관리자 → 새 eSIM <strong>켜기</strong>', '모바일 데이터를 새 eSIM으로 선택', '<strong>데이터 로밍 ON</strong> — 상단에 신호가 뜨면 성공'];
-    body = '<div class="stp-note">' + ico('check', 15) + '설치 확인됨 · ' + fmtShort(st.installedAt) +
-      '<button type="button" class="re" onclick="reopenInstall()">설치 방법 보기</button></div>' +
-      (window._reopenInst ? installTabsHTML() : '') +
-      '<div class="ct" style="margin-top:14px;">현지 도착 30초 세팅</div>' +
+    body = '<div class="ct" style="margin-top:2px;">현지 도착 30초 세팅 <span>도착하면 순서대로</span></div>' +
       '<div class="arrchk" id="arrChk">' + steps.map(function(t){
         return '<label class="chk"><input type="checkbox" onchange="arrTick(this)"><span>' + t + '</span></label>';
       }).join('') + '</div>' +
@@ -994,14 +1020,13 @@ function renderJourney(){
       '<div class="gauge-top"><span class="muted">' + esc(order.productName || '') + '</span>' +
       (days ? '<span class="dday" style="color:' + barColor + ';">' + (left > 0 ? '남은 ' + left + '일' : '오늘 만료') + '</span>' : '<span class="dday" style="color:#17B55E;">사용 중</span>') + '</div>' +
       (days ? '<div class="gauge"><i style="width:' + pct + '%;background:' + barColor + ';"></i></div>' : '') +
-      '<div class="muted" style="margin-top:9px;">일 용량 상품은 매일 자정(현지 기준)에 고속 데이터가 새로 채워져요</div>' +
+      '<div class="muted" style="margin-top:9px;">' + (resetInfo(order.country) ? '매일 <strong>현지 ' + resetInfo(order.country).t + '</strong>에 오늘의 고속 데이터가 새로 채워져요 ↻' : '일 용량 상품은 매일 정해진 시간에 데이터가 새로 채워져요') + '</div>' +
       (days && left <= 2 ? '<a class="btn btn-primary" style="margin-top:12px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">여행이 길어졌나요? 연장 eSIM 주문</a>' : '');
   }
   box.innerHTML = secHd('plane', 'JOURNEY', '발급부터 개통까지') + strip + '<div class="stp-body">' + body + '</div>';
-  if (!st.installedAt || window._reopenInst) bindInstallTabs();
   if (st.activatedAt && !window._usageAuto && $('usageBody')) { window._usageAuto = 1; setTimeout(loadUsage, 450); }
 }
-function reopenInstall(){ window._reopenInst = true; renderJourney(); var t=$('tb0'); if(t) t.scrollIntoView({behavior:'smooth',block:'center'}); }
+function reopenInstall(){ window._reopenInst = true; renderInstallCard(); var t=$('tb0'); if(t) t.scrollIntoView({behavior:'smooth',block:'center'}); }
 function arrTick(inp){
   var lb = inp.closest('label'); if (lb) lb.classList.toggle('on', inp.checked);
   var wrap = $('arrChk'), btn = $('actBtn');
@@ -1028,7 +1053,7 @@ function bpassHTML(o, opts){
   opts = opts || {};
   var fl = FLAG_EMOJI[o.country] || '✈️';
   var cc = CC3[o.country] || '···';
-  var p = parsePlan(o.productName, o.country);
+  var p = planOf(o);
   var st = opts.issued
     ? '<span class="st ok"><i></i>발급 완료</span>'
     : '<span class="st wait"><i></i>발급 대기</span>';
@@ -1036,7 +1061,8 @@ function bpassHTML(o, opts){
   var cells = '';
   if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : (p.unlimited ? '' : '<small>총</small> ')) + esc(p.data) + '</div></div>';
   if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + p.days + '<small>일</small></div></div>';
-  if (p.total) cells += '<div><div class="sk">TOTAL</div><div class="sv"><small>총</small> ' + esc(p.total) + '</div></div>';
+  var ri = resetInfo(o.country);
+  if (p.daily && ri) cells += '<div><div class="sk">RESET</div><div class="sv" style="font-size:0.9rem;">↻ ' + esc(ri.t) + '</div></div>';
   if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(o.productName || '—') + '</div></div>';
   var qty = o.quantity > 1 ? ' <em>× ' + o.quantity + '</em>' : '';
   var acts = opts.issued
@@ -1056,7 +1082,7 @@ function bpassHTML(o, opts){
   return (opts.print ? '<div class="print-slot"></div>' : '') +
     '<div class="tkt'+(opts.print?' printing':'')+'">' +
     '<div class="tkt-band"><span class="twm">JDISIM · E-SIM BOARDING PASS</span>'+st+'</div>' +
-    '<div class="tkt-hero"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+qty+'</b><i>KOR → '+cc+' <em>· 대한민국 출발</em></i></span></div>' +
+    '<div class="tkt-hero"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+qty+'</b><i>KOR → '+cc+' <em>· ' + (opts.issued ? '준비 완료, 좋은 여행 되세요 ✈️' : '곧 만나요 ✈️') + '</em></i></span></div>' +
     '<div class="specs">' + cells + '</div>' +
     '<div class="tkt-perf"></div>' +
     '<div class="tkt-grid">' +
@@ -1093,9 +1119,15 @@ function loadLocal(){
   if (!found) return renderError('이 기기에서 주문을 찾지 못했어요', '테스트 주문은 결제했던 그 브라우저에서만 보여요. 실서비스에서는 카카오톡 링크로 어디서든 열립니다.');
   var o = found.o, it = (o.items && o.items[0]) || {};
   var created = o.createdAt ? new Date(o.createdAt) : new Date();
+  var cty = (it.productName || '').split(' ')[0];
+  if (!FLAG_EMOJI[cty]) {
+    // 상품명에 국가가 없으면 옵션/SKU 토큰에서 탐색 (예: KSX_한국_매일2GB_01일)
+    String((it.option || '') + '_' + (it.sku || '')).split(/[_\s\/:]+/).some(function(t){ if (FLAG_EMOJI[t]) { cty = t; return true; } return false; });
+  }
   order = {
     orderCode: o.orderCode, buyerName: o.buyerName || '', productName: it.productName || '',
-    quantity: it.quantity || 1, country: (it.productName || '').split(' ')[0],
+    option: it.option || '', sku: it.sku || '',
+    quantity: it.quantity || 1, country: cty,
     validity: '구매일로부터 30일', status: it.lpa ? 'ISSUED' : 'PAID',
     autoIssueAt: new Date(created.getTime() + 7 * 86400000).toISOString(),
     iccid: it.iccid || '', lpa: it.lpa || ''
@@ -1259,6 +1291,7 @@ function renderIssued(lpa, revisit){
   window._lpa = lpa;
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
+    installCardHTML() +
     skyWHTML() +
     '<div class="trust">' +
       '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
@@ -1276,13 +1309,32 @@ function renderIssued(lpa, revisit){
     '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
     '</div>' +
     brandFootHTML());
+  renderInstallCard();
   paintSkyW(); renderRomi(); reveal(); loadWeather();
   renderJourney();
   renderBottomBar(tripBarState());
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
 }
 
-// ===== 설치 UI (여정 3단계 내부) — 탭 3종 =====
+// ===== 설치 카드 (최상단 독립 배치) =====
+function installCardHTML(){ return '<div class="card" id="instCard"></div>'; }
+function renderInstallCard(){
+  var box = $('instCard'); if (!box) return;
+  var st = tripState();
+  if (st.installedAt && !window._reopenInst) {
+    box.innerHTML = secHd('qr', 'INSTALL', 'eSIM 설치', '완료') +
+      '<div class="stp-note" style="margin-top:12px;">' + ico('check', 15) + '설치 확인됨 · ' + fmtShort(st.installedAt) +
+      '<button type="button" class="re" onclick="reopenInstall()">설치 방법 다시 보기</button></div>';
+    return;
+  }
+  box.innerHTML = secHd('qr', 'INSTALL', 'eSIM 설치', '셋 중 편한 방법 하나 · 와이파이에서') +
+    installTabsHTML() +
+    (st.installedAt ? '' :
+      '<div class="jbtns" style="margin-top:12px;"><button type="button" class="btn btn-ghost" onclick="checkInstalled(\'' + esc(order && order.iccid || '') + '\')">설치 자동 확인</button>' +
+      '<button type="button" class="btn btn-ghost" onclick="markInstalled()">설치 완료로 표시</button></div><div id="jsInstRes"></div>');
+  bindInstallTabs();
+}
+// ===== 설치 UI — 탭 3종 =====
 function installTabsHTML(){
   return '<div class="tabs"><button type="button" class="tab" id="tb0">원클릭</button><button type="button" class="tab" id="tb1">QR 스캔</button><button type="button" class="tab" id="tb2">수동 입력</button></div><div id="tbody"></div>';
 }
