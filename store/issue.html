@@ -588,9 +588,7 @@ function renderBottomBar(state){
   if (state === 'pre') box.innerHTML = '<button class="btn btn-primary" onclick="attemptIssue()">eSIM 발급하기</button>';
   else if (state === 'busy') box.innerHTML = '<button class="btn btn-primary" disabled>발권하고 있어요…</button>';
   else if (state === 'install') box.innerHTML = window._lpa
-    ? (isIOS
-        ? '<a class="btn btn-primary" href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=' + encodeURIComponent(window._lpa) + '">탭 한 번으로 지금 설치</a>'
-        : '<button class="btn btn-primary" onclick="androidOneClick()">탭 한 번으로 지금 설치</button>')
+    ? '<a class="btn btn-primary" href="' + oneClickUrl(window._lpa) + '">탭 한 번으로 지금 설치</a>'
     : '<button class="btn btn-primary" onclick="goInstall()">QR로 설치하기</button>';
   else if (state === 'activate') box.innerHTML = '<button class="btn btn-primary" onclick="markActivated()">도착했어요 — 개통 확인</button>';
   else if (state === 'done') {
@@ -1437,9 +1435,10 @@ function pickTab(i){
   tabs.forEach(function(t,j){ t.classList.toggle('on', i===j); });
   var b=$('tbody'); if (!b) return;
   if(i===0){
-    b.innerHTML = (isIOS
-      ? '<a class="btn btn-primary" href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata='+encodeURIComponent(lpa)+'">탭 한 번으로 지금 설치</a><div class="center" style="margin-top:9px;"><span class="muted">iOS 17.4 이상 · 누르면 애플 설치 화면이 바로 열려요</span></div>'
-      : '<button type="button" class="btn btn-primary" onclick="androidOneClick()">탭 한 번으로 지금 설치</button><div class="center" style="margin-top:9px;"><span class="muted">누르면 설정의 eSIM 추가 화면이 코드까지 입력된 채로 열려요</span></div>');
+    b.innerHTML = '<a class="btn btn-primary" href="' + oneClickUrl(lpa) + '">탭 한 번으로 지금 설치</a>' +
+      '<div class="center" style="margin-top:9px;"><span class="muted">' +
+      (isIOS ? 'iOS 17.4 이상 · 누르면 애플 설치 화면이 바로 열려요' : '누르면 설정의 eSIM 추가 화면이 코드까지 입력된 채로 열려요 · 안 열리면 QR 스캔 탭으로!') +
+      '</span></div>';
   } else if(i===1){
     b.innerHTML = '<div class="qr-stage"><div class="qr-frame2" onclick="qrFullOpen()" title="탭하면 전체화면">' +
       (qrLocal || '<img src="'+qrUrl+'" width="200" height="200" alt="eSIM QR" style="display:block;">') +
@@ -1453,24 +1452,12 @@ function pickTab(i){
       '<div class="center" style="margin-top:8px;"><span class="muted">설정 → 셀룰러 → eSIM 추가 → <strong>세부사항 직접 입력</strong>에 붙여넣으세요</span></div>';
   }
 }
-// 안드로이드 원클릭: ① START_EUICC_ACTIVATION 인텐트(공식 API, 코드 자동입력)
-//                  ② LPA: 스킴 폴백  ③ 미지원 시 QR 탭 안내
-function androidOneClick(){
-  var lpa = window._lpa || '';
-  if (!lpa) { if (window.pickTab) pickTab(1); return; }
-  var enc = encodeURIComponent(lpa);
-  var intent = 'intent:#Intent;action=android.telephony.euicc.action.START_EUICC_ACTIVATION;S.android.telephony.euicc.extra.ACTIVATION_CODE=' + enc + ';end';
-  buzz(10);
-  try { location.href = intent; } catch(e){}
-  setTimeout(function(){
-    if (document.hidden) return;           // 시스템 화면으로 전환됨 → 성공
-    try { location.href = lpa; } catch(e){} // 폴백: LPA 스킴
-    setTimeout(function(){
-      if (document.hidden) return;
-      toast('자동 설치가 열리지 않으면 QR 스캔으로 해주세요');
-      if (window.pickTab) pickTab(1);
-    }, 1400);
-  }, 1200);
+// 원클릭 링크: iOS/Android 공식 유니버설 링크 (carddata 포맷 동일)
+function oneClickUrl(lpa){
+  var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  return (isIOS
+    ? 'https://esimsetup.apple.com/esim_qrcode_provisioning?carddata='
+    : 'https://esimsetup.android.com/esim_qrcode_provisioning/?carddata=') + encodeURIComponent(lpa);
 }
 function bindInstallTabs(){
   [0,1,2].forEach(function(i){ var t=$('tb'+i); if(t) t.onclick=function(){ pickTab(i); }; });
