@@ -77,6 +77,7 @@
   .specs .sk { font-size:0.6rem; font-weight:800; letter-spacing:0.14em; color:#B0A28C; }
   .specs .sv { font-size:1.02rem; font-weight:900; margin-top:4px; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; word-break:keep-all; line-height:1.3; }
   .specs .sv small { font-size:0.72rem; font-weight:800; }
+  .specs .s2 { font-size:0.6rem; font-weight:800; color:#0E8A45; margin-top:3px; }
   .tkt-perf { position:relative; border-top:1.5px dashed #E9E2D6; margin:17px 0 0; }
   .tkt-perf::before, .tkt-perf::after { content:''; position:absolute; top:-10px; width:20px; height:20px; border-radius:50%; background:#FAF8F4; box-shadow:inset 0 1px 3px rgba(16,22,35,0.09); }
   .tkt-perf::before { left:-10px; } .tkt-perf::after { right:-10px; }
@@ -416,7 +417,11 @@ var token = new URLSearchParams(location.search).get('t') || '';
 var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CARE = new URLSearchParams(location.search).get('care') || '';
-var PLAN = new URLSearchParams(location.search).get('plan') || '';  // 브리지 v6가 동봉하는 사용일수 옵션
+var _q = new URLSearchParams(location.search);
+var PLAN = _q.get('plan') || '';   // 브리지가 동봉: 구매상품 SKU
+var Q_NAME = _q.get('n') || '';    // 고객명
+var Q_BUYDT = _q.get('bd') || '';  // 구매일 (YYYY-MM-DD)
+var Q_ORDER = _q.get('o') || '';   // 주문번호
 // 케어 모드 사용량/설치/정보 조회 프록시 (CORS 차단 시 Vercel 프록시 주소로 교체)
 window.CARE_API = 'https://jdisim-proxy.vercel.app/api/esim';
 var order = null;
@@ -694,13 +699,15 @@ function ico(n, sz){ return '<svg class="i" width="'+(sz||16)+'" height="'+(sz||
 function parsePlan(name, country){
   name = String(name || '');
   var m = name.match(/(\d+(?:\.\d+)?)\s*(GB|기가|MB)/i);
-  var unlimited = /무제한/.test(name);
+  var hasUnlim = /무제한/.test(name);
   var daily = /매일|데일리/.test(name);
   var unit = m ? m[2].toUpperCase().replace('기가','GB') : '';
-  var data = unlimited ? '무제한' : (m ? (m[1] + unit) : '');
+  // '매일2GB무제한' = 매일 2GB 고속 + 소진 후 저속 무제한 → 순수 무제한과 구분
+  var pureUnlim = hasUnlim && !m;
+  var data = pureUnlim ? '무제한' : (m ? (m[1] + unit) : (hasUnlim ? '무제한' : ''));
   var dm = name.match(/(\d+)\s*일/);
   var days = dm ? parseInt(dm[1], 10) : 0;
-  return { data: data, daily: daily && !unlimited, days: days, unlimited: unlimited };
+  return { data: data, daily: daily && !pureUnlim, days: days, unlimited: pureUnlim, throttle: hasUnlim && !!m };
 }
 // 주문의 모든 소스(스마트스토어 옵션 문자열 · SKU 코드 · 상품명)를 병합해 스펙 확정
 // 예: "데이터 용량: 매일 2GB / 사용일수: KSX_한국_매일2GB_01일 / 수령방법: 구매 후 5~15분 내 QR 발송"
@@ -738,6 +745,16 @@ function countryFrom(){
     for (var j = 0; j < toks.length; j++) if (FLAG_EMOJI[toks[j]]) return toks[j];
   }
   return '';
+}
+function validityOf(country, buyDate){
+  // 구매일 기준 유효기간(대부분 30일 · 베트남 15일) → 실제 만료일 문구
+  if (!buyDate) return '';
+  var days = country === '베트남' ? 15 : 30;
+  var d = new Date(buyDate + 'T00:00:00');
+  if (isNaN(d)) return '';
+  d.setDate(d.getDate() + days);
+  var f = fmtDate(d.toISOString());
+  return f ? f + '까지 활성화' : '';
 }
 var CC3 = { '일본':'JPN','베트남':'VNM','태국':'THA','대만':'TWN','필리핀':'PHL','싱가포르':'SGP','말레이시아':'MYS','인도네시아':'IDN','미국':'USA','괌':'GUM','사이판':'MNP','중국':'CHN','홍콩':'HKG','마카오':'MAC','호주':'AUS','뉴질랜드':'NZL','튀르키예':'TUR','캐나다':'CAN','몽골':'MNG','인도':'IND','몰디브':'MDV','라오스':'LAO','캄보디아':'KHM','스리랑카':'LKA','러시아':'RUS','멕시코':'MEX','브라질':'BRA','오렌지프랑스':'FRA','오렌지스페인':'ESP','보다폰스페인':'ESP','쓰리(THREE)':'GBR','한국':'KOR' };
 
@@ -1122,7 +1139,7 @@ function bpassHTML(o, opts){
     : '<span class="st wait"><i></i>발급 대기</span>';
   // 스펙 셀: 사람들이 실제로 보는 것만 크게
   var cells = '';
-  if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : (p.unlimited ? '' : '<small>총</small> ')) + esc(p.data) + '</div></div>';
+  if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : (p.unlimited ? '' : '<small>총</small> ')) + esc(p.data) + '</div>' + (p.throttle ? '<div class="s2">소진 후 무제한</div>' : '') + '</div>';
   if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + p.days + '<small>일</small></div></div>';
   var ri = resetInfo(o.country);
   if (p.daily && ri) cells += '<div><div class="sk">RESET</div><div class="sv" style="font-size:0.9rem;">↻ ' + esc(ri.t) + '</div></div>';
@@ -1212,10 +1229,10 @@ function loadCare(){
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
       var cty = countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
       order = {
-        orderCode: e.orderCode || '', buyerName: '', productName: e.prodName || '',
-        option: e.option || e.Option || '', sku: PLAN,
+        orderCode: e.orderCode || Q_ORDER || '', buyerName: Q_NAME || '', productName: e.prodName || '',
+        option: e.option || e.Option || '', sku: PLAN, buyDate: Q_BUYDT || '',
         quantity: parseInt(e.count||'1',10)||1, country: cty,
-        validity: '', status: 'ISSUED', iccid: e.iccid || CARE,
+        validity: validityOf(cty, Q_BUYDT), status: 'ISSUED', iccid: e.iccid || CARE,
         lpa: e.qrCodeContent || '', storeId: d.storeId
       };
       setModeChip('care');
@@ -1223,7 +1240,7 @@ function loadCare(){
       var tk = document.querySelector('#app .tkt');
       if (tk) tk.insertAdjacentHTML('beforebegin',
         '<div class="care-hero"><img src="images/fox-phone.png" alt="로미" onerror="this.style.display=\'none\'">' +
-        '<div class="ch-t"><div class="ey">CARE DESK</div><b>로미의 여행 케어 데스크 🦊</b>' +
+        '<div class="ch-t"><div class="ey">CARE DESK</div><b>' + (order.buyerName ? esc(order.buyerName) + ' 님의 여행 케어 데스크 🦊' : '로미의 여행 케어 데스크 🦊') + '</b>' +
         '<p>설치 · 사용량 · 문제 해결까지, 여행 내내 이 티켓 하나면 돼요.</p>' +
         '<div class="care-chips"><button type="button" onclick="goUsage()">📊 사용량 새로고침</button>' +
         '<button type="button" onclick="openHelp()">🩺 로미 닥터 상담</button></div></div></div>');
