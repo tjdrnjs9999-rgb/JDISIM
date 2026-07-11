@@ -83,6 +83,16 @@
   .tkt-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; padding:15px 20px 0; }
   .tkt-grid .k { font-size:0.58rem; font-weight:800; letter-spacing:0.15em; color:#8B94A7; }
   .tkt-grid .v { font-size:0.9rem; font-weight:800; margin-top:3px; line-height:1.4; word-break:keep-all; }
+  /* 티켓 내장 설치 존 */
+  .tz { padding:15px 20px 2px; }
+  .tz-h { display:flex; align-items:center; gap:8px; font-size:0.88rem; font-weight:900; }
+  .tz-h .i { color:#F1690D; }
+  .tz-h span { margin-left:auto; font-size:0.68rem; font-weight:700; color:#8B94A7; }
+  .tz .stp-note { padding:2px 0 12px; }
+  /* 출국일 예보 라인 */
+  .sw-fc { margin-top:10px; padding:11px 13px; border-radius:13px; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.28); font-size:0.82rem; font-weight:800; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .sw-fc b { font-variant-numeric:tabular-nums; }
+  .sw-fc.dim { opacity:0.82; font-weight:700; }
   .tkt-acts { display:flex; gap:8px; padding:14px 20px 0; }
   .tkt-acts button { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; min-height:47px; border:1.5px solid #EFE7DC; border-radius:13px; background:#FDFBF7; font-family:inherit; font-size:0.8rem; font-weight:800; color:#101623; cursor:pointer; }
   .tkt-acts button .i { color:#F1690D; }
@@ -394,6 +404,7 @@ var token = new URLSearchParams(location.search).get('t') || '';
 var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CARE = new URLSearchParams(location.search).get('care') || '';
+var PLAN = new URLSearchParams(location.search).get('plan') || '';  // 브리지 v6가 동봉하는 사용일수 옵션
 // 케어 모드 사용량/설치/정보 조회 프록시 (CORS 차단 시 Vercel 프록시 주소로 교체)
 window.CARE_API = 'https://jdisim-proxy.vercel.app/api/esim';
 var order = null;
@@ -436,7 +447,7 @@ function ddayText(){
 function renderSkyMeta(){ paintSkyW(); }
 function skyWHTML(){ return '<div class="skyw t-day" id="skyW"></div>'; }
 // 목적지 대표 도시 좌표 (날씨용)
-var GEO = { '일본':[35.68,139.69,'도쿄'],'베트남':[10.82,106.63,'호치민'],'태국':[13.75,100.50,'방콕'],'대만':[25.03,121.56,'타이베이'],'필리핀':[14.60,120.98,'마닐라'],'싱가포르':[1.35,103.82,'싱가포르'],'말레이시아':[3.14,101.69,'쿠알라룸푸르'],'인도네시아':[-8.65,115.22,'발리'],'미국':[34.05,-118.24,'LA'],'괌':[13.44,144.79,'괌'],'사이판':[15.18,145.75,'사이판'],'중국':[31.23,121.47,'상하이'],'홍콩':[22.32,114.17,'홍콩'],'마카오':[22.20,113.55,'마카오'],'호주':[-33.87,151.21,'시드니'],'뉴질랜드':[-36.85,174.76,'오클랜드'],'튀르키예':[41.01,28.98,'이스탄불'],'캐나다':[49.28,-123.12,'밴쿠버'],'몽골':[47.89,106.91,'울란바토르'],'인도':[28.61,77.21,'델리'],'몰디브':[4.18,73.51,'말레'],'라오스':[17.98,102.63,'비엔티안'],'캄보디아':[11.56,104.92,'프놈펜'],'스리랑카':[6.93,79.85,'콜롬보'],'러시아':[55.76,37.62,'모스크바'],'멕시코':[19.43,-99.13,'멕시코시티'],'브라질':[-23.55,-46.63,'상파울루'],'오렌지프랑스':[48.86,2.35,'파리'],'오렌지스페인':[40.42,-3.70,'마드리드'],'보다폰스페인':[40.42,-3.70,'마드리드'],'쓰리(THREE)':[51.51,-0.13,'런던'] };
+var GEO = { '일본':[35.68,139.69,'도쿄'],'베트남':[10.82,106.63,'호치민'],'태국':[13.75,100.50,'방콕'],'대만':[25.03,121.56,'타이베이'],'필리핀':[14.60,120.98,'마닐라'],'싱가포르':[1.35,103.82,'싱가포르'],'말레이시아':[3.14,101.69,'쿠알라룸푸르'],'인도네시아':[-8.65,115.22,'발리'],'미국':[34.05,-118.24,'LA'],'괌':[13.44,144.79,'괌'],'사이판':[15.18,145.75,'사이판'],'중국':[31.23,121.47,'상하이'],'홍콩':[22.32,114.17,'홍콩'],'마카오':[22.20,113.55,'마카오'],'호주':[-33.87,151.21,'시드니'],'뉴질랜드':[-36.85,174.76,'오클랜드'],'튀르키예':[41.01,28.98,'이스탄불'],'캐나다':[49.28,-123.12,'밴쿠버'],'몽골':[47.89,106.91,'울란바토르'],'인도':[28.61,77.21,'델리'],'몰디브':[4.18,73.51,'말레'],'라오스':[17.98,102.63,'비엔티안'],'캄보디아':[11.56,104.92,'프놈펜'],'스리랑카':[6.93,79.85,'콜롬보'],'러시아':[55.76,37.62,'모스크바'],'멕시코':[19.43,-99.13,'멕시코시티'],'브라질':[-23.55,-46.63,'상파울루'],'오렌지프랑스':[48.86,2.35,'파리'],'오렌지스페인':[40.42,-3.70,'마드리드'],'보다폰스페인':[40.42,-3.70,'마드리드'],'쓰리(THREE)':[51.51,-0.13,'런던'],'한국':[37.57,126.98,'서울'] };
 function wxEmoji(c){
   if (c === 0) return '☀️'; if (c <= 2) return '🌤️'; if (c === 3) return '☁️';
   if (c === 45 || c === 48) return '🌫️'; if (c <= 57) return '🌦️'; if (c <= 67) return '🌧️';
@@ -480,6 +491,32 @@ function resetCountdown(country, tz){
   var hh = Math.floor(left / 60), mm = left % 60;
   return '데이터 리셋까지 ' + (hh ? hh + '시간 ' : '') + mm + '분 ↻';
 }
+var _fc = null, _fcKey = '';
+function loadDepForecast(){
+  if (!order || !order.country || typeof fetch === 'undefined') return;
+  var g = GEO[order.country], dep = getDep();
+  if (!g || !dep) return;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var diff = Math.round((new Date(dep + 'T00:00:00') - today) / 86400000);
+  if (diff < 0 || diff > 15) { _fc = null; return; }   // Open-Meteo 예보 범위: 16일
+  var key = 'jd_wxf_' + order.country + '_' + dep;
+  if (_fcKey === key && _fc) return;
+  try {
+    var c = JSON.parse(sessionStorage.getItem(key) || 'null');
+    if (c && Date.now() - c.t < 3600000) { _fc = c.v; _fcKey = key; return paintSkyW(); }
+  } catch(e){}
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=' + g[0] + '&longitude=' + g[1] +
+        '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=' + dep + '&end_date=' + dep)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var dy = d && d.daily;
+      if (!dy || !dy.weather_code || !dy.weather_code.length) return;
+      _fc = { c: dy.weather_code[0], hi: Math.round(dy.temperature_2m_max[0]), lo: Math.round(dy.temperature_2m_min[0]) };
+      _fcKey = key;
+      try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), v: _fc })); } catch(e){}
+      paintSkyW();
+    }).catch(function(){});
+}
 function paintSkyW(){
   var box = $('skyW'); if (!box || !order || !order.country) return;
   var tz = TZONE[order.country];
@@ -489,8 +526,15 @@ function paintSkyW(){
   if (tz) { try { t = new Intl.DateTimeFormat('ko-KR', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()); hh = destHour(tz); } catch(e){} }
   box.className = 'skyw ' + skyTone(hh);
   var dep = getDep();
+  var fcLine = '';
+  if (dep) {
+    var dd = Math.round((new Date(dep + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000);
+    if (_fc && _fcKey.indexOf(dep) !== -1) fcLine = '<div class="sw-fc">' + wxEmoji(_fc.c) + ' 출국일 예보 · <b>' + _fc.hi + '°</b> / ' + _fc.lo + '° ' + wxLabel(_fc.c) + '</div>';
+    else if (dd > 15) fcLine = '<div class="sw-fc dim">출국일 날씨는 16일 전부터 알려드릴게요 🗓️</div>';
+    else loadDepForecast();
+  }
   var dz = dep
-    ? '<div class="sw-chips"><span class="swc hot">' + ddayText() + '</span><button type="button" class="swc" onclick="addToCalendar()">📆 캘린더 추가</button><button type="button" class="swc" onclick="openDep()">변경</button></div>'
+    ? '<div class="sw-chips"><span class="swc hot">' + ddayText() + '</span><button type="button" class="swc" onclick="addToCalendar()">📆 캘린더 추가</button><button type="button" class="swc" onclick="openDep()">변경</button></div>' + fcLine
     : '<button type="button" class="sw-btn" onclick="openDep()">✈️ 출국일 등록하고 D-Day 받기</button><div class="sw-note">등록하지 않아도 이용에는 아무 지장 없어요</div>';
   box.innerHTML =
     '<div class="sw-top"><span class="sw-name">' + fl + ' ' + esc(order.country) + (g ? ' · ' + g[2] : '') + ' 지금</span>' +
@@ -506,8 +550,8 @@ function openDep(){
   var cur = getDep(); if (cur) inp.value = cur;
   inp.onchange = function(){
     try { if (inp.value) localStorage.setItem(depKey(), inp.value); } catch(e){}
-    renderSkyMeta();
-    if (inp.value) toast('출국일 저장 — D-Day를 세어드릴게요');
+    renderSkyMeta(); loadDepForecast();
+    if (inp.value) toast('출국일 저장 — D-Day와 그날 날씨를 챙겨드릴게요 ✈️');
   };
   if (inp.showPicker) { try { inp.showPicker(); return; } catch(e){} }
   inp.focus(); inp.click();
@@ -675,6 +719,14 @@ function secHd(icon, ey, title, sub){
   return '<div class="shd"><span class="cic">' + ico(icon, 18) + '</span><div><div class="ey">' + ey + '</div><div class="ct">' + title + (sub ? '<span>' + sub + '</span>' : '') + '</div></div></div>';
 }
 
+function countryFrom(){
+  // 여러 텍스트 소스에서 국가 토큰 탐색 (상품명 → 옵션/SKU/plan 순)
+  for (var i = 0; i < arguments.length; i++) {
+    var toks = String(arguments[i] || '').split(/[_\s\/:|,()]+/);
+    for (var j = 0; j < toks.length; j++) if (FLAG_EMOJI[toks[j]]) return toks[j];
+  }
+  return '';
+}
 var CC3 = { '일본':'JPN','베트남':'VNM','태국':'THA','대만':'TWN','필리핀':'PHL','싱가포르':'SGP','말레이시아':'MYS','인도네시아':'IDN','미국':'USA','괌':'GUM','사이판':'MNP','중국':'CHN','홍콩':'HKG','마카오':'MAC','호주':'AUS','뉴질랜드':'NZL','튀르키예':'TUR','캐나다':'CAN','몽골':'MNG','인도':'IND','몰디브':'MDV','라오스':'LAO','캄보디아':'KHM','스리랑카':'LKA','러시아':'RUS','멕시코':'MEX','브라질':'BRA','오렌지프랑스':'FRA','오렌지스페인':'ESP','보다폰스페인':'ESP','쓰리(THREE)':'GBR','한국':'KOR' };
 
 function $(id){ return document.getElementById(id); }
@@ -729,7 +781,7 @@ function reveal(){
   }, { threshold: 0.1 });
   document.querySelectorAll('.rv:not(.in)').forEach(function(el){ io.observe(el); });
 }
-function goInstall(){ var j = $('instCard') || $('jny'); if (j) j.scrollIntoView({ behavior:'smooth', block:'start' }); if (window.pickTab) pickTab(1); }
+function goInstall(){ var j = $('instZone') || $('jny'); if (j) j.scrollIntoView({ behavior:'smooth', block:'center' }); if (window.pickTab) pickTab(1); }
 function goUsage(){ var u = $('usageBody'); if (u) { loadUsage(); u.scrollIntoView({ behavior:'smooth', block:'center' }); } }
 // ===== 브랜드 푸터 (JDISIM 스토리) =====
 function brandFootHTML(){
@@ -873,7 +925,7 @@ function renderRomi(){
   if (order.status !== 'ISSUED') { msg = '안녕하세요, <b class="rn">로미</b>예요! 🦊 ' + esc(order.country || '여행') + ' 여행, 벌써 설레지 않나요? 아래만 확인하면 발급 준비 끝이에요 ✨'; img = 'fox-hello'; }
   else if (st.activatedAt) { msg = '개통 완료! 🎉 드디어 ' + esc(order.country || '') + ' 여행 시작이네요. 마음껏 찍고, 검색하고, 공유하세요 — 데이터는 아래에서 확인할 수 있어요 📸'; img = 'fox-thumbsup'; }
   else if (st.installedAt) { msg = '설치 확인했어요! 이제 현지에 도착해서 <strong>데이터 로밍</strong>만 켜면 끝 — 도착하면 아래 체크리스트대로만 해주세요.'; img = 'fox-phone'; }
-  else { msg = '발급 완료! 🎫 이제 바로 위 <strong>설치 카드</strong>에서 설치만 하면 끝이에요. 사용일은 현지 도착부터 시작되니 지금 해도 안심! ✈️'; img = 'fox-qr'; }
+  else { msg = '발급 완료! 🎫 <strong>보딩패스 안 설치 탭</strong>에서 설치만 하면 끝이에요. 사용일은 현지 도착부터 시작되니 지금 해도 안심! ✈️'; img = 'fox-qr'; }
   el.innerHTML = '<img src="images/' + img + '.png" alt="로미" onerror="this.style.display=\'none\'"><div class="bub">' + msg + '</div>';
 }
 // 콘페티 (발권 세리머니 — 골드 티커 + 비행기)
@@ -998,7 +1050,7 @@ function renderJourney(){
   var body = '';
   if (!st.installedAt) {
     // ── 현재: 설치 (설치 UI는 최상단 카드가 담당)
-    body = '<div class="jd" style="margin-top:2px;">맨 위의 <strong>eSIM 설치</strong> 카드에서 설치를 진행해 주세요.<br>설치가 확인되면 <strong>현지 개통</strong> 단계가 자동으로 열려요 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이에요 ✈️</div>';
+    body = '<div class="jd" style="margin-top:2px;">위 <strong>보딩패스 안의 설치 탭</strong>에서 설치를 진행해 주세요.<br>설치가 확인되면 <strong>현지 개통</strong> 단계가 자동으로 열려요 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이에요 ✈️</div>';
   } else if (!st.activatedAt) {
     // ── 현재: 개통 (설치 완료 라인 + 도착 체크리스트)
     var isI = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -1084,11 +1136,12 @@ function bpassHTML(o, opts){
     '<div class="tkt-band"><span class="twm">JDISIM · E-SIM BOARDING PASS</span>'+st+'</div>' +
     '<div class="tkt-hero"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+qty+'</b><i>KOR → '+cc+' <em>· ' + (opts.issued ? '준비 완료, 좋은 여행 되세요 ✈️' : '곧 만나요 ✈️') + '</em></i></span></div>' +
     '<div class="specs">' + cells + '</div>' +
-    '<div class="tkt-perf"></div>' +
     '<div class="tkt-grid">' +
       '<div class="f"><div class="k">PASSENGER · 수령인</div><div class="v">'+esc(o.buyerName || '—')+'</div></div>' +
       '<div class="f"><div class="k">VALID · 유효기간</div><div class="v">'+esc(o.validity || 'QR 안내문 참조')+'</div></div>' +
-    '</div>' + acts +
+    '</div>' +
+    '<div class="tkt-perf"></div>' +
+    (opts.issued ? '<div class="tz" id="instZone"></div>' : '') + acts +
     '<div class="tkt-bar"><div class="barcode"></div></div>' + detail +
     '<img class="tkt-wm" src="images/fox-hello.png" alt="" onerror="this.remove()">' +
     '</div>';
@@ -1119,11 +1172,7 @@ function loadLocal(){
   if (!found) return renderError('이 기기에서 주문을 찾지 못했어요', '테스트 주문은 결제했던 그 브라우저에서만 보여요. 실서비스에서는 카카오톡 링크로 어디서든 열립니다.');
   var o = found.o, it = (o.items && o.items[0]) || {};
   var created = o.createdAt ? new Date(o.createdAt) : new Date();
-  var cty = (it.productName || '').split(' ')[0];
-  if (!FLAG_EMOJI[cty]) {
-    // 상품명에 국가가 없으면 옵션/SKU 토큰에서 탐색 (예: KSX_한국_매일2GB_01일)
-    String((it.option || '') + '_' + (it.sku || '')).split(/[_\s\/:]+/).some(function(t){ if (FLAG_EMOJI[t]) { cty = t; return true; } return false; });
-  }
+  var cty = countryFrom(it.productName, it.option, it.sku) || (it.productName || '').split(' ')[0];
   order = {
     orderCode: o.orderCode, buyerName: o.buyerName || '', productName: it.productName || '',
     option: it.option || '', sku: it.sku || '',
@@ -1150,9 +1199,11 @@ function loadCare(){
     .then(function(d){
       var e = (d && d.esim) || {};
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
+      var cty = countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
       order = {
         orderCode: e.orderCode || '', buyerName: '', productName: e.prodName || '',
-        quantity: parseInt(e.count||'1',10)||1, country: (e.prodName||'').split(' ')[0],
+        option: e.option || e.Option || '', sku: PLAN,
+        quantity: parseInt(e.count||'1',10)||1, country: cty,
         validity: '', status: 'ISSUED', iccid: e.iccid || CARE,
         lpa: e.qrCodeContent || '', storeId: d.storeId
       };
@@ -1178,6 +1229,8 @@ function loadOrder(){
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(d){
       order=d;
+      if (PLAN && !order.sku) order.sku = PLAN;
+      if (!FLAG_EMOJI[order.country]) order.country = countryFrom(order.productName, order.option, order.sku, PLAN) || order.country;
       if (d.status==='ISSUED' && d.lpa) renderIssued(d.lpa, true);
       else if (d.status==='PAID') renderPreIssue();
       else if (d.status==='REFUNDED') renderError('환불 처리된 주문이에요','이미 환불이 완료되어 발급할 수 없어요.');
@@ -1291,7 +1344,6 @@ function renderIssued(lpa, revisit){
   window._lpa = lpa;
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
-    installCardHTML() +
     skyWHTML() +
     '<div class="trust">' +
       '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
@@ -1316,18 +1368,16 @@ function renderIssued(lpa, revisit){
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
 }
 
-// ===== 설치 카드 (최상단 독립 배치) =====
-function installCardHTML(){ return '<div class="card" id="instCard"></div>'; }
+// ===== 설치 존 (보딩패스 내장 — 절취선 아래) =====
 function renderInstallCard(){
-  var box = $('instCard'); if (!box) return;
+  var box = $('instZone'); if (!box) return;
   var st = tripState();
   if (st.installedAt && !window._reopenInst) {
-    box.innerHTML = secHd('qr', 'INSTALL', 'eSIM 설치', '완료') +
-      '<div class="stp-note" style="margin-top:12px;">' + ico('check', 15) + '설치 확인됨 · ' + fmtShort(st.installedAt) +
+    box.innerHTML = '<div class="stp-note">' + ico('check', 15) + '설치 확인됨 · ' + fmtShort(st.installedAt) +
       '<button type="button" class="re" onclick="reopenInstall()">설치 방법 다시 보기</button></div>';
     return;
   }
-  box.innerHTML = secHd('qr', 'INSTALL', 'eSIM 설치', '셋 중 편한 방법 하나 · 와이파이에서') +
+  box.innerHTML = '<div class="tz-h">' + ico('qr', 15) + '<b>eSIM 설치</b><span>셋 중 편한 방법 하나 · 와이파이에서</span></div>' +
     installTabsHTML() +
     (st.installedAt ? '' :
       '<div class="jbtns" style="margin-top:12px;"><button type="button" class="btn btn-ghost" onclick="checkInstalled(\'' + esc(order && order.iccid || '') + '\')">설치 자동 확인</button>' +
