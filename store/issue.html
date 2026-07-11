@@ -143,7 +143,7 @@ var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CARE = new URLSearchParams(location.search).get('care') || '';
 // 케어 모드 사용량/설치/정보 조회 프록시 (CORS 차단 시 Vercel 프록시 주소로 교체)
-window.CARE_API = 'https://jdisim-proxy.vercel.app/api/esim';
+window.CARE_API = '';  // 예: 'https://jdisim.co.kr/api/esim' — 비우면 도매처 직접호출 시도
 var order = null;
 
 var FLAG_EMOJI = { '일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭','대만':'🇹🇼','필리핀':'🇵🇭','싱가포르':'🇸🇬','말레이시아':'🇲🇾','인도네시아':'🇮🇩','미국':'🇺🇸','괌':'🇬🇺','사이판':'🇲🇵','중국':'🇨🇳','홍콩':'🇭🇰','마카오':'🇲🇴','호주':'🇦🇺','뉴질랜드':'🇳🇿','튀르키예':'🇹🇷','캐나다':'🇨🇦','몽골':'🇲🇳','인도':'🇮🇳','몰디브':'🇲🇻','라오스':'🇱🇦','캄보디아':'🇰🇭','스리랑카':'🇱🇰','러시아':'🇷🇺','멕시코':'🇲🇽','브라질':'🇧🇷','오렌지프랑스':'🇫🇷','오렌지스페인':'🇪🇸','보다폰스페인':'🇪🇸','쓰리(THREE)':'🇬🇧','한국':'🇰🇷' };
@@ -559,6 +559,15 @@ function checkInstalled(iccid){
   var box=$('instResult');
   box.innerHTML='<div class="muted" style="padding:9px 2px 0;">⏳ 확인 중...</div>';
   if (DEMO){ setTimeout(function(){ box.innerHTML='<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ 기기에 설치가 확인됐어요! 현지 도착 후 데이터 로밍만 켜면 끝이에요</div>'; },1200); return; }
+  if (CARE && window.CARE_API){
+    var q = 'iccid='+encodeURIComponent(iccid)+'&action=install&store='+encodeURIComponent((order&&order.storeId)||'');
+    fetch(window.CARE_API+'?'+q).then(function(r){return r.json();}).then(function(d){
+      box.innerHTML = d && d.isInstalled
+        ? '<div class="notice" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.3);color:#15803d;">✅ '+(d.message||'기기에 설치가 확인됐어요!')+' 현지 도착 후 데이터 로밍만 켜면 끝이에요</div>'
+        : '<div class="notice" style="background:#f8fafc;border:1px solid #e5eaf2;color:#334155;">아직 설치 전이에요 — 위의 원클릭/QR/수동입력으로 설치해 주세요</div>';
+    }).catch(function(){ box.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;">확인에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
+    return;
+  }
   if (!CONFIG.STATUS_API){ box.innerHTML='<div class="notice" style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);color:#9a5b16;">🛠️ 설치 자동 확인은 곧 오픈돼요 — 설정 → 셀룰러에 새 회선이 보이면 설치 성공이에요!</div>'; return; }
   fetch(CONFIG.STATUS_API+'?iccid='+encodeURIComponent(iccid)).then(function(r){return r.json();})
     .then(function(d){ box.innerHTML = d.installed
@@ -571,6 +580,20 @@ function loadUsage(){
   var box=$('usageBody');
   box.innerHTML='<div class="muted" style="padding:14px 0;">⏳ 조회 중...</div>';
   if (DEMO){ return renderUsage({used_mb:126,total_mb:2048,status:'active',daily:[{date:'2026-07-09',mb:126}]}); }
+  if (CARE && window.CARE_API){
+    fetch(window.CARE_API+'?iccid='+encodeURIComponent(order&&order.iccid||'')+'&action=usage').then(function(r){return r.json();}).then(function(d){
+      var lst = (d && d.usageList) || [];
+      if (!lst.length){
+        box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 아직 사용량 기록이 없어요.<br>무제한 요금제이거나 현지에서 아직 개통 전일 수 있어요. 개통 후 다시 눌러보세요!<br><span style="color:#64748b;">정확한 사용량은 설정 → 셀룰러 → 해당 회선에서도 볼 수 있어요.</span></div>';
+        return;
+      }
+      // usageList가 채워지면 표준 포맷으로 변환해 도넛 렌더
+      var used=0,total=0,daily=[];
+      lst.forEach(function(r){ var mb=Number(r.used||r.usedMb||r.dataUsed||0); used+=mb; if(r.date||r.useDate)daily.push({date:r.date||r.useDate,mb:mb}); if(r.total||r.totalMb)total=Number(r.total||r.totalMb); });
+      renderUsage({used_mb:used,total_mb:total,status:'active',daily:daily});
+    }).catch(function(){ box.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;text-align:left;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
+    return;
+  }
   if (!CONFIG.USAGE_API){ box.innerHTML='<div class="notice" style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);color:#9a5b16;text-align:left;">🛠️ 실시간 사용량 조회는 곧 오픈돼요!<br>지금은 설정 → 셀룰러 → 해당 회선에서 확인할 수 있어요</div>'; return; }
   fetch(CONFIG.USAGE_API+'?iccid='+encodeURIComponent(order&&order.iccid||'')).then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(renderUsage)
