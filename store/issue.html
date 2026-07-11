@@ -3,133 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F97316">
+<meta name="theme-color" content="#0B1430">
 <title>eSIM 발급 — JDISIM</title>
 <meta name="robots" content="noindex">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { font-size:17px; }
   body { font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; background:linear-gradient(180deg,#fdfefe,#f4f6fa); min-height:100dvh; color:#0f172a; -webkit-font-smoothing:antialiased; }
   ::selection { background:rgba(249,115,22,0.22); }
-  .wrap { max-width:440px; margin:0 auto; padding:16px 16px calc(30px + env(safe-area-inset-bottom,0px)); }
-  .brand { display:flex; align-items:center; gap:9px; padding:8px 2px 16px; }
-  .brand-badge { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; font-weight:900; font-size:1.05rem; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 14px rgba(249,115,22,0.3); }
-  .brand strong { font-size:1.02rem; letter-spacing:0.4px; }
+
+  /* ============ 밤하늘 발권 카운터 헤더 ============ */
+  .sky { position:relative; background:linear-gradient(180deg,#070D22 0%,#0B1430 42%,#182552 78%,#2A3B6E 100%); padding:calc(14px + env(safe-area-inset-top,0px)) 0 86px; overflow:hidden; }
+  .sky::after { content:''; position:absolute; left:0; right:0; bottom:0; height:64px; background:linear-gradient(180deg,transparent,rgba(249,115,22,0.16) 55%,rgba(249,115,22,0.32)); pointer-events:none; }
+  .stars { position:absolute; inset:0; pointer-events:none; background-repeat:no-repeat; }
+  .stars.s1 { background-image:
+    radial-gradient(1.2px 1.2px at 8% 22%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 21% 64%, rgba(255,255,255,0.9) 60%, transparent),
+    radial-gradient(1.4px 1.4px at 33% 18%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 47% 48%, rgba(255,255,255,0.8) 60%, transparent),
+    radial-gradient(1.3px 1.3px at 62% 12%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 71% 56%, rgba(255,255,255,0.85) 60%, transparent),
+    radial-gradient(1.5px 1.5px at 84% 26%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 93% 62%, rgba(255,255,255,0.8) 60%, transparent);
+    animation:tw 3.4s ease-in-out infinite; }
+  .stars.s2 { background-image:
+    radial-gradient(1px 1px at 14% 40%, rgba(255,255,255,0.85) 60%, transparent),
+    radial-gradient(1.3px 1.3px at 27% 10%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 41% 70%, rgba(255,255,255,0.75) 60%, transparent),
+    radial-gradient(1.2px 1.2px at 55% 30%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 67% 76%, rgba(255,255,255,0.8) 60%, transparent),
+    radial-gradient(1.2px 1.2px at 78% 8%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 90% 44%, rgba(255,255,255,0.85) 60%, transparent);
+    animation:tw 4.6s ease-in-out infinite 1.4s; }
+  @keyframes tw { 0%,100% { opacity:0.55; } 50% { opacity:1; } }
+  .sky-in { position:relative; max-width:440px; margin:0 auto; padding:0 20px; }
+  .sky .brand { display:flex; align-items:center; gap:10px; }
+  .sky .brand-badge { width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; font-weight:900; font-size:1.1rem; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(249,115,22,0.45); }
+  .sky .brand b { display:block; color:#fff; font-size:1.02rem; letter-spacing:0.6px; line-height:1.15; }
+  .sky .brand i { display:block; font-style:normal; color:#8FA3D9; font-size:0.66rem; font-weight:800; letter-spacing:2.2px; }
+
+  /* 비행 경로 */
+  .route { display:flex; align-items:flex-end; gap:6px; margin-top:22px; }
+  .ap { flex-shrink:0; text-align:center; min-width:64px; }
+  .ap b { display:block; color:#fff; font-size:1.72rem; font-weight:900; letter-spacing:1px; line-height:1; font-variant-numeric:tabular-nums; }
+  .ap i { display:block; font-style:normal; color:#8FA3D9; font-size:0.64rem; font-weight:800; letter-spacing:1.5px; margin-top:5px; }
+  .ap .fl { font-size:0.95rem; margin-right:3px; vertical-align:-1px; }
+  .arc { flex:1; height:52px; min-width:0; overflow:visible; margin-bottom:2px; }
+  .arc .base { stroke:rgba(143,163,217,0.28); stroke-width:1.6; stroke-dasharray:2 6; stroke-linecap:round; }
+  .arc .glow { stroke:url(#agrad); stroke-width:2; stroke-dasharray:6 8; stroke-linecap:round; animation:dash 1.6s linear infinite; opacity:0; transition:opacity 0.6s; }
+  .route.go .glow { opacity:1; }
+  @keyframes dash { to { stroke-dashoffset:-28; } }
+  .arc .pl { font-size:13px; opacity:0; }
+  .route.go .pl { opacity:1; }
+  @media (prefers-reduced-motion:reduce) { .arc .glow { animation:none; } .arc .pl { display:none; } .stars { animation:none !important; } }
+
+  /* ============ 본문 ============ */
+  .wrap { max-width:440px; margin:-64px auto 0; position:relative; padding:0 16px calc(34px + env(safe-area-inset-bottom,0px)); }
   .card { background:#fff; border:1px solid #eef2f7; border-radius:18px; padding:16px; box-shadow:0 8px 24px rgba(15,23,42,0.05); margin-bottom:12px; animation:rise 0.55s cubic-bezier(0.16,1,0.3,1) both; }
   .card:nth-of-type(2){animation-delay:0.07s}.card:nth-of-type(3){animation-delay:0.14s}.card:nth-of-type(4){animation-delay:0.21s}
   @keyframes rise { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
-  .ticket { background:linear-gradient(180deg,#fff,#fffaf5); border:1px solid rgba(242,117,31,0.3); position:relative; }
-  .badge { font-size:0.62rem; font-weight:900; padding:4px 9px; border-radius:11px; }
-  .badge.ok { color:#15803d; background:rgba(34,197,94,0.1); }
-  .badge.wait { color:#b45309; background:rgba(245,158,11,0.12); }
-  .row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:6.5px 0; font-size:0.79rem; border-bottom:1px solid rgba(15,23,42,0.05); }
+
+  /* ============ 보딩패스 티켓 ============ */
+  .bpass { position:relative; background:#FFFDF9; border-radius:20px; box-shadow:0 18px 44px rgba(11,20,48,0.22), 0 3px 10px rgba(11,20,48,0.12); margin-bottom:14px; animation:rise 0.6s cubic-bezier(0.16,1,0.3,1) both; overflow:hidden; }
+  .bpass::after { content:''; position:absolute; inset:0; background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.55) 46%,rgba(255,214,165,0.25) 52%,transparent 66%); transform:translateX(-120%); animation:holo 5.2s ease-in-out infinite 1.2s; pointer-events:none; }
+  @keyframes holo { 0%,55% { transform:translateX(-120%); } 78%,100% { transform:translateX(120%); } }
+  .bp-top { display:flex; justify-content:space-between; align-items:center; background:linear-gradient(120deg,#F97316,#F59E0B); padding:9px 16px; }
+  .bp-top span { color:#fff; font-size:0.62rem; font-weight:900; letter-spacing:2.6px; }
+  .badge { font-size:0.64rem; font-weight:900; padding:4px 10px; border-radius:11px; }
+  .badge.ok { color:#fff; background:rgba(255,255,255,0.24); border:1px solid rgba(255,255,255,0.5); }
+  .badge.wait { color:#7c3a00; background:#FFE9CF; }
+  .bp-main { padding:15px 16px 13px; }
+  .bp-dest { display:flex; align-items:center; gap:10px; }
+  .bp-dest .flag { font-size:2rem; line-height:1; filter:drop-shadow(0 3px 6px rgba(15,23,42,0.18)); }
+  .bp-dest .nm { min-width:0; }
+  .bp-dest .nm b { display:block; font-size:1.32rem; font-weight:900; letter-spacing:-0.4px; line-height:1.2; }
+  .bp-dest .nm i { display:block; font-style:normal; color:#64748b; font-size:0.78rem; font-weight:700; margin-top:2px; word-break:keep-all; }
+  .bp-perf { position:relative; border-top:2px dashed #EAD9C6; margin:13px -16px 12px; }
+  .bp-perf::before, .bp-perf::after { content:''; position:absolute; top:-9px; width:18px; height:18px; border-radius:50%; background:#f4f6fa; box-shadow:inset 0 2px 4px rgba(11,20,48,0.1); }
+  .bp-perf::before { left:-9px; } .bp-perf::after { right:-9px; }
+  .bp-grid { display:grid; grid-template-columns:1.3fr 1fr; gap:9px 12px; }
+  .bp-grid .f .k { font-size:0.58rem; font-weight:900; letter-spacing:1.6px; color:#A28D75; }
+  .bp-grid .f .v { font-size:0.86rem; font-weight:800; margin-top:2px; word-break:break-all; line-height:1.4; }
+  .bp-bar { margin-top:12px; }
+  .barcode { height:26px; border-radius:2px; opacity:0.85; background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px); }
+  .bp-code { text-align:center; font-family:ui-monospace,Menlo,monospace; font-size:0.66rem; font-weight:700; letter-spacing:3px; color:#94a3b8; margin-top:5px; }
+
+  /* 발권 프린트 애니메이션 */
+  .print-slot { height:10px; border-radius:6px; background:linear-gradient(180deg,#1B2C55,#0B1430); box-shadow:inset 0 2px 5px rgba(0,0,0,0.55), 0 2px 6px rgba(11,20,48,0.25); margin:2px 26px 10px; }
+  .bpass.printing { animation:printOut 1.05s cubic-bezier(0.25,0.9,0.3,1) 0.15s both; }
+  @keyframes printOut { from { clip-path:inset(0 0 96% 0); transform:translateY(-16px); } to { clip-path:inset(0 0 0 0); transform:none; } }
+  @media (prefers-reduced-motion:reduce) { .bpass.printing { animation:none; } .bpass::after { animation:none; display:none; } }
+
+  /* ============ 발권 시퀀스 로더 ============ */
+  .seq-t { font-weight:900; font-size:1.02rem; text-align:center; margin:4px 0 14px; }
+  .sq { display:flex; align-items:center; gap:11px; padding:10px 6px; font-size:0.87rem; font-weight:800; color:#94a3b8; transition:color 0.3s; }
+  .sq i { flex-shrink:0; width:24px; height:24px; border-radius:50%; border:2.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; font-style:normal; font-size:0.72rem; transition:all 0.3s; }
+  .sq.run { color:#0f172a; }
+  .sq.run i { border-color:#F97316; border-top-color:transparent; animation:sp 0.8s linear infinite; }
+  .sq.done { color:#15803d; }
+  .sq.done i { border-color:transparent; background:linear-gradient(135deg,#22c55e,#4ade80); color:#fff; animation:pop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  .sq.done i::before { content:'✓'; font-weight:900; }
+  @keyframes pop { from { transform:scale(0.4); } to { transform:scale(1); } }
+  .spin { width:34px; height:34px; border-radius:50%; border:4px solid #ffe3cf; border-top-color:#F97316; margin:16px auto; animation:sp 0.9s linear infinite; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+
+  /* ============ QR 스테이지 ============ */
+  .qr-stage { display:flex; justify-content:center; padding:4px 0 2px; }
+  .qr-frame2 { position:relative; background:#fff; border-radius:18px; padding:15px; box-shadow:0 12px 32px rgba(15,23,42,0.14); }
+  .qr-frame2 .cn { position:absolute; width:22px; height:22px; border:3px solid #F97316; }
+  .qr-frame2 .cn.tl { top:6px; left:6px; border-right:none; border-bottom:none; border-radius:8px 0 0 0; }
+  .qr-frame2 .cn.tr { top:6px; right:6px; border-left:none; border-bottom:none; border-radius:0 8px 0 0; }
+  .qr-frame2 .cn.bl { bottom:6px; left:6px; border-right:none; border-top:none; border-radius:0 0 0 8px; }
+  .qr-frame2 .cn.br { bottom:6px; right:6px; border-left:none; border-top:none; border-radius:0 0 8px 0; }
+  .qr-frame2 .scan { position:absolute; left:12px; right:12px; top:14px; height:3px; border-radius:3px; background:linear-gradient(90deg,transparent,#F97316 30%,#F59E0B 70%,transparent); box-shadow:0 0 14px rgba(249,115,22,0.55); animation:scan 2.6s ease-in-out infinite; pointer-events:none; }
+  @keyframes scan { 0%,100% { transform:translateY(0); opacity:0.9; } 50% { transform:translateY(196px); opacity:0.9; } 52% { opacity:0.2; } }
+  .qrsvg { display:block; }
+  @media (prefers-reduced-motion:reduce) { .qr-frame2 .scan { display:none; } }
+
+  /* ============ 공용 컴포넌트 (기존 유지) ============ */
+  .notice { border-radius:12px; padding:11px 13px; font-size:0.81rem; line-height:1.7; font-weight:600; margin-top:9px; }
+  .row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:6.5px 0; font-size:0.85rem; border-bottom:1px solid rgba(15,23,42,0.05); }
   .row:last-of-type { border-bottom:none; }
   .row span { color:#64748b; font-weight:600; flex-shrink:0; }
   .row strong { text-align:right; word-break:break-all; }
-  .barcode { height:15px; margin-top:10px; border-radius:2px; opacity:0.82; background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px); }
-  .btn { display:block; width:100%; text-align:center; padding:15px; border:none; border-radius:14px; font-size:0.9rem; font-weight:800; cursor:pointer; text-decoration:none; color:#0f172a; }
-  .btn-primary { background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; box-shadow:0 8px 20px rgba(249,115,22,0.3); }
-  .btn-ghost { background:#fff; border:1px solid #e5eaf2; font-size:0.8rem; padding:12px; }
-  .notice { border-radius:12px; padding:11px 13px; font-size:0.75rem; font-weight:700; line-height:1.65; margin-top:9px; }
-  .agree-box { display:flex; align-items:flex-start; gap:10px; padding:12px 13px; border:1.5px solid rgba(242,117,31,0.35); background:rgba(242,117,31,0.05); border-radius:13px; margin-top:9px; cursor:pointer; font-size:0.78rem; font-weight:700; line-height:1.55; transition:all 0.2s; }
-  .agree-box input { width:20px; height:20px; accent-color:#F2751F; flex-shrink:0; margin-top:1px; }
-  .agree-box.ok { border-color:#22c55e; background:rgba(34,197,94,0.06); }
+  .btn { display:block; width:100%; text-align:center; padding:15px; border:none; border-radius:14px; font-size:0.95rem; font-weight:800; cursor:pointer; text-decoration:none; color:#0f172a; }
+  .btn-primary { background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; box-shadow:0 8px 20px rgba(249,115,22,0.3); position:relative; overflow:hidden; }
+  .btn-primary:active { transform:scale(0.985); }
+  .btn-primary::after { content:''; position:absolute; top:0; left:-80%; width:50%; height:100%; background:linear-gradient(105deg,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-20deg); animation:sheen 3.8s ease-in-out infinite; }
+  @keyframes sheen { 0%,60% { left:-80%; } 80%,100% { left:130%; } }
+  .btn-ghost { background:#fff; border:1px solid #e5eaf2; font-size:0.86rem; padding:12px; }
   .center { text-align:center; }
-  .muted { color:#94a3b8; font-size:0.72rem; font-weight:600; }
-  .spin { width:34px; height:34px; border-radius:50%; border:4px solid #ffe3cf; border-top-color:#F97316; margin:16px auto; animation:sp 0.9s linear infinite; }
-  @keyframes sp { to { transform:rotate(360deg); } }
-  /* 설치 3탭 */
+  .muted { color:#7e8ba3; font-size:0.78rem; font-weight:600; }
   .tabs { display:flex; gap:7px; margin:4px 0 14px; }
-  .tab { flex:1; padding:11px 4px; border-radius:12px; border:1px solid #e5eaf2; background:#fff; font-size:0.78rem; font-weight:800; color:#64748b; cursor:pointer; transition:all 0.18s; }
+  .tab { flex:1; padding:11px 4px; border-radius:12px; border:1px solid #e5eaf2; background:#fff; font-size:0.83rem; font-weight:800; color:#64748b; cursor:pointer; transition:all 0.18s; }
   .tab.on { background:#0f172a; color:#fff; border-color:#0f172a; box-shadow:0 6px 16px rgba(15,23,42,0.2); }
   .copyline { display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #eef2f7; border-radius:12px; padding:11px 12px; margin-top:8px; }
   .copyline div { min-width:0; flex:1; }
-  .copyline .lbl { font-size:0.64rem; font-weight:800; color:#94a3b8; letter-spacing:0.5px; }
-  .copyline .val { font-family:ui-monospace,Menlo,monospace; font-size:0.76rem; font-weight:700; word-break:break-all; margin-top:2px; }
+  .copyline .lbl { font-size:0.68rem; font-weight:800; color:#94a3b8; letter-spacing:0.5px; }
+  .copyline .val { font-family:ui-monospace,Menlo,monospace; font-size:0.82rem; font-weight:700; word-break:break-all; margin-top:2px; }
   .copybtn { flex-shrink:0; border:none; background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; font-size:0.7rem; font-weight:800; padding:8px 12px; border-radius:18px; cursor:pointer; }
-  .qr-frame { background:#fff; border-radius:16px; padding:13px; display:inline-block; box-shadow:0 10px 26px rgba(15,23,42,0.1); }
-  .step { display:flex; gap:10px; padding:8px 0; font-size:0.78rem; line-height:1.6; color:#334155; }
+  .step { display:flex; gap:10px; padding:8px 0; font-size:0.84rem; line-height:1.6; color:#334155; }
   .step b { flex-shrink:0; width:21px; height:21px; border-radius:50%; background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; font-size:0.66rem; font-weight:900; display:flex; align-items:center; justify-content:center; }
-  /* 사용량 도넛 */
   .donut-wrap { position:relative; width:172px; height:172px; margin:6px auto; }
   .donut-wrap svg { transform:rotate(-90deg); }
   .donut-bg { fill:none; stroke:#f1f5f9; stroke-width:13; }
   .donut-fg { fill:none; stroke:url(#dg); stroke-width:13; stroke-linecap:round; transition:stroke-dashoffset 1.1s cubic-bezier(0.16,1,0.3,1); }
   .donut-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
   .donut-center .big { font-size:1.5rem; font-weight:900; letter-spacing:-0.5px; }
+  .donut-center .badge.ok { color:#15803d; background:rgba(34,197,94,0.1); border:none; }
+  .donut-center .badge.wait { color:#b45309; background:rgba(245,158,11,0.12); }
   .pillstat { display:flex; gap:9px; margin-top:12px; }
   .pillstat > div { flex:1; background:#f8fafc; border:1px solid #eef2f7; border-radius:13px; padding:11px; text-align:center; }
-  .pillstat .l { font-size:0.66rem; font-weight:700; color:#94a3b8; }
-  .pillstat .v { font-size:0.92rem; font-weight:900; margin-top:3px; }
-  .daybar { display:flex; align-items:center; gap:9px; padding:7px 0; font-size:0.74rem; font-weight:700; }
+  .pillstat .l { font-size:0.71rem; font-weight:700; color:#94a3b8; }
+  .pillstat .v { font-size:1rem; font-weight:900; margin-top:3px; }
+  .daybar { display:flex; align-items:center; gap:9px; padding:7px 0; font-size:0.79rem; font-weight:700; }
   .daybar .d { color:#64748b; flex-shrink:0; width:74px; }
   .daybar .bar { flex:1; height:7px; border-radius:5px; background:#f1f5f9; overflow:hidden; }
   .daybar .bar i { display:block; height:100%; border-radius:5px; background:linear-gradient(90deg,#F97316,#F59E0B); }
   .daybar .mb { flex-shrink:0; color:#F2751F; min-width:56px; text-align:right; }
   details.g { margin-top:9px; background:#fff; border:1px solid #eef2f7; border-radius:13px; overflow:hidden; }
-  details.g summary { list-style:none; padding:12px 14px; font-size:0.79rem; font-weight:800; cursor:pointer; display:flex; }
+  details.g summary { list-style:none; padding:13px 14px; font-size:0.86rem; font-weight:800; cursor:pointer; display:flex; }
   details.g summary::after { content:'▾'; margin-left:auto; color:#94a3b8; }
+  .agree-box { display:flex; align-items:flex-start; gap:10px; padding:12px 13px; border:1.5px solid rgba(242,117,31,0.35); background:rgba(242,117,31,0.05); border-radius:13px; margin-top:9px; cursor:pointer; font-size:0.84rem; font-weight:700; line-height:1.6; transition:all 0.2s; }
+  .agree-box input { width:20px; height:20px; accent-color:#F2751F; flex-shrink:0; margin-top:1px; }
+  .agree-box.ok { border-color:#22c55e; background:rgba(34,197,94,0.06); }
   .shake { animation:shk 0.4s ease; border-color:#ef4444 !important; }
   @keyframes shk { 25% { transform:translateX(-7px); } 50% { transform:translateX(7px); } 75% { transform:translateX(-4px); } }
   .kakao-float { position:fixed; right:16px; bottom:calc(18px + env(safe-area-inset-bottom,0px)); z-index:50; display:flex; align-items:center; gap:7px; background:#FEE500; color:#191919; font-weight:800; font-size:0.78rem; padding:12px 16px; border-radius:26px; text-decoration:none; box-shadow:0 10px 26px rgba(0,0,0,0.18); }
-  /* 진행 스트립 */
   .flow { display:flex; align-items:flex-start; margin:2px 2px 16px; }
   .flow .fs { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; }
   .flow .dot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:900; background:#fff; border:2px solid #e2e8f0; color:#cbd5e1; }
   .flow .fs.done .dot { background:linear-gradient(135deg,#F97316,#F59E0B); border:none; color:#fff; box-shadow:0 4px 10px rgba(249,115,22,0.35); }
   .flow .fs.now .dot { border-color:#F97316; color:#F97316; box-shadow:0 0 0 4px rgba(249,115,22,0.14); }
-  .flow .lb { font-size:0.6rem; font-weight:800; color:#94a3b8; white-space:nowrap; }
+  .flow .lb { font-size:0.64rem; font-weight:800; color:#94a3b8; white-space:nowrap; }
   .flow .fs.done .lb, .flow .fs.now .lb { color:#F2751F; }
   .flow .ln { flex:1; height:2.5px; background:#e2e8f0; margin:12px 4px 0; border-radius:2px; }
   .flow .ln.done { background:linear-gradient(90deg,#F97316,#F59E0B); }
-  /* 로미 웰컴 */
   .romi { display:flex; align-items:center; gap:11px; margin-bottom:12px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
   .romi img { width:52px; height:52px; object-fit:contain; }
-  .romi .bub { background:#fff; border:1px solid #ffe0c7; border-radius:14px 14px 14px 4px; padding:10px 13px; font-size:0.78rem; font-weight:700; color:#334155; box-shadow:0 6px 16px rgba(249,115,22,0.1); line-height:1.5; }
-  /* 티켓 절취선 */
-  .perf { position:relative; border-top:2px dashed #f3d9c2; margin:11px -16px 0; }
-  .perf::before, .perf::after { content:''; position:absolute; top:-8px; width:16px; height:16px; border-radius:50%; background:#f4f6fa; }
-  .perf::before { left:-8px; } .perf::after { right:-8px; }
-  /* CTA 광택 */
-  .btn-primary { position:relative; overflow:hidden; }
-  .btn-primary::after { content:''; position:absolute; top:0; left:-80%; width:50%; height:100%; background:linear-gradient(105deg,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-20deg); animation:sheen 3.8s ease-in-out infinite; }
-  @keyframes sheen { 0%,60% { left:-80%; } 80%,100% { left:130%; } }
-  /* 설치 후 체크리스트 */
+  .romi .bub { background:#fff; border:1px solid #ffe0c7; border-radius:14px 14px 14px 4px; padding:10px 13px; font-size:0.84rem; font-weight:700; color:#334155; box-shadow:0 6px 16px rgba(249,115,22,0.1); line-height:1.5; }
   .chk { display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border:1px solid #eef2f7; border-radius:13px; margin-top:8px; cursor:pointer; font-size:0.79rem; font-weight:700; line-height:1.55; background:#fff; transition:all 0.2s; }
   .chk input { width:19px; height:19px; accent-color:#22c55e; flex-shrink:0; margin-top:1px; }
   .chk.on { border-color:rgba(34,197,94,0.4); background:rgba(34,197,94,0.05); }
   .chk.on span { color:#15803d; }
-  /* 콘페티 */
-  .cf { position:fixed; top:-14px; border-radius:2px; z-index:9999; pointer-events:none; animation:cfall linear both; }
-  @keyframes cfall { to { transform:translateY(105vh) rotate(640deg); opacity:0.6; } }
+  .cf { position:fixed; top:-16px; z-index:9999; pointer-events:none; animation:cfall linear both; }
+  .cf.r { border-radius:2px; }
+  .cf.t { font-size:15px; line-height:1; }
+  @keyframes cfall { to { transform:translateY(105vh) rotate(640deg); opacity:0.55; } }
   @media (prefers-reduced-motion:reduce) { .card,.spin,.shake,.cf,.romi { animation:none !important; } .donut-fg { transition:none; } .btn-primary::after { animation:none; display:none; } }
-  /* ===== 가독성 리뉴얼: 전체 글자 크기·대비 상향 ===== */
-  html { font-size: 17px; }
-  .muted { font-size: 0.78rem; color: #7e8ba3; }
-  .row { font-size: 0.85rem; }
-  .notice { font-size: 0.81rem; line-height: 1.7; }
-  .agree-box { font-size: 0.84rem; line-height: 1.6; }
-  .btn { font-size: 0.95rem; }
-  .btn-ghost { font-size: 0.86rem; }
-  .tab { font-size: 0.83rem; }
-  .step { font-size: 0.84rem; }
-  details.g summary { font-size: 0.86rem; padding: 13px 14px; }
-  .copyline .val { font-size: 0.82rem; }
-  .copyline .lbl { font-size: 0.68rem; }
-  .romi .bub { font-size: 0.84rem; }
-  .daybar { font-size: 0.79rem; }
-  .pillstat .l { font-size: 0.71rem; }
-  .pillstat .v { font-size: 1rem; }
-  .flow .lb { font-size: 0.64rem; }
-  .brand strong { font-size: 1.08rem; }
 </style>
 </head>
 <body>
+<header class="sky">
+  <div class="stars s1"></div><div class="stars s2"></div>
+  <div class="sky-in">
+    <div class="brand"><div class="brand-badge">J</div><div><b>JDISIM</b><i>E-SIM COUNTER</i></div></div>
+    <div class="route" id="route">
+      <div class="ap"><b>ICN</b><i>인천 · 대한민국</i></div>
+      <svg class="arc" viewBox="0 0 200 56" aria-hidden="true">
+        <defs><linearGradient id="agrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#FBBF24"/></linearGradient></defs>
+        <path id="arcP" class="base" d="M8,50 Q100,-10 192,50" fill="none"/>
+        <path class="glow" d="M8,50 Q100,-10 192,50" fill="none"/>
+        <text class="pl" dy="4">✈️<animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto"><mpath href="#arcP"/></animateMotion></text>
+      </svg>
+      <div class="ap"><b id="apCode">···</b><i id="apName">여행지 확인 중</i></div>
+    </div>
+  </div>
+</header>
 <div class="wrap">
-  <div class="brand"><div class="brand-badge">J</div><strong>JDISIM · eSIM 발급</strong></div>
   <div id="app"><div class="card center"><div class="spin"></div><div class="muted">주문 정보를 불러오는 중...</div></div></div>
 </div>
 <a class="kakao-float" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카톡 상담</a>
 <script>
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+
 // ============ 서버 연동 설정 (Flask/Vercel 연결 시 여기만 수정) ============
 var CONFIG = {
   ORDER_API:  '',  // GET ?token=   주문/발급상태 조회
@@ -148,6 +235,19 @@ var order = null;
 
 var FLAG_EMOJI = { '일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭','대만':'🇹🇼','필리핀':'🇵🇭','싱가포르':'🇸🇬','말레이시아':'🇲🇾','인도네시아':'🇮🇩','미국':'🇺🇸','괌':'🇬🇺','사이판':'🇲🇵','중국':'🇨🇳','홍콩':'🇭🇰','마카오':'🇲🇴','호주':'🇦🇺','뉴질랜드':'🇳🇿','튀르키예':'🇹🇷','캐나다':'🇨🇦','몽골':'🇲🇳','인도':'🇮🇳','몰디브':'🇲🇻','라오스':'🇱🇦','캄보디아':'🇰🇭','스리랑카':'🇱🇰','러시아':'🇷🇺','멕시코':'🇲🇽','브라질':'🇧🇷','오렌지프랑스':'🇫🇷','오렌지스페인':'🇪🇸','보다폰스페인':'🇪🇸','쓰리(THREE)':'🇬🇧','한국':'🇰🇷' };
 
+// 헤더 비행경로 공항코드 (대표 관문 공항)
+var AIRPORT = { '일본':['NRT','도쿄 · 일본'],'베트남':['SGN','호치민 · 베트남'],'태국':['BKK','방콕 · 태국'],'대만':['TPE','타이베이 · 대만'],'필리핀':['MNL','마닐라 · 필리핀'],'싱가포르':['SIN','싱가포르'],'말레이시아':['KUL','쿠알라룸푸르'],'인도네시아':['DPS','발리 · 인도네시아'],'미국':['LAX','로스앤젤레스 · 미국'],'괌':['GUM','괌'],'사이판':['SPN','사이판'],'중국':['PVG','상하이 · 중국'],'홍콩':['HKG','홍콩'],'마카오':['MFM','마카오'],'호주':['SYD','시드니 · 호주'],'뉴질랜드':['AKL','오클랜드 · 뉴질랜드'],'튀르키예':['IST','이스탄불 · 튀르키예'],'캐나다':['YVR','밴쿠버 · 캐나다'],'몽골':['UBN','울란바토르 · 몽골'],'인도':['DEL','델리 · 인도'],'몰디브':['MLE','말레 · 몰디브'],'라오스':['VTE','비엔티안 · 라오스'],'캄보디아':['PNH','프놈펜 · 캄보디아'],'스리랑카':['CMB','콜롬보 · 스리랑카'],'러시아':['SVO','모스크바 · 러시아'],'멕시코':['MEX','멕시코시티'],'브라질':['GRU','상파울루 · 브라질'],'오렌지프랑스':['CDG','파리 · 프랑스'],'오렌지스페인':['MAD','마드리드 · 스페인'],'보다폰스페인':['MAD','마드리드 · 스페인'],'쓰리(THREE)':['LHR','런던 · 영국'],'한국':['ICN','인천 · 대한민국'] };
+function setRoute(country){
+  var a = AIRPORT[country];
+  var fl = FLAG_EMOJI[country] || '';
+  var code = a ? a[0] : (country ? 'FLY' : '···');
+  var name = a ? a[1] : (country || '여행지 확인 중');
+  var c = $('apCode'), n = $('apName'), r = $('route');
+  if (c) c.innerHTML = (fl ? '<span class="fl">'+fl+'</span>' : '') + code;
+  if (n) n.textContent = name;
+  if (r && country) r.classList.add('go');
+}
+
 function $(id){ return document.getElementById(id); }
 function h(html){ $('app').innerHTML = html; }
 function esc(s){ return String(s || '').replace(/[<>&"]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
@@ -156,6 +256,33 @@ function copy(v,msg){ if(navigator.clipboard&&navigator.clipboard.writeText){ na
 function fmtDate(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var w=['일','월','화','수','목','금','토']; return (d.getMonth()+1)+'월 '+d.getDate()+'일('+w[d.getDay()]+')'; }catch(e){ return ''; } }
 function parseLpa(lpa){ var p=String(lpa||'').split('$'); return { smdp:p[1]||'', code:p[2]||'', confirm:p[3]||'' }; }
 function gb(mb){ return (Math.round(mb/1024*100)/100); }
+function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p||18); }catch(e){} }
+
+// ============ 로컬 QR 생성 (외부 API 0 — LPA 코드가 밖으로 나가지 않음) ============
+function qrSvg(text, px){
+  try{
+    var q = qrcode(0,'M'); q.addData(String(text)); q.make();
+    var n = q.getModuleCount(), Q = 3, S = n + Q*2, d = '';
+    for (var r=0;r<n;r++) for (var c=0;c<n;c++) if (q.isDark(r,c)) d += 'M'+(c+Q)+' '+(r+Q)+'h1v1h-1z';
+    return '<svg class="qrsvg" width="'+px+'" height="'+px+'" viewBox="0 0 '+S+' '+S+'" shape-rendering="crispEdges" role="img" aria-label="eSIM 설치 QR"><rect width="'+S+'" height="'+S+'" fill="#fff"/><path d="'+d+'" fill="#0f172a"/></svg>';
+  }catch(e){ return null; }
+}
+function saveQrLocal(lpa){
+  try{
+    var q = qrcode(0,'M'); q.addData(String(lpa)); q.make();
+    var n = q.getModuleCount(), Q = 4, cell = 20, S = (n+Q*2)*cell;
+    var cv = document.createElement('canvas'); cv.width = cv.height = S;
+    var g = cv.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0,0,S,S);
+    g.fillStyle = '#0f172a';
+    for (var r=0;r<n;r++) for (var c=0;c<n;c++) if (q.isDark(r,c)) g.fillRect((c+Q)*cell,(r+Q)*cell,cell,cell);
+    cv.toBlob(function(b){
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'JDISIM-eSIM-QR.png'; a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      toast('🖼️ QR 이미지가 저장됐어요');
+    }, 'image/png');
+  }catch(e){ toast('저장에 실패했어요 — QR을 스크린샷으로 남겨주세요'); }
+}
 
 const TRAVEL_TIPS = {
   '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용', '🛂 무비자 90일 — Visit Japan Web을 미리 작성하면 입국 심사가 빨라요'] },
@@ -206,25 +333,32 @@ function flowStrip(step){
   var out='<div class="flow">';
   for(var i=0;i<4;i++){
     var cls = i<step?'done':(i===step?'now':'');
-    if(i) out += '<div class="ln '+(i<=step-0? (i<step?'done':''):'')+'"></div>';
+    if(i) out += '<div class="ln '+(i<step?'done':'')+'"></div>';
     out += '<div class="fs '+cls+'"><div class="dot">'+(i<step?'✓':(i+1))+'</div><div class="lb">'+labels[i]+'</div></div>';
   }
   return out+'</div>';
 }
-function romiSay(msg){
-  return '<div class="romi"><img src="images/fox-hello.png" alt="" onerror="this.style.display=\'none\'"><div class="bub">'+msg+'</div></div>';
+function romiSay(msg, img){
+  return '<div class="romi"><img src="images/'+(img||'fox-hello')+'.png" alt="" onerror="this.style.display=\'none\'"><div class="bub">'+msg+'</div></div>';
 }
-// 콘페티 (발급 성공 세리머니)
+// 콘페티 (발권 세리머니 — 골드 티커 + 비행기)
 function confetti(){
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var colors=['#F97316','#F59E0B','#fbbf24','#fff','#4ade80'];
-  for(var i=0;i<30;i++){
+  var colors=['#F97316','#F59E0B','#FBBF24','#FDE68A','#fff','#4ade80'];
+  for(var i=0;i<34;i++){
     var c=document.createElement('span');
-    c.className='cf';
-    c.style.cssText+='left:'+Math.random()*100+'%;width:'+(6+Math.random()*5)+'px;height:'+(9+Math.random()*6)+'px;background:'+colors[i%colors.length]+';animation-duration:'+(2.2+Math.random()*1.5)+'s;animation-delay:'+Math.random()*0.7+'s;';
+    c.className='cf r';
+    c.style.cssText+='left:'+Math.random()*100+'%;width:'+(6+Math.random()*5)+'px;height:'+(9+Math.random()*7)+'px;background:'+colors[i%colors.length]+';animation-duration:'+(2.2+Math.random()*1.5)+'s;animation-delay:'+Math.random()*0.7+'s;'+(i%4===0?'box-shadow:0 0 8px rgba(251,191,36,0.7);':'');
     document.body.appendChild(c);
     setTimeout(function(el){ return function(){ el.remove(); }; }(c), 4500);
   }
+  ['✈️','🎫','✈️'].forEach(function(em,i){
+    var c=document.createElement('span');
+    c.className='cf t'; c.textContent=em;
+    c.style.cssText+='left:'+(12+Math.random()*76)+'%;animation-duration:'+(2.6+Math.random()*1.2)+'s;animation-delay:'+(0.2+i*0.35)+'s;';
+    document.body.appendChild(c);
+    setTimeout(function(el){ return function(){ el.remove(); }; }(c), 4800);
+  });
 }
 // 📱 기종 선택식 자가진단 (탭 몇 번이면 끝)
 var DEVICE_DB = {
@@ -288,13 +422,13 @@ function tripStep(){
 }
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
-  renderTripCard(); confetti();
+  renderTripCard(); confetti(); buzz([16,50,16]);
 }
 function markActivated(){
   var st = tripState();
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
-  saveTrip(st); renderTripCard(); confetti();
+  saveTrip(st); renderTripCard(); confetti(); buzz([16,50,16]);
 }
 function tripCardHTML(){ return '<div class="card" id="tripCard"></div>'; }
 function renderTripCard(){
@@ -325,6 +459,31 @@ function renderTripCard(){
       '<div class="muted" style="margin-top:7px;">' + (order.productName || '') + ' · ' + new Date(st.activatedAt).toLocaleDateString('ko-KR') + ' 개통</div>' : '') +
     '<div class="muted" style="margin-top:6px;">💡 일 용량 상품은 매일 자정(현지 기준) 고속 데이터가 새로 채워져요</div>' +
     (days && left <= 2 ? '<a class="btn btn-primary" style="margin-top:11px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">🔋 여행이 더 길어졌나요? 연장 eSIM 3초 주문 →</a>' : '');
+}
+
+// ---------------- 보딩패스 티켓 ----------------
+function bpassHTML(o, opts){
+  opts = opts || {};
+  var fl = FLAG_EMOJI[o.country] || '✈️';
+  var badge = opts.issued
+    ? '<span class="badge ok">✓ 발급 완료</span>'
+    : '<span class="badge wait">발급 대기</span>';
+  var grid = [
+    ['PASSENGER · 수령인', o.buyerName || '—'],
+    ['ORDER NO · 주문번호', o.orderCode || '—'],
+    ['PLAN · 상품', (o.productName || '') + (o.quantity > 1 ? ' × ' + o.quantity : '')],
+    ['VALID · 유효기간', o.validity || 'QR 안내문 참조']
+  ];
+  if (opts.issued && o.iccid) grid[3] = ['ICCID', o.iccid];
+  return (opts.print ? '<div class="print-slot"></div>' : '') +
+    '<div class="bpass'+(opts.print?' printing':'')+'">' +
+    '<div class="bp-top"><span>JDISIM · E-SIM BOARDING PASS</span>'+badge+'</div>' +
+    '<div class="bp-main">' +
+      '<div class="bp-dest"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+'</b><i>'+esc(o.productName || '')+(o.quantity>1?' × '+o.quantity:'')+'</i></span></div>' +
+      '<div class="bp-perf"></div>' +
+      '<div class="bp-grid">' + grid.map(function(g){ return '<div class="f"><div class="k">'+g[0]+'</div><div class="v">'+esc(g[1])+'</div></div>'; }).join('') + '</div>' +
+      '<div class="bp-bar"><div class="barcode"></div><div class="bp-code">'+esc(o.orderCode || 'JDISIM')+'</div></div>' +
+    '</div></div>';
 }
 
 // ---------------- 주문 로드 ----------------
@@ -413,15 +572,11 @@ function loadOrder(){
 
 // ---------------- 발급 전 ----------------
 function renderPreIssue(){
+  setRoute(order.country);
   var fl = FLAG_EMOJI[order.country] || '✈️';
-  h(flowStrip(1) +
+  h(bpassHTML(order, {issued:false}) +
+    flowStrip(1) +
     romiSay('안녕, 난 <strong style="color:#F2751F;">로미</strong>! ' + fl + ' <strong>' + esc(order.country || '여행') + '</strong> 갈 준비 도와줄게. 원하는 때에 발급 버튼만 누르면 돼!') +
-    '<div class="card ticket">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.72rem;font-weight:800;color:#F2751F;">' + fl + ' 발급 대기 중인 여행 티켓</span><span class="badge wait">발급 대기</span></div>' +
-    '<div class="row"><span>상품</span><strong>'+esc(order.productName)+(order.quantity>1?' × '+order.quantity:'')+'</strong></div>' +
-    '<div class="row"><span>주문번호</span><strong>'+esc(order.orderCode)+'</strong></div>' +
-    '<div class="row"><span>수령인</span><strong>'+esc(order.buyerName)+'</strong></div>' +
-    '<div class="perf"></div><div class="barcode"></div></div>' +
     deviceCheckHTML() +
 
     '<details class="g"><summary>ℹ️ 발급 전 꼭 알아두세요 (사용일·유효기간·환불)</summary><div style="padding:0 12px 12px;">' +
@@ -445,13 +600,39 @@ function renderPreIssue(){
   boxes.forEach(function(b){ b.querySelector('input').addEventListener('change',function(){ b.classList.toggle('ok',this.checked); }); });
   $('issueBtn').addEventListener('click',function(){
     var miss=boxes.filter(function(b){ return !b.querySelector('input').checked; });
-    if(miss.length){ miss.forEach(function(b){ b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); }); return; }
+    if(miss.length){ miss.forEach(function(b){ b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); }); buzz(30); return; }
     doIssue();
   });
 }
 
+// ---------------- 발권 시퀀스 ----------------
+var seqTimers = [];
+function seqUI(){
+  h('<div class="card"><div class="seq-t">🎫 발권 중이에요</div>' +
+    '<div class="sq run" id="sq0"><i></i>주문 확인</div>' +
+    '<div class="sq" id="sq1"><i></i>통신사에 eSIM 프로필 요청</div>' +
+    '<div class="sq" id="sq2"><i></i>QR 코드 생성</div>' +
+    '<div class="center" style="margin-top:12px;"><span class="muted" id="seqMsg">보통 수 초, 길면 몇 분 — 화면을 닫지 마세요</span></div></div>');
+  seqTimers.forEach(clearTimeout); seqTimers = [];
+  seqTimers.push(setTimeout(function(){ seqMark(0); }, 800));
+  seqTimers.push(setTimeout(function(){
+    var m = $('seqMsg'); if (m) m.textContent = '통신사 응답을 기다리는 중 — 결제는 안전하게 보존돼요';
+  }, 9000));
+}
+function seqMark(i){
+  var el = $('sq'+i); if (!el) return;
+  el.classList.remove('run'); el.classList.add('done');
+  var nx = $('sq'+(i+1)); if (nx && !nx.classList.contains('done')) nx.classList.add('run');
+}
+function seqFinish(then){
+  seqTimers.forEach(clearTimeout);
+  seqMark(0); seqMark(1);
+  setTimeout(function(){ seqMark(2); }, 260);
+  setTimeout(then, 780);
+}
+
 function doIssue(){
-  h('<div class="card center"><div class="spin"></div><div style="font-weight:800;font-size:0.9rem;">통신사에서 QR코드를 만들고 있어요</div><div class="muted" style="margin-top:4px;">보통 수 초, 길면 몇 분 — 화면을 닫지 마세요</div></div>');
+  seqUI();
   if (LOCAL){
     setTimeout(function(){
       var found = findLocalOrder(LOCAL);
@@ -466,41 +647,42 @@ function doIssue(){
         } catch (e) {}
       }
       order.status = 'ISSUED';
-      renderIssued(lpa, false);
-      document.getElementById('app').insertAdjacentHTML('afterbegin', localBanner());
-    }, 1600);
+      seqFinish(function(){
+        renderIssued(lpa, false);
+        document.getElementById('app').insertAdjacentHTML('afterbegin', localBanner());
+      });
+    }, 1400);
     return;
   }
-  if (DEMO){ setTimeout(function(){ order.status='ISSUED'; renderIssued('LPA:1$rsp.billionconnect.com$F8B7C1B0B68F4AB889460F568F1F13D7', false); },1600); return; }
+  if (DEMO){ setTimeout(function(){ order.status='ISSUED'; seqFinish(function(){ renderIssued('LPA:1$rsp.billionconnect.com$F8B7C1B0B68F4AB889460F568F1F13D7', false); }); },1400); return; }
   fetch(CONFIG.ISSUE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,agreedNoRefund:true,agreedDevice:true,agreedAt:new Date().toISOString()})})
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(d){ if(d.lpa) renderIssued(d.lpa,false); else if(d.status==='PENDING') pollIssue(0); else throw 0; })
+    .then(function(d){ if(d.lpa) seqFinish(function(){ renderIssued(d.lpa,false); }); else if(d.status==='PENDING') pollIssue(0); else throw 0; })
     .catch(function(){ renderError('발급 중 문제가 생겼어요','결제는 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.'); });
 }
+
 function pollIssue(n){
   if(n>40) return renderError('발급이 지연되고 있어요','완료되면 카톡으로 알려드릴게요 — 결제는 안전하게 보존됩니다.');
   setTimeout(function(){
     fetch(CONFIG.ORDER_API+'?token='+encodeURIComponent(token)).then(function(r){return r.json();})
-      .then(function(d){ if(d.status==='ISSUED'&&d.lpa) renderIssued(d.lpa,false); else pollIssue(n+1); })
+      .then(function(d){ if(d.status==='ISSUED'&&d.lpa) seqFinish(function(){ renderIssued(d.lpa,false); }); else pollIssue(n+1); })
       .catch(function(){ pollIssue(n+1); });
   },3000);
 }
 
 // ---------------- 발급 완료: 3탭 설치 + 설치확인 + 사용량 ----------------
 function renderIssued(lpa, revisit){
+  setRoute(order && order.country);
   var p = parseLpa(lpa);
   var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&data='+encodeURIComponent(lpa);
-  var fl = FLAG_EMOJI[order && order.country] || '✈️';
-  if (!revisit) confetti();
-  h(flowStrip(tripStep()) +
-    (revisit ? '' : romiSay('발급 완료! 🎉 이제 <strong>설치</strong>만 하면 끝 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이야!')) +
-    '<div class="card ticket">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.72rem;font-weight:800;color:#F2751F;">' + fl + ' 내 여행 eSIM</span><span class="badge ok">발급 완료</span></div>' +
-    '<div class="row"><span>상품</span><strong>'+esc(order?order.productName:'')+'</strong></div>' +
-    '<div class="row"><span>주문번호</span><strong>'+esc(order?order.orderCode:'')+'</strong></div>' +
-    '<div class="barcode"></div>' +
-    '<div class="muted" style="margin-top:8px;">'+(revisit?'이미 발급된 eSIM이에요 — 이 링크로 언제든 다시 볼 수 있어요':'발급 완료! 사용일은 현지에서 신호를 잡는 순간부터 시작돼요')+'</div></div>' +
+  var qrLocal = qrSvg(lpa, 200);
+  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&data='+encodeURIComponent(lpa); // 폴백 전용
+  if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
+  h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
+    flowStrip(tripStep()) +
+    (revisit
+      ? '<div class="center" style="margin:-4px 0 12px;"><span class="muted">이미 발급된 eSIM이에요 — 이 링크로 언제든 다시 볼 수 있어요</span></div>'
+      : romiSay('발급 완료! 🎉 이제 <strong>설치</strong>만 하면 끝 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이야!','fox-qr')) +
 
     // 설치 3탭
     '<div class="card"><div style="font-weight:800;font-size:0.92rem;margin-bottom:2px;">📲 eSIM 설치</div><div class="muted" style="margin-bottom:10px;">셋 중 편한 방법 하나면 돼요 — 와이파이 연결 상태에서!</div>' +
@@ -531,9 +713,13 @@ function renderIssued(lpa, revisit){
         ? '<a class="btn btn-primary" href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata='+encodeURIComponent(lpa)+'">⚡ 탭 한 번으로 지금 설치</a><div class="center" style="margin-top:8px;"><span class="muted">iOS 17.4 이상 · 버튼을 누르면 애플 설치 화면이 바로 열려요</span></div>'
         : '<div class="notice" style="background:#f8fafc;border:1px solid #e5eaf2;color:#334155;margin-top:0;">갤럭시는 원클릭 대신 <strong>QR 스캔</strong> 또는 <strong>수동입력</strong>이 가장 빨라요 — 위 탭에서 선택하세요 🙂</div>');
     } else if(i===1){
-      b.innerHTML = '<div class="center"><div class="qr-frame"><img src="'+qrUrl+'" width="200" height="200" alt="eSIM QR" style="display:block;"></div></div>' +
-        '<button class="btn btn-ghost" style="margin-top:10px;" onclick="saveQr(\''+qrUrl.replace(/'/g,'')+'\')">🖼️ 이미지로 저장하기</button>' +
+      b.innerHTML = '<div class="qr-stage"><div class="qr-frame2"><span class="cn tl"></span><span class="cn tr"></span><span class="cn bl"></span><span class="cn br"></span>' +
+        (qrLocal || '<img src="'+qrUrl+'" width="200" height="200" alt="eSIM QR" style="display:block;">') +
+        '<div class="scan"></div></div></div>' +
+        '<button class="btn btn-ghost" style="margin-top:12px;" id="qrSaveBtn">🖼️ 이미지로 저장하기</button>' +
         '<div class="center" style="margin-top:7px;"><span class="muted">다른 화면에 띄우고: 설정 → 셀룰러(연결) → eSIM 추가 → QR 스캔</span></div>';
+      var sb = $('qrSaveBtn');
+      if (sb) sb.onclick = function(){ if (qrLocal) saveQrLocal(lpa); else { window.open(qrUrl,'_blank'); toast('이미지를 길게 눌러 저장하세요'); } };
     } else {
       b.innerHTML = '<div class="copyline"><div><div class="lbl">SM-DP+ 주소</div><div class="val">'+esc(p.smdp)+'</div></div><button class="copybtn" onclick="copy(\''+esc(p.smdp)+'\')">복사</button></div>' +
         '<div class="copyline"><div><div class="lbl">활성화 코드</div><div class="val">'+esc(p.code)+'</div></div><button class="copybtn" onclick="copy(\''+esc(p.code)+'\')">복사</button></div>' +
@@ -546,13 +732,6 @@ function renderIssued(lpa, revisit){
   pick(isIOS?0:1);
   renderTripCard();
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
-}
-
-function saveQr(url){
-  fetch(url).then(function(r){ return r.blob(); }).then(function(b){
-    var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='JDISIM-eSIM-QR.png'; a.click();
-    toast('🖼️ QR 이미지가 저장됐어요');
-  }).catch(function(){ window.open(url,'_blank'); toast('이미지를 길게 눌러 저장하세요'); });
 }
 
 function checkInstalled(iccid){
@@ -623,7 +802,7 @@ function renderUsage(d){
 }
 
 function renderError(title,msg){
-  h('<div class="card center"><div style="font-size:2rem;">🦊</div><div style="font-weight:800;margin-top:6px;">'+esc(title)+'</div><div class="muted" style="margin-top:6px;line-height:1.7;">'+esc(msg)+'</div><div style="height:14px;"></div><a class="btn btn-primary" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카톡 상담 바로 연결</a></div>');
+  h('<div class="card center" style="margin-top:2px;"><div style="font-size:2rem;">🦊</div><div style="font-weight:800;margin-top:6px;">'+esc(title)+'</div><div class="muted" style="margin-top:6px;line-height:1.7;">'+esc(msg)+'</div><div style="height:14px;"></div><a class="btn btn-primary" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카톡 상담 바로 연결</a></div>');
 }
 
 loadOrder();
