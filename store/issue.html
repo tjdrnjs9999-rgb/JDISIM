@@ -143,7 +143,7 @@ var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CARE = new URLSearchParams(location.search).get('care') || '';
 // 케어 모드 사용량/설치/정보 조회 프록시 (CORS 차단 시 Vercel 프록시 주소로 교체)
-window.CARE_API = '';  // 예: 'https://jdisim.co.kr/api/esim' — 비우면 도매처 직접호출 시도
+window.CARE_API = 'https://jdisim-proxy.vercel.app/api/esim';
 var order = null;
 
 var FLAG_EMOJI = { '일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭','대만':'🇹🇼','필리핀':'🇵🇭','싱가포르':'🇸🇬','말레이시아':'🇲🇾','인도네시아':'🇮🇩','미국':'🇺🇸','괌':'🇬🇺','사이판':'🇲🇵','중국':'🇨🇳','홍콩':'🇭🇰','마카오':'🇲🇴','호주':'🇦🇺','뉴질랜드':'🇳🇿','튀르키예':'🇹🇷','캐나다':'🇨🇦','몽골':'🇲🇳','인도':'🇮🇳','몰디브':'🇲🇻','라오스':'🇱🇦','캄보디아':'🇰🇭','스리랑카':'🇱🇰','러시아':'🇷🇺','멕시코':'🇲🇽','브라질':'🇧🇷','오렌지프랑스':'🇫🇷','오렌지스페인':'🇪🇸','보다폰스페인':'🇪🇸','쓰리(THREE)':'🇬🇧','한국':'🇰🇷' };
