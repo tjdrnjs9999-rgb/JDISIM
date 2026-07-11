@@ -15,7 +15,12 @@
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html { font-size:17px; }
   html.fz2 { font-size:19px; } html.fz3 { font-size:21px; }
-  body { font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; background:#F7F8FA; min-height:100dvh; color:#101623; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
+  body { font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; background:#FAF8F4; min-height:100dvh; color:#101623; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
+  body::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:radial-gradient(rgba(16,22,35,0.05) 1px, transparent 1px);
+    background-size:23px 23px; }
+  body::after { content:''; position:fixed; top:-140px; left:50%; transform:translateX(-50%); z-index:-1; width:620px; height:420px; pointer-events:none;
+    background:radial-gradient(closest-side, rgba(241,105,13,0.1), transparent 72%); }
   ::selection { background:rgba(241,105,13,0.18); }
   .i { vertical-align:-3px; }
 
@@ -24,7 +29,10 @@
   .offbar.on { display:block; }
 
   /* ── 헤더: 슬림 잉크 바 ── */
-  .hd { background:#101623; padding:calc(12px + env(safe-area-inset-top,0px)) 0 52px; }
+  .hd { position:relative; background:#101623; padding:calc(13px + env(safe-area-inset-top,0px)) 0 56px; overflow:hidden; }
+  .hd::before { content:''; position:absolute; top:-70px; right:-60px; width:280px; height:220px; background:radial-gradient(closest-side, rgba(241,105,13,0.4), transparent 70%); filter:blur(6px); }
+  .hd::after { content:''; position:absolute; bottom:-90px; left:-70px; width:260px; height:200px; background:radial-gradient(closest-side, rgba(245,158,11,0.22), transparent 70%); }
+  .hd-in { position:relative; z-index:1; }
   .hd-in { max-width:430px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:10px; }
   .wm { color:#fff; font-size:1rem; font-weight:900; letter-spacing:0.18em; }
   .wm i { font-style:normal; color:#F1690D; }
@@ -35,46 +43,61 @@
 
   /* ── 레이아웃 ── */
   .wrap { max-width:430px; margin:-36px auto 0; position:relative; padding:0 16px calc(108px + env(safe-area-inset-bottom,0px)); }
-  .card { background:#fff; border:1px solid #E9ECF2; border-radius:20px; padding:18px; box-shadow:0 1px 2px rgba(16,22,35,0.04), 0 10px 28px rgba(16,22,35,0.05); margin-bottom:12px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  .card { background:#fff; border:1px solid #ECE8E0; border-radius:20px; padding:18px; box-shadow:0 1px 2px rgba(16,22,35,0.04), 0 10px 28px rgba(16,22,35,0.05); margin-bottom:12px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
   @keyframes rise { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
   .ey { font-size:0.6rem; font-weight:800; letter-spacing:0.16em; color:#8B94A7; }
   .ct { font-size:0.98rem; font-weight:800; margin-top:3px; }
   .ct span { font-size:0.74rem; font-weight:700; color:#8B94A7; margin-left:6px; }
+  .shd { display:flex; align-items:center; gap:12px; }
+  .shd .cic { flex-shrink:0; width:40px; height:40px; border-radius:13px; display:flex; align-items:center; justify-content:center; color:#F1690D; background:linear-gradient(150deg,rgba(241,105,13,0.1),rgba(245,158,11,0.05)); border:1px solid rgba(241,105,13,0.18); }
+  .shd .ct { margin-top:2px; }
   .muted { color:#8B94A7; font-size:0.8rem; font-weight:600; line-height:1.65; }
   .center { text-align:center; }
 
-  /* ── 티켓 (유일한 히어로) ── */
-  .tkt { position:relative; background:#fff; border-radius:22px; box-shadow:0 2px 4px rgba(16,22,35,0.06), 0 22px 48px rgba(16,22,35,0.14); margin-bottom:12px; overflow:hidden; animation:rise 0.55s cubic-bezier(0.16,1,0.3,1) both; }
-  .tkt-rule { height:4px; background:linear-gradient(90deg,#F1690D,#F59E0B); }
-  .tkt-hd { display:flex; justify-content:space-between; align-items:center; padding:15px 20px 0; }
-  .tkt-hd .twm { font-size:0.64rem; font-weight:800; letter-spacing:0.2em; color:#8B94A7; }
-  .tkt-hd .twm b { color:#101623; }
-  .st { display:inline-flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:800; }
-  .st i { width:7px; height:7px; border-radius:50%; }
-  .st.ok { color:#0E8A45; } .st.ok i { background:#17B55E; box-shadow:0 0 0 3px rgba(23,181,94,0.15); }
-  .st.wait { color:#B45309; } .st.wait i { background:#F59E0B; box-shadow:0 0 0 3px rgba(245,158,11,0.15); }
-  .tkt-route { display:flex; align-items:center; gap:12px; padding:16px 20px 4px; }
-  .trc { min-width:0; }
-  .trc b { display:block; font-size:1.42rem; font-weight:900; letter-spacing:-0.02em; line-height:1.15; }
-  .trc i { display:block; font-style:normal; margin-top:4px; font-size:0.7rem; font-weight:800; letter-spacing:0.14em; color:#8B94A7; }
-  .trc.r { text-align:right; margin-left:auto; }
-  .trm { flex:1; display:flex; align-items:center; gap:8px; color:#C6CCD8; min-width:56px; }
-  .trm::before, .trm::after { content:''; flex:1; border-top:1.5px dashed #D9DEE7; }
-  .trm .i { color:#F1690D; flex-shrink:0; }
-  .tkt-perf { position:relative; border-top:1.5px dashed #E4E8EF; margin:16px 0 0; }
-  .tkt-perf::before, .tkt-perf::after { content:''; position:absolute; top:-10px; width:20px; height:20px; border-radius:50%; background:#F7F8FA; box-shadow:inset 0 1px 3px rgba(16,22,35,0.08); }
+  /* ── 티켓: 크래프티드 히어로 ── */
+  .tkt { position:relative; background:#fff; border-radius:24px; box-shadow:0 2px 4px rgba(16,22,35,0.06), 0 26px 54px rgba(16,22,35,0.16); margin-bottom:12px; overflow:hidden; animation:rise 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+  .tkt-band { position:relative; display:flex; justify-content:space-between; align-items:center; padding:13px 20px; background:linear-gradient(115deg,#F1690D,#F59E0B); overflow:hidden; }
+  .tkt-band::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,0.09) 0 2px, transparent 2px 13px); }
+  .tkt-band::after { content:''; position:absolute; top:0; left:-70%; width:44%; height:100%; background:linear-gradient(105deg,transparent,rgba(255,255,255,0.38),transparent); transform:skewX(-18deg); animation:sheen 5.4s ease-in-out infinite 1.4s; }
+  @keyframes sheen { 0%,66% { left:-70%; } 86%,100% { left:135%; } }
+  .tkt-band .twm { position:relative; color:#fff; font-size:0.66rem; font-weight:800; letter-spacing:0.22em; }
+  .st { position:relative; display:inline-flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:800; padding:6px 11px; border-radius:14px; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.35); }
+  .st i { width:7px; height:7px; border-radius:50%; background:#fff; box-shadow:0 0 0 3px rgba(255,255,255,0.25); }
+  .st.ok i { background:#B7F5CF; }
+  .tkt-hero { display:flex; align-items:center; gap:15px; padding:19px 20px 4px; }
+  .tkt-hero .flag { font-size:2.6rem; line-height:1; filter:drop-shadow(0 5px 12px rgba(16,22,35,0.18)); }
+  .tkt-hero .nm { min-width:0; }
+  .tkt-hero .nm b { display:block; font-size:1.62rem; font-weight:900; letter-spacing:-0.02em; line-height:1.15; }
+  .tkt-hero .nm i { display:block; font-style:normal; margin-top:4px; font-size:0.68rem; font-weight:800; letter-spacing:0.14em; color:#8B94A7; }
+  .tkt-hero .nm i em { font-style:normal; color:#F1690D; }
+  /* 스펙 셀 (메인 정보) */
+  .specs { display:flex; margin:15px 20px 0; border:1.5px solid #EFE7DC; background:#FDFBF7; border-radius:17px; overflow:hidden; }
+  .specs > div { flex:1; padding:13px 6px 12px; text-align:center; min-width:0; }
+  .specs > div + div { border-left:1.5px dashed #EFE7DC; }
+  .specs .sk { font-size:0.6rem; font-weight:800; letter-spacing:0.14em; color:#B0A28C; }
+  .specs .sv { font-size:1.02rem; font-weight:900; margin-top:4px; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; word-break:keep-all; line-height:1.3; }
+  .specs .sv small { font-size:0.72rem; font-weight:800; }
+  .tkt-perf { position:relative; border-top:1.5px dashed #E9E2D6; margin:17px 0 0; }
+  .tkt-perf::before, .tkt-perf::after { content:''; position:absolute; top:-10px; width:20px; height:20px; border-radius:50%; background:#FAF8F4; box-shadow:inset 0 1px 3px rgba(16,22,35,0.09); }
   .tkt-perf::before { left:-10px; } .tkt-perf::after { right:-10px; }
-  .tkt-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px 14px; padding:16px 20px 0; }
-  .tkt-grid .f.w2 { grid-column:1 / -1; }
-  .tkt-grid .k { font-size:0.58rem; font-weight:800; letter-spacing:0.16em; color:#8B94A7; }
-  .tkt-grid .v { font-size:0.9rem; font-weight:800; margin-top:3px; line-height:1.4; word-break:keep-all; overflow-wrap:anywhere; }
-  .tkt-grid .v.code { font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:0.74rem; font-weight:600; letter-spacing:0.03em; color:#3D4657; word-break:break-all; line-height:1.55; }
-  .tkt-acts { display:flex; gap:8px; padding:15px 20px 0; }
-  .tkt-acts button { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; min-height:46px; border:1px solid #E9ECF2; border-radius:13px; background:#FAFBFC; font-family:inherit; font-size:0.8rem; font-weight:800; color:#101623; cursor:pointer; }
+  .tkt-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; padding:15px 20px 0; }
+  .tkt-grid .k { font-size:0.58rem; font-weight:800; letter-spacing:0.15em; color:#8B94A7; }
+  .tkt-grid .v { font-size:0.9rem; font-weight:800; margin-top:3px; line-height:1.4; word-break:keep-all; }
+  .tkt-acts { display:flex; gap:8px; padding:14px 20px 0; }
+  .tkt-acts button { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; min-height:47px; border:1.5px solid #EFE7DC; border-radius:13px; background:#FDFBF7; font-family:inherit; font-size:0.8rem; font-weight:800; color:#101623; cursor:pointer; }
+  .tkt-acts button .i { color:#F1690D; }
   .tkt-acts button:active { transform:scale(0.97); }
-  .tkt-bar { padding:15px 20px 17px; }
+  .tkt-bar { padding:14px 20px 8px; }
   .barcode { height:30px; border-radius:2px; opacity:0.9; background:repeating-linear-gradient(90deg,#101623 0 1.5px,transparent 1.5px 3.5px,#101623 3.5px 6px,transparent 6px 7px,#101623 7px 8px,transparent 8px 11px); }
-  .bp-code { text-align:center; font-family:ui-monospace,Menlo,monospace; font-size:0.64rem; font-weight:600; letter-spacing:0.34em; color:#8B94A7; margin-top:6px; }
+  /* 상세 정보 (주문번호·ICCID 접힘) */
+  .tkt-more { width:100%; display:flex; align-items:center; justify-content:center; gap:6px; border:none; background:none; padding:12px 0 15px; font-family:inherit; font-size:0.72rem; font-weight:800; letter-spacing:0.05em; color:#B0B8C6; cursor:pointer; }
+  .tkt-more .i { transition:transform 0.25s; transform:rotate(90deg); }
+  .tkt-more.open .i { transform:rotate(-90deg); }
+  .tkt-detail { display:none; padding:0 20px 17px; }
+  .tkt-detail.open { display:block; }
+  .tkt-detail .dr { display:flex; justify-content:space-between; gap:12px; padding:8px 0; font-size:0.76rem; border-top:1px solid #F4F0E9; }
+  .tkt-detail .dr span { color:#8B94A7; font-weight:700; flex-shrink:0; }
+  .tkt-detail .dr b { font-family:ui-monospace,Menlo,monospace; font-weight:600; color:#3D4657; word-break:break-all; text-align:right; }
   /* 발권 프린트 */
   .print-slot { height:9px; border-radius:5px; background:#101623; box-shadow:inset 0 2px 5px rgba(0,0,0,0.6); margin:4px 30px 10px; }
   .tkt.printing { animation:printOut 1s cubic-bezier(0.25,0.9,0.3,1) 0.12s both; }
@@ -88,12 +111,12 @@
   .iline .pill.hot { border-color:rgba(241,105,13,0.4); color:#F1690D; background:rgba(241,105,13,0.05); }
 
   /* ── 트러스트 스트립 ── */
-  .trust { display:flex; background:#fff; border:1px solid #E9ECF2; border-radius:18px; margin-bottom:12px; overflow:hidden; }
+  .trust { display:flex; background:#fff; border:1px solid #ECE8E0; border-radius:18px; margin-bottom:12px; overflow:hidden; box-shadow:0 6px 18px rgba(16,22,35,0.04); }
   .trust > div { flex:1; padding:14px 8px; text-align:center; }
   .trust > div + div { border-left:1px solid #EFF2F6; }
   .trust b { display:block; font-size:0.79rem; font-weight:800; }
   .trust span { display:block; font-size:0.65rem; font-weight:700; color:#8B94A7; margin-top:3px; line-height:1.45; }
-  .trust .i { color:#F1690D; margin-bottom:5px; }
+  .trust .tic { width:32px; height:32px; margin:0 auto 7px; border-radius:11px; display:flex; align-items:center; justify-content:center; color:#F1690D; background:rgba(241,105,13,0.08); }
 
   /* ── 스테퍼 (컴팩트 여정) ── */
   .stp { display:flex; align-items:flex-start; margin:14px 2px 4px; }
@@ -269,10 +292,24 @@
   /* ── 하단 액션바 ── */
   .bbar { position:fixed; left:0; right:0; bottom:0; z-index:60; padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px)); background:linear-gradient(180deg,rgba(247,248,250,0),rgba(247,248,250,0.9) 30%,#F7F8FA 70%); pointer-events:none; }
   .bbar-in { max-width:430px; margin:0 auto; display:flex; gap:9px; align-items:stretch; pointer-events:auto; }
-  .bbar .kko { flex-shrink:0; width:54px; border-radius:15px; background:#FEE500; color:#3C1E1E; display:flex; align-items:center; justify-content:center; text-decoration:none; box-shadow:0 6px 18px rgba(16,22,35,0.12); }
+  .bbar .kko { flex-shrink:0; width:54px; border-radius:15px; border:none; background:#FEE500; color:#3C1E1E; display:flex; align-items:center; justify-content:center; text-decoration:none; cursor:pointer; box-shadow:0 6px 18px rgba(16,22,35,0.12); }
   #bbarCta { flex:1; min-width:0; display:flex; }
   #bbarCta .btn { flex:1; min-height:54px; border-radius:15px; box-shadow:0 10px 26px rgba(241,105,13,0.3); }
   #bbarCta .btn.btn-ink { box-shadow:0 10px 26px rgba(16,22,35,0.2); }
+
+  /* ── 스마트 상담 시트 ── */
+  .sheet-dim { position:fixed; inset:0; z-index:99985; background:rgba(16,22,35,0.48); animation:dimIn 0.25s ease both; }
+  @keyframes dimIn { from { opacity:0; } to { opacity:1; } }
+  .sheet { position:fixed; left:0; right:0; bottom:0; z-index:99986; background:#fff; border-radius:26px 26px 0 0; box-shadow:0 -14px 46px rgba(16,22,35,0.22); animation:sheetUp 0.34s cubic-bezier(0.2,0.9,0.3,1) both; max-height:88dvh; overflow-y:auto; }
+  @keyframes sheetUp { from { transform:translateY(100%); } to { transform:none; } }
+  .sheet-in { max-width:430px; margin:0 auto; padding:10px 20px calc(22px + env(safe-area-inset-bottom,0px)); }
+  .sheet .grab { width:44px; height:5px; border-radius:4px; background:#E4E8EF; margin:4px auto 16px; }
+  .sheet .sx { position:absolute; top:16px; right:16px; width:40px; height:40px; border-radius:50%; border:1px solid #ECE8E0; background:#FAF8F4; font-size:0.9rem; font-weight:900; color:#101623; cursor:pointer; }
+  .symps { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px; }
+  .symp { display:flex; align-items:center; gap:8px; padding:14px 12px; border:1.5px solid #E4E8EF; border-radius:14px; background:#fff; font-family:inherit; font-size:0.83rem; font-weight:800; color:#3D4657; cursor:pointer; text-align:left; line-height:1.4; min-height:52px; transition:all 0.15s; }
+  .symp.on { border-color:#F1690D; background:rgba(241,105,13,0.05); color:#101623; box-shadow:0 0 0 3px rgba(241,105,13,0.1); }
+  .pre-msg { margin-top:14px; background:#FAF8F4; border:1px solid #ECE8E0; border-radius:14px; padding:13px 14px; font-family:ui-monospace,Menlo,monospace; font-size:0.72rem; font-weight:600; color:#3D4657; line-height:1.8; white-space:pre-wrap; word-break:break-all; }
+  .pre-msg .pm-k { color:#B0A28C; }
 
   /* ── 콘페티 (단색 절제) ── */
   .cf { position:fixed; top:-14px; z-index:9999; pointer-events:none; border-radius:2px; animation:cfall linear both; }
@@ -302,7 +339,7 @@
   </div>
 </div>
 <div class="bbar"><div class="bbar-in">
-  <a class="kko" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" aria-label="카톡 상담"><svg width="22" height="22" viewBox="0 0 18 18" fill="currentColor"><path d="M9 2.6c-3.9 0-7.1 2.5-7.1 5.5 0 2 1.4 3.7 3.4 4.7l-.8 3 3.3-1.8c.4 0 .8.1 1.2.1 3.9 0 7.1-2.5 7.1-5.5S12.9 2.6 9 2.6z"/></svg></a>
+  <button type="button" class="kko" onclick="openHelp()" aria-label="카톡 상담"><svg width="22" height="22" viewBox="0 0 18 18" fill="currentColor"><path d="M9 2.6c-3.9 0-7.1 2.5-7.1 5.5 0 2 1.4 3.7 3.4 4.7l-.8 3 3.3-1.8c.4 0 .8.1 1.2.1 3.9 0 7.1-2.5 7.1-5.5S12.9 2.6 9 2.6z"/></svg></button>
   <div id="bbarCta"></div>
 </div></div>
 <script>
@@ -413,12 +450,81 @@ function renderBottomBar(state){
       ? '<a class="btn btn-primary" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">연장 eSIM 주문하기</a>'
       : '<button class="btn btn-ink" onclick="goUsage()">실시간 사용량 보기</button>';
   }
-  else if (state === 'error') box.innerHTML = '<a class="btn btn-primary" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">카톡 상담 바로 연결</a>';
+  else if (state === 'error') box.innerHTML = '<button class="btn btn-primary" onclick="openHelp()">카톡 상담 바로 연결</button>';
   else box.innerHTML = '';
 }
 function tripBarState(){ var st = tripState(); return st.activatedAt ? 'done' : st.installedAt ? 'activate' : 'install'; }
 
 function setRoute(country){ renderSkyMeta(); }
+
+// ===== 스마트 상담 시트: 증상 선택 → 주문정보 자동 작성 → 카톡 =====
+var KAKAO_CHAT = 'https://pf.kakao.com/_GSixcn/chat';
+var SYMPTOMS = ['QR이 인식이 안 돼요','설치 중 오류가 떠요','현지에서 데이터가 안 터져요','속도가 너무 느려요','유효기간·환불 문의','기타 문의'];
+var _symp = '';
+function deviceLabel(){
+  var ua = navigator.userAgent;
+  if (/iPhone/.test(ua)) return 'iPhone (iOS ' + ((ua.match(/OS (\d+[._]\d+)/)||[])[1]||'').replace('_','.') + ')';
+  if (/iPad/.test(ua)) return 'iPad';
+  if (/Android/.test(ua)) { var mm = (ua.match(/;\s*([^;)]+)\s*Build/)||[])[1]; return 'Android ' + ((ua.match(/Android ([\d.]+)/)||[])[1]||'') + (mm ? ' · ' + mm.trim() : ''); }
+  return '기타 기기';
+}
+function helpMsg(){
+  var L = ['[JDISIM 상담 요청]'];
+  if (_symp) L.push('증상: ' + _symp);
+  if (order) {
+    var pl = parsePlan(order.productName, order.country);
+    var spec = [order.country, pl.data ? (pl.daily?'매일 ':'') + pl.data : '', pl.days ? pl.days + '일' : ''].filter(Boolean).join(' · ');
+    if (spec) L.push('상품: ' + spec);
+    if (order.orderCode) L.push('주문번호: ' + order.orderCode);
+    if (order.iccid) L.push('ICCID: ' + order.iccid);
+    if (order.status) L.push('상태: ' + (order.status === 'ISSUED' ? '발급 완료' : '발급 전'));
+  }
+  L.push('기기: ' + deviceLabel());
+  return L.join('\n');
+}
+function openHelp(pre){
+  _symp = (typeof pre === 'string') ? pre : '';
+  closeHelp();
+  var dim = document.createElement('div'); dim.className = 'sheet-dim'; dim.id = 'shDim'; dim.onclick = closeHelp;
+  var sh = document.createElement('div'); sh.className = 'sheet'; sh.id = 'shBox';
+  sh.innerHTML = '<div class="sheet-in">' +
+    '<div class="grab"></div>' +
+    '<button type="button" class="sx" onclick="closeHelp()" aria-label="닫기">✕</button>' +
+    secHd('chat', 'SUPPORT', '무엇을 도와드릴까요?') +
+    '<div class="muted" style="margin-top:6px;">증상을 고르면 <strong>주문 정보가 자동으로 작성</strong>돼요 — 카톡에서 붙여넣기만 하면 끝!</div>' +
+    '<div class="symps">' + SYMPTOMS.map(function(t, i){
+      return '<button type="button" class="symp' + (t === _symp ? ' on' : '') + '" id="sy' + i + '" onclick="pickSymp(' + i + ')">' + t + '</button>';
+    }).join('') + '</div>' +
+    '<div class="pre-msg" id="preMsg"></div>' +
+    '<button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="helpGo()">메시지 복사하고 카톡 열기</button>' +
+    '<div class="center" style="margin-top:9px;"><span class="muted">채팅창이 열리면 길게 눌러 <strong>붙여넣기</strong>만 해주세요</span></div>' +
+    '</div>';
+  document.body.appendChild(dim);
+  document.body.appendChild(sh);
+  renderPreMsg();
+  buzz(10);
+}
+function closeHelp(){ var d = $('shDim'), b = $('shBox'); if (d) d.remove(); if (b) b.remove(); }
+function pickSymp(i){
+  _symp = SYMPTOMS[i];
+  SYMPTOMS.forEach(function(_, j){ var el = $('sy' + j); if (el) el.classList.toggle('on', j === i); });
+  renderPreMsg(); buzz(8);
+}
+function renderPreMsg(){
+  var el = $('preMsg'); if (!el) return;
+  el.innerHTML = helpMsg().split('\n').map(function(l){
+    var p = l.split(': ');
+    return p.length > 1 ? '<span class="pm-k">' + esc(p[0]) + ':</span> ' + esc(p.slice(1).join(': ')) : '<strong>' + esc(l) + '</strong>';
+  }).join('\n');
+}
+function helpGo(){
+  var msg = helpMsg();
+  function go(){ window.open(KAKAO_CHAT, '_blank'); closeHelp(); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg).then(function(){ toast('메시지 복사 완료 — 채팅창에 붙여넣어 주세요'); go(); })
+      .catch(function(){ toast('카톡으로 연결할게요'); go(); });
+  } else { go(); }
+}
 
 // ── 1.7px 스트로크 아이콘 시스템 (이모지 대체) ──
 var ICO = {
@@ -440,6 +546,26 @@ var ICO = {
   gear:'<circle cx="9" cy="9" r="2.4"/><path d="M9 2.6v2M9 13.4v2M2.6 9h2M13.4 9h2M4.5 4.5l1.4 1.4M12.1 12.1l1.4 1.4M13.5 4.5l-1.4 1.4M5.9 12.1l-1.4 1.4"/>'
 };
 function ico(n, sz){ return '<svg class="i" width="'+(sz||16)+'" height="'+(sz||16)+'" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICO[n]||'')+'</svg>'; }
+// ── 상품명 → 정직한 스펙 (나라·용량·일수·통신사) ──
+function parsePlan(name, country){
+  name = String(name || '');
+  var m = name.match(/(\d+(?:\.\d+)?)\s*(GB|기가|MB)/i);
+  var unlimited = /무제한/.test(name);
+  var daily = /매일|데일리|1일\s*(\d|당)/.test(name) || /매일/.test(name);
+  var data = unlimited ? '무제한' : (m ? (m[1] + m[2].toUpperCase().replace('기가','GB')) : '');
+  var dm = name.match(/(\d+)\s*일/);
+  var days = dm ? dm[1] : '';
+  var carrier = '';
+  name.replace(country || '', '').split(/[\s/·]+/).some(function(t){
+    if (!t || /GB|MB|기가|일$|^\d|무제한|매일|총|데일리|eSIM|이심/i.test(t)) return false;
+    carrier = t; return true;
+  });
+  return { data: data, daily: daily && !unlimited, days: days, carrier: carrier, unlimited: unlimited };
+}
+function secHd(icon, ey, title, sub){
+  return '<div class="shd"><span class="cic">' + ico(icon, 18) + '</span><div><div class="ey">' + ey + '</div><div class="ct">' + title + (sub ? '<span>' + sub + '</span>' : '') + '</div></div></div>';
+}
+
 var CC3 = { '일본':'JPN','베트남':'VNM','태국':'THA','대만':'TWN','필리핀':'PHL','싱가포르':'SGP','말레이시아':'MYS','인도네시아':'IDN','미국':'USA','괌':'GUM','사이판':'MNP','중국':'CHN','홍콩':'HKG','마카오':'MAC','호주':'AUS','뉴질랜드':'NZL','튀르키예':'TUR','캐나다':'CAN','몽골':'MNG','인도':'IND','몰디브':'MDV','라오스':'LAO','캄보디아':'KHM','스리랑카':'LKA','러시아':'RUS','멕시코':'MEX','브라질':'BRA','오렌지프랑스':'FRA','오렌지스페인':'ESP','보다폰스페인':'ESP','쓰리(THREE)':'GBR','한국':'KOR' };
 
 function $(id){ return document.getElementById(id); }
@@ -608,7 +734,7 @@ function buildBriefHTML(country) {
    ['📱','*#06# → EID가 보이면 eSIM 지원 기종 — 출발 전 한 번 더 확인']].forEach(function(c){
     cards += briefCard('common','모든 여행 공통', c[0], c[1]);
   });
-  return '<div class="brief" id="briefBox"><div class="brief-h"><div><div class="ey">BRIEFING</div><div class="ct">'+esc(country||'여행')+' 브리핑</div></div><span>옆으로 밀어보세요 ' + ico('chev', 12) + '</span></div>' +
+  return '<div class="brief" id="briefBox"><div class="brief-h">' + secHd('cal', 'BRIEFING', esc(country||'여행') + ' 브리핑') + '<span>옆으로 밀어보세요 ' + ico('chev', 12) + '</span></div>' +
     '<div class="brief-wrap"><div class="brief-scroll" id="bScroll">'+cards+'</div></div>' +
     '<div class="bprog"><i id="bProg" style="width:34%;"></i></div></div>';
 }
@@ -681,7 +807,7 @@ var DEVICE_DB = {
   ]}
 }
 function deviceCheckHTML(){
-  return '<div class="card"><div class="ey">DEVICE CHECK</div><div class="ct">내 기종, eSIM 되는지 확인</div>' +
+  return '<div class="card">' + secHd('gear', 'DEVICE CHECK', '내 기종, eSIM 되는지 확인') +
     '<div class="muted" style="margin-top:4px;">브랜드를 고르고, 목록에서 내 기종을 선택하세요</div>' +
     '<div class="tabs" style="margin-top:10px;">' + Object.keys(DEVICE_DB).map(function(k, i){
       return '<button type="button" class="tab' + (i === 0 ? ' on' : '') + '" id="dvt-' + k + '" onclick="devBrand(\'' + k + '\')">' + DEVICE_DB[k].name + '</button>';
@@ -795,7 +921,7 @@ function renderJourney(){
       '<div class="muted" style="margin-top:9px;">일 용량 상품은 매일 자정(현지 기준)에 고속 데이터가 새로 채워져요</div>' +
       (days && left <= 2 ? '<a class="btn btn-primary" style="margin-top:12px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">여행이 길어졌나요? 연장 eSIM 주문</a>' : '');
   }
-  box.innerHTML = '<div class="ey">JOURNEY</div><div class="ct">발급부터 개통까지</div>' + strip + '<div class="stp-body">' + body + '</div>';
+  box.innerHTML = secHd('plane', 'JOURNEY', '발급부터 개통까지') + strip + '<div class="stp-body">' + body + '</div>';
   if (!st.installedAt || window._reopenInst) bindInstallTabs();
   if (st.activatedAt && !window._usageAuto && $('usageBody')) { window._usageAuto = 1; setTimeout(loadUsage, 450); }
 }
@@ -812,51 +938,63 @@ function arrTick(inp){
 // ===== 🆘 비상 연락 카드 =====
 function sosHTML(country){
   var e = EMERGENCY[country] || ['112','112'];
-  return '<div class="card" id="sosBox"><div class="ey">EMERGENCY</div><div class="ct">비상 연락처 <span>' + esc(country || '현지') + ' 기준</span></div>' +
+  return '<div class="card" id="sosBox">' + secHd('phone', 'EMERGENCY', '비상 연락처', esc(country || '현지') + ' 기준') +
     '<div style="margin-top:4px;">' +
     '<a class="srow" href="tel:' + e[0] + '"><span>현지 경찰</span><b>' + ico('phone', 15) + e[0] + '</b></a>' +
     '<a class="srow" href="tel:' + e[1] + '"><span>현지 구급</span><b>' + ico('phone', 15) + e[1] + '</b></a>' +
     '<a class="srow" href="tel:+8223210-0404"><span>영사콜센터 <span class="muted">24시간</span></span><b>' + ico('phone', 15) + '+82-2-3210-0404</b></a>' +
-    '<a class="srow k" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener"><span>eSIM 문제가 생겼다면</span><b>' + ico('chat', 15) + '카톡 상담</b></a>' +
+    '<a class="srow k" href="javascript:void(0)" onclick="openHelp()"><span>eSIM 문제가 생겼다면</span><b>' + ico('chat', 15) + '카톡 상담</b></a>' +
     '</div></div>';
 }
 
 // ---------------- 보딩패스 티켓 ----------------
 function bpassHTML(o, opts){
   opts = opts || {};
-  var fl = FLAG_EMOJI[o.country] || '';
+  var fl = FLAG_EMOJI[o.country] || '✈️';
   var cc = CC3[o.country] || '···';
+  var p = parsePlan(o.productName, o.country);
   var st = opts.issued
     ? '<span class="st ok"><i></i>발급 완료</span>'
     : '<span class="st wait"><i></i>발급 대기</span>';
-  function f(k, v, w2, code){
-    return '<div class="f'+(w2?' w2':'')+'"><div class="k">'+k+'</div><div class="v'+(code?' code':'')+'">'+esc(v)+'</div></div>';
-  }
-  var grid =
-    f('PASSENGER · 수령인', o.buyerName || '—') +
-    f('VALID · 유효기간', o.validity || 'QR 안내문 참조') +
-    f('PLAN · 상품', (o.productName || '—') + (o.quantity > 1 ? ' × ' + o.quantity : ''), true) +
-    f('ORDER NO · 주문번호', o.orderCode || '—', true, true) +
-    (opts.issued && o.iccid ? f('ICCID', o.iccid, true, true) : '');
+  // 스펙 셀: 사람들이 실제로 보는 것만 크게
+  var cells = '';
+  if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : '') + esc(p.data) + '</div></div>';
+  if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + esc(p.days) + '<small>일</small></div></div>';
+  if (p.carrier) cells += '<div><div class="sk">NETWORK</div><div class="sv" style="font-size:0.88rem;">' + esc(p.carrier) + '</div></div>';
+  if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(o.productName || '—') + '</div></div>';
+  var qty = o.quantity > 1 ? ' <em>× ' + o.quantity + '</em>' : '';
   var acts = opts.issued
     ? '<div class="tkt-acts">' +
       '<button type="button" onclick="qrFullOpen()">'+ico('expand',15)+'QR 크게</button>' +
       '<button type="button" onclick="saveQrLocal(window._lpa)">'+ico('save',15)+'저장</button>' +
       '<button type="button" onclick="shareLink()">'+ico('share',15)+'공유</button></div>'
     : '';
+  // 상세 정보 (주문번호·ICCID — 필요할 때만)
+  var detail =
+    '<button type="button" class="tkt-more" onclick="tktMore(this)">상세 정보' + ico('chev', 12) + '</button>' +
+    '<div class="tkt-detail">' +
+      '<div class="dr"><span>주문번호</span><b>' + esc(o.orderCode || '—') + '</b></div>' +
+      (o.iccid ? '<div class="dr"><span>ICCID</span><b>' + esc(o.iccid) + '</b></div>' : '') +
+      '<div class="dr"><span>상품 전체명</span><b style="font-family:inherit;font-weight:700;">' + esc(o.productName || '—') + qty + '</b></div>' +
+    '</div>';
   return (opts.print ? '<div class="print-slot"></div>' : '') +
     '<div class="tkt'+(opts.print?' printing':'')+'">' +
-    '<div class="tkt-rule"></div>' +
-    '<div class="tkt-hd"><span class="twm"><b>JDISIM</b> · E-SIM PASS</span>'+st+'</div>' +
-    '<div class="tkt-route">' +
-      '<div class="trc"><b>대한민국</b><i>🇰🇷 KOR</i></div>' +
-      '<div class="trm">'+ico('plane',15)+'</div>' +
-      '<div class="trc r"><b>'+esc(o.country || '여행')+'</b><i>'+fl+' '+cc+'</i></div>' +
-    '</div>' +
+    '<div class="tkt-band"><span class="twm">JDISIM · E-SIM BOARDING PASS</span>'+st+'</div>' +
+    '<div class="tkt-hero"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+qty+'</b><i>KOR → '+cc+' <em>· 대한민국 출발</em></i></span></div>' +
+    '<div class="specs">' + cells + '</div>' +
     '<div class="tkt-perf"></div>' +
-    '<div class="tkt-grid">' + grid + '</div>' + acts +
-    '<div class="tkt-bar"><div class="barcode"></div><div class="bp-code">'+esc(o.orderCode || 'JDISIM')+'</div></div>' +
+    '<div class="tkt-grid">' +
+      '<div class="f"><div class="k">PASSENGER · 수령인</div><div class="v">'+esc(o.buyerName || '—')+'</div></div>' +
+      '<div class="f"><div class="k">VALID · 유효기간</div><div class="v">'+esc(o.validity || 'QR 안내문 참조')+'</div></div>' +
+    '</div>' + acts +
+    '<div class="tkt-bar"><div class="barcode"></div></div>' + detail +
     '</div>';
+}
+function tktMore(btn){
+  var d = btn.nextElementSibling; if (!d) return;
+  var open = d.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.firstChild.textContent = open ? '접기' : '상세 정보';
 }
 
 // ---------------- 주문 로드 ----------------
@@ -949,8 +1087,9 @@ function renderPreIssue(){
     '<div class="irow"><span class="ic">' + ico('alert', 17) + '</span><span class="tx">발급 후에는 <strong>취소·환불 불가</strong> — 지금은 100% 환불 가능해요</span></div>';
   h(bpassHTML(order, {issued:false}) +
     infoLineHTML() +
+    romiSay('안녕하세요, <strong style="color:#F1690D;">로미</strong>예요! ' + esc(order.country || '여행') + ' 갈 준비를 도와드릴게요. 아래 확인 후 원하는 때에 발급 버튼만 누르면 돼요.') +
     deviceCheckHTML() +
-    '<div class="card"><div class="ey">BEFORE YOU ISSUE</div><div class="ct">발급 전 30초 확인</div><div style="margin-top:6px;">' + irows + '</div></div>' +
+    '<div class="card">' + secHd('check', 'BEFORE YOU ISSUE', '발급 전 30초 확인') + '<div style="margin-top:8px;">' + irows + '</div></div>' +
     '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, eSIM 지원 기종이 맞아요 <span style="color:#F1690D;">(필수)</span></span></label>' +
     '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후 <strong>취소·환불 불가</strong> 및 <strong>유효기간 내 활성화</strong> 필요함을 확인했어요 <span style="color:#F1690D;">(필수)</span></span></label>' +
     '<div class="center" style="margin:12px 0 4px;"><span class="muted">동의 후 아래 <strong>발급하기</strong> · QR 생성은 수 초~수 분</span></div>' +
@@ -1046,15 +1185,15 @@ function renderIssued(lpa, revisit){
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
     infoLineHTML() +
     '<div class="trust">' +
-      '<div>'+ico('bolt',17)+'<b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
-      '<div>'+ico('shield',17)+'<b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
-      '<div>'+ico('chat',17)+'<b>연중무휴</b><span>카톡 상담</span></div>' +
+      '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
+      '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
+      '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
     '</div>' +
     (revisit
       ? ''
       : romiSay('발급 완료! 이제 <strong>설치</strong>만 하면 끝 — 사용일은 현지 도착부터 시작되니 지금 설치해도 안심이에요.','fox-qr')) +
     journeyHTML() +
-    '<div class="card" id="usageCard"><div class="ey">DATA</div><div class="ct">데이터 사용량</div>' +
+    '<div class="card" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
     '<div id="usageBody" class="center" style="margin-top:8px;"><div class="muted" style="padding:4px 0 10px;">현지에서 개통되면 여기에 실시간 사용량이 표시돼요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
     buildBriefHTML((order&&order.country)||'') +
     sosHTML((order&&order.country)||'') +
@@ -1120,13 +1259,13 @@ function checkInstalled(iccid){
     fetch(window.CARE_API+'?'+q).then(function(r){return r.json();}).then(function(d){
       if (d && d.isInstalled) instOk(d.message || '기기에 설치가 확인됐어요');
       else instMsg('<div class="notice">아직 설치 전이에요 — 위의 원클릭 · QR · 수동 입력으로 설치해 주세요</div>');
-    }).catch(function(){ instMsg('<div class="notice bad">확인에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'); });
+    }).catch(function(){ instMsg('<div class="notice bad">확인에 실패했어요 — 잠시 후 다시 시도하거나 <button type="button" onclick="openHelp(&quot;설치 중 오류가 떠요&quot;)" style="border:none;background:none;padding:0;font:inherit;font-weight:800;color:#F1690D;cursor:pointer;text-decoration:underline;">상담 연결</button>로 도와드릴게요</div>'); });
     return;
   }
   if (!CONFIG.STATUS_API){ instMsg('<div class="notice acc">자동 확인은 곧 오픈돼요 — 설정 → 셀룰러에 새 회선이 보이면 설치 성공입니다. 옆의 <strong>설치 완료로 표시</strong>를 눌러주세요</div>'); return; }
   fetch(CONFIG.STATUS_API+'?iccid='+encodeURIComponent(iccid)).then(function(r){return r.json();})
     .then(function(d){ if (d.installed) instOk(); else instMsg('<div class="notice">아직 설치 전이에요 — 위의 원클릭 · QR · 수동 입력으로 설치해 주세요</div>'); })
-    .catch(function(){ instMsg('<div class="notice bad">확인에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'); });
+    .catch(function(){ instMsg('<div class="notice bad">확인에 실패했어요 — 잠시 후 다시 시도하거나 <button type="button" onclick="openHelp(&quot;설치 중 오류가 떠요&quot;)" style="border:none;background:none;padding:0;font:inherit;font-weight:800;color:#F1690D;cursor:pointer;text-decoration:underline;">상담 연결</button>로 도와드릴게요</div>'); });
 }
 
 function loadUsage(){
