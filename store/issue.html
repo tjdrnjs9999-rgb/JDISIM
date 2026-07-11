@@ -81,9 +81,11 @@
   .bp-perf { position:relative; border-top:2px dashed #EAD9C6; margin:13px -16px 12px; }
   .bp-perf::before, .bp-perf::after { content:''; position:absolute; top:-9px; width:18px; height:18px; border-radius:50%; background:#f4f6fa; box-shadow:inset 0 2px 4px rgba(11,20,48,0.1); }
   .bp-perf::before { left:-9px; } .bp-perf::after { right:-9px; }
-  .bp-grid { display:grid; grid-template-columns:1.3fr 1fr; gap:9px 12px; }
+  .bp-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
+  .bp-grid .f.w2 { grid-column:1 / -1; }
   .bp-grid .f .k { font-size:0.58rem; font-weight:900; letter-spacing:1.6px; color:#A28D75; }
   .bp-grid .f .v { font-size:0.86rem; font-weight:800; margin-top:2px; word-break:keep-all; overflow-wrap:anywhere; line-height:1.4; }
+  .bp-grid .f .v.code { font-family:ui-monospace,Menlo,monospace; font-size:0.7rem; font-weight:700; letter-spacing:0.4px; word-break:break-all; line-height:1.55; color:#334155; }
   .bp-bar { margin-top:12px; }
   .barcode { height:26px; border-radius:2px; opacity:0.85; background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px); }
   .bp-code { text-align:center; font-family:ui-monospace,Menlo,monospace; font-size:0.66rem; font-weight:700; letter-spacing:3px; color:#94a3b8; margin-top:5px; }
@@ -219,6 +221,38 @@
   .irow + .irow { border-top:1px dashed #eef2f7; }
   .irow .ic { flex-shrink:0; width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.05rem; background:#f8fafc; border:1px solid #eef2f7; }
   .irow .tx { font-size:0.83rem; font-weight:700; line-height:1.65; color:#334155; min-width:0; }
+
+  /* ============ 🕐 헤더 메타 (현지시간 · 시차 · D-Day) ============ */
+  .sky-meta { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:15px; font-size:0.73rem; font-weight:800; color:#B9C7EA; }
+  .sky-meta .dot { color:#3D4E80; }
+  .sky-meta b { color:#fff; font-variant-numeric:tabular-nums; }
+  .sky-meta .dd { border:1px solid rgba(251,191,36,0.45); background:rgba(251,191,36,0.12); color:#FBBF24; font-family:inherit; font-weight:900; font-size:0.7rem; padding:5px 11px; border-radius:16px; cursor:pointer; }
+  .sky-meta .dd.hot { background:linear-gradient(135deg,#F97316,#F59E0B); color:#fff; border-color:transparent; box-shadow:0 4px 12px rgba(249,115,22,0.4); }
+
+  /* ============ 🔍 전체화면 QR ============ */
+  .qrfull { position:fixed; inset:0; z-index:99990; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:24px; animation:qf 0.22s ease both; }
+  @keyframes qf { from { opacity:0; transform:scale(1.03); } to { opacity:1; transform:none; } }
+  .qrfull svg { width:min(86vw,64vh,480px); height:auto; }
+  .qrfull .qf-tip { font-size:0.85rem; font-weight:800; color:#334155; text-align:center; line-height:1.6; }
+  .qrfull .qf-x { position:absolute; top:calc(14px + env(safe-area-inset-top,0px)); right:16px; width:44px; height:44px; border-radius:50%; border:1px solid #e5eaf2; background:#f8fafc; font-size:1.05rem; font-weight:900; color:#334155; cursor:pointer; }
+  .qr-tap { cursor:zoom-in; }
+
+  /* ============ 🆘 비상 연락 카드 ============ */
+  .sos { background:linear-gradient(135deg,#1C1017,#2B1520); border:1px solid rgba(239,68,68,0.35); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:0 12px 30px rgba(43,21,32,0.35); }
+  .sos-h { display:flex; align-items:baseline; gap:8px; color:#fff; font-weight:900; font-size:0.98rem; }
+  .sos-h span { margin-left:auto; font-size:0.66rem; font-weight:800; color:#F8B4B4; letter-spacing:0.5px; }
+  .sos-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px; }
+  .sos-grid a { display:flex; flex-direction:column; gap:3px; padding:12px 13px; border-radius:13px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); text-decoration:none; }
+  .sos-grid a i { font-style:normal; font-size:0.64rem; font-weight:900; letter-spacing:1px; color:#F8B4B4; }
+  .sos-grid a b { color:#fff; font-size:0.95rem; font-weight:900; font-variant-numeric:tabular-nums; }
+  .sos-grid a.kko { background:rgba(254,229,0,0.1); border-color:rgba(254,229,0,0.35); }
+  .sos-grid a.kko i { color:#FEE500; }
+
+  /* ============ 🛬 도착 30초 체크리스트 + 개통버튼 활성 연출 ============ */
+  .arrchk .chk { margin-top:7px; font-size:0.81rem; }
+  .btn.ready { animation:readyPulse 1.5s ease-in-out infinite; }
+  @keyframes readyPulse { 0%,100% { box-shadow:0 8px 20px rgba(249,115,22,0.3); } 50% { box-shadow:0 8px 30px rgba(249,115,22,0.65), 0 0 0 5px rgba(249,115,22,0.12); } }
+  @media (prefers-reduced-motion:reduce) { .btn.ready, .qrfull { animation:none; } }
   .agree-box { display:flex; align-items:flex-start; gap:10px; padding:12px 13px; border:1.5px solid rgba(242,117,31,0.35); background:rgba(242,117,31,0.05); border-radius:13px; margin-top:9px; cursor:pointer; font-size:0.84rem; font-weight:700; line-height:1.6; transition:all 0.2s; }
   .agree-box input { width:20px; height:20px; accent-color:#F2751F; flex-shrink:0; margin-top:1px; }
   .agree-box.ok { border-color:#22c55e; background:rgba(34,197,94,0.06); }
@@ -263,6 +297,8 @@
       </svg>
       <div class="ap"><b id="apCode">···</b><i id="apName">여행지 확인 중</i></div>
     </div>
+    <div class="sky-meta" id="skyMeta" hidden></div>
+    <input type="date" id="depInput" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;">
   </div>
 </header>
 <div class="wrap">
@@ -292,6 +328,66 @@ var FLAG_EMOJI = { '일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭
 
 // 헤더 비행경로 공항코드 (대표 관문 공항)
 var AIRPORT = { '일본':['NRT','도쿄 · 일본'],'베트남':['SGN','호치민 · 베트남'],'태국':['BKK','방콕 · 태국'],'대만':['TPE','타이베이 · 대만'],'필리핀':['MNL','마닐라 · 필리핀'],'싱가포르':['SIN','싱가포르'],'말레이시아':['KUL','쿠알라룸푸르'],'인도네시아':['DPS','발리 · 인도네시아'],'미국':['LAX','로스앤젤레스 · 미국'],'괌':['GUM','괌'],'사이판':['SPN','사이판'],'중국':['PVG','상하이 · 중국'],'홍콩':['HKG','홍콩'],'마카오':['MFM','마카오'],'호주':['SYD','시드니 · 호주'],'뉴질랜드':['AKL','오클랜드 · 뉴질랜드'],'튀르키예':['IST','이스탄불 · 튀르키예'],'캐나다':['YVR','밴쿠버 · 캐나다'],'몽골':['UBN','울란바토르 · 몽골'],'인도':['DEL','델리 · 인도'],'몰디브':['MLE','말레 · 몰디브'],'라오스':['VTE','비엔티안 · 라오스'],'캄보디아':['PNH','프놈펜 · 캄보디아'],'스리랑카':['CMB','콜롬보 · 스리랑카'],'러시아':['SVO','모스크바 · 러시아'],'멕시코':['MEX','멕시코시티'],'브라질':['GRU','상파울루 · 브라질'],'오렌지프랑스':['CDG','파리 · 프랑스'],'오렌지스페인':['MAD','마드리드 · 스페인'],'보다폰스페인':['MAD','마드리드 · 스페인'],'쓰리(THREE)':['LHR','런던 · 영국'],'한국':['ICN','인천 · 대한민국'] };
+// 현지 타임존 (대표 관문 도시 기준 — AIRPORT와 동일 기준)
+var TZONE = { '일본':'Asia/Tokyo','베트남':'Asia/Ho_Chi_Minh','태국':'Asia/Bangkok','대만':'Asia/Taipei','필리핀':'Asia/Manila','싱가포르':'Asia/Singapore','말레이시아':'Asia/Kuala_Lumpur','인도네시아':'Asia/Makassar','미국':'America/Los_Angeles','괌':'Pacific/Guam','사이판':'Pacific/Saipan','중국':'Asia/Shanghai','홍콩':'Asia/Hong_Kong','마카오':'Asia/Macau','호주':'Australia/Sydney','뉴질랜드':'Pacific/Auckland','튀르키예':'Europe/Istanbul','캐나다':'America/Vancouver','몽골':'Asia/Ulaanbaatar','인도':'Asia/Kolkata','몰디브':'Indian/Maldives','라오스':'Asia/Vientiane','캄보디아':'Asia/Phnom_Penh','스리랑카':'Asia/Colombo','러시아':'Europe/Moscow','멕시코':'America/Mexico_City','브라질':'America/Sao_Paulo','오렌지프랑스':'Europe/Paris','오렌지스페인':'Europe/Madrid','보다폰스페인':'Europe/Madrid','쓰리(THREE)':'Europe/London','한국':'Asia/Seoul' };
+// 현지 긴급번호 { 경찰, 구급 }
+var EMERGENCY = { '일본':['110','119'],'베트남':['113','115'],'태국':['191','1669'],'대만':['110','119'],'필리핀':['911','911'],'싱가포르':['999','995'],'말레이시아':['999','999'],'인도네시아':['110','118'],'미국':['911','911'],'괌':['911','911'],'사이판':['911','911'],'중국':['110','120'],'홍콩':['999','999'],'마카오':['999','999'],'호주':['000','000'],'뉴질랜드':['111','111'],'튀르키예':['112','112'],'캐나다':['911','911'],'몽골':['102','103'],'인도':['112','112'],'몰디브':['119','102'],'라오스':['191','195'],'캄보디아':['117','119'],'스리랑카':['119','110'],'러시아':['112','112'],'멕시코':['911','911'],'브라질':['190','192'],'오렌지프랑스':['112','112'],'오렌지스페인':['112','112'],'보다폰스페인':['112','112'],'쓰리(THREE)':['999','999'] };
+
+// ===== 🕐 현지시간 · 시차 · ✈️ D-Day (헤더 메타) =====
+var clockTimer = null;
+function tzOffsetMin(tz, base){
+  // 특정 타임존의 현재 벽시계를 파싱해 분 단위 오프셋 비교 (Intl 기반, 오프라인 동작)
+  var d = new Date(base.toLocaleString('en-US', { timeZone: tz }));
+  return Math.round((d - base) / 60000);
+}
+function timeDiffText(tz){
+  try {
+    var now = new Date();
+    var diff = tzOffsetMin(tz, now) - tzOffsetMin('Asia/Seoul', now);
+    if (!diff) return '한국과 시차 없음';
+    var h = Math.abs(diff) / 60;
+    var hs = (h % 1 ? h.toFixed(1) : String(h)) + '시간';
+    return diff > 0 ? '한국보다 ' + hs + ' 빨라요' : '한국보다 ' + hs + ' 느려요';
+  } catch(e){ return ''; }
+}
+function depKey(){ return 'jd_dep_' + ((order && order.orderCode) || 'x'); }
+function getDep(){ try { return localStorage.getItem(depKey()) || ''; } catch(e){ return ''; } }
+function ddayText(){
+  var dep = getDep();
+  if (!dep) return '📅 출국일 설정';
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d = Math.round((new Date(dep + 'T00:00:00') - today) / 86400000);
+  if (d > 0) return '✈️ 출국 D-' + d;
+  if (d === 0) return '✈️ 오늘 출국!';
+  return '🌏 여행 ' + (1 - d) + '일차';
+}
+function renderSkyMeta(){
+  var box = $('skyMeta'); if (!box || !order || !order.country) return;
+  var tz = TZONE[order.country];
+  var html = '';
+  if (tz) {
+    try {
+      var t = new Intl.DateTimeFormat('ko-KR', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+      html += '<span>🕐 현지 <b>' + t + '</b></span><span class="dot">·</span><span>' + timeDiffText(tz) + '</span><span class="dot">·</span>';
+    } catch(e){}
+  }
+  var dep = getDep();
+  html += '<button type="button" class="dd' + (dep ? ' hot' : '') + '" onclick="openDep()">' + ddayText() + '</button>';
+  box.innerHTML = html; box.hidden = false;
+  if (!clockTimer) clockTimer = setInterval(renderSkyMeta, 30000);
+}
+function openDep(){
+  var inp = $('depInput'); if (!inp) return;
+  var cur = getDep(); if (cur) inp.value = cur;
+  inp.onchange = function(){
+    try { if (inp.value) localStorage.setItem(depKey(), inp.value); } catch(e){}
+    renderSkyMeta();
+    if (inp.value) toast('✈️ 출국일 저장! 헤더에서 D-Day를 세어드릴게요');
+  };
+  if (inp.showPicker) { try { inp.showPicker(); return; } catch(e){} }
+  inp.focus(); inp.click();
+}
+
 function setRoute(country){
   var a = AIRPORT[country];
   var fl = FLAG_EMOJI[country] || '';
@@ -301,6 +397,7 @@ function setRoute(country){
   if (c) c.innerHTML = (fl ? '<span class="fl">'+fl+'</span>' : '') + code;
   if (n) n.textContent = name;
   if (r && country) r.classList.add('go');
+  renderSkyMeta();
 }
 
 function $(id){ return document.getElementById(id); }
@@ -338,6 +435,20 @@ function saveQrLocal(lpa){
     }, 'image/png');
   }catch(e){ toast('저장에 실패했어요 — QR을 스크린샷으로 남겨주세요'); }
 }
+
+function qrFullOpen(){
+  var lpa = window._lpa; if (!lpa) return;
+  var svg = qrSvg(lpa, 480);
+  if (!svg) return;
+  var d = document.createElement('div');
+  d.className = 'qrfull'; d.id = 'qrFull';
+  d.innerHTML = '<button class="qf-x" onclick="qrFullClose()" aria-label="닫기">✕</button>' + svg +
+    '<div class="qf-tip">📱 다른 기기의 카메라로 스캔하세요<br><span class="muted">이 화면의 <strong>밝기를 최대</strong>로 올리면 인식이 훨씬 잘돼요</span></div>' +
+    '<button class="btn btn-primary" style="max-width:280px;" onclick="qrFullClose()">닫기</button>';
+  document.body.appendChild(d);
+  buzz(12);
+}
+function qrFullClose(){ var d = $('qrFull'); if (d) d.remove(); }
 
 const TRAVEL_TIPS = {
   '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용', '🛂 무비자 90일 — Visit Japan Web을 미리 작성하면 입국 심사가 빨라요'] },
@@ -543,13 +654,41 @@ function renderJourney(){
       (days && left <= 2 ? '<a class="btn btn-primary" style="margin-top:11px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">🔋 여행이 더 길어졌나요? 연장 eSIM 3초 주문 →</a>' : '');
     html += jstep('done', 4, '현지 개통 — 여행 ' + used + '일차 🛬', '', gauge);
   } else if (st.installedAt) {
-    html += jstep('now', 4, '현지 개통',
-      '현지 도착 후 <strong>데이터 로밍을 켠 순간</strong> 아래를 눌러주세요 — 남은 일수를 세어드릴게요',
-      '<button class="btn btn-primary" onclick="markActivated()">🛬 현지 도착 · 개통했어요!</button>');
+    var isI = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    var steps = isI
+      ? ['설정 → 셀룰러 → 새 eSIM 회선 <strong>켜기</strong>', '그 회선의 <strong>데이터 로밍 ON</strong>', '셀룰러 데이터를 새 회선으로 선택 — 상단에 신호가 뜨면 성공!']
+      : ['설정 → 연결 → SIM 관리자 → 새 eSIM <strong>켜기</strong>', '모바일 데이터를 새 eSIM으로 선택', '<strong>데이터 로밍 ON</strong> — 상단에 신호가 뜨면 성공!'];
+    var chks = '<div class="arrchk" id="arrChk">' + steps.map(function(s){
+      return '<label class="chk"><input type="checkbox" onchange="arrTick(this)"><span>' + s + '</span></label>';
+    }).join('') + '</div>';
+    html += jstep('now', 4, '현지 개통 — 도착 30초 세팅',
+      '현지 도착 후 아래 순서대로 켜기만 하면 끝이에요',
+      chks + '<button class="btn btn-primary" id="actBtn" style="margin-top:11px;" onclick="markActivated()">🛬 현지 도착 · 개통했어요!</button>');
   } else {
     html += jstep('todo', 4, '현지 개통', '현지 도착 → 데이터 로밍 켜기 — 그 순간부터 사용일이 시작돼요');
   }
   box.innerHTML = html;
+}
+function arrTick(inp){
+  var lb = inp.closest('label'); if (lb) lb.classList.toggle('on', inp.checked);
+  var wrap = $('arrChk'), btn = $('actBtn');
+  if (!wrap || !btn) return;
+  var all = wrap.querySelectorAll('input'), on = wrap.querySelectorAll('input:checked');
+  btn.classList.toggle('ready', all.length && all.length === on.length);
+  if (all.length === on.length) buzz(14);
+}
+
+// ===== 🆘 비상 연락 카드 =====
+function sosHTML(country){
+  var e = EMERGENCY[country] || ['112','112'];
+  var pol = e[0], med = e[1];
+  return '<div class="sos"><div class="sos-h">🆘 여행 중 비상 연락<span>' + esc(country || '현지') + ' 기준</span></div>' +
+    '<div class="sos-grid">' +
+    '<a href="tel:' + pol + '"><i>현지 경찰</i><b>🚓 ' + pol + '</b></a>' +
+    '<a href="tel:' + med + '"><i>현지 구급</i><b>🚑 ' + med + '</b></a>' +
+    '<a href="tel:+8223210-0404"><i>영사콜센터 24시간</i><b>🇰🇷 +82-2-3210-0404</b></a>' +
+    '<a class="kko" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener"><i>eSIM 문제</i><b>💬 JDISIM 카톡</b></a>' +
+    '</div></div>';
 }
 
 // ---------------- 보딩패스 티켓 ----------------
@@ -559,20 +698,22 @@ function bpassHTML(o, opts){
   var badge = opts.issued
     ? '<span class="badge ok">✓ 발급 완료</span>'
     : '<span class="badge wait">발급 대기</span>';
-  var grid = [
-    ['PASSENGER · 수령인', o.buyerName || '—'],
-    ['ORDER NO · 주문번호', o.orderCode || '—'],
-    ['PLAN · 상품', (o.productName || '') + (o.quantity > 1 ? ' × ' + o.quantity : '')],
-    ['VALID · 유효기간', o.validity || 'QR 안내문 참조']
-  ];
-  if (opts.issued && o.iccid) grid[3] = ['ICCID', o.iccid];
+  function f(k, v, w2, code){
+    return '<div class="f'+(w2?' w2':'')+'"><div class="k">'+k+'</div><div class="v'+(code?' code':'')+'">'+esc(v)+'</div></div>';
+  }
+  var grid =
+    f('PASSENGER · 수령인', o.buyerName || '—') +
+    f('VALID · 유효기간', o.validity || 'QR 안내문 참조') +
+    f('PLAN · 상품', (o.productName || '—') + (o.quantity > 1 ? ' × ' + o.quantity : ''), true) +
+    f('ORDER NO · 주문번호', o.orderCode || '—', true, true) +
+    (opts.issued && o.iccid ? f('ICCID', o.iccid, true, true) : '');
   return (opts.print ? '<div class="print-slot"></div>' : '') +
     '<div class="bpass'+(opts.print?' printing':'')+'">' +
     '<div class="bp-top"><span>JDISIM · E-SIM BOARDING PASS</span>'+badge+'</div>' +
     '<div class="bp-main">' +
       '<div class="bp-dest"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+'</b><i>'+esc(o.productName || '')+(o.quantity>1?' × '+o.quantity:'')+'</i></span></div>' +
       '<div class="bp-perf"></div>' +
-      '<div class="bp-grid">' + grid.map(function(g){ return '<div class="f"><div class="k">'+g[0]+'</div><div class="v">'+esc(g[1])+'</div></div>'; }).join('') + '</div>' +
+      '<div class="bp-grid">' + grid + '</div>' +
       '<div class="bp-bar"><div class="barcode"></div><div class="bp-code">'+esc(o.orderCode || 'JDISIM')+'</div></div>' +
     '</div></div>';
 }
@@ -763,6 +904,7 @@ function renderIssued(lpa, revisit){
   var p = parseLpa(lpa);
   var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
   var qrLocal = qrSvg(lpa, 200);
+  window._lpa = lpa;
   var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&data='+encodeURIComponent(lpa); // 폴백 전용
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
@@ -784,6 +926,9 @@ function renderIssued(lpa, revisit){
 
     buildBriefHTML((order&&order.country)||'') +
 
+    // 🆘 비상 연락
+    sosHTML((order&&order.country)||'') +
+
     // 상시 노출 경고 밴드
     '<div class="warnband">' +
     '<div class="w red"><span class="wi">🚫</span><span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담!</span></div>' +
@@ -799,13 +944,15 @@ function renderIssued(lpa, revisit){
         ? '<a class="btn btn-primary" href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata='+encodeURIComponent(lpa)+'">⚡ 탭 한 번으로 지금 설치</a><div class="center" style="margin-top:8px;"><span class="muted">iOS 17.4 이상 · 버튼을 누르면 애플 설치 화면이 바로 열려요</span></div>'
         : '<div class="notice" style="background:#f8fafc;border:1px solid #e5eaf2;color:#334155;margin-top:0;">갤럭시는 원클릭 대신 <strong>QR 스캔</strong> 또는 <strong>수동입력</strong>이 가장 빨라요 — 위 탭에서 선택하세요 🙂</div>');
     } else if(i===1){
-      b.innerHTML = '<div class="qr-stage"><div class="qr-frame2"><span class="cn tl"></span><span class="cn tr"></span><span class="cn bl"></span><span class="cn br"></span>' +
+      b.innerHTML = '<div class="qr-stage"><div class="qr-frame2 qr-tap" onclick="qrFullOpen()" title="탭하면 전체화면"><span class="cn tl"></span><span class="cn tr"></span><span class="cn bl"></span><span class="cn br"></span>' +
         (qrLocal || '<img src="'+qrUrl+'" width="200" height="200" alt="eSIM QR" style="display:block;">') +
         '<div class="scan"></div></div></div>' +
-        '<button class="btn btn-ghost" style="margin-top:12px;" id="qrSaveBtn">🖼️ 이미지로 저장하기</button>' +
-        '<div class="center" style="margin-top:7px;"><span class="muted">다른 화면에 띄우고: 설정 → 셀룰러(연결) → eSIM 추가 → QR 스캔</span></div>';
+        '<div class="jbtns" style="margin-top:12px;"><button class="btn btn-ghost" id="qrFullBtn">🔍 전체화면 크게</button><button class="btn btn-ghost" id="qrSaveBtn">🖼️ 이미지 저장</button></div>' +
+        '<div class="center" style="margin-top:8px;"><span class="muted">다른 화면에 띄우고: 설정 → 셀룰러(연결) → eSIM 추가 → QR 스캔</span></div>';
       var sb = $('qrSaveBtn');
       if (sb) sb.onclick = function(){ if (qrLocal) saveQrLocal(lpa); else { window.open(qrUrl,'_blank'); toast('이미지를 길게 눌러 저장하세요'); } };
+      var fb = $('qrFullBtn');
+      if (fb) fb.onclick = qrFullOpen;
     } else {
       b.innerHTML = '<div class="copyline"><div><div class="lbl">SM-DP+ 주소</div><div class="val">'+esc(p.smdp)+'</div></div><button class="copybtn" onclick="copy(\''+esc(p.smdp)+'\')">복사</button></div>' +
         '<div class="copyline"><div><div class="lbl">활성화 코드</div><div class="val">'+esc(p.code)+'</div></div><button class="copybtn" onclick="copy(\''+esc(p.code)+'\')">복사</button></div>' +
