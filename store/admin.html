@@ -88,7 +88,7 @@ function boot(){
   $('app').innerHTML = '<div class="empty">불러오는 중…</div>';
   fetch(API + '/admin' + (REVEAL?'?reveal=1':''), { credentials:'include' })
     .then(function(r){ if (r.status === 401) { logout(); throw 0; } return r.json(); })
-    .then(render)
+    .then(function(d){ render(d); loadChats(); loadProfit(); if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); clearInterval(CUR.listTimer); CUR.listTimer = setInterval(loadChats, 15000); })
     .catch(function(e){ if (e !== 0) $('app').innerHTML = '<div class="empty">API 연결 실패 — 배포·환경변수(ADMIN_TOKEN)·KV 연결을 확인하세요</div>'; });
 }
 
@@ -103,6 +103,15 @@ function render(d){
       st('오늘 주문', s.ordersToday, '건') + st('누적 주문', s.ordersTotal, '건') +
       st('미처리 상담', s.supportOpen, '건', s.supportOpen > 0) + st('오늘 상담', s.supportToday, '건') +
     '</div>' +
+    '<div class="sec"><h2>🗨️ 라이브 상담 <span class="n" id="lvN">-</span><button class="re" onclick="loadChats()">새로고침 ↻</button></h2>' +
+      '<div id="chatList" class="empty">불러오는 중…</div>' +
+      '<div id="chatRoom" style="display:none;margin-top:12px;">' +
+        '<div id="chatMsgs" style="max-height:300px;overflow-y:auto;background:#0F1526;border:1px solid #1E2740;border-radius:14px;padding:13px;display:flex;flex-direction:column;gap:8px;"></div>' +
+        '<div style="display:flex;gap:7px;margin-top:9px;">' +
+          '<input id="chatInput" placeholder="답변 입력 후 Enter" style="flex:1;height:44px;border-radius:12px;border:1.5px solid #26304D;background:#131A2E;color:#fff;font:inherit;font-size:.82rem;padding:0 13px;outline:none;">' +
+          '<button onclick="sendChat()" style="height:44px;padding:0 16px;border:none;border-radius:12px;background:#F1690D;color:#fff;font:inherit;font-weight:900;cursor:pointer;">전송</button>' +
+          '<button onclick="closeChat()" style="height:44px;padding:0 12px;border:1px solid #26304D;border-radius:12px;background:none;color:#8B98B8;font:inherit;font-weight:800;cursor:pointer;">종료</button>' +
+        '</div></div></div>' +
     toolboxHTML() +
     '<div class="sec"><h2>📮 상담 인박스 <span class="n">' + (s.supportOpen || 0) + ' 대기</span><button class="re" onclick="boot()">새로고침 ↻</button></h2><div id="inbox">' + inboxHTML(d.support || []) + '</div></div>' +
     '<div class="sec"><h2>🧾 주문 로그 <span class="n">' + (s.ordersTotal || 0) + '</span></h2>' + ordersHTML(d.orders || []) + '</div>' +
@@ -196,6 +205,65 @@ function ordersHTML(list){
     }).join('') + '</table>';
 }
 function esc(t){ var d = document.createElement('i'); d.textContent = t || ''; return d.innerHTML; }
+// ── 🗨️ 라이브 상담 ──
+var CUR = { id: '', seen: 0, timer: null, listTimer: null, lastCount: 0 };
+function loadChats(){
+  fetch(API + '/chat?list=1', { credentials:'include' }).then(function(r){ return r.json(); }).then(function(d){
+    var C2 = (d.chats || []).filter(function(c){ return !c.closed; });
+    var el = $('lvN'); if (el) el.textContent = C2.length + ' 진행중';
+    // 새 상담 데스크톱 알림
+    if (C2.length > CUR.lastCount && CUR.lastCount >= 0 && window.Notification && Notification.permission === 'granted') {
+      new Notification('🗨️ 새 라이브 상담', { body: (C2[0] && (C2[0].name || '고객') + ': ' + (C2[0].last && C2[0].last.t || '')).slice(0, 80) });
+      try { new AudioContext().resume(); } catch(e){}
+    }
+    CUR.lastCount = C2.length;
+    var box = $('chatList'); if (!box) return;
+    box.innerHTML = (d.chats || []).length ? (d.chats || []).map(function(c){
+      var age = Math.round((Date.now() - c.openAt) / 3600000);
+      var left = Math.max(0, 24 - age);
+      return '<div class="tk' + (c.closed ? ' done' : '') + '" style="cursor:pointer;" onclick="openChat(\'' + c.id + '\')">' +
+        '<div class="who"><b>' + esc(c.name || '고객') + '</b><i>' + (c.phone || '') + ' · ' + c.n + '개 · 삭제까지 ' + left + 'h</i></div>' +
+        '<div class="msg">' + esc(c.last && c.last.t || '') + (c.last && c.last.f === 'u' && !c.closed ? ' <span style="color:#F1690D;font-weight:900;">● 답변 대기</span>' : '') + '</div></div>';
+    }).join('') : '<div class="empty">진행 중인 상담이 없어요 — 챗봇의 [실시간 상담]으로 들어옵니다</div>';
+  }).catch(function(){});
+}
+function openChat(id){
+  CUR.id = id; CUR.seen = 0;
+  $('chatRoom').style.display = 'block';
+  $('chatMsgs').innerHTML = '';
+  $('chatInput').onkeydown = function(e){ if (e.key === 'Enter') sendChat(); };
+  pollChat();
+}
+function pollChat(){
+  if (!CUR.id) return;
+  clearTimeout(CUR.timer);
+  fetch(API + '/chat?id=' + CUR.id, { credentials:'include' }).then(function(r){ return r.json(); }).then(function(c){
+    if (c.gone) { $('chatMsgs').innerHTML = '<div class="empty">만료·삭제된 상담이에요</div>'; CUR.id=''; return; }
+    var box = $('chatMsgs');
+    (c.msgs || []).slice(CUR.seen).forEach(function(m){
+      var mine = m.f === 'a';
+      var d = document.createElement('div');
+      d.style.cssText = 'max-width:82%;padding:9px 12px;border-radius:12px;font-size:.8rem;font-weight:600;line-height:1.6;white-space:pre-wrap;' +
+        (mine ? 'align-self:flex-end;background:#F1690D;color:#fff;' : 'align-self:flex-start;background:#1B2338;color:#DDE4F2;');
+      d.textContent = m.t;
+      box.appendChild(d);
+      if (!mine && CUR.seen > 0 && window.Notification && Notification.permission === 'granted') new Notification('💬 ' + (c.name || '고객'), { body: m.t.slice(0, 80) });
+      CUR.seen++;
+    });
+    box.scrollTop = box.scrollHeight;
+    if (!c.closed) CUR.timer = setTimeout(pollChat, 3000);
+  }).catch(function(){ CUR.timer = setTimeout(pollChat, 6000); });
+}
+function sendChat(){
+  var v = $('chatInput').value.trim(); if (!v || !CUR.id) return;
+  $('chatInput').value = '';
+  fetch(API + '/chat', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ op:'msg', id: CUR.id, text: v }) }).then(pollChat);
+}
+function closeChat(){
+  if (!CUR.id) return;
+  fetch(API + '/chat', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ op:'close', id: CUR.id }) })
+    .then(function(){ $('chatRoom').style.display = 'none'; CUR.id=''; loadChats(); });
+}
 // ── 📈 손익 그래프 ──
 function loadProfit(){
   $('profitBody').innerHTML = '<div class="empty">불러오는 중…</div>';

@@ -9,7 +9,7 @@
 
   var KAKAO = 'https://pf.kakao.com/_GSixcn/chat';
   var CARE = window.CARE_API || 'https://jdisim-proxy.vercel.app/api/esim';
-  var isMobilePage = /mobile\.html/.test(location.pathname) || document.querySelector('.bottom-nav');
+  var isMobilePage = /mobile\.html|issue\.html/.test(location.pathname) || document.querySelector('.bottom-nav') || document.querySelector('.bbar');
   var BOTTOM = isMobilePage ? 'calc(80px + env(safe-area-inset-bottom, 0px))' : '24px';
 
   var RESET = { '일본':'새벽 1시','한국':'새벽 1시','베트남':'밤 11시','태국':'밤 11시','라오스':'밤 11시','캄보디아':'밤 11시','중국':'자정','대만':'자정','필리핀':'자정','싱가포르':'자정','말레이시아':'자정','홍콩':'자정','마카오':'자정','몰디브':'밤 9시','괌':'새벽 2시','사이판':'새벽 2시','호주':'새벽 2시','뉴질랜드':'새벽 4시','미국':'서부 08:00 · 동부 11:00' };
@@ -273,9 +273,49 @@
   }
   function offerHuman(pre){
     chips([
+      ['🗨️ 여기서 바로 실시간 상담', function(){ startLive(pre || ''); }],
       ['📮 연락처 남기고 콜백 받기', function(){ aInbox(pre || ''); }],
-      ['💬 카톡으로 바로 상담', function(){ me('카톡 상담'); bot('<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>\n연중무휴 · 평균 응답 5분 이내'); homeChips(); }]
+      ['💬 카톡으로 상담', function(){ me('카톡 상담'); bot('<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>\n연중무휴 · 평균 응답 5분 이내'); homeChips(); }]
     ]);
+  }
+
+  // ══ 라이브 상담: 이 창에서 사장님과 직접 대화 ══
+  var LIVE = { id: sessionStorage.getItem('rb_live') || '', timer: null, seen: 0 };
+  function startLive(pre){
+    if (LIVE.id) { bot('이미 상담이 연결돼 있어요! 아래에 이어서 입력해 주세요 🦊'); return; }
+    var w = typing();
+    fetch(CARE.replace('/api/esim', '/api/chat'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ op: 'open', q: pre || '상담 요청', name: USERINFO.nm, phone: USERINFO.ph }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d.id) throw 0;
+        LIVE.id = d.id; LIVE.seen = 1;
+        try { sessionStorage.setItem('rb_live', d.id); } catch(e){}
+        w.innerHTML = '🗨️ <strong>상담원을 호출했어요!</strong> 보통 몇 분 안에 여기로 답변이 와요.\n기다리는 동안 아래에 상황을 더 적어주셔도 좋아요.\n\n<span style="font-size:.7rem;color:#94a3b8;">· 이 대화는 개인정보 보호를 위해 <strong>24시간 후 자동 삭제</strong>돼요\n· 창을 닫아도 다시 열면 이어져요</span>';
+        pollLive();
+      })
+      .catch(function(){ w.innerHTML = '연결이 잠시 어렵네요 — 카톡으로 도와드릴게요!\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>'; homeChips(); });
+  }
+  function pollLive(){
+    if (!LIVE.id) return;
+    clearTimeout(LIVE.timer);
+    fetch(CARE.replace('/api/esim', '/api/chat') + '?id=' + LIVE.id)
+      .then(function(r){ return r.json(); })
+      .then(function(c){
+        if (c.gone) { endLiveUI('상담이 만료되어 자동 삭제됐어요. 새로 연결할 수 있어요!'); return; }
+        (c.msgs || []).slice(LIVE.seen).forEach(function(m){
+          if (m.f === 'a') { var d = bot('👨‍💼 <strong>상담원</strong>\n' + esc0(m.t)); buzz(15); }
+          LIVE.seen++;
+        });
+        if (c.closed) { endLiveUI('상담이 종료됐어요. 도움이 되었길 바라요 🦊'); return; }
+        LIVE.timer = setTimeout(pollLive, 4000);
+      })
+      .catch(function(){ LIVE.timer = setTimeout(pollLive, 8000); });
+  }
+  function endLiveUI(msg){
+    clearTimeout(LIVE.timer); LIVE.id = ''; LIVE.seen = 0;
+    try { sessionStorage.removeItem('rb_live'); } catch(e){}
+    bot(msg); homeChips();
   }
 
 
@@ -418,6 +458,7 @@
     panel.classList.toggle('on');
     if (panel.classList.contains('on') && !opened) {
       opened = true;
+      if (LIVE.id) pollLive();
       if (!restore()) {
         bot('안녕하세요! JDISIM 여행 도우미 <strong>로미</strong>예요 🦊\n무엇을 도와드릴까요?');
         homeChips();
@@ -426,7 +467,15 @@
   };
   panel.querySelector('.rb-x').onclick = function(){ panel.classList.remove('on'); };
   var inp = panel.querySelector('#rbInput');
-  function send(){ var v = inp.value.trim(); if (!v) return; me(v); inp.value = ''; route(v); }
+  function send(){
+    var v = inp.value.trim(); if (!v) return; me(v); inp.value = '';
+    if (LIVE.id) {
+      fetch(CARE.replace('/api/esim', '/api/chat'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op: 'msg', id: LIVE.id, text: v }) }).catch(function(){});
+      return;
+    }
+    route(v);
+  }
   panel.querySelector('#rbSend').onclick = send;
   inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') send(); });
 })();
