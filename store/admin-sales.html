@@ -39,13 +39,25 @@ input:focus{border-color:var(--accent)}
 .ins .ico{flex:0 0 auto;font-size:1rem}
 .ins b{color:var(--ink)}.ins em{font-style:normal;font-weight:900;color:var(--accent)}
 .warnrow td{color:#ef4444 !important}
+details.team{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:12px;box-shadow:0 4px 16px rgba(34,21,16,.04);overflow:hidden}
+details.team summary{list-style:none;cursor:pointer;padding:15px 18px;font-size:.92rem;font-weight:900;display:flex;align-items:center;gap:8px}
+details.team summary::-webkit-details-marker{display:none}
+details.team summary .tn{margin-left:auto;font-size:.66rem;color:var(--sub);font-weight:800}
+details.team summary::after{content:"▾";color:var(--accent);font-weight:900;margin-left:6px;transition:transform .2s}
+details.team[open] summary::after{transform:rotate(180deg)}
+details.team .tb{padding:0 18px 14px}
+.fb{margin-left:auto;display:flex;gap:4px;flex:0 0 auto}
+.fb button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:2px 7px;font-size:.72rem;cursor:pointer}
+.fb button:hover{border-color:var(--accent)}
+#lockOverlay{position:fixed;inset:0;background:rgba(255,253,251,.97);backdrop-filter:blur(6px);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;font-weight:800}
 .empty{text-align:center;color:var(--sub);font-weight:700;padding:32px 0;font-size:.86rem}
 @media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" href="/">JDI<span>SIM</span></a><span style="font-size:12px;color:var(--sub);font-weight:800">관리자 · 매출</span></div></header>
+<header><div class="wrap"><a class="logo" href="/">JDI<span>SIM</span></a><span style="display:flex;gap:10px;align-items:center"><span style="font-size:12px;color:var(--sub);font-weight:800">관리자 · 매출</span><button onclick="logout()" style="border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-family:inherit;font-size:.7rem;font-weight:800;color:var(--sub);cursor:pointer">로그아웃</button></span></div></header>
 
+<div id="lockOverlay"><div style="font-size:2rem">🔒</div><div>보안을 위해 화면이 잠겼어요</div><button class="btn" onclick="unlock()">계속 보기</button></div>
 <div class="wrap">
   <!-- 로그인 -->
   <div id="login" style="display:none">
@@ -71,18 +83,19 @@ input:focus{border-color:var(--accent)}
 
     <div class="card"><h2>일별 매출</h2><canvas id="chart" height="220"></canvas></div>
 
-    <div class="card" id="insightCard" style="display:none">
-      <h2 style="display:flex;justify-content:space-between;align-items:center">🧭 전략기획실
-        <button onclick="copyReport()" style="border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-family:inherit;font-size:.68rem;font-weight:800;color:var(--sub);cursor:pointer">📋 리포트 복사</button></h2>
-      <div id="insightList"></div>
+    <div class="card" id="briefCard" style="display:none;border:1.5px solid rgba(242,117,31,.35)">
+      <h2 style="display:flex;justify-content:space-between;align-items:center">🗂️ 비서 브리핑
+        <button onclick="copyReport()" style="border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-family:inherit;font-size:.68rem;font-weight:800;color:var(--sub);cursor:pointer">📋 전체 보고서 복사</button></h2>
+      <div id="briefList"></div>
     </div>
+    <div id="teamCards"></div>
 
     <div class="card" id="ctyCard" style="display:none">
       <h2>🌏 국가별 손익 랭킹</h2>
       <table id="cTable"><thead><tr><th>국가</th><th>주문</th><th>매출</th><th>순익</th><th>마진</th></tr></thead><tbody></tbody></table>
     </div>
 
-    <div class="card"><h2>월별 요약</h2><table id="mTable"><thead><tr><th>월</th><th>주문</th><th>매출</th><th>원가</th><th>순익</th><th>마진</th></tr></thead><tbody></tbody></table></div>
+    <div class="card"><h2>월별 요약</h2><table id="mTable"><thead><tr><th>월</th><th>주문</th><th>매출</th><th>원가</th><th>수수료</th><th>순익</th><th>마진</th></tr></thead><tbody></tbody></table></div>
 
     <div class="card">
       <h2>💱 환율 설정 <span style="font-size:.68rem;color:var(--sub);font-weight:700">저장 이후 수집되는 신규 주문부터 적용 · 기존 집계분은 고정</span></h2>
@@ -194,8 +207,12 @@ function editDay(btn){
   .catch(function(){ alert('수정 실패'); });
 }
 function copyReport(){
-  var txt = '📊 JDISIM 주간 리포트 (' + new Date().toLocaleDateString('ko-KR') + ')\n' +
-    Array.prototype.map.call(document.querySelectorAll('#insightList .ins'), function(el){ return '· ' + el.textContent.trim(); }).join('\n');
+  var txt = '📊 JDISIM 경영 브리핑 (' + new Date().toLocaleDateString('ko-KR') + ')\n\n[비서 브리핑]\n' +
+    Array.prototype.map.call(document.querySelectorAll('#briefList .ins'), function(el){ return '· ' + el.textContent.replace(/👍|👎|반영됨|덜 보여드릴게요/g,'').trim(); }).join('\n') + '\n\n[팀별 상세]\n' +
+    Array.prototype.map.call(document.querySelectorAll('#teamCards details'), function(d){
+      return d.querySelector('summary').textContent.replace(/\d+개 코멘트/,'').trim() + '\n' +
+        Array.prototype.map.call(d.querySelectorAll('.ins'), function(el){ return '  - ' + el.textContent.replace(/👍|👎|반영됨|덜 보여드릴게요/g,'').trim(); }).join('\n');
+    }).join('\n');
   navigator.clipboard.writeText(txt).then(function(){ alert('리포트가 복사됐어요 — 카톡/노션에 붙여넣기'); });
 }
 function esc(x){ return String(x==null?'':x).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -226,7 +243,7 @@ function render(data){
   var last7 = s.filter(function(r){ return new Date(r.d) >= new Date(Date.now()-7*864e5); });
   var sum = function(arr,k){ return arr.reduce(function(a,r){ return a+(r[k]||0); },0); };
 
-  var pf = function(r){ return (r.profit != null) ? r.profit : (r.revenue||0) - (r.cost||0); };
+  var pf = function(r){ return (r.profit != null) ? r.profit : (r.revenue||0) - (r.cost||0) - (r.fee||0); };
   set('kToday', won(t.revenue), t.orders + '건 · 순익 ' + won(pf(t)));
   set('kYday', won(y.revenue), y.orders + '건 · 순익 ' + won(pf(y)));
   set('k7', won(sum(last7,'revenue')), '순익 ' + won(last7.reduce(function(a,r){return a+pf(r);},0)));
@@ -235,11 +252,11 @@ function render(data){
 
   // 월별
   var months = {};
-  s.forEach(function(r){ var m = r.d.slice(0,7); (months[m] = months[m] || {o:0,v:0,c:0});
-    months[m].o += r.orders||0; months[m].v += r.revenue||0; months[m].c += r.cost||0; });
+  s.forEach(function(r){ var m = r.d.slice(0,7); (months[m] = months[m] || {o:0,v:0,c:0,f:0});
+    months[m].o += r.orders||0; months[m].v += r.revenue||0; months[m].c += r.cost||0; months[m].f += r.fee||0; });
   document.querySelector('#mTable tbody').innerHTML = Object.keys(months).sort().map(function(m){
-    var x = months[m], p = x.v - x.c, pct = x.v ? Math.round(p/x.v*100) : 0;
-    return '<tr><td>'+m+'</td><td>'+x.o+'</td><td>'+won(x.v)+'</td><td>'+won(x.c)+'</td><td style="color:#16a34a">'+won(p)+'</td><td>'+pct+'%</td></tr>';
+    var x = months[m], p = x.v - x.c - x.f, pct = x.v ? Math.round(p/x.v*100) : 0;
+    return '<tr><td>'+m+'</td><td>'+x.o+'</td><td>'+won(x.v)+'</td><td>'+won(x.c)+'</td><td>'+won(x.f)+'</td><td style="color:#16a34a">'+won(p)+'</td><td>'+pct+'%</td></tr>';
   }).join('');
 
   // 일별 (최근 31)
@@ -267,80 +284,115 @@ function renderCountries(cs){
 }
 
 function renderInsights(s, cs){
-  var out = [];
-  var pf = function(r){ return (r.profit != null) ? r.profit : (r.revenue||0) - (r.cost||0); };
-  var sum = function(arr, f){ return arr.reduce(function(a, r){ return a + (f(r)||0); }, 0); };
+  var pf = function(r){ return (r.profit != null) ? r.profit : (r.revenue||0) - (r.cost||0) - (r.fee||0); };
   var rv = function(r){ return r.revenue || 0; };
-
-  // ① 최근 7일 vs 직전 7일 추세
-  if (s.length >= 8) {
-    var last7 = s.slice(-7), prev7 = s.slice(-14, -7);
-    var a = sum(last7, rv), b = sum(prev7, rv);
-    if (b > 0) {
-      var chg = Math.round((a - b) / b * 100);
-      out.push(['📈', '최근 7일 매출 <b>' + won(a) + '</b> — 직전 주 대비 <em>' + (chg >= 0 ? '+' : '') + chg + '%</em>' +
-        (chg <= -20 ? '. 급감 구간 — 광고·노출 점검 필요' : chg >= 20 ? '. 상승 흐름 — 재고(발급여력)와 광고예산 증액 타이밍' : '')]);
-    }
-  }
-  // ② 마진 최고/최저 국가 → 예산 배분 제안
-  var big = cs.filter(function(c){ return c.revenue >= 100000; });
-  if (big.length >= 2) {
-    var withPct = big.map(function(c){ return { n: c.name, pct: Math.round(c.profit / c.revenue * 100), rev: c.revenue }; });
-    withPct.sort(function(x, y){ return y.pct - x.pct; });
-    var hi = withPct[0], lo = withPct[withPct.length - 1];
-    out.push(['💰', '마진 1위 <b>' + esc(hi.n) + ' ' + hi.pct + '%</b> — 검색광고·가이드 SEO 예산을 여기에 집중하면 순익 레버리지 최대']);
-    if (lo.pct < 30) out.push(['⚠️', '<b>' + esc(lo.n) + '</b> 마진 <em>' + lo.pct + '%</em> — 판매가 인상 또는 상위 요금제로 상품 구성 재검토 권장']);
-  }
-  // ③ 매출 집중도 (리스크)
-  if (cs.length >= 2) {
-    var tot = sum(cs, rv);
-    var top = cs.slice().sort(function(x, y){ return y.revenue - x.revenue; })[0];
-    var share = tot ? Math.round(top.revenue / tot * 100) : 0;
-    if (share >= 50) out.push(['🎯', '매출의 <em>' + share + '%</em>가 <b>' + esc(top.name) + '</b>에 집중 — 성수기 종료 리스크 대비, 2·3위 국가 프로모션으로 분산 추천']);
-  }
-  // ④ 객단가 추이 (당월 vs 전월)
-  var mo = {};
-  s.forEach(function(r){ var m = r.d.slice(0, 7); (mo[m] = mo[m] || { v: 0, o: 0 }); mo[m].v += rv(r); mo[m].o += r.orders || 0; });
+  var sum = function(arr, f){ return arr.reduce(function(a, r){ return a + (f(r)||0); }, 0); };
+  var mo = {}; s.forEach(function(r){ var m = r.d.slice(0,7); (mo[m]=mo[m]||{v:0,o:0,p:0,f:0}); mo[m].v+=rv(r); mo[m].o+=r.orders||0; mo[m].p+=pf(r); mo[m].f+=r.fee||0; });
   var keys = Object.keys(mo).sort();
-  if (keys.length >= 2) {
-    var cur = mo[keys[keys.length - 1]], prv = mo[keys[keys.length - 2]];
-    var aovC = cur.o ? Math.round(cur.v / cur.o) : 0, aovP = prv.o ? Math.round(prv.v / prv.o) : 0;
-    if (aovP) out.push(['🧾', '객단가 ' + won(aovP) + ' → <b>' + won(aovC) + '</b>' +
-      (aovC < aovP ? ' — 짧은 일수 상품 비중 증가. 상세페이지에 장기권 업셀 배너 추천' : ' — 장기권 판매 증가 흐름 유지')]);
+  var now = new Date(), ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+
+  // ===== 팀별 코멘트 생성 (id는 피드백 학습 키) =====
+  var T = { plan:[], mkt:[], fin:[], ops:[] };
+
+  // --- 🧭 전략기획실 ---
+  if (s.length >= 8) {
+    var l7 = s.slice(-7), p7 = s.slice(-14,-7), a = sum(l7,rv), b = sum(p7,rv);
+    if (b > 0) { var chg = Math.round((a-b)/b*100);
+      T.plan.push({id:'wow', h:'📈', t:'최근 7일 매출 <b>'+won(a)+'</b> — 전주 대비 <em>'+(chg>=0?'+':'')+chg+'%</em>'+(chg<=-20?'. 급감 — 노출·광고 점검':chg>=20?'. 상승세 — 예산 증액 타이밍':'')}); }
   }
-  // ⑤-a 이번 달 페이스 예측 (전략기획: 월 마감 전망)
-  var lastM = keys.length ? keys[keys.length - 1] : null;
-  if (lastM) {
-    var now = new Date(), ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-    if (lastM === ym) {
-      var dayOfM = now.getDate(), daysInM = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      var pace = mo[ym].v / dayOfM * daysInM;
-      var prevM = keys.length >= 2 ? mo[keys[keys.length - 2]].v : 0;
-      out.push(['🔮', '이번 달 마감 전망 <b>' + won(Math.round(pace)) + '</b> (일평균 페이스 기준)' +
-        (prevM ? ' — 전월 ' + won(prevM) + ' 대비 <em>' + (pace >= prevM ? '+' : '') + Math.round((pace - prevM) / prevM * 100) + '%</em>' : '')]);
-    }
+  if (keys.indexOf(ym) >= 0) {
+    var dayOfM = now.getDate(), daysInM = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    var pace = mo[ym].v/dayOfM*daysInM, prevV = keys.length>=2 ? mo[keys[keys.length-2]].v : 0;
+    T.plan.push({id:'pace', h:'🔮', t:'이달 마감 전망 <b>'+won(Math.round(pace))+'</b>'+(prevV?' — 전월 대비 <em>'+(pace>=prevV?'+':'')+Math.round((pace-prevV)/prevV*100)+'%</em>':'')});
   }
-  // ⑤-b 무매출일 감지
-  var zero = s.slice(-14).filter(function(r){ return !rv(r); }).length;
-  if (zero >= 2) out.push(['🕳️', '최근 2주 중 <em>무매출 ' + zero + '일</em> — 발급 파이프라인 장애 또는 광고 공백 여부 점검']);
-  // ⑤-c 최고 매출 요일 → 광고 배분
+  var big = cs.filter(function(c){ return c.revenue >= 100000; });
+  if (cs.length >= 2) {
+    var tot = sum(cs, rv), top = cs.slice().sort(function(x,y){return y.revenue-x.revenue;})[0];
+    var share = tot ? Math.round(top.revenue/tot*100) : 0;
+    if (share >= 50) T.plan.push({id:'conc', h:'🎯', t:'매출 <em>'+share+'%</em>가 <b>'+esc(top.name)+'</b> 집중 — 성수기 종료 대비 2·3위 국가 분산 필요'});
+  }
+
+  // --- 📣 마케팅팀 (전략을 실행 캠페인으로) ---
+  if (big.length) {
+    var hi = big.map(function(c){ return {n:c.name, pct:Math.round(c.profit/c.revenue*100), rev:c.revenue}; }).sort(function(x,y){return y.pct-x.pct;})[0];
+    T.mkt.push({id:'mk-focus', h:'🚀', t:'<b>'+esc(hi.n)+'</b>(마진 '+hi.pct+'%)에 집중 — 실행: 네이버 검색광고 "'+esc(hi.n)+' 이심/eSIM" 키워드 + /guide 가이드 랜딩 연결. 카피 예: "'+esc(hi.n)+' eSIM, 로밍의 1/5 가격 · QR 10초 개통"'});
+  }
   var dow = [0,0,0,0,0,0,0], dowN = ['일','월','화','수','목','금','토'];
   s.forEach(function(r){ dow[new Date(r.d).getDay()] += rv(r); });
   var bi = dow.indexOf(Math.max.apply(null, dow));
-  if (Math.max.apply(null, dow) > 0) out.push(['📣', '매출 최고 요일은 <b>' + dowN[bi] + '요일</b> — 그 전날 저녁 광고·알림톡 집행이 전환 효율 최적']);
-  // ⑤ 주말 비중
-  var wk = 0, wd = 0;
-  s.forEach(function(r){ var day = new Date(r.d).getDay(); (day === 0 || day === 6) ? wk += rv(r) : wd += rv(r); });
-  if (wk + wd > 0) {
-    var wkPct = Math.round(wk / (wk + wd) * 100);
-    out.push(['📅', '주말 매출 비중 <em>' + wkPct + '%</em>' + (wkPct >= 35 ? ' — 금요일 오후 알림톡/광고 집행이 효율 최고 구간' : ' — 평일 출국 수요 중심, 월~수 광고 배분 유지')]);
-  }
+  if (Math.max.apply(null, dow) > 0) T.mkt.push({id:'mk-day', h:'📣', t:'매출 피크는 <b>'+dowN[bi]+'요일</b> — '+dowN[(bi+6)%7]+'요일 저녁 알림톡·광고 집행이 최적. 소재는 후기 별점 캡처 활용'});
+  var mNum = now.getMonth()+1;
+  var season = (mNum>=6&&mNum<=8) ? {n:'여름 성수기(일본·동남아 휴양지)', c:'"방학 여행 필수템" 숏폼 + 가족여행 2인 세트 소구'} :
+               (mNum>=9&&mNum<=10) ? {n:'추석·가을 연휴', c:'"연휴 항공권 샀다면 이심부터" 타이밍 광고'} :
+               (mNum>=11||mNum<=2) ? {n:'겨울 성수기(일본 스키·동남아 피한)', c:'"삿포로·다낭 겨울여행" 키워드 선점'} : {n:'봄 시즌(벚꽃·골든위크)', c:'"일본 벚꽃 명당" 콘텐츠 + 이심 번들'};
+  T.mkt.push({id:'mk-season', h:'🗓️', t:'시즌: <b>'+season.n+'</b> — '+season.c});
+  var curM = mo[ym], aov = curM && curM.o ? Math.round(curM.v/curM.o) : 0;
+  if (aov && aov < 15000) T.mkt.push({id:'mk-aov', h:'🧾', t:'객단가 '+won(aov)+' — 상세페이지 상단에 장기권 업셀: "7일 이상이면 하루 990원꼴" 배너 추가 제안'});
+  T.mkt.push({id:'mk-review', h:'⭐', t:'후기 수집 캠페인: 티켓에서 후기 작성 시 500원 쿠폰/추첨 — 발급인증 후기가 쌓일수록 메인·가이드 전환율 동반 상승'});
 
-  var card = document.getElementById('insightCard');
-  card.style.display = out.length ? '' : 'none';
-  document.getElementById('insightList').innerHTML = out.map(function(x){
-    return '<div class="ins"><span class="ico">' + x[0] + '</span><div>' + x[1] + '</div></div>';
+  // --- 💰 재무팀 ---
+  var totV = sum(s,rv), totP = sum(s,pf), totF = sum(s,function(r){return r.fee||0;});
+  if (totV) T.fin.push({id:'fin-sum', h:'💰', t:'누적 매출 <b>'+won(totV)+'</b> · 플랫폼 수수료 '+won(totF)+' · 순익 <em>'+won(totP)+'</em> (실마진 '+Math.round(totP/totV*100)+'%)'});
+  var lowM = big.map(function(c){ return {n:c.name, pct:Math.round(c.profit/c.revenue*100)}; }).filter(function(x){ return x.pct < 25; });
+  if (lowM.length) T.fin.push({id:'fin-low', h:'⚠️', t:'저마진 경보: <b>'+lowM.map(function(x){return esc(x.n)+' '+x.pct+'%';}).join(', ')+'</b> — 판매가 인상 또는 고수수료 채널(쿠팡 10.8%) 노출 축소 검토'});
+  T.fin.push({id:'fin-fx', h:'💱', t:'환율은 위 환율 카드에서 관리 — 변경 시 신규 주문부터 적용, 기존 집계 불변. 위안화 ±5원당 원가 영향 큼'});
+
+  // --- 🛠️ 운영팀 ---
+  var zero = s.slice(-14).filter(function(r){ return !rv(r); }).length;
+  if (zero >= 2) T.ops.push({id:'ops-zero', h:'🕳️', t:'최근 2주 <em>무매출 '+zero+'일</em> — 발급 파이프라인·상품 노출 상태 점검 필요'});
+  var kkoN = parseInt((document.getElementById('kkoN')||{textContent:'0'}).textContent) || 0;
+  if (kkoN) T.ops.push({id:'ops-kko', h:'🛎️', t:'카카오 검수 대기 <b>'+kkoN+'건</b> — 완료 처리 전까지 매출 미반영'});
+  T.ops.push({id:'ops-daily', h:'✅', t:'일일 체크: 수집기 23:30 자동 실행 확인 · QR 발송 로그 · 원가 미매칭 경고 여부'});
+
+  // ===== 피드백 학습 (👍👎 → 가중치, 👎 3회면 숨김) =====
+  var W = {}; try { W = JSON.parse(localStorage.getItem('teamW')||'{}'); } catch(e){}
+  function alive(it){ return (W[it.id]||0) > -3; }
+
+  // ===== 지난주 제안 추적 (스스로 검증) =====
+  try {
+    var trk = JSON.parse(localStorage.getItem('teamTrack')||'null');
+    var wk = Math.floor(Date.now()/6048e5);
+    var last7v = sum(s.slice(-7), rv);
+    if (trk && trk.wk < wk && trk.base) {
+      var dpct = Math.round((last7v-trk.base)/trk.base*100);
+      T.plan.unshift({id:'track', h:'🔁', t:'지난주 제안 「'+esc(trk.tip)+'」 이후 주간 매출 <em>'+(dpct>=0?'+':'')+dpct+'%</em> — '+(dpct>=10?'효과 확인, 유지·확대':'효과 미미, 다른 접근 검토')+' (자가 검증 루프)'});
+    }
+    var topTip = (T.mkt[0]||{}).t || '';
+    localStorage.setItem('teamTrack', JSON.stringify({wk:wk, base:last7v, tip: topTip.replace(/<[^>]+>/g,'').slice(0,40)}));
+  } catch(e){}
+
+  // ===== 렌더 =====
+  var TEAMS = [['plan','🧭 전략기획실'],['mkt','📣 마케팅팀'],['fin','💰 재무팀'],['ops','🛠️ 운영팀']];
+  document.getElementById('teamCards').innerHTML = TEAMS.map(function(tm, i){
+    var items = T[tm[0]].filter(alive);
+    if (!items.length) return '';
+    return '<details class="team"'+(i===0?' open':'')+'><summary>'+tm[1]+'<span class="tn">'+items.length+'개 코멘트</span></summary><div class="tb">' +
+      items.map(function(it){
+        return '<div class="ins"><span class="ico">'+it.h+'</span><div>'+it.t+'</div><span class="fb">' +
+          '<button onclick="fb(\''+it.id+'\',1,this)">👍</button><button onclick="fb(\''+it.id+'\',-1,this)">👎</button></span></div>';
+      }).join('') + '</div></details>';
   }).join('');
+
+  // ===== 비서 브리핑 (각 팀 1순위 종합) =====
+  var brief = [];
+  if (totV) brief.push('오늘 기준 누적 매출 <b>'+won(totV)+'</b>, 순익 <em>'+won(totP)+'</em> (실마진 '+Math.round(totP/totV*100)+'%)입니다.');
+  TEAMS.forEach(function(tm){ var f = T[tm[0]].filter(alive)[0]; if (f) brief.push('<b>'+tm[1].split(' ')[1]+'</b>: '+f.t); });
+  if (kkoN) brief.push('처리 대기: 카카오 검수 '+kkoN+'건 — 오늘 완료 권장.');
+  var bc = document.getElementById('briefCard');
+  bc.style.display = brief.length ? '' : 'none';
+  document.getElementById('briefList').innerHTML = brief.map(function(b){ return '<div class="ins"><span class="ico">•</span><div>'+b+'</div></div>'; }).join('');
+}
+function logout(){ try{ sessionStorage.removeItem('jdSess'); }catch(e){} location.reload(); }
+var _idleT = null;
+function armIdle(){ clearTimeout(_idleT); _idleT = setTimeout(function(){ document.getElementById('lockOverlay').style.display = 'flex'; }, 15*60*1000); }
+function unlock(){ document.getElementById('lockOverlay').style.display = 'none'; armIdle(); }
+['click','keydown','touchstart','scroll'].forEach(function(ev){ document.addEventListener(ev, armIdle, {passive:true}); });
+armIdle();
+function fb(id, v, btn){
+  var W = {}; try { W = JSON.parse(localStorage.getItem('teamW')||'{}'); } catch(e){}
+  W[id] = (W[id]||0) + v;
+  localStorage.setItem('teamW', JSON.stringify(W));
+  btn.parentNode.innerHTML = v>0 ? '<span style="font-size:.7rem;color:var(--teal);font-weight:800">반영됨</span>' : '<span style="font-size:.7rem;color:var(--sub);font-weight:800">덜 보여드릴게요</span>';
 }
 function set(id, v, n){ document.getElementById(id).textContent = v; document.getElementById(id+'N').textContent = n||''; }
 
