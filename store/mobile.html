@@ -502,6 +502,13 @@
 
     /* Search Bar */
 
+
+    /* 지역 카테고리 탭 (가로 스크롤) */
+    .m-cat { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 2px 2px 4px; margin-bottom: 14px; }
+    .m-cat::-webkit-scrollbar { display: none; }
+    .m-cat-btn { flex-shrink: 0; padding: 9px 14px; border-radius: 20px; border: 1.5px solid rgba(15,23,42,0.1); background: #fff; font-family: inherit; font-size: 0.78rem; font-weight: 700; color: #475569; cursor: pointer; white-space: nowrap; }
+    .m-cat-btn.active { background: linear-gradient(135deg,#F97316,#F59E0B); border-color: transparent; color: #fff; box-shadow: 0 5px 14px rgba(249,115,22,0.3); }
+
     /* ── JD 통합 검색바 (모바일·PC 공통) ── */
     .jd-search { position: relative; margin-bottom: 18px; }
     .jd-search .jd-box { display: flex; align-items: center; gap: 4px; background: #fff; border: 1.5px solid rgba(15,23,42,0.1); border-radius: 16px; padding: 5px 5px 5px 14px; box-shadow: 0 2px 10px rgba(15,23,42,0.05); transition: border-color .18s, box-shadow .18s; }
@@ -1861,6 +1868,18 @@
       </div>
       <div class="jd-suggest" id="jdSuggest"></div>
     </div>
+    <!-- 지역 카테고리 (PC와 동일) -->
+    <div class="m-cat" id="mCatTabs">
+      <button class="m-cat-btn active" data-cat="ALL">🌎 전체 국가</button>
+      <button class="m-cat-btn" data-cat="아시아">🌏 아시아</button>
+      <button class="m-cat-btn" data-cat="유럽">🇪🇺 유럽</button>
+      <button class="m-cat-btn" data-cat="북미괌사이판">🇺🇸 북미/괌/사이판</button>
+      <button class="m-cat-btn" data-cat="호주뉴질랜드">🦘 호주/뉴질랜드</button>
+      <button class="m-cat-btn" data-cat="중동">🐫 중동</button>
+      <button class="m-cat-btn" data-cat="아프리카">🦁 아프리카</button>
+      <button class="m-cat-btn" data-cat="남미">🐆 남미</button>
+      <button class="m-cat-btn" data-cat="글로벌">✈️ 글로벌</button>
+    </div>
 
     <!-- 구매 보장 신뢰 스트립 -->
     <div class="trust-strip">
@@ -1887,14 +1906,6 @@
     <div class="recent-row" id="recentRow" style="display:none;">
       <span class="recent-label">최근 본</span>
       <div class="recent-chips" id="recentChips"></div>
-    </div>
-
-      <div class="category-tab" data-country="일본">🇯🇵 일본</div>
-      <div class="category-tab" data-country="베트남">🇻🇳 베트남</div>
-      <div class="category-tab" data-country="태국">🇹🇭 태국</div>
-      <div class="category-tab" data-country="대만">🇹🇼 대만</div>
-      <div class="category-tab" data-country="미국">🇺🇸 미국</div>
-      <div class="category-tab" data-country="유럽">🇪🇺 유럽</div>
     </div>
 
     <!-- Products list -->
@@ -2516,6 +2527,7 @@
       window.PRODUCTS_DATA.forEach(group => {
         const st = groupStats(group);
         if (st.count === 0) return;
+        if (window._mCat && window._mCat !== 'ALL' && (group.category || '') !== window._mCat) return;
         let entry = countryMap.get(group.country);
         if (!entry) {
           entry = { country: group.country, category: group.category || '', carriers: [], nets: new Set(), speeds: new Set(), planCount: 0, minPrice: Infinity, minPerDay: Infinity };
@@ -4269,6 +4281,21 @@
     })();
   </script>
   <script>
+
+    // 지역 카테고리 필터 (PC와 동일)
+    window._mCat = 'ALL';
+    (function(){
+      var box = document.getElementById('mCatTabs'); if (!box) return;
+      box.querySelectorAll('.m-cat-btn').forEach(function(b){
+        b.onclick = function(){
+          box.querySelectorAll('.m-cat-btn').forEach(function(x){ x.classList.remove('active'); });
+          b.classList.add('active');
+          window._mCat = b.getAttribute('data-cat');
+          var q = (document.getElementById('storeSearchInput') || {}).value || '';
+          if (typeof renderStoreProducts === 'function') renderStoreProducts('all', q);
+        };
+      });
+    })();
     (function(){
       var inp = document.getElementById('storeSearchInput');
       var sg = document.getElementById('jdSuggest');
