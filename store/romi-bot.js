@@ -97,12 +97,32 @@
     bot('가장 확실한 확인법: 키패드에 <strong>*#06#</strong> 입력 → <strong>EID</strong>(32자리)가 보이면 eSIM 지원 기종이에요! ✅\n\n· 아이폰: XS/XR(2018) 이후 전 기종 (SE1·X 제외)\n· 갤럭시: S23 이후 전 기종, Z폴드4/플립4 이후 (국내판 S22 이하 미지원)\n· 중국 본토 구매 아이폰은 최신 기종도 막혀 있어요 ⚠️\n\n애매하면 기종명을 알려주세요 — 상담으로 바로 확인해 드릴게요.');
     homeChips();
   }
+  // 상담 접수: 연락처를 남기면 관리자 인박스로 저장 → 콜백 (카톡은 병행 채널)
+  function aInbox(pre){
+    var d = bot('상담원이 <strong>먼저 연락</strong>드릴 수도 있어요. 연락처와 내용을 남겨주세요 📮');
+    var f = document.createElement('div'); f.className = 'rb-form';
+    f.innerHTML = '<input id="rbIp" type="tel" placeholder="전화번호" style="max-width:118px;"><input id="rbIq" placeholder="문의 내용"><button>접수</button>';
+    body.appendChild(f); scrollDn();
+    if (pre) f.querySelector('#rbIq').value = pre;
+    f.querySelector('button').onclick = function(){
+      var ph = f.querySelector('#rbIp').value.replace(/[^0-9]/g, '');
+      var q = f.querySelector('#rbIq').value.trim();
+      if (ph.length < 10 || !q) { bot('전화번호와 문의 내용을 모두 입력해 주세요!'); return; }
+      me(q);
+      fetch(CARE.replace('/api/esim', '/api/support'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: ph, msg: q, from: isMobilePage ? 'mobile' : 'pc', at: new Date().toISOString() }) })
+        .then(function(r){ if (!r.ok) throw 0;
+          bot('✅ 접수됐어요! 순서대로 연락드릴게요.\n급하시면 카톡이 더 빨라요 → <a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담</a>'); homeChips(); })
+        .catch(function(){ bot('접수 서버가 잠시 쉬는 중이에요 — 카톡으로 바로 연결해 드릴게요!\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>'); homeChips(); });
+    };
+  }
   function aAgent(pre){
     var msg = '[JDISIM 상담 요청]' + (pre ? '\n문의: ' + pre : '') + '\n경로: ' + (isMobilePage ? '모바일' : 'PC') + ' 챗봇';
     var copied = false;
     try { navigator.clipboard.writeText(msg); copied = true; } catch (e) {}
     bot('상담원(로미 닥터 🩺)을 연결해 드릴게요!\n' + (copied ? '문의 내용이 <strong>복사</strong>됐어요 — 채팅창에 붙여넣기만 해주세요.' : '') +
       '\n\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 바로 열기 →</a>\n연중무휴 · 평균 응답 5분 이내');
+    chips([['📮 연락처 남기고 콜백 받기', function(){ aInbox(pre || ''); }]]);
     homeChips();
   }
 
@@ -192,6 +212,16 @@
   }
 
   // ---------- 이벤트 ----------
+  // 첫 방문: 3초 후 살짝 흔들어 존재 알림 (하루 1회)
+  try {
+    if (!sessionStorage.getItem('rb_hi')) {
+      sessionStorage.setItem('rb_hi', '1');
+      setTimeout(function(){ fab.style.animation = 'rbNudge 0.7s ease 2'; }, 3000);
+      var kf = document.createElement('style');
+      kf.textContent = '@keyframes rbNudge{0%,100%{transform:none}30%{transform:scale(1.12) rotate(-6deg)}60%{transform:scale(1.08) rotate(5deg)}}';
+      document.head.appendChild(kf);
+    }
+  } catch(e){}
   var opened = false;
   fab.onclick = function(){
     panel.classList.toggle('on');

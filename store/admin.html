@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>JDISIM 콘솔</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:#0D1220;color:#E8ECF5;min-height:100dvh}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 18px 60px}
+.top{display:flex;align-items:center;gap:12px;padding:6px 2px 18px}
+.top b{font-size:1.05rem;font-weight:900;letter-spacing:.16em}.top b i{font-style:normal;color:#F1690D}
+.top span{font-size:.68rem;font-weight:800;color:#5B6B94;background:#161D33;padding:5px 10px;border-radius:10px}
+.top .out{margin-left:auto;border:1px solid #26304D;background:none;color:#8B98B8;font:inherit;font-size:.72rem;font-weight:800;padding:8px 13px;border-radius:10px;cursor:pointer}
+/* 로그인 */
+.login{max-width:340px;margin:16vh auto 0;text-align:center}
+.login img{width:64px}.login h1{font-size:1.1rem;font-weight:900;margin:12px 0 4px}.login p{font-size:.76rem;color:#5B6B94;font-weight:700}
+.login input{width:100%;margin-top:16px;height:50px;border-radius:13px;border:1.5px solid #26304D;background:#131A2E;color:#fff;font:inherit;font-size:.9rem;font-weight:700;padding:0 16px;outline:none;text-align:center;letter-spacing:.2em}
+.login input:focus{border-color:#F1690D}
+.login button{width:100%;margin-top:10px;height:50px;border:none;border-radius:13px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font:inherit;font-size:.92rem;font-weight:900;cursor:pointer}
+/* 통계 */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.st{background:#131A2E;border:1px solid #1E2740;border-radius:16px;padding:15px 16px}
+.st .k{font-size:.62rem;font-weight:800;letter-spacing:.12em;color:#5B6B94}
+.st .v{font-size:1.5rem;font-weight:900;margin-top:5px;font-variant-numeric:tabular-nums}
+.st .v em{font-style:normal;font-size:.72rem;color:#F1690D;margin-left:4px}
+/* 카드/섹션 */
+.sec{background:#131A2E;border:1px solid #1E2740;border-radius:18px;padding:17px;margin-top:14px}
+.sec h2{font-size:.82rem;font-weight:900;display:flex;align-items:center;gap:8px}
+.sec h2 .n{font-size:.62rem;font-weight:900;color:#F1690D;background:rgba(241,105,13,.12);padding:3px 9px;border-radius:9px}
+.sec h2 .re{margin-left:auto;border:none;background:none;color:#5B6B94;font:inherit;font-size:.7rem;font-weight:800;cursor:pointer}
+/* 즉시 조회 도구 */
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:12px}
+.tool{background:#0F1526;border:1px solid #1E2740;border-radius:14px;padding:13px}
+.tool .t{font-size:.72rem;font-weight:900;color:#AAB6D4;margin-bottom:9px}
+.tool .row{display:flex;gap:7px}
+.tool input{flex:1;min-width:0;height:42px;border-radius:11px;border:1.5px solid #26304D;background:#131A2E;color:#fff;font:inherit;font-size:.8rem;font-weight:600;padding:0 12px;outline:none}
+.tool input:focus{border-color:#F1690D}
+.tool button{flex-shrink:0;height:42px;padding:0 15px;border:none;border-radius:11px;background:#F1690D;color:#fff;font:inherit;font-size:.76rem;font-weight:900;cursor:pointer}
+.tool .out{margin-top:9px;font-size:.74rem;font-weight:600;line-height:1.7;color:#C6CFE6;white-space:pre-wrap;word-break:break-all}
+.tool .out a{color:#F59E0B;font-weight:800}
+/* 인박스 */
+.tk{display:flex;gap:11px;align-items:flex-start;padding:13px 4px;border-top:1px solid #1E2740}
+.tk:first-of-type{border-top:none}
+.tk.done{opacity:.4}
+.tk .who{flex-shrink:0;min-width:118px}
+.tk .who b{display:block;font-size:.82rem;font-weight:900;font-variant-numeric:tabular-nums}
+.tk .who i{font-style:normal;font-size:.64rem;color:#5B6B94;font-weight:700}
+.tk .msg{flex:1;font-size:.8rem;font-weight:600;line-height:1.65;color:#C6CFE6}
+.tk .acts{flex-shrink:0;display:flex;gap:6px}
+.tk .acts button,.tk .acts a{border:1px solid #26304D;background:#0F1526;color:#AAB6D4;font:inherit;font-size:.66rem;font-weight:800;padding:7px 11px;border-radius:9px;cursor:pointer;text-decoration:none}
+.tk .acts .ok{border-color:rgba(23,181,94,.4);color:#3DDC84}
+.empty{padding:22px;text-align:center;font-size:.76rem;color:#5B6B94;font-weight:700}
+/* 주문 테이블 */
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.74rem}
+th{text-align:left;color:#5B6B94;font-size:.62rem;font-weight:800;letter-spacing:.08em;padding:8px 6px;border-bottom:1px solid #1E2740}
+td{padding:10px 6px;border-bottom:1px solid #161D33;font-weight:600;font-variant-numeric:tabular-nums}
+td a{color:#F59E0B;font-weight:800;text-decoration:none}
+@media(max-width:640px){.tk{flex-wrap:wrap}.tk .acts{width:100%;justify-content:flex-end}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+var API = 'https://jdisim-proxy.vercel.app/api';
+var TK = localStorage.getItem('jd_admin') || '';
+var $ = function(id){ return document.getElementById(id); };
+
+function loginView(){
+  $('app').innerHTML = '<div class="login"><img src="images/fox-hello.png" onerror="this.outerHTML=\'🦊\'">' +
+    '<h1>JDISIM 콘솔</h1><p>관리자 전용 — 토큰을 입력하세요</p>' +
+    '<input id="tok" type="password" placeholder="ADMIN TOKEN" onkeydown="if(event.key===\'Enter\')doLogin()">' +
+    '<button onclick="doLogin()">들어가기</button></div>';
+}
+function doLogin(){
+  TK = $('tok').value.trim();
+  localStorage.setItem('jd_admin', TK);
+  boot();
+}
+function logout(){ localStorage.removeItem('jd_admin'); TK=''; loginView(); }
+
+function boot(){
+  if (!TK) return loginView();
+  $('app').innerHTML = '<div class="empty">불러오는 중…</div>';
+  fetch(API + '/admin?token=' + encodeURIComponent(TK))
+    .then(function(r){ if (r.status === 401) { logout(); throw 0; } return r.json(); })
+    .then(render)
+    .catch(function(e){ if (e !== 0) $('app').innerHTML = '<div class="empty">API 연결 실패 — jdisim-api 배포와 ADMIN_TOKEN 환경변수를 확인하세요</div>' + toolboxHTML(); bindTools(); });
+}
+
+function render(d){
+  var s = d.stats || {};
+  $('app').innerHTML =
+    '<div class="top"><b>JDIS<i>I</i>M</b><span>ADMIN CONSOLE</span><button class="out" onclick="logout()">잠그기</button></div>' +
+    '<div class="stats">' +
+      st('오늘 주문', s.ordersToday, '건') + st('누적 주문', s.ordersTotal, '건') +
+      st('미처리 상담', s.supportOpen, '건', s.supportOpen > 0) + st('오늘 상담', s.supportToday, '건') +
+    '</div>' +
+    toolboxHTML() +
+    '<div class="sec"><h2>📮 상담 인박스 <span class="n">' + (s.supportOpen || 0) + ' 대기</span><button class="re" onclick="boot()">새로고침 ↻</button></h2><div id="inbox">' + inboxHTML(d.support || []) + '</div></div>' +
+    '<div class="sec"><h2>🧾 주문 로그 <span class="n">' + (s.ordersTotal || 0) + '</span></h2>' + ordersHTML(d.orders || []) + '</div>';
+  bindTools();
+}
+function st(k, v, unit, hot){
+  return '<div class="st"><div class="k">' + k + '</div><div class="v"' + (hot ? ' style="color:#F1690D"' : '') + '>' + (v || 0) + '<em>' + unit + '</em></div></div>';
+}
+
+// ── 즉시 조회 도구 3종 ──
+function toolboxHTML(){
+  return '<div class="sec"><h2>⚡ 즉시 조회</h2><div class="tools">' +
+    '<div class="tool"><div class="t">전화번호 → 고객 eSIM</div><div class="row"><input id="qPhone" type="tel" placeholder="01012345678"><button onclick="qHistory()">조회</button></div><div class="out" id="oPhone"></div></div>' +
+    '<div class="tool"><div class="t">ICCID → 실시간 사용량</div><div class="row"><input id="qIccid" placeholder="89…"><button onclick="qUsage()">조회</button></div><div class="out" id="oIccid"></div></div>' +
+    '<div class="tool"><div class="t">케어링크 생성기</div><div class="row"><input id="qCare" placeholder="ICCID"><button onclick="qCareLink()">생성</button></div><div class="out" id="oCare"></div></div>' +
+    '</div></div>';
+}
+function bindTools(){
+  ['qPhone','qIccid','qCare'].forEach(function(id, i){
+    var el = $(id); if (!el) return;
+    el.addEventListener('keydown', function(e){ if (e.key === 'Enter') [qHistory, qUsage, qCareLink][i](); });
+  });
+}
+function qHistory(){
+  var ph = $('qPhone').value.replace(/[^0-9]/g, ''); if (!ph) return;
+  $('oPhone').textContent = '조회 중…';
+  fetch(API + '/esim?action=history&phone=' + ph).then(function(r){ return r.json(); }).then(function(d){
+    var L = d.esims || [];
+    $('oPhone').innerHTML = L.length ? L.map(function(e){
+      return '• ' + (e.prodName || e.option || '?') + '\n  <a href="#" onclick="$(\'qIccid\').value=\'' + e.iccid + '\';qUsage();return false;">' + e.iccid + ' → 사용량</a>';
+    }).join('\n') : '결과 없음';
+  }).catch(function(){ $('oPhone').textContent = '실패 — API 확인'; });
+}
+function qUsage(){
+  var ic = $('qIccid').value.trim(); if (!ic) return;
+  $('oIccid').textContent = '조회 중…';
+  fetch(API + '/esim?action=usage&iccid=' + encodeURIComponent(ic)).then(function(r){ return r.json(); }).then(function(u){
+    var L = u.usageList || u.daily || [];
+    var tot = 0; L.forEach(function(x){ tot += Number(x.used || x.used_mb || 0); });
+    $('oIccid').textContent = L.length
+      ? '누적 ' + (Math.round(tot / 1024 * 10) / 10) + 'GB\n' + L.slice(-4).reverse().map(function(x){ return x.date + '  ' + (Math.round((x.used || x.used_mb || 0) / 1024 * 10) / 10) + 'GB'; }).join('\n')
+      : JSON.stringify(u).slice(0, 200);
+  }).catch(function(){ $('oIccid').textContent = '실패'; });
+}
+function qCareLink(){
+  var ic = $('qCare').value.trim(); if (!ic) return;
+  var url = 'https://jdisim.co.kr/issue.html?care=' + encodeURIComponent(ic);
+  navigator.clipboard && navigator.clipboard.writeText(url);
+  $('oCare').innerHTML = '복사됨 ✓\n<a href="' + url + '" target="_blank">' + url + '</a>';
+}
+
+// ── 인박스 ──
+function inboxHTML(list){
+  if (!list.length) return '<div class="empty">접수된 상담이 없어요 — 챗봇 [연락처 남기기]로 들어옵니다</div>';
+  return list.map(function(t, i){
+    return '<div class="tk' + (t.done ? ' done' : '') + '">' +
+      '<div class="who"><b>' + t.phone + '</b><i>' + (t.at || '').replace('T', ' ').slice(5, 16) + ' · ' + (t.from || '') + '</i></div>' +
+      '<div class="msg">' + esc(t.msg) + '</div>' +
+      '<div class="acts">' +
+        '<a href="tel:' + t.phone + '">📞</a>' +
+        '<button onclick="copyMsg(' + i + ', this)">복사</button>' +
+        '<button class="ok" onclick="toggleDone(' + i + ')">' + (t.done ? '되돌리기' : '완료') + '</button>' +
+      '</div></div>';
+  }).join('');
+}
+var _cache = null;
+function copyMsg(i, btn){
+  fetch(API + '/support?token=' + encodeURIComponent(TK)).then(function(r){ return r.json(); }).then(function(d){
+    var t = (d.support || [])[i]; if (!t) return;
+    navigator.clipboard.writeText(t.phone + ' / ' + t.msg);
+    btn.textContent = '복사 ✓'; setTimeout(function(){ btn.textContent = '복사'; }, 1200);
+  });
+}
+function toggleDone(i){
+  fetch(API + '/support?token=' + encodeURIComponent(TK) + '&index=' + i, { method: 'PATCH' }).then(boot);
+}
+
+// ── 주문 로그 ──
+function ordersHTML(list){
+  if (!list.length) return '<div class="empty">아직 자동 주문 기록이 없어요 — /api/order 가동 시 자동 축적</div>';
+  return '<table><tr><th>시각</th><th>이름</th><th>전화</th><th>상품</th><th>금액</th><th>티켓</th></tr>' +
+    list.slice(0, 50).map(function(o){
+      return '<tr><td>' + (o.at || '').replace('T', ' ').slice(5, 16) + '</td><td>' + esc(o.name || '') + '</td><td>' + (o.phone || '') + '</td><td>' + esc((o.sku || '').replace(/_/g, ' ')) + '</td><td>' + (o.amount ? Number(o.amount).toLocaleString() : '') + '</td><td><a href="' + (o.care || '#') + '" target="_blank">열기</a></td></tr>';
+    }).join('') + '</table>';
+}
+function esc(t){ var d = document.createElement('i'); d.textContent = t || ''; return d.innerHTML; }
+boot();
+</script>
+</body>
+</html>
