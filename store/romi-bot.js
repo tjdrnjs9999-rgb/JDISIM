@@ -9,6 +9,7 @@
 
   var KAKAO = 'https://pf.kakao.com/_GSixcn/chat';
   var CARE = window.CARE_API || 'https://jdisim-proxy.vercel.app/api/esim';
+  function rbBuzz(ms){ try { if (navigator.vibrate) navigator.vibrate(ms || 12); } catch (e) {} }
   var isMobilePage = /mobile\.html|issue\.html/.test(location.pathname) || document.querySelector('.bottom-nav') || document.querySelector('.bbar');
   var BOTTOM = isMobilePage ? 'calc(80px + env(safe-area-inset-bottom, 0px))' : '24px';
 
@@ -303,9 +304,10 @@
       .then(function(r){ return r.json(); })
       .then(function(c){
         if (c.gone) { endLiveUI('상담이 만료되어 자동 삭제됐어요. 새로 연결할 수 있어요!'); return; }
-        (c.msgs || []).slice(LIVE.seen).forEach(function(m){
-          if (m.f === 'a') { var d = bot('👨‍💼 <strong>상담원</strong>\n' + esc0(m.t)); buzz(15); }
-          LIVE.seen++;
+        var news = (c.msgs || []).slice(LIVE.seen);
+        LIVE.seen += news.length;   // 표시 중 오류가 나도 같은 메시지가 반복되지 않도록 선반영
+        news.forEach(function(m){
+          if (m.f === 'a') { try { bot('👨‍💼 <strong>상담원</strong>\n' + esc0(m.t)); rbBuzz(15); } catch (e) {} }
         });
         if (c.closed) { endLiveUI('상담이 종료됐어요. 도움이 되었길 바라요 🦊'); return; }
         LIVE.timer = setTimeout(pollLive, 4000);
