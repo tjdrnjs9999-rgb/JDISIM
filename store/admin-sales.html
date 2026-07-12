@@ -78,6 +78,10 @@ input:focus{border-color:var(--accent)}
 <script>
 var API = 'https://jdisim-proxy.vercel.app';
 var won = function(n){ return (n||0).toLocaleString('ko-KR') + '원'; };
+// 서드파티 쿠키 차단(사파리·크롬) 대응: 로그인 응답의 서명 세션을 저장해 Bearer로 전송
+function getSess(){ try { return sessionStorage.getItem('jdSess') || ''; } catch(e){ return ''; } }
+function setSess(v){ try { sessionStorage.setItem('jdSess', v); } catch(e){} }
+function authHeaders(){ var s = getSess(); return s ? { 'Authorization': 'Bearer ' + s } : {}; }
 
 function doLogin(){
   fetch(API + '/api/login', { method:'POST', credentials:'include',
@@ -85,6 +89,7 @@ function doLogin(){
   .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
   .then(function(x){
     if (!x.ok) { document.getElementById('loginErr').textContent = x.j.error || '로그인 실패'; return; }
+    if (x.j.session) setSess(x.j.session);   // 쿠키가 막혀도 동작하도록 세션값 보관
     show('dash'); load();
   }).catch(function(){ document.getElementById('loginErr').textContent = '네트워크 오류'; });
 }
@@ -92,7 +97,7 @@ function show(id){ document.getElementById('login').style.display = id==='login'
                    document.getElementById('dash').style.display = id==='dash'?'':'none'; }
 
 function load(){
-  fetch(API + '/api/profit', { credentials:'include' })
+  fetch(API + '/api/profit', { credentials:'include', headers: authHeaders() })
   .then(function(r){ if (r.status === 401) { show('login'); throw 0; } return r.json(); })
   .then(render).catch(function(){});
 }
@@ -152,8 +157,8 @@ function drawChart(rows){
 }
 function roundRect(x,a,b,w,h,r){ if(h<1)h=1; x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,0); x.arcTo(a,b+h,a,b,0); x.arcTo(a,b,a+w,b,r); x.closePath(); }
 
-// 시작: 세션 있으면 바로 대시보드
-fetch(API + '/api/profit', { credentials:'include' })
+// 시작: 저장된 세션 있으면 바로 대시보드, 없거나 만료면 로그인
+fetch(API + '/api/profit', { credentials:'include', headers: authHeaders() })
   .then(function(r){ if (r.status === 401) { show('login'); throw 0; } return r.json(); })
   .then(function(d){ show('dash'); render(d); })
   .catch(function(){});
