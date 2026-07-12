@@ -74,6 +74,7 @@
     body.querySelectorAll('.rb-form').forEach(function(f){ f.remove(); }); // 미완성 폼은 제거
   }
   function routeChip(label){
+    if (label.indexOf('안 터져') !== -1 || label.indexOf('🚨') !== -1) return aTrouble();
     if (label.indexOf('설치') !== -1) return aInstall();
     if (label.indexOf('사용량') !== -1) return aUsage();
     if (label.indexOf('리셋') !== -1) return aReset();
@@ -101,6 +102,7 @@
 
   function homeChips(){
     chips([
+      ['🚨 데이터가 안 터져요', aTrouble],
       ['📲 설치 방법', aInstall],
       ['📊 내 사용량 조회', aUsage],
       ['↻ 데이터 리셋 시간', aReset],
@@ -146,6 +148,19 @@
           bot('✅ 접수됐어요! 순서대로 연락드릴게요.\n급하시면 카톡이 더 빨라요 → <a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담</a>'); homeChips(); })
         .catch(function(){ bot('접수 서버가 잠시 쉬는 중이에요 — 카톡으로 바로 연결해 드릴게요!\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>'); homeChips(); });
     };
+  }
+  function aTrouble(){
+    var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    bot('당황하지 마세요, 90%는 설정 3개로 해결돼요! ' + (isIOS ? '아이폰' : '갤럭시') + ' 기준으로 알려드릴게요 🦊\n\n' +
+      (isIOS
+        ? '① <strong>설정 > 셀룰러</strong> → eSIM 회선 <strong>켜기</strong>\n② 같은 화면 <strong>셀룰러 데이터</strong> → eSIM 선택\n③ eSIM 선택 → <strong>데이터 로밍 ON</strong> (한국 유심 회선은 로밍 OFF!)\n④ <strong>셀룰러 데이터 전환 허용 OFF</strong> ← 이게 켜져 있으면 자꾸 끊겨요\n⑤ 비행기모드 20초 켰다 끄기 → 안 되면 재부팅'
+        : '① <strong>설정 > 연결 > SIM 관리자</strong> → eSIM <strong>켜기</strong>\n② 같은 화면 <strong>모바일 데이터</strong> → eSIM 선택\n③ <strong>모바일 네트워크 > 데이터 로밍 ON</strong> (한국 유심은 OFF!)\n④ <strong>설정 > 연결 > 데이터 사용 > 모바일 데이터</strong> 켜짐 확인\n⑤ 비행기모드 20초 켰다 끄기 → 안 되면 재부팅') +
+      '\n\n⚠️ 어떤 경우에도 <strong>eSIM을 삭제하진 마세요</strong> — 삭제하면 재설치가 안 돼요!');
+    bot('그래도 안 되면 <strong>통신사 수동 선택</strong>을 해볼게요:\n' +
+      (isIOS ? '설정 > 셀룰러 > 네트워크 선택 > 자동 끄기 → 안내받은 통신사 선택' : '설정 > 연결 > 해외 로밍 > 로밍 이동통신사 > 수동 선택') +
+      '\n5G가 불안정하면 <strong>4G/LTE로 고정</strong>하는 것도 효과적이에요.\n\n여기까지 했는데도 안 되면 바로 도와드릴게요 👇');
+    chips([['🩺 상담원에게 바로 연결', function(){ aAgent('현지에서 데이터가 안 터져요 (5단계 체크 완료)'); }]]);
+    homeChips();
   }
   function aAgent(pre){
     var q = pre || '상담 요청';
@@ -237,6 +252,23 @@
   // ---------- 입력 라우터 ----------
   function route(q){
     var t = q.replace(/\s+/g, '');
+    // 스몰토크 즉답
+    if (/^(안녕|하이|헬로|헬로우|ㅎㅇ|hi|hello|반가워)/i.test(t)) {
+      bot('안녕하세요! JDISIM 여행 도우미 <strong>로미</strong>예요 🦊\n여행 준비 중이신가요? 무엇이든 물어보세요!');
+      return homeChips();
+    }
+    if (/고마워|고맙|감사|땡큐|thank|최고|굿|짱/i.test(t)) {
+      bot('도움이 됐다니 기뻐요! 🦊 즐거운 여행 되세요 ✈️\n또 궁금한 게 생기면 언제든 불러주세요!');
+      return homeChips();
+    }
+    if (/누구야|누구세요|이름이뭐|정체가/.test(t)) {
+      bot('저는 JDISIM의 여행 도우미 여우 <strong>로미</strong>예요 🦊\n설치·사용량·리셋 시간 같은 건 즉시, 어려운 건 상담원과 함께 도와드려요!');
+      return homeChips();
+    }
+    if (/^(잘가|바이|빠이|안녕히|수고)/.test(t)) {
+      bot('네, 좋은 여행 되세요! ✈️🦊');
+      return homeChips();
+    }
     // 국가 언급 시 컨텍스트 저장
     for (var ck in RESET) if (t.indexOf(ck) !== -1) { CTX.country = ck; persist(); break; }
     // 후속 질문: 국가 생략형 ("요금은?", "리셋 몇시야", "거기 얼마야")
@@ -246,6 +278,7 @@
       }
       if (/리셋|초기화|몇시/.test(t)) { bot('🌏 <strong>' + CTX.country + '</strong>의 일일 리셋은 <strong>현지 ' + RESET[CTX.country] + '</strong>예요 ↻'); return homeChips(); }
     }
+    if (/안터|안터져|안돼|안됨|신호없|서비스없|인터넷안|연결안|먹통|데이터가안/.test(t)) return aTrouble();
     if (/설치|원클릭|QR|큐알|수동|등록방법/i.test(t)) return aInstall();
     if (/사용량|얼마남|남은데이터|데이터확인|조회/.test(t)) return aUsage();
     if (/리셋|초기화|충전시간|몇시에/.test(t)) {
@@ -264,7 +297,6 @@
       bot('🌏 <strong>' + k2 + '</strong> 여행 준비 중이시군요!\n· 일일 리셋: 현지 ' + RESET[k2] + ' ↻\n· 요금이 궁금하면 "' + k2 + ' 요금"이라고 물어보세요!');
       return homeChips();
     }
-    bot('음, 그건 로미가 바로 답하기 어려운 질문이에요 🦊\n상담원이 정확히 도와드릴게요!');
     aAgent(q);
   }
 
