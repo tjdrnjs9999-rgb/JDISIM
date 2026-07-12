@@ -64,7 +64,7 @@ td a{color:#F59E0B;font-weight:800;text-decoration:none}
 <div class="wrap" id="app"></div>
 <script>
 var API = 'https://jdisim-proxy.vercel.app/api';
-var TK = localStorage.getItem('jd_admin') || '';
+var REVEAL = false;
 var $ = function(id){ return document.getElementById(id); };
 
 function loginView(){
@@ -74,25 +74,31 @@ function loginView(){
     '<button onclick="doLogin()">들어가기</button></div>';
 }
 function doLogin(){
-  TK = $('tok').value.trim();
-  localStorage.setItem('jd_admin', TK);
-  boot();
+  var tok = $('tok').value.trim(); if(!tok) return;
+  $('tok').disabled = true;
+  fetch(API + '/login', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: tok }) })
+    .then(function(r){ return r.json().then(function(j){ return { ok:r.ok, j:j }; }); })
+    .then(function(o){ if(o.ok){ sessionStorage.setItem('jd_in','1'); boot(); } else { alert(o.j.error||'로그인 실패'); $('tok').disabled=false; } })
+    .catch(function(){ alert('연결 실패'); $('tok').disabled=false; });
 }
-function logout(){ localStorage.removeItem('jd_admin'); TK=''; loginView(); }
+function logout(){ sessionStorage.removeItem('jd_in'); document.cookie='jd_sess=; Max-Age=0; Path=/'; loginView(); }
 
 function boot(){
-  if (!TK) return loginView();
+  if (!sessionStorage.getItem('jd_in')) return loginView();
   $('app').innerHTML = '<div class="empty">불러오는 중…</div>';
-  fetch(API + '/admin?token=' + encodeURIComponent(TK))
+  fetch(API + '/admin' + (REVEAL?'?reveal=1':''), { credentials:'include' })
     .then(function(r){ if (r.status === 401) { logout(); throw 0; } return r.json(); })
     .then(render)
-    .catch(function(e){ if (e !== 0) $('app').innerHTML = '<div class="empty">API 연결 실패 — jdisim-api 배포와 ADMIN_TOKEN 환경변수를 확인하세요</div>' + toolboxHTML(); bindTools(); });
+    .catch(function(e){ if (e !== 0) $('app').innerHTML = '<div class="empty">API 연결 실패 — 배포·환경변수(ADMIN_TOKEN)·KV 연결을 확인하세요</div>'; });
 }
 
+function toggleReveal(){ REVEAL=!REVEAL; boot(); }
 function render(d){
   var s = d.stats || {};
   $('app').innerHTML =
-    '<div class="top"><b>JDIS<i>I</i>M</b><span>ADMIN CONSOLE</span><button class="out" onclick="logout()">잠그기</button></div>' +
+    '<div class="top"><b>JDIS<i>I</i>M</b><span>ADMIN CONSOLE</span>' +
+      '<button class="out" onclick="toggleReveal()" style="margin-left:auto">' + (REVEAL?'🔓 번호 표시중':'🔒 번호 가림') + '</button>' +
+      '<button class="out" onclick="logout()" style="margin-left:8px">잠그기</button></div>' +
     '<div class="stats">' +
       st('오늘 주문', s.ordersToday, '건') + st('누적 주문', s.ordersTotal, '건') +
       st('미처리 상담', s.supportOpen, '건', s.supportOpen > 0) + st('오늘 상담', s.supportToday, '건') +
@@ -164,14 +170,14 @@ function inboxHTML(list){
 }
 var _cache = null;
 function copyMsg(i, btn){
-  fetch(API + '/support?token=' + encodeURIComponent(TK)).then(function(r){ return r.json(); }).then(function(d){
+  fetch(API + '/support', {credentials:'include'}).then(function(r){ return r.json(); }).then(function(d){
     var t = (d.support || [])[i]; if (!t) return;
     navigator.clipboard.writeText(t.phone + ' / ' + t.msg);
     btn.textContent = '복사 ✓'; setTimeout(function(){ btn.textContent = '복사'; }, 1200);
   });
 }
 function toggleDone(i){
-  fetch(API + '/support?token=' + encodeURIComponent(TK) + '&index=' + i, { method: 'PATCH' }).then(boot);
+  fetch(API + '/support?index=' + i, { method:'PATCH', credentials:'include' }).then(boot);
 }
 
 // ── 주문 로그 ──

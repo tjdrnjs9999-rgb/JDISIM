@@ -117,14 +117,27 @@
     };
   }
   function aAgent(pre){
-    var msg = '[JDISIM 상담 요청]' + (pre ? '\n문의: ' + pre : '') + '\n경로: ' + (isMobilePage ? '모바일' : 'PC') + ' 챗봇';
-    var copied = false;
-    try { navigator.clipboard.writeText(msg); copied = true; } catch (e) {}
-    bot('상담원(로미 닥터 🩺)을 연결해 드릴게요!\n' + (copied ? '문의 내용이 <strong>복사</strong>됐어요 — 채팅창에 붙여넣기만 해주세요.' : '') +
-      '\n\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 바로 열기 →</a>\n연중무휴 · 평균 응답 5분 이내');
-    chips([['📮 연락처 남기고 콜백 받기', function(){ aInbox(pre || ''); }]]);
-    homeChips();
+    var q = pre || '상담 요청';
+    var w = bot('로미가 좀 더 알아보고 있어요… 🦊');
+    fetch(CARE.replace('/api/esim', '/api/ai'), { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ q: q, from: isMobilePage ? 'mobile' : 'pc' }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.reply && !d.escalate) { w.innerHTML = esc0(d.reply); homeChips(); return; }
+        if (d.reply && d.escalate) { w.innerHTML = esc0(d.reply); }
+        else { w.innerHTML = '이 질문은 담당자가 직접 도와드리는 게 정확해요. 연결해 드릴게요!'; }
+        offerHuman(q);
+      })
+      .catch(function(){ w.innerHTML = '지금 바로 담당자에게 연결해 드릴게요!'; offerHuman(q); });
   }
+  function esc0(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML.replace(/\n/g,'<br>'); }
+  function offerHuman(pre){
+    chips([
+      ['📮 연락처 남기고 콜백 받기', function(){ aInbox(pre || ''); }],
+      ['💬 카톡으로 바로 상담', function(){ me('카톡 상담'); bot('<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>\n연중무휴 · 평균 응답 5분 이내'); homeChips(); }]
+    ]);
+  }
+
 
   // 사용량 조회 (이름+전화)
   function aUsage(){
