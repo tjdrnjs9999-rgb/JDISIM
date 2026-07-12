@@ -135,10 +135,11 @@
               if (u && u.used_mb !== undefined) tot = Number(u.used_mb) || tot;
               var gb = (Math.round(tot / 1024 * 10) / 10) + 'GB';
               var prod = pick.prodName || pick.Option || pick.option || '';
+              var care = 'https://jdisim.co.kr/issue.html?care=' + encodeURIComponent(iccid) + (prod ? '&plan=' + encodeURIComponent(prod) : '');
               w.innerHTML = '✅ 찾았어요!' + (prod ? '\n<strong>' + prod + '</strong>' : '') +
                 '\n누적 사용: <strong style="color:#F2751F;">' + gb + '</strong>' +
                 (L.length ? '\n최근: ' + L.slice(-2).reverse().map(function(x){ return (x.date || '') + ' ' + (Math.round(Number(x.used || x.used_mb || 0) / 1024 * 10) / 10) + 'GB'; }).join(' · ') : '') +
-                '\n\n일 용량 상품은 매일 현지 리셋 시간에 새로 채워져요 ↻';
+                '\n\n<a href="' + care + '" target="_blank" rel="noopener">🎫 내 티켓 열기 →</a>  ·  <a href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">➕ 연장 eSIM 보기</a>';
               homeChips();
             });
         })

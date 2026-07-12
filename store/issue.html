@@ -384,6 +384,7 @@
     .tkt.printing { animation:none; } .donut-fg,.gauge i { transition:none; }
   }
 </style>
+<link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
 <div class="offbar" id="offBar">오프라인 상태예요 — 이미 발급된 QR은 계속 볼 수 있어요</div>
@@ -1581,5 +1582,6 @@ function renderError(title,msg){
 
 loadOrder();
 </script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});</script>
 </body>
 </html>
