@@ -66,9 +66,15 @@ input:focus{border-color:var(--accent)}
 
     <div class="card"><h2>일별 매출</h2><canvas id="chart" height="220"></canvas></div>
 
-    <div class="card"><h2>월별 요약</h2><table id="mTable"><thead><tr><th>월</th><th>주문</th><th>수량</th><th>매출</th><th>객단가</th></tr></thead><tbody></tbody></table></div>
+    <div class="card"><h2>월별 요약</h2><table id="mTable"><thead><tr><th>월</th><th>주문</th><th>매출</th><th>원가</th><th>순익</th><th>마진</th></tr></thead><tbody></tbody></table></div>
 
-    <div class="card"><h2>일별 상세 (최근 31일)</h2><table id="dTable"><thead><tr><th>날짜</th><th>주문</th><th>수량</th><th>매출</th></tr></thead><tbody></tbody></table></div>
+    <div class="card" id="kkoCard" style="display:none">
+      <h2>🛎️ 카카오톡스토어 검수 대기 <span id="kkoN" style="color:var(--accent)"></span></h2>
+      <p style="font-size:.72rem;color:var(--sub);font-weight:700;margin:-6px 0 10px">금액·수량 확인 후 <b>완료</b>를 누르면 매출표에 합산됩니다</p>
+      <div id="kkoList"></div>
+    </div>
+
+    <div class="card"><h2>일별 상세 (최근 31일)</h2><table id="dTable"><thead><tr><th>날짜</th><th>주문</th><th>매출</th><th>순익</th></tr></thead><tbody></tbody></table></div>
 
     <button class="btn" onclick="load()">새로고침</button>
     <div class="empty" id="empty" style="display:none">아직 데이터가 없어요.<br>로컬에서 <b>python playauto_profit.py --from 2026-06-01</b> 실행 후 새로고침.</div>
@@ -100,6 +106,43 @@ function load(){
   fetch(API + '/api/profit', { credentials:'include', headers: authHeaders() })
   .then(function(r){ if (r.status === 401) { show('login'); throw 0; } return r.json(); })
   .then(render).catch(function(){});
+  loadPending();
+}
+
+function loadPending(){
+  fetch(API + '/api/pending', { credentials:'include', headers: authHeaders() })
+  .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+  .then(function(d){
+    var items = d.items || [];
+    var card = document.getElementById('kkoCard');
+    card.style.display = items.length ? '' : 'none';
+    document.getElementById('kkoN').textContent = items.length + '건';
+    document.getElementById('kkoList').innerHTML = items.map(function(it){
+      return '<div style="border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:9px" data-id="'+it.id+'">' +
+        '<div style="font-size:.78rem;font-weight:800">'+esc(it.prod)+'</div>' +
+        (it.opt ? '<div style="font-size:.68rem;color:var(--sub);font-weight:700;margin-top:2px">'+esc(it.opt)+'</div>' : '') +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px;align-items:center">' +
+          '<label style="font-size:.66rem;color:var(--sub);font-weight:800">날짜 <input class="ki" data-f="date" value="'+it.date+'" style="width:106px;margin:0;padding:7px 9px;font-size:.76rem"></label>' +
+          '<label style="font-size:.66rem;color:var(--sub);font-weight:800">수량 <input class="ki" data-f="qty" type="number" value="'+it.qty+'" style="width:58px;margin:0;padding:7px 9px;font-size:.76rem"></label>' +
+          '<label style="font-size:.66rem;color:var(--sub);font-weight:800">매출 <input class="ki" data-f="revenue" type="number" value="'+it.revenue+'" style="width:92px;margin:0;padding:7px 9px;font-size:.76rem"></label>' +
+          '<label style="font-size:.66rem;color:var(--sub);font-weight:800">원가 <input class="ki" data-f="cost" type="number" value="'+it.cost+'" style="width:86px;margin:0;padding:7px 9px;font-size:.76rem"></label>' +
+          '<button class="btn" style="padding:9px 14px;font-size:.78rem" onclick="kkoAct(this,\'approve\')">완료</button>' +
+          '<button style="padding:9px 12px;font-size:.78rem;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-family:inherit;font-weight:800;color:var(--sub);cursor:pointer" onclick="kkoAct(this,\'remove\')">제외</button>' +
+        '</div></div>';
+    }).join('');
+  }).catch(function(){});
+}
+function esc(x){ return String(x==null?'':x).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function kkoAct(btn, action){
+  var box = btn.closest('[data-id]');
+  var body = { id: box.getAttribute('data-id'), action: action };
+  box.querySelectorAll('.ki').forEach(function(i){ body[i.getAttribute('data-f')] = i.value; });
+  btn.disabled = true; btn.textContent = '처리중…';
+  fetch(API + '/api/pending', { method:'PATCH', credentials:'include',
+    headers: Object.assign({'Content-Type':'application/json'}, authHeaders()),
+    body: JSON.stringify(body) })
+  .then(function(r){ if (!r.ok) throw 0; load(); })
+  .catch(function(){ btn.disabled = false; btn.textContent = action==='approve'?'완료':'제외'; alert('처리 실패 — 다시 시도'); });
 }
 
 function render(data){
@@ -117,21 +160,25 @@ function render(data){
   var last7 = s.filter(function(r){ return new Date(r.d) >= new Date(Date.now()-7*864e5); });
   var sum = function(arr,k){ return arr.reduce(function(a,r){ return a+(r[k]||0); },0); };
 
-  set('kToday', won(t.revenue), t.orders + '건'); set('kYday', won(y.revenue), y.orders + '건');
-  set('k7', won(sum(last7,'revenue')), sum(last7,'orders') + '건');
-  set('kAll', won(sum(s,'revenue')), sum(s,'orders') + '건 · ' + s[0].d + '~');
+  var pf = function(r){ return (r.profit != null) ? r.profit : (r.revenue||0) - (r.cost||0); };
+  set('kToday', won(t.revenue), t.orders + '건 · 순익 ' + won(pf(t)));
+  set('kYday', won(y.revenue), y.orders + '건 · 순익 ' + won(pf(y)));
+  set('k7', won(sum(last7,'revenue')), '순익 ' + won(last7.reduce(function(a,r){return a+pf(r);},0)));
+  var allPf = s.reduce(function(a,r){ return a+pf(r); },0);
+  set('kAll', won(sum(s,'revenue')), '순익 ' + won(allPf) + ' · ' + s[0].d + '~');
 
   // 월별
   var months = {};
-  s.forEach(function(r){ var m = r.d.slice(0,7); (months[m] = months[m] || {o:0,q:0,v:0});
-    months[m].o += r.orders||0; months[m].q += r.qty||0; months[m].v += r.revenue||0; });
+  s.forEach(function(r){ var m = r.d.slice(0,7); (months[m] = months[m] || {o:0,v:0,c:0});
+    months[m].o += r.orders||0; months[m].v += r.revenue||0; months[m].c += r.cost||0; });
   document.querySelector('#mTable tbody').innerHTML = Object.keys(months).sort().map(function(m){
-    var x = months[m]; return '<tr><td>'+m+'</td><td>'+x.o+'</td><td>'+x.q+'</td><td>'+won(x.v)+'</td><td>'+won(x.o?Math.round(x.v/x.o):0)+'</td></tr>';
+    var x = months[m], p = x.v - x.c, pct = x.v ? Math.round(p/x.v*100) : 0;
+    return '<tr><td>'+m+'</td><td>'+x.o+'</td><td>'+won(x.v)+'</td><td>'+won(x.c)+'</td><td style="color:#16a34a">'+won(p)+'</td><td>'+pct+'%</td></tr>';
   }).join('');
 
   // 일별 (최근 31)
   document.querySelector('#dTable tbody').innerHTML = s.slice(-31).reverse().map(function(r){
-    return '<tr><td>'+r.d.slice(5)+'</td><td>'+(r.orders||0)+'</td><td>'+(r.qty||0)+'</td><td>'+won(r.revenue)+'</td></tr>';
+    return '<tr><td>'+r.d.slice(5)+'</td><td>'+(r.orders||0)+'</td><td>'+won(r.revenue)+'</td><td style="color:#16a34a">'+won(pf(r))+'</td></tr>';
   }).join('');
 
   drawChart(s.slice(-31));
