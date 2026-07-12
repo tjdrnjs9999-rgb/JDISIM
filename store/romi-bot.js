@@ -38,7 +38,9 @@
     '.rb-ft{display:flex;gap:7px;padding:11px 13px;border-top:1px solid #EFF2F6;background:#fff;}' +
     '.rb-ft input{flex:1;min-width:0;height:44px;border:1.5px solid #E4E8EF;border-radius:13px;padding:0 13px;font-size:.82rem;font-weight:600;font-family:inherit;outline:none;}' +
     '.rb-ft input:focus{border-color:#F97316;box-shadow:0 0 0 3px rgba(249,115,22,0.12);}' +
-    '.rb-ft button{flex-shrink:0;width:44px;height:44px;border:none;border-radius:13px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:900;cursor:pointer;font-size:1rem;}';
+    '.rb-ft button{flex-shrink:0;width:44px;height:44px;border:none;border-radius:13px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:900;cursor:pointer;font-size:1rem;}' +
+    '.rb-typing{display:inline-flex;gap:4px;padding:2px 0;}.rb-typing i{width:7px;height:7px;border-radius:50%;background:#F1690D;opacity:.35;animation:rbDot 1.1s infinite;}' +
+    '.rb-typing i:nth-child(2){animation-delay:.18s}.rb-typing i:nth-child(3){animation-delay:.36s}@keyframes rbDot{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}';
   document.head.appendChild(css);
 
   // ---------- 마크업 ----------
@@ -55,9 +57,38 @@
   document.body.appendChild(panel);
 
   var body = panel.querySelector('#rbBody');
+  var CTX = { country: '' };   // 대화 컨텍스트: 마지막 언급 국가
+  function persist(){ try { sessionStorage.setItem('rb_log', body.innerHTML.slice(0, 60000)); sessionStorage.setItem('rb_ctx', JSON.stringify(CTX)); } catch(e){} }
+  function restore(){
+    try {
+      var h = sessionStorage.getItem('rb_log');
+      if (h) { body.innerHTML = h; CTX = JSON.parse(sessionStorage.getItem('rb_ctx') || '{}') || {}; rebindChips(); return true; }
+    } catch(e){}
+    return false;
+  }
+  function rebindChips(){
+    // 복원된 칩은 핸들러가 없으니 라벨로 재연결
+    body.querySelectorAll('.rb-chip').forEach(function(b){
+      b.onclick = function(){ me(b.textContent); routeChip(b.textContent); };
+    });
+    body.querySelectorAll('.rb-form').forEach(function(f){ f.remove(); }); // 미완성 폼은 제거
+  }
+  function routeChip(label){
+    if (label.indexOf('설치') !== -1) return aInstall();
+    if (label.indexOf('사용량') !== -1) return aUsage();
+    if (label.indexOf('리셋') !== -1) return aReset();
+    if (label.indexOf('유효') !== -1 || label.indexOf('환불') !== -1) return aValid();
+    if (label.indexOf('기종') !== -1) return aDevice();
+    if (label.indexOf('콜백') !== -1) return aInbox('');
+    if (label.indexOf('카톡') !== -1) { bot('<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>'); return homeChips(); }
+    if (label.indexOf('상담') !== -1) return aAgent();
+    return homeChips();
+  }
+  function typing(){ var d = document.createElement('div'); d.className = 'rb-msg bot'; d.innerHTML = '<span class="rb-typing"><i></i><i></i><i></i></span>'; body.appendChild(d); scrollDn(); return d; }
+  function isNight(){ var h = new Date().getHours(); return h >= 21 || h < 8; }
   function scrollDn(){ body.scrollTop = body.scrollHeight; }
-  function bot(html){ var d = document.createElement('div'); d.className = 'rb-msg bot'; d.innerHTML = html; body.appendChild(d); scrollDn(); return d; }
-  function me(t){ var d = document.createElement('div'); d.className = 'rb-msg me'; d.textContent = t; body.appendChild(d); scrollDn(); }
+  function bot(html){ var d = document.createElement('div'); d.className = 'rb-msg bot'; d.innerHTML = html; body.appendChild(d); scrollDn(); persist(); return d; }
+  function me(t){ var d = document.createElement('div'); d.className = 'rb-msg me'; d.textContent = t; body.appendChild(d); scrollDn(); persist(); }
   function chips(list){
     var w = document.createElement('div'); w.className = 'rb-chips';
     list.forEach(function(c){
@@ -118,7 +149,11 @@
   }
   function aAgent(pre){
     var q = pre || '상담 요청';
-    var w = bot('로미가 좀 더 알아보고 있어요… 🦊');
+    if (isNight() && !pre) {
+      bot('지금은 상담원 응답이 느릴 수 있는 시간이에요 🌙\n<strong>연락처를 남겨주시면 아침에 가장 먼저</strong> 연락드릴게요!');
+      return offerHuman('');
+    }
+    var w = typing();
     fetch(CARE.replace('/api/esim', '/api/ai'), { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ q: q, from: isMobilePage ? 'mobile' : 'pc' }) })
       .then(function(r){ return r.json(); })
@@ -202,6 +237,15 @@
   // ---------- 입력 라우터 ----------
   function route(q){
     var t = q.replace(/\s+/g, '');
+    // 국가 언급 시 컨텍스트 저장
+    for (var ck in RESET) if (t.indexOf(ck) !== -1) { CTX.country = ck; persist(); break; }
+    // 후속 질문: 국가 생략형 ("요금은?", "리셋 몇시야", "거기 얼마야")
+    if (CTX.country && !Object.keys(RESET).some(function(k){ return t.indexOf(k) !== -1; })) {
+      if (/^(요금|얼마|가격)/.test(t) || /(요금|얼마|가격)[은는이가]?[??]?$/.test(t)) {
+        var pr2 = priceFor(CTX.country); if (pr2) { bot(pr2); return homeChips(); }
+      }
+      if (/리셋|초기화|몇시/.test(t)) { bot('🌏 <strong>' + CTX.country + '</strong>의 일일 리셋은 <strong>현지 ' + RESET[CTX.country] + '</strong>예요 ↻'); return homeChips(); }
+    }
     if (/설치|원클릭|QR|큐알|수동|등록방법/i.test(t)) return aInstall();
     if (/사용량|얼마남|남은데이터|데이터확인|조회/.test(t)) return aUsage();
     if (/리셋|초기화|충전시간|몇시에/.test(t)) {
@@ -240,8 +284,10 @@
     panel.classList.toggle('on');
     if (panel.classList.contains('on') && !opened) {
       opened = true;
-      bot('안녕하세요! JDISIM 여행 도우미 <strong>로미</strong>예요 🦊\n무엇을 도와드릴까요?');
-      homeChips();
+      if (!restore()) {
+        bot('안녕하세요! JDISIM 여행 도우미 <strong>로미</strong>예요 🦊\n무엇을 도와드릴까요?');
+        homeChips();
+      } else { scrollDn(); }
     }
   };
   panel.querySelector('.rb-x').onclick = function(){ panel.classList.remove('on'); };

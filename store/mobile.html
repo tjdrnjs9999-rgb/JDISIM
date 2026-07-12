@@ -501,6 +501,26 @@
     }
 
     /* Search Bar */
+
+    /* ── JD 통합 검색바 (모바일·PC 공통) ── */
+    .jd-search { position: relative; margin-bottom: 18px; }
+    .jd-search .jd-box { display: flex; align-items: center; gap: 4px; background: #fff; border: 1.5px solid rgba(15,23,42,0.1); border-radius: 16px; padding: 5px 5px 5px 14px; box-shadow: 0 2px 10px rgba(15,23,42,0.05); transition: border-color .18s, box-shadow .18s; }
+    .jd-search .jd-box:focus-within { border-color: #F97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.13); }
+    .jd-search svg { width: 18px; height: 18px; flex-shrink: 0; color: #94a3b8; }
+    .jd-search input { flex: 1; min-width: 0; border: none; outline: none; background: none; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: #0f172a; padding: 10px 6px; }
+    .jd-search input::placeholder { color: #a8b3c5; font-weight: 500; }
+    .jd-search .jd-x { flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 50%; background: #eef1f6; color: #64748b; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: none; }
+    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F97316,#F59E0B); color: #fff; font-family: inherit; font-size: 0.84rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(249,115,22,0.28); }
+    .jd-search .jd-go:active { transform: scale(0.96); }
+    .jd-suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 14px; box-shadow: 0 16px 40px rgba(15,23,42,0.14); overflow: hidden; z-index: 300; display: none; }
+    .jd-suggest.on { display: block; animation: jdSgIn .16s ease both; }
+    @keyframes jdSgIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    .jd-sg { display: flex; align-items: center; gap: 11px; width: 100%; padding: 12px 15px; border: none; background: none; font-family: inherit; cursor: pointer; text-align: left; }
+    .jd-sg:hover, .jd-sg:active { background: #FFF7F0; }
+    .jd-sg .fl { font-size: 1.25rem; }
+    .jd-sg b { font-size: 0.88rem; font-weight: 800; color: #0f172a; }
+    .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F2751F; }
+
     .search-container {
       position: relative;
       margin-bottom: 20px;
@@ -1832,10 +1852,14 @@
 
   <main id="view-store" class="mobile-view">
     <!-- Search -->
-    <div class="search-container" style="display:flex;align-items:center;gap:8px;">
-      <i data-lucide="search" class="search-icon"></i>
-      <input type="text" id="storeSearchInput" class="search-input" placeholder="어디로 가시나요? 국가명이나 통신사를 적어보세요." style="flex:1;">
-      <button id="storeSearchBtn" onclick="renderStoreProducts('all', document.getElementById('storeSearchInput').value); this.blur();" style="flex-shrink:0;height:44px;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.84rem;box-shadow:0 6px 16px rgba(249,115,22,0.3);cursor:pointer;">검색</button>
+    <div class="jd-search">
+      <div class="jd-box">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+        <input type="text" id="storeSearchInput" placeholder="어디로 가시나요? 국가명이나 통신사를 적어보세요." autocomplete="off">
+        <button type="button" class="jd-x" id="jdClear" aria-label="지우기">✕</button>
+        <button type="button" class="jd-go" id="storeSearchBtn">검색</button>
+      </div>
+      <div class="jd-suggest" id="jdSuggest"></div>
     </div>
 
     <!-- 구매 보장 신뢰 스트립 -->
@@ -4244,6 +4268,44 @@
       } catch (e) {}
     })();
   </script>
+  <script>
+    (function(){
+      var inp = document.getElementById('storeSearchInput');
+      var sg = document.getElementById('jdSuggest');
+      var xb = document.getElementById('jdClear');
+      var go = document.getElementById('storeSearchBtn');
+      if (!inp || !sg) return;
+      var FLAGS = {'일본':'\uD83C\uDDEF\uD83C\uDDF5','베트남':'\uD83C\uDDFB\uD83C\uDDF3','태국':'\uD83C\uDDF9\uD83C\uDDED','대만':'\uD83C\uDDF9\uD83C\uDDFC','미국':'\uD83C\uDDFA\uD83C\uDDF8','중국':'\uD83C\uDDE8\uD83C\uDDF3','홍콩':'\uD83C\uDDED\uD83C\uDDF0','싱가포르':'\uD83C\uDDF8\uD83C\uDDEC','말레이시아':'\uD83C\uDDF2\uD83C\uDDFE','인도네시아':'\uD83C\uDDEE\uD83C\uDDE9','필리핀':'\uD83C\uDDF5\uD83C\uDDED','괌':'\uD83C\uDDEC\uD83C\uDDFA','사이판':'\uD83C\uDDF2\uD83C\uDDF5','호주':'\uD83C\uDDE6\uD83C\uDDFA','뉴질랜드':'\uD83C\uDDF3\uD83C\uDDFF','유럽':'\uD83C\uDDEA\uD83C\uDDFA','몰디브':'\uD83C\uDDF2\uD83C\uDDFB','몽골':'\uD83C\uDDF2\uD83C\uDDF3','라오스':'\uD83C\uDDF1\uD83C\uDDE6','캄보디아':'\uD83C\uDDF0\uD83C\uDDED','인도':'\uD83C\uDDEE\uD83C\uDDF3','한국':'\uD83C\uDDF0\uD83C\uDDF7'};
+      function dataset(){
+        var d = window.productsData || window.PRODUCTS_DATA || [];
+        return d.map(function(c){ return { name: c.country || c.name || '', price: c.min_price || c.minPrice || 0 }; }).filter(function(c){ return c.name; });
+      }
+      function doSearch(v){ if (typeof renderStoreProducts === 'function') renderStoreProducts('all', v); }
+      function hide(){ sg.classList.remove('on'); }
+      function show(list){
+        if (!list.length) return hide();
+        sg.innerHTML = list.slice(0, 6).map(function(c){
+          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0~</i>' : '') + '</button>';
+        }).join('');
+        sg.classList.add('on');
+        sg.querySelectorAll('.jd-sg').forEach(function(b){
+          b.onclick = function(){ inp.value = b.getAttribute('data-c'); hide(); xb.style.display = 'block'; doSearch(inp.value); inp.blur(); };
+        });
+      }
+      inp.addEventListener('input', function(){
+        var v = inp.value.trim();
+        xb.style.display = v ? 'block' : 'none';
+        doSearch(v);
+        if (!v) return hide();
+        var q = v.toLowerCase();
+        show(dataset().filter(function(c){ return c.name.toLowerCase().indexOf(q) !== -1; }));
+      });
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') { hide(); doSearch(inp.value); inp.blur(); } if (e.key === 'Escape') hide(); });
+      xb.onclick = function(){ inp.value = ''; xb.style.display = 'none'; hide(); doSearch(''); inp.focus(); };
+      go.onclick = function(){ hide(); doSearch(inp.value); inp.blur(); };
+      document.addEventListener('click', function(e){ if (!sg.contains(e.target) && e.target !== inp) hide(); });
+    })();
+</script>
   <script src="romi-bot.js" defer></script>
 </body>
 </html>
