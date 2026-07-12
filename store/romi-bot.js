@@ -58,6 +58,9 @@
 
   var body = panel.querySelector('#rbBody');
   var CTX = { country: '' };   // 대화 컨텍스트: 마지막 언급 국가
+  var HIST = [];               // AI 멀티턴용 대화 기록 (최근 8개)
+  var USERINFO = { nm: '', ph: '' }; // 사용량 조회로 파악된 고객
+  function track(role, content){ HIST.push({ role: role, content: String(content).slice(0, 300) }); if (HIST.length > 8) HIST.shift(); }
   function persist(){ try { sessionStorage.setItem('rb_log', body.innerHTML.slice(0, 60000)); sessionStorage.setItem('rb_ctx', JSON.stringify(CTX)); } catch(e){} }
   function restore(){
     try {
@@ -89,7 +92,7 @@
   function isNight(){ var h = new Date().getHours(); return h >= 21 || h < 8; }
   function scrollDn(){ body.scrollTop = body.scrollHeight; }
   function bot(html){ var d = document.createElement('div'); d.className = 'rb-msg bot'; d.innerHTML = html; body.appendChild(d); scrollDn(); persist(); return d; }
-  function me(t){ var d = document.createElement('div'); d.className = 'rb-msg me'; d.textContent = t; body.appendChild(d); scrollDn(); persist(); }
+  function me(t){ var d = document.createElement('div'); d.className = 'rb-msg me'; d.textContent = t; body.appendChild(d); scrollDn(); persist(); track('me', t); }
   function chips(list){
     var w = document.createElement('div'); w.className = 'rb-chips';
     list.forEach(function(c){
@@ -170,10 +173,10 @@
     }
     var w = typing();
     fetch(CARE.replace('/api/esim', '/api/ai'), { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ q: q, from: isMobilePage ? 'mobile' : 'pc' }) })
+      body: JSON.stringify({ q: q, history: HIST.slice(0, -1), name: USERINFO.nm, phone: USERINFO.ph, from: isMobilePage ? 'mobile' : 'pc' }) })
       .then(function(r){ return r.json(); })
       .then(function(d){
-        if (d.reply && !d.escalate) { w.innerHTML = esc0(d.reply); homeChips(); return; }
+        if (d.reply && !d.escalate) { w.innerHTML = esc0(d.reply); track('bot', d.reply); feedback(q, d.reply); homeChips(); return; }
         if (d.reply && d.escalate) { w.innerHTML = esc0(d.reply); }
         else { w.innerHTML = '이 질문은 담당자가 직접 도와드리는 게 정확해요. 연결해 드릴게요!'; }
         offerHuman(q);
@@ -181,6 +184,20 @@
       .catch(function(){ w.innerHTML = '지금 바로 담당자에게 연결해 드릴게요!'; offerHuman(q); });
   }
   function esc0(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML.replace(/\n/g,'<br>'); }
+  function feedback(q, a){
+    var w = document.createElement('div'); w.className = 'rb-chips';
+    w.innerHTML = '<button type="button" class="rb-chip">👍 도움됐어요</button><button type="button" class="rb-chip">👎 아쉬워요</button>';
+    var bs = w.querySelectorAll('button');
+    function send(good){
+      fetch(CARE.replace('/api/esim', '/api/learn'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fb: { q: q, a: a, good: good } }) }).catch(function(){});
+      w.innerHTML = '<span style="font-size:.72rem;font-weight:700;color:#94a3b8;padding:4px 2px;">' + (good ? '감사해요! 🦊' : '알려주셔서 감사해요 — 더 배워올게요 🦊') + '</span>';
+      if (!good) offerHuman(q);
+    }
+    bs[0].onclick = function(){ send(true); };
+    bs[1].onclick = function(){ send(false); };
+    body.appendChild(w); scrollDn();
+  }
   function offerHuman(pre){
     chips([
       ['📮 연락처 남기고 콜백 받기', function(){ aInbox(pre || ''); }],
@@ -210,6 +227,7 @@
           for (var i = list.length - 1; i >= 0; i--) { if (list[i] && (list[i].iccid || list[i].ICCID)) { pick = list[i]; break; } }
           if (!pick) throw 1;
           var iccid = String(pick.iccid || pick.ICCID);
+          USERINFO = { nm: nm, ph: ph };
           return fetch(CARE + '?action=usage&iccid=' + encodeURIComponent(iccid))
             .then(function(r){ if (!r.ok) throw 0; return r.json(); })
             .then(function(u){

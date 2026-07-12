@@ -105,7 +105,12 @@ function render(d){
     '</div>' +
     toolboxHTML() +
     '<div class="sec"><h2>📮 상담 인박스 <span class="n">' + (s.supportOpen || 0) + ' 대기</span><button class="re" onclick="boot()">새로고침 ↻</button></h2><div id="inbox">' + inboxHTML(d.support || []) + '</div></div>' +
-    '<div class="sec"><h2>🧾 주문 로그 <span class="n">' + (s.ordersTotal || 0) + '</span></h2>' + ordersHTML(d.orders || []) + '</div>';
+    '<div class="sec"><h2>🧾 주문 로그 <span class="n">' + (s.ordersTotal || 0) + '</span></h2>' + ordersHTML(d.orders || []) + '</div>' +
+    '<div class="sec"><h2>🧠 로미 학습 <button class="re" onclick="loadLearn()">불러오기 ↻</button></h2>' +
+      '<div class="tool" style="margin-top:10px;"><div class="t">직접 가르치기 — 저장 즉시 로미가 반영해요</div>' +
+      '<input id="tq" placeholder="질문 (예: 크루즈에서도 되나요?)" style="width:100%;height:42px;border-radius:11px;border:1.5px solid #26304D;background:#131A2E;color:#fff;font:inherit;font-size:.8rem;padding:0 12px;outline:none;margin-bottom:7px;box-sizing:border-box;">' +
+      '<div class="row"><input id="ta" placeholder="로미가 할 답변"><button onclick="teach()">가르치기</button></div><div class="out" id="tOut"></div></div>' +
+      '<div id="learnBody" class="empty">[불러오기]를 누르면 대화 로그와 학습 목록이 표시돼요</div></div>';
   bindTools();
 }
 function st(k, v, unit, hot){
@@ -189,6 +194,33 @@ function ordersHTML(list){
     }).join('') + '</table>';
 }
 function esc(t){ var d = document.createElement('i'); d.textContent = t || ''; return d.innerHTML; }
+// ── 🧠 로미 학습 ──
+function teach(){
+  var q = $('tq').value.trim(), a = $('ta').value.trim();
+  if (!q || !a) { $('tOut').textContent = '질문과 답변을 모두 입력하세요'; return; }
+  fetch(API + '/learn', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ q:q, a:a }) })
+    .then(function(r){ if(!r.ok) throw 0; $('tq').value=''; $('ta').value=''; $('tOut').textContent='저장 ✓ — 로미가 5분 내 반영해요'; loadLearn(); })
+    .catch(function(){ $('tOut').textContent='저장 실패 — 로그인/배포 확인'; });
+}
+function fillTeach(q){ $('tq').value = q; $('ta').focus(); window.scrollTo({top: $('tq').getBoundingClientRect().top + window.scrollY - 90, behavior:'smooth'}); }
+function unlearn(i){ fetch(API + '/learn?remove=' + i, { method:'PATCH', credentials:'include' }).then(loadLearn); }
+function loadLearn(){
+  $('learnBody').innerHTML = '<div class="empty">불러오는 중…</div>';
+  fetch(API + '/learn', { credentials:'include' }).then(function(r){ return r.json(); }).then(function(d){
+    var fb = (d.botlog || []).filter(function(x){ return x.fb; });
+    var badSet = {}; fb.forEach(function(x){ if (x.good === false) badSet[x.q] = 1; });
+    var logs = (d.botlog || []).filter(function(x){ return !x.fb; }).slice(0, 30);
+    var logHtml = logs.length ? logs.map(function(x){
+      var tag = x.esc ? '<span style="color:#F1690D;font-weight:900;"> 🔴미해결</span>' : (badSet[x.q] ? '<span style="color:#F59E0B;font-weight:900;"> 👎</span>' : '');
+      return '<div class="tk"><div class="msg"><b style="color:#fff;">Q.</b> ' + esc(x.q) + tag + (x.a ? '<br><span style="color:#8B98B8;">A. ' + esc(x.a.slice(0,120)) + '</span>' : '') + (x.err ? '<br><span style="color:#F1690D;font-size:.68rem;">⚠ ' + esc(x.err) + '</span>' : '') + '</div>' +
+        '<div class="acts"><button onclick="fillTeach(\'' + esc(x.q).replace(/'/g,"\\'") + '\')">가르치기</button></div></div>';
+    }).join('') : '<div class="empty">대화 로그가 아직 없어요</div>';
+    var faqHtml = (d.faq || []).length ? '<div style="margin-top:14px;font-size:.72rem;font-weight:900;color:#AAB6D4;">✅ 학습 완료 (' + d.faq.length + ')</div>' + d.faq.map(function(f, i){
+      return '<div class="tk"><div class="msg"><b style="color:#3DDC84;">Q.</b> ' + esc(f.q) + '<br><span style="color:#8B98B8;">A. ' + esc(f.a) + '</span></div><div class="acts"><button onclick="unlearn(' + i + ')">삭제</button></div></div>';
+    }).join('') : '';
+    $('learnBody').innerHTML = '<div style="font-size:.72rem;font-weight:900;color:#AAB6D4;margin-bottom:4px;">💬 최근 대화 (미해결·👎는 가르치기 추천)</div>' + logHtml + faqHtml;
+  }).catch(function(){ $('learnBody').innerHTML = '<div class="empty">불러오기 실패</div>'; });
+}
 boot();
 </script>
 </body>
