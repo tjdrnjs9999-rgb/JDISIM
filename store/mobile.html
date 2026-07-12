@@ -1848,9 +1848,6 @@
       </div>
     </div>
 
-    <!-- 가격 비교: 로밍 vs 포켓와이파이 vs eSIM -->
-    <div data-jdisim-compare style="margin: 30px 0 6px;"></div>
-
     <!-- 자체 수집: 발급 고객 인증 후기 (티켓 별점) — 0건이면 자동 숨김 -->
     <div data-jdisim-reviews="strip" style="margin: 28px 0 4px;"></div>
 
@@ -1924,8 +1921,14 @@
       <div class="recent-chips" id="recentChips"></div>
     </div>
 
+    <!-- 데이터 용량 계산기 (접힌 상태) -->
+    <div data-jdisim-datacalc="fold" style="margin: 4px 0 16px;"></div>
+
     <!-- Products list -->
     <div class="product-list" id="storeProductList"></div>
+
+    <!-- 가격 비교: 로밍 vs 포켓와이파이 vs eSIM (구매 결정 지점) -->
+    <div data-jdisim-compare style="margin: 34px 0 10px;"></div>
   </main>
 
   <!-- ================= VIEW 3: ORDER VIEW ================= -->
@@ -2139,6 +2142,7 @@
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
+  <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="globe.js?v=20260720" defer></script>
   
   <script>
@@ -4089,20 +4093,19 @@
         const root = document.documentElement;
         const hadSnap = root.classList.contains('home-snap');
         if (hadSnap) root.classList.remove('home-snap');   // 이동 중 스냅 개입 차단
-        // scrollend 미지원(iOS) 대응: 타이머 대신 직접 애니메이션 → 끝난 시점에 정확히 복원
-        const startY = window.pageYOffset;
-        const targetY = el.getBoundingClientRect().top + startY;
-        const dist = targetY - startY;
-        const dur = Math.min(900, Math.max(450, Math.abs(dist) * 0.22));
         const t0 = performance.now();
+        const startY = window.pageYOffset;
+        const dur = 750;
         const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         (function step(now) {
+          // 이미지 로딩 등으로 레이아웃이 밀려도 정확히 붙도록 매 프레임 목표 재계산
+          const targetY = window.pageYOffset + el.getBoundingClientRect().top;
           const p = Math.min(1, (now - t0) / dur);
-          window.scrollTo(0, startY + dist * ease(p));
+          window.scrollTo(0, startY + (targetY - startY) * ease(p));
           if (p < 1) requestAnimationFrame(step);
           else {
-            window.scrollTo(0, targetY);                   // 스냅 지점에 정확히 착지
-            if (hadSnap) requestAnimationFrame(() => root.classList.add('home-snap'));
+            el.scrollIntoView({ behavior: 'instant', block: 'start' });   // 스냅 지점에 강제 정렬
+            if (hadSnap) requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('home-snap')));
           }
         })(t0);
       } catch (e) { /* 미지원 환경 무시 */ }

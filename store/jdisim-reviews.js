@@ -184,12 +184,12 @@
     el.innerHTML =
       '<div class="jrv-panel">' +
         '<div class="jrv-sum">' +
-          '<div class="jrv-avg">' + avg.toFixed(1) + '<small>후기 ' + total + '건</small></div>' +
+          '<div class="jrv-avg">' + avg.toFixed(1) + '<small>발급 고객 별점</small></div>' +
           '<div class="jrv-bars">' + barsHTML + '</div>' +
           '<span class="jrv-badge">발급 고객 인증</span>' +
         '</div>' +
         '<div class="jrv-list">' + itemsHTML(SHOW) + '</div>' +
-        (total > SHOW ? '<button type="button" class="jrv-more">후기 더 보기 (' + (total - SHOW) + ')</button>' : '') +
+        (total > SHOW ? '<button type="button" class="jrv-more">후기 더 보기</button>' : '') +
       '</div>';
 
     var btn = el.querySelector('.jrv-more');
