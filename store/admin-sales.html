@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>매출 현황 | JDISIM 관리</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+:root{--accent:#F2751F;--grad:linear-gradient(135deg,#F97316,#FB923C 55%,#F59E0B);--teal:#2BB3A3;--ink:#221510;--sub:#8B94A7;--line:#F0E8E0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;background:linear-gradient(180deg,#FFFDFB,#FFF6EE 8%,#f8fafc 30%);color:var(--ink);font-size:15px;padding-bottom:60px;word-break:keep-all}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+header{padding:16px 0;border-bottom:1px solid var(--line);background:#fff;margin-bottom:24px}
+header .wrap{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:900;font-size:18px;text-decoration:none;color:var(--ink)}.logo span{color:var(--accent)}
+h1{font-size:20px;font-weight:900;margin:6px 0 2px}
+.meta{font-size:12px;color:var(--sub);font-weight:700;margin-bottom:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 4px 14px rgba(34,21,16,.04)}
+.kpi small{display:block;font-size:.68rem;color:var(--sub);font-weight:800;margin-bottom:4px}
+.kpi b{font-size:1.1rem;font-weight:900}
+.kpi span{display:block;font-size:.7rem;color:var(--teal);font-weight:800;margin-top:2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 16px rgba(34,21,16,.04);margin-bottom:14px}
+.card h2{font-size:14px;font-weight:900;margin-bottom:12px}
+canvas{width:100%;height:220px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{font-size:.7rem;color:var(--sub);font-weight:800;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px;text-align:right;border-bottom:1px solid #F8F4EF;font-weight:700}
+tr:last-child td{border:none}
+.btn{background:var(--grad);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-family:inherit;font-weight:900;font-size:.9rem;cursor:pointer;box-shadow:0 8px 24px rgba(242,117,31,.22)}
+input{width:100%;border:1.5px solid #E4E8EF;border-radius:12px;padding:12px 14px;font-family:inherit;font-size:.9rem;font-weight:700;outline:none;margin-bottom:10px}
+input:focus{border-color:var(--accent)}
+#login{max-width:360px;margin:80px auto}
+.err{color:#ef4444;font-size:.8rem;font-weight:800;margin-top:8px}
+.empty{text-align:center;color:var(--sub);font-weight:700;padding:32px 0;font-size:.86rem}
+@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/">JDI<span>SIM</span></a><span style="font-size:12px;color:var(--sub);font-weight:800">관리자 · 매출</span></div></header>
+
+<div class="wrap">
+  <!-- 로그인 -->
+  <div id="login" style="display:none">
+    <div class="card">
+      <h2>관리자 인증</h2>
+      <input id="tk" type="password" placeholder="관리자 토큰" autocomplete="current-password">
+      <button class="btn" style="width:100%" onclick="doLogin()">로그인</button>
+      <div class="err" id="loginErr"></div>
+    </div>
+  </div>
+
+  <!-- 대시보드 -->
+  <div id="dash" style="display:none">
+    <h1>매출 현황 <span style="font-size:.7rem;color:var(--sub);font-weight:800">(eSIM · 유심 제외)</span></h1>
+    <div class="meta" id="syncAt">—</div>
+
+    <div class="kpis">
+      <div class="kpi"><small>오늘</small><b id="kToday">—</b><span id="kTodayN"></span></div>
+      <div class="kpi"><small>어제</small><b id="kYday">—</b><span id="kYdayN"></span></div>
+      <div class="kpi"><small>최근 7일</small><b id="k7">—</b><span id="k7N"></span></div>
+      <div class="kpi"><small>기간 전체</small><b id="kAll">—</b><span id="kAllN"></span></div>
+    </div>
+
+    <div class="card"><h2>일별 매출</h2><canvas id="chart" height="220"></canvas></div>
+
+    <div class="card"><h2>월별 요약</h2><table id="mTable"><thead><tr><th>월</th><th>주문</th><th>수량</th><th>매출</th><th>객단가</th></tr></thead><tbody></tbody></table></div>
+
+    <div class="card"><h2>일별 상세 (최근 31일)</h2><table id="dTable"><thead><tr><th>날짜</th><th>주문</th><th>수량</th><th>매출</th></tr></thead><tbody></tbody></table></div>
+
+    <button class="btn" onclick="load()">새로고침</button>
+    <div class="empty" id="empty" style="display:none">아직 데이터가 없어요.<br>로컬에서 <b>python playauto_profit.py --from 2026-06-01</b> 실행 후 새로고침.</div>
+  </div>
+</div>
+
+<script>
+var API = 'https://jdisim-proxy.vercel.app';
+var won = function(n){ return (n||0).toLocaleString('ko-KR') + '원'; };
+
+function doLogin(){
+  fetch(API + '/api/login', { method:'POST', credentials:'include',
+    headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: document.getElementById('tk').value }) })
+  .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+  .then(function(x){
+    if (!x.ok) { document.getElementById('loginErr').textContent = x.j.error || '로그인 실패'; return; }
+    show('dash'); load();
+  }).catch(function(){ document.getElementById('loginErr').textContent = '네트워크 오류'; });
+}
+function show(id){ document.getElementById('login').style.display = id==='login'?'':'none';
+                   document.getElementById('dash').style.display = id==='dash'?'':'none'; }
+
+function load(){
+  fetch(API + '/api/profit', { credentials:'include' })
+  .then(function(r){ if (r.status === 401) { show('login'); throw 0; } return r.json(); })
+  .then(render).catch(function(){});
+}
+
+function render(data){
+  var s = (data && data.series) || [];
+  document.getElementById('syncAt').textContent = data && data.at ? '마지막 동기화: ' + new Date(data.at).toLocaleString('ko-KR') : '';
+  document.getElementById('empty').style.display = s.length ? 'none' : '';
+  if (!s.length) return;
+  s.sort(function(a,b){ return a.d < b.d ? -1 : 1; });
+  var byDate = {}; s.forEach(function(r){ byDate[r.d] = r; });
+
+  var iso = function(dt){ var z = new Date(dt.getTime() - dt.getTimezoneOffset()*60000); return z.toISOString().slice(0,10); };
+  var today = new Date();
+  var t = byDate[iso(today)] || {revenue:0, orders:0};
+  var y = byDate[iso(new Date(Date.now()-864e5))] || {revenue:0, orders:0};
+  var last7 = s.filter(function(r){ return new Date(r.d) >= new Date(Date.now()-7*864e5); });
+  var sum = function(arr,k){ return arr.reduce(function(a,r){ return a+(r[k]||0); },0); };
+
+  set('kToday', won(t.revenue), t.orders + '건'); set('kYday', won(y.revenue), y.orders + '건');
+  set('k7', won(sum(last7,'revenue')), sum(last7,'orders') + '건');
+  set('kAll', won(sum(s,'revenue')), sum(s,'orders') + '건 · ' + s[0].d + '~');
+
+  // 월별
+  var months = {};
+  s.forEach(function(r){ var m = r.d.slice(0,7); (months[m] = months[m] || {o:0,q:0,v:0});
+    months[m].o += r.orders||0; months[m].q += r.qty||0; months[m].v += r.revenue||0; });
+  document.querySelector('#mTable tbody').innerHTML = Object.keys(months).sort().map(function(m){
+    var x = months[m]; return '<tr><td>'+m+'</td><td>'+x.o+'</td><td>'+x.q+'</td><td>'+won(x.v)+'</td><td>'+won(x.o?Math.round(x.v/x.o):0)+'</td></tr>';
+  }).join('');
+
+  // 일별 (최근 31)
+  document.querySelector('#dTable tbody').innerHTML = s.slice(-31).reverse().map(function(r){
+    return '<tr><td>'+r.d.slice(5)+'</td><td>'+(r.orders||0)+'</td><td>'+(r.qty||0)+'</td><td>'+won(r.revenue)+'</td></tr>';
+  }).join('');
+
+  drawChart(s.slice(-31));
+}
+function set(id, v, n){ document.getElementById(id).textContent = v; document.getElementById(id+'N').textContent = n||''; }
+
+function drawChart(rows){
+  var cv = document.getElementById('chart'), dpr = window.devicePixelRatio||1;
+  var W = cv.clientWidth, H = 220; cv.width = W*dpr; cv.height = H*dpr;
+  var x = cv.getContext('2d'); x.scale(dpr,dpr); x.clearRect(0,0,W,H);
+  if (!rows.length) return;
+  var max = Math.max.apply(null, rows.map(function(r){ return r.revenue||0; })) || 1;
+  var pad = 6, bw = (W - pad*2) / rows.length;
+  var g = x.createLinearGradient(0,20,0,H-24); g.addColorStop(0,'#F97316'); g.addColorStop(1,'#F59E0B');
+  rows.forEach(function(r,i){
+    var h = (r.revenue||0)/max*(H-50);
+    x.fillStyle = g; roundRect(x, pad+i*bw+bw*0.18, H-24-h, bw*0.64, h, 3); x.fill();
+  });
+  x.fillStyle = '#8B94A7'; x.font = '700 9px Pretendard'; x.textAlign = 'center';
+  var step = Math.ceil(rows.length/6);
+  rows.forEach(function(r,i){ if (i % step === 0) x.fillText(r.d.slice(5), pad+i*bw+bw/2, H-8); });
+  x.textAlign = 'left'; x.fillText('최고 ' + won(max), pad, 12);
+}
+function roundRect(x,a,b,w,h,r){ if(h<1)h=1; x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,0); x.arcTo(a,b+h,a,b,0); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+
+// 시작: 세션 있으면 바로 대시보드
+fetch(API + '/api/profit', { credentials:'include' })
+  .then(function(r){ if (r.status === 401) { show('login'); throw 0; } return r.json(); })
+  .then(function(d){ show('dash'); render(d); })
+  .catch(function(){});
+</script>
+</body>
+</html>

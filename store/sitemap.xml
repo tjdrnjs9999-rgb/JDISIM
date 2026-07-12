@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://jdisim.co.kr/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://jdisim.co.kr/mobile.html</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://jdisim.co.kr/guide.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <url><loc>https://jdisim.co.kr/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/terms.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/privacy.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/japan.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/vietnam.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/thailand.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/taiwan.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/china.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/hongkong.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/singapore.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/malaysia.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/philippines.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/indonesia.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/usa.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/guam.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/australia.html</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://jdisim.co.kr/guide/turkiye.html</loc><lastmod>2026-07-12</lastmod></url>
 </urlset>
