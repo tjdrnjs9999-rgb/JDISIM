@@ -65,6 +65,13 @@ td a{color:#F59E0B;font-weight:800;text-decoration:none}
 <script>
 var API = 'https://jdisim-proxy.vercel.app/api';
 var REVEAL = false;
+function fx(path, opts){
+  opts = opts || {};
+  opts.credentials = 'include';
+  var sess = sessionStorage.getItem('jd_sess');
+  opts.headers = Object.assign({}, opts.headers || {}, sess ? { 'Authorization': 'Bearer ' + sess } : {});
+  return fetch(API + path, opts);
+}
 var $ = function(id){ return document.getElementById(id); };
 
 function loginView(){
@@ -78,15 +85,15 @@ function doLogin(){
   $('tok').disabled = true;
   fetch(API + '/login', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: tok }) })
     .then(function(r){ return r.json().then(function(j){ return { ok:r.ok, j:j }; }); })
-    .then(function(o){ if(o.ok){ sessionStorage.setItem('jd_in','1'); boot(); } else { alert(o.j.error||'로그인 실패'); $('tok').disabled=false; } })
+    .then(function(o){ if(o.ok){ sessionStorage.setItem('jd_in','1'); if (o.j.session) sessionStorage.setItem('jd_sess', o.j.session); boot(); } else { alert(o.j.error||'로그인 실패'); $('tok').disabled=false; } })
     .catch(function(){ alert('연결 실패'); $('tok').disabled=false; });
 }
-function logout(){ sessionStorage.removeItem('jd_in'); document.cookie='jd_sess=; Max-Age=0; Path=/'; loginView(); }
+function logout(){ sessionStorage.removeItem('jd_in'); sessionStorage.removeItem('jd_sess'); document.cookie='jd_sess=; Max-Age=0; Path=/'; loginView(); }
 
 function boot(){
   if (!sessionStorage.getItem('jd_in')) return loginView();
   $('app').innerHTML = '<div class="empty">불러오는 중…</div>';
-  fetch(API + '/admin' + (REVEAL?'?reveal=1':''), { credentials:'include' })
+  fx('/admin' + (REVEAL?'?reveal=1':''))
     .then(function(r){ if (r.status === 401) { logout(); throw 0; } return r.json(); })
     .then(function(d){ render(d); loadChats(); loadProfit(); if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); clearInterval(CUR.listTimer); CUR.listTimer = setInterval(loadChats, 15000); })
     .catch(function(e){ if (e !== 0) $('app').innerHTML = '<div class="empty">API 연결 실패 — 배포·환경변수(ADMIN_TOKEN)·KV 연결을 확인하세요</div>'; });
@@ -186,14 +193,14 @@ function inboxHTML(list){
 }
 var _cache = null;
 function copyMsg(i, btn){
-  fetch(API + '/support', {credentials:'include'}).then(function(r){ return r.json(); }).then(function(d){
+  fx('/support').then(function(r){ return r.json(); }).then(function(d){
     var t = (d.support || [])[i]; if (!t) return;
     navigator.clipboard.writeText(t.phone + ' / ' + t.msg);
     btn.textContent = '복사 ✓'; setTimeout(function(){ btn.textContent = '복사'; }, 1200);
   });
 }
 function toggleDone(i){
-  fetch(API + '/support?index=' + i, { method:'PATCH', credentials:'include' }).then(boot);
+  fx('/support?index=' + i, { method:'PATCH' }).then(boot);
 }
 
 // ── 주문 로그 ──
@@ -208,7 +215,7 @@ function esc(t){ var d = document.createElement('i'); d.textContent = t || ''; r
 // ── 🗨️ 라이브 상담 ──
 var CUR = { id: '', seen: 0, timer: null, listTimer: null, lastCount: 0 };
 function loadChats(){
-  fetch(API + '/chat?list=1', { credentials:'include' }).then(function(r){ return r.json(); }).then(function(d){
+  fx('/chat?list=1').then(function(r){ return r.json(); }).then(function(d){
     var C2 = (d.chats || []).filter(function(c){ return !c.closed; });
     var el = $('lvN'); if (el) el.textContent = C2.length + ' 진행중';
     // 새 상담 데스크톱 알림
@@ -237,7 +244,7 @@ function openChat(id){
 function pollChat(){
   if (!CUR.id) return;
   clearTimeout(CUR.timer);
-  fetch(API + '/chat?id=' + CUR.id, { credentials:'include' }).then(function(r){ return r.json(); }).then(function(c){
+  fx('/chat?id=' + CUR.id).then(function(r){ return r.json(); }).then(function(c){
     if (c.gone) { $('chatMsgs').innerHTML = '<div class="empty">만료·삭제된 상담이에요</div>'; CUR.id=''; return; }
     var box = $('chatMsgs');
     (c.msgs || []).slice(CUR.seen).forEach(function(m){
@@ -257,17 +264,17 @@ function pollChat(){
 function sendChat(){
   var v = $('chatInput').value.trim(); if (!v || !CUR.id) return;
   $('chatInput').value = '';
-  fetch(API + '/chat', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ op:'msg', id: CUR.id, text: v }) }).then(pollChat);
+  fx('/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ op:'msg', id: CUR.id, text: v }) }).then(pollChat);
 }
 function closeChat(){
   if (!CUR.id) return;
-  fetch(API + '/chat', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ op:'close', id: CUR.id }) })
+  fx('/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ op:'close', id: CUR.id }) })
     .then(function(){ $('chatRoom').style.display = 'none'; CUR.id=''; loadChats(); });
 }
 // ── 📈 손익 그래프 ──
 function loadProfit(){
   $('profitBody').innerHTML = '<div class="empty">불러오는 중…</div>';
-  fetch(API + '/profit', { credentials:'include' }).then(function(r){ return r.json(); }).then(function(d){
+  fx('/profit').then(function(r){ return r.json(); }).then(function(d){
     var S = d.series || [];
     if (!S.length) { $('profitBody').innerHTML = '<div class="empty">아직 데이터가 없어요 — PC에서 python profit_sync.py 를 실행하면 채워져요</div>'; return; }
     var last30 = S.slice(-30);
@@ -296,15 +303,15 @@ function loadProfit(){
 function teach(){
   var q = $('tq').value.trim(), a = $('ta').value.trim();
   if (!q || !a) { $('tOut').textContent = '질문과 답변을 모두 입력하세요'; return; }
-  fetch(API + '/learn', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ q:q, a:a }) })
+  fx('/learn', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ q:q, a:a }) })
     .then(function(r){ if(!r.ok) throw 0; $('tq').value=''; $('ta').value=''; $('tOut').textContent='저장 ✓ — 로미가 5분 내 반영해요'; loadLearn(); })
     .catch(function(){ $('tOut').textContent='저장 실패 — 로그인/배포 확인'; });
 }
 function fillTeach(q){ $('tq').value = q; $('ta').focus(); window.scrollTo({top: $('tq').getBoundingClientRect().top + window.scrollY - 90, behavior:'smooth'}); }
-function unlearn(i){ fetch(API + '/learn?remove=' + i, { method:'PATCH', credentials:'include' }).then(loadLearn); }
+function unlearn(i){ fx('/learn?remove=' + i, { method:'PATCH' }).then(loadLearn); }
 function loadLearn(){
   $('learnBody').innerHTML = '<div class="empty">불러오는 중…</div>';
-  fetch(API + '/learn', { credentials:'include' }).then(function(r){ return r.json(); }).then(function(d){
+  fx('/learn').then(function(r){ return r.json(); }).then(function(d){
     var fb = (d.botlog || []).filter(function(x){ return x.fb; });
     var badSet = {}; fb.forEach(function(x){ if (x.good === false) badSet[x.q] = 1; });
     var logs = (d.botlog || []).filter(function(x){ return !x.fb; }).slice(0, 30);
