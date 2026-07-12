@@ -106,6 +106,8 @@ function render(d){
     toolboxHTML() +
     '<div class="sec"><h2>📮 상담 인박스 <span class="n">' + (s.supportOpen || 0) + ' 대기</span><button class="re" onclick="boot()">새로고침 ↻</button></h2><div id="inbox">' + inboxHTML(d.support || []) + '</div></div>' +
     '<div class="sec"><h2>🧾 주문 로그 <span class="n">' + (s.ordersTotal || 0) + '</span></h2>' + ordersHTML(d.orders || []) + '</div>' +
+    '<div class="sec"><h2>📈 손익 (하루 1회 자동 수집) <button class="re" onclick="loadProfit()">불러오기 ↻</button></h2>' +
+      '<div id="profitBody" class="empty">[불러오기] — PC의 profit_sync.py가 매일 전송한 데이터를 보여드려요</div></div>' +
     '<div class="sec"><h2>🧠 로미 학습 <button class="re" onclick="loadLearn()">불러오기 ↻</button></h2>' +
       '<div class="tool" style="margin-top:10px;"><div class="t">직접 가르치기 — 저장 즉시 로미가 반영해요</div>' +
       '<input id="tq" placeholder="질문 (예: 크루즈에서도 되나요?)" style="width:100%;height:42px;border-radius:11px;border:1.5px solid #26304D;background:#131A2E;color:#fff;font:inherit;font-size:.8rem;padding:0 12px;outline:none;margin-bottom:7px;box-sizing:border-box;">' +
@@ -194,6 +196,34 @@ function ordersHTML(list){
     }).join('') + '</table>';
 }
 function esc(t){ var d = document.createElement('i'); d.textContent = t || ''; return d.innerHTML; }
+// ── 📈 손익 그래프 ──
+function loadProfit(){
+  $('profitBody').innerHTML = '<div class="empty">불러오는 중…</div>';
+  fetch(API + '/profit', { credentials:'include' }).then(function(r){ return r.json(); }).then(function(d){
+    var S = d.series || [];
+    if (!S.length) { $('profitBody').innerHTML = '<div class="empty">아직 데이터가 없어요 — PC에서 python profit_sync.py 를 실행하면 채워져요</div>'; return; }
+    var last30 = S.slice(-30);
+    var tRev = 0, tMg = 0, tCnt = 0, un = 0;
+    last30.forEach(function(x){ tRev += x.rev; tMg += x.margin; tCnt += x.cnt; un += (x.unmatched || 0); });
+    var mx = Math.max.apply(null, last30.map(function(x){ return x.rev; }).concat([1]));
+    var W = 900, H = 180, bw = W / last30.length;
+    var bars = last30.map(function(x, i){
+      var hR = Math.round(x.rev / mx * (H - 20)), hM = Math.round(Math.max(0, x.margin) / mx * (H - 20));
+      return '<g><rect x="' + (i * bw + 2) + '" y="' + (H - hR) + '" width="' + (bw - 5) + '" height="' + hR + '" rx="3" fill="rgba(249,115,22,0.28)"/>' +
+             '<rect x="' + (i * bw + 2) + '" y="' + (H - hM) + '" width="' + (bw - 5) + '" height="' + hM + '" rx="3" fill="#F97316"><title>' + x.date + ' 매출 ' + x.rev.toLocaleString() + ' · 마진 ' + x.margin.toLocaleString() + ' · ' + x.cnt + '건</title></rect></g>';
+    }).join('');
+    $('profitBody').innerHTML =
+      '<div class="stats" style="margin:10px 0 14px;">' +
+        '<div class="st"><div class="k">30일 매출</div><div class="v">' + Math.round(tRev/10000).toLocaleString() + '<em>만원</em></div></div>' +
+        '<div class="st"><div class="k">30일 마진</div><div class="v" style="color:#3DDC84">' + Math.round(tMg/10000).toLocaleString() + '<em>만원</em></div></div>' +
+        '<div class="st"><div class="k">30일 판매</div><div class="v">' + tCnt + '<em>건</em></div></div>' +
+        '<div class="st"><div class="k">마진율</div><div class="v">' + (tRev ? Math.round(tMg/tRev*100) : 0) + '<em>%</em></div></div>' +
+      '</div>' +
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;">' + bars + '</svg>' +
+      '<div style="font-size:.64rem;color:#5B6B94;font-weight:700;margin-top:6px;">연한 막대 = 매출 · 진한 막대 = 마진 · 마우스 올리면 상세' + (un ? ' · <span style="color:#F1690D;">가격표 미입력 ' + un + '건 (prices.xlsx 채우면 정확해져요)</span>' : '') + '</div>' +
+      '<div style="font-size:.62rem;color:#5B6B94;margin-top:2px;">마지막 수집: ' + (d.at || '').replace('T',' ').slice(0,16) + '</div>';
+  }).catch(function(){ $('profitBody').innerHTML = '<div class="empty">불러오기 실패</div>'; });
+}
 // ── 🧠 로미 학습 ──
 function teach(){
   var q = $('tq').value.trim(), a = $('ta').value.trim();

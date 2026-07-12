@@ -384,7 +384,6 @@
     .tkt.printing { animation:none; } .donut-fg,.gauge i { transition:none; }
   }
 </style>
-<link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
 <div class="offbar" id="offBar">오프라인 상태예요 — 이미 발급된 QR은 계속 볼 수 있어요</div>
@@ -418,6 +417,7 @@ var token = new URLSearchParams(location.search).get('t') || '';
 var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CARE = new URLSearchParams(location.search).get('care') || '';
+var RV = new URLSearchParams(location.search).get('rv') === '1';
 var _q = new URLSearchParams(location.search);
 var PLAN = _q.get('plan') || '';   // 브리지가 동봉: 구매상품 SKU
 var Q_NAME = _q.get('n') || '';    // 고객명
@@ -534,6 +534,99 @@ function loadDepForecast(){
       try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), v: _fc })); } catch(e){}
       paintSkyW();
     }).catch(function(){});
+}
+// ============ 여행 후기 + 리포트 카드 ============
+function openReview(){
+  var old = $('rvSheet'); if (old) old.remove();
+  var d = document.createElement('div');
+  d.id = 'rvSheet';
+  d.innerHTML = '<div class="hs-bg" onclick="this.parentNode.remove()"></div>' +
+    '<div class="hs-panel"><div class="hs-grab"></div>' +
+    '<div style="text-align:center;padding:4px 0 2px;"><img src="images/fox-thumbsup.png" style="width:56px;" onerror="this.remove()">' +
+    '<div style="font-size:1.02rem;font-weight:900;margin-top:6px;">' + esc(order && order.country || '') + ' 여행은 어떠셨나요?</div>' +
+    '<div style="font-size:0.76rem;color:#8B94A7;font-weight:700;margin-top:3px;">별점을 눌러주세요 — 후기를 남기면 여행 리포트를 만들어드려요 🎁</div></div>' +
+    '<div id="rvStars" style="display:flex;justify-content:center;gap:10px;padding:14px 0;font-size:2rem;">' +
+      [1,2,3,4,5].map(function(i){ return '<span data-s="' + i + '" style="cursor:pointer;filter:grayscale(1);opacity:.45;">⭐</span>'; }).join('') + '</div>' +
+    '<textarea id="rvText" placeholder="한 줄 후기 (선택)" style="width:100%;box-sizing:border-box;min-height:74px;border:1.5px solid #E4E8EF;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:0.86rem;font-weight:600;outline:none;resize:none;"></textarea>' +
+    '<button type="button" class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="submitReview()">후기 남기고 리포트 받기</button>' +
+    '<div id="rvOut" style="margin-top:8px;"></div></div>';
+  document.body.appendChild(d);
+  var picked = 0;
+  d.querySelectorAll('#rvStars span').forEach(function(sp){
+    sp.onclick = function(){
+      picked = parseInt(sp.getAttribute('data-s'), 10);
+      window._rvStars = picked;
+      d.querySelectorAll('#rvStars span').forEach(function(x, i){
+        x.style.filter = i < picked ? 'none' : 'grayscale(1)';
+        x.style.opacity = i < picked ? '1' : '0.45';
+      });
+      buzz(8);
+    };
+  });
+}
+function submitReview(){
+  var stars = window._rvStars || 0;
+  var out = $('rvOut');
+  if (!stars) { out.innerHTML = '<div class="notice">별점을 먼저 골라주세요!</div>'; return; }
+  var txt = ($('rvText') || {}).value || '';
+  out.innerHTML = '<div class="center"><span class="muted">저장 중…</span></div>';
+  fetch(CARE_API.replace('/api/esim', '/api/review'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stars: stars, text: txt, iccid: (order && order.iccid) || CARE, country: order && order.country || '', name: order && order.buyerName || '', days: (planOf(order) || {}).days || '' }) })
+    .then(function(r){ return r.json(); })
+    .then(function(){ makeReport(stars); })
+    .catch(function(){ makeReport(stars); }); // 저장 실패해도 리포트는 선물
+}
+function makeReport(stars){
+  var sheet = $('rvSheet'); if (sheet) sheet.remove();
+  var cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1350;
+  var x = cv.getContext('2d');
+  // 배경
+  var g = x.createLinearGradient(0, 0, 0, 1350); g.addColorStop(0, '#101623'); g.addColorStop(1, '#25314F');
+  x.fillStyle = g; x.fillRect(0, 0, 1080, 1350);
+  // 도트 그리드
+  x.fillStyle = 'rgba(255,255,255,0.05)';
+  for (var i = 40; i < 1080; i += 60) for (var j = 40; j < 1350; j += 60) { x.beginPath(); x.arc(i, j, 3, 0, 7); x.fill(); }
+  x.textAlign = 'center';
+  x.fillStyle = '#8FA3D9'; x.font = '800 34px Pretendard, sans-serif';
+  x.fillText('JDISIM · TRAVEL REPORT', 540, 130);
+  // 국기 + 국가
+  x.font = '200px serif'; x.fillText(FLAG_EMOJI[order && order.country] || '✈️', 540, 420);
+  x.fillStyle = '#fff'; x.font = '900 92px Pretendard, sans-serif';
+  x.fillText((order && order.country || '나의') + ' 여행', 540, 560);
+  // 스탯
+  var st = tripState();
+  var days = (planOf(order) || {}).days || '';
+  var lines = [];
+  if (st.activatedAt) {
+    var dd = Math.max(1, Math.round((Date.now() - new Date(st.activatedAt)) / 86400000));
+    lines.push((days || dd) + '일의 여정');
+  } else if (days) lines.push(days + '일의 여정');
+  if (window._lastUsedGB) lines.push(window._lastUsedGB + ' 데이터와 함께');
+  x.fillStyle = '#F5B301'; x.font = '84px serif';
+  x.fillText('★★★★★'.slice(0, stars) , 540, 700);
+  x.fillStyle = '#C6CFE6'; x.font = '700 46px Pretendard, sans-serif';
+  lines.forEach(function(t, i){ x.fillText(t, 540, 800 + i * 70); });
+  // 하단
+  x.fillStyle = '#F1690D'; x.font = '900 40px Pretendard, sans-serif';
+  x.fillText('여행 데이터는 JDISIM 🦊', 540, 1240);
+  x.fillStyle = '#5B6B94'; x.font = '700 30px Pretendard, sans-serif';
+  x.fillText('jdisim.co.kr', 540, 1295);
+  var url = cv.toDataURL('image/png');
+  h('<div class="card" style="text-align:center;">' + secHd('check', 'REPORT', '여행 리포트가 완성됐어요', '소중한 후기 감사합니다 🎁') +
+    '<img src="' + url + '" style="width:78%;border-radius:18px;margin:12px 0;box-shadow:0 18px 44px rgba(16,22,35,0.35);">' +
+    '<div class="jbtns"><a class="btn btn-primary" download="jdisim-travel-report.png" href="' + url + '">이미지 저장</a>' +
+    '<button type="button" class="btn btn-ghost" onclick="shareReport(\'' + '\')">공유하기</button></div>' +
+    '<div class="center" style="margin-top:8px;"><span class="muted">인스타에 올리고 친구에게 여행을 자랑해 보세요 ✈️</span></div></div>' + document.getElementById('app').innerHTML);
+  window._reportUrl = url;
+  toast('리포트 완성! 후기 감사해요 🦊');
+}
+function shareReport(){
+  var url = window._reportUrl; if (!url) return;
+  fetch(url).then(function(r){ return r.blob(); }).then(function(b){
+    var f = new File([b], 'jdisim-report.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], title: 'JDISIM 여행 리포트' });
+    else { var a = document.createElement('a'); a.href = url; a.download = 'jdisim-report.png'; a.click(); }
+  });
 }
 function paintSkyW(){
   var box = $('skyW'); if (!box || !order || !order.country) return;
@@ -1246,6 +1339,7 @@ function loadCare(){
         '<div class="care-chips"><button type="button" onclick="goUsage()">📊 사용량 새로고침</button>' +
         '<button type="button" onclick="openHelp()">🩺 로미 닥터 상담</button></div></div></div>');
       setTimeout(loadUsage, 700);
+      if (RV) setTimeout(openReview, 1200);
     })
     .catch(function(){
       renderError('연결이 지연되고 있어요', 'ICCID 조회에 실패했어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.');
@@ -1554,6 +1648,7 @@ function maybeAutoActivate(d){
 }
 function renderUsage(d){
   maybeAutoActivate(d);
+  try { var L0 = d && (d.usageList || d.daily) || []; var t0 = 0; L0.forEach(function(x){ t0 += Number(x.used || x.used_mb || 0); }); if (t0) window._lastUsedGB = (Math.round(t0 / 1024 * 10) / 10) + 'GB'; } catch(e){}
   var box=$('usageBody');
   var used=Number(d.used_mb)||0, total=Number(d.total_mb)||0;
   var remain=Math.max(0,total-used);
@@ -1582,6 +1677,5 @@ function renderError(title,msg){
 
 loadOrder();
 </script>
-<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});</script>
 </body>
 </html>
