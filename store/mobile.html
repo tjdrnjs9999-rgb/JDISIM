@@ -875,10 +875,13 @@
       box-sizing: border-box;
       scroll-snap-align: start !important;
       scroll-snap-stop: always !important;
+      /* 하단바(65px+safe)에 콘텐츠가 가리지 않게 패널 안쪽에서 공간 확보 */
+      padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
     }
     /* 스냅 구간 이후의 일반 콘텐츠는 자유 스크롤 (뷰포트보다 큰 스냅 영역은 내부 자유 스크롤 허용) */
     html.home-snap #view-home .snap-tail {
       scroll-snap-align: start;
+      padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
     }
 
     .trust-strip {
@@ -4070,8 +4073,21 @@
 
     function scrollToRomi() {
       try {
-        const el = document.querySelector('.romi-finder');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 스냅 지점인 패널 자체로 이동 (내부 div로 가면 mandatory 스냅이 되돌림)
+        const el = document.querySelector('.finder-panel') || document.querySelector('.romi-finder');
+        if (!el) return;
+        const root = document.documentElement;
+        const hadSnap = root.classList.contains('home-snap');
+        if (hadSnap) root.classList.remove('home-snap');   // 스크롤 중 스냅 개입 차단
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const restore = () => { if (hadSnap) root.classList.add('home-snap'); };
+        if ('onscrollend' in window) {
+          const h = () => { window.removeEventListener('scrollend', h); restore(); };
+          window.addEventListener('scrollend', h);
+          setTimeout(restore, 1500);                        // scrollend 미발화 대비 백업
+        } else {
+          setTimeout(restore, 1000);
+        }
       } catch (e) { /* 미지원 환경 무시 */ }
     }
 
@@ -4337,6 +4353,6 @@
       document.addEventListener('click', function(e){ if (!sg.contains(e.target) && e.target !== inp) hide(); });
     })();
 </script>
-  <script src="romi-bot.js" defer></script>
+  <script src="romi-bot.js?v=20260713" defer></script>
 </body>
 </html>

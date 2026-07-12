@@ -480,4 +480,27 @@
   }
   panel.querySelector('#rbSend').onclick = send;
   inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') send(); });
+
+  // ===== 키보드 회피: 키보드가 뜨면 패널을 그 위로 끌어올림 (iOS/안드로이드 공통) =====
+  if (window.visualViewport) {
+    var vv = window.visualViewport;
+    function kbAdjust(){
+      if (!panel.classList.contains('on')) { panel.style.transform = ''; panel.style.maxHeight = ''; return; }
+      var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      if (kb > 40) {                                   // 키보드 열림
+        panel.style.animation = 'none';                // rbUp fill-mode가 transform을 덮는 것 방지
+        panel.style.transform = 'translateY(-' + kb + 'px)';
+        panel.style.maxHeight = Math.max(240, vv.height - 84) + 'px';  // 패널 상단이 화면 밖으로 안 나가게
+        setTimeout(scrollDn, 60);                      // 대화 끝으로
+      } else {                                         // 키보드 닫힘
+        panel.style.animation = '';
+        panel.style.transform = '';
+        panel.style.maxHeight = '';
+      }
+    }
+    vv.addEventListener('resize', kbAdjust);
+    vv.addEventListener('scroll', kbAdjust);
+    inp.addEventListener('focus', function(){ setTimeout(kbAdjust, 250); });
+    inp.addEventListener('blur', function(){ setTimeout(kbAdjust, 150); });
+  }
 })();
