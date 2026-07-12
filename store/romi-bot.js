@@ -152,6 +152,25 @@
         .catch(function(){ bot('접수 서버가 잠시 쉬는 중이에요 — 카톡으로 바로 연결해 드릴게요!\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>'); homeChips(); });
     };
   }
+  function aCalls(){
+    bot('여행 eSIM은 <strong>데이터 전용</strong>이라 전화번호가 없고, 일반 전화·문자는 안 돼요.\n대신 데이터로 <strong>카톡·보이스톡·페이스타임</strong>은 전부 잘 돼요! 🦊\n\n💡 꿀팁: 한국 번호로 오는 <strong>인증문자를 받아야 한다면</strong> — 한국 유심 회선을 켜둔 채 <strong>데이터 로밍만 꺼두세요</strong>. 문자 수신은 무료라 요금 안 나와요. (전화를 받으면 로밍 통화료가 나오니 주의!)');
+    homeChips();
+  }
+  function aHotspot(){
+    bot('네! 대부분의 상품에서 <strong>핫스팟(테더링) 사용 가능</strong>해요 — 노트북이나 동행자 폰에 나눠 쓸 수 있어요 🦊\n\n혹시 켰는데 연결이 안 되면 기기 설정 문제일 수 있으니 상담으로 도와드릴게요. 참고로 일 용량 상품은 나눠 쓰면 <strong>고속 데이터가 빨리 소진</strong>되니 그 점만 기억해 주세요!');
+    homeChips();
+  }
+  function aVerify(){
+    var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    bot('설치가 잘 됐는지 확인하는 방법 3가지예요 🦊\n\n' +
+      '① <strong>발급 카톡의 [내 티켓 열기]</strong> → 설치 존의 <strong>[설치 자동 확인]</strong> 버튼 — 가장 정확해요!\n' +
+      '② 폰에서 직접: ' + (isIOS
+        ? '<strong>설정 > 셀룰러</strong>에 새 회선(eSIM)이 목록에 보이면 설치된 거예요'
+        : '<strong>설정 > 연결 > SIM 관리자</strong>에 eSIM이 보이면 설치된 거예요') + '\n' +
+      '③ 회선 이름 옆에 <strong>"번호 없음"</strong>이라고 떠도 정상이에요 — 데이터 전용이라 번호가 원래 없어요!\n\n' +
+      '💡 한국에서는 설치돼 있어도 <strong>"활성화 중"이나 "등록 실패"처럼 보일 수 있는데 정상</strong>이에요. 현지 도착하면 자동으로 연결돼요 ✈️');
+    homeChips();
+  }
   function aTrouble(){
     var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     bot('당황하지 마세요, 90%는 설정 3개로 해결돼요! ' + (isIOS ? '아이폰' : '갤럭시') + ' 기준으로 알려드릴게요 🦊\n\n' +
@@ -173,7 +192,7 @@
     }
     var w = typing();
     fetch(CARE.replace('/api/esim', '/api/ai'), { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ q: q, history: HIST.slice(0, -1), name: USERINFO.nm, phone: USERINFO.ph, from: isMobilePage ? 'mobile' : 'pc' }) })
+      body: JSON.stringify({ q: q, history: HIST.slice(0, -1), name: USERINFO.nm, phone: USERINFO.ph, country: CTX.country || '', from: isMobilePage ? 'mobile' : 'pc' }) })
       .then(function(r){ return r.json(); })
       .then(function(d){
         if (d.reply && !d.escalate) { w.innerHTML = esc0(d.reply); track('bot', d.reply); feedback(q, d.reply); homeChips(); return; }
@@ -270,51 +289,57 @@
   // ---------- 입력 라우터 ----------
   function route(q){
     var t = q.replace(/\s+/g, '');
-    // 스몰토크 즉답
-    if (/^(안녕|하이|헬로|헬로우|ㅎㅇ|hi|hello|반가워)/i.test(t)) {
+    var n = t.length;
+    // 국가 언급 시 컨텍스트 저장
+    var cty = '';
+    for (var ck in RESET) if (t.indexOf(ck) !== -1) { cty = ck; CTX.country = ck; persist(); break; }
+
+    // ── 스몰토크 (짧은 문장일 때만 — 긴 문의에 인사말이 섞여도 오작동 방지) ──
+    if (n <= 8 && /^(안녕|하이|헬로|헬로우|ㅎㅇ|hi|hello|반가워)/i.test(t)) {
       bot('안녕하세요! JDISIM 여행 도우미 <strong>로미</strong>예요 🦊\n여행 준비 중이신가요? 무엇이든 물어보세요!');
       return homeChips();
     }
-    if (/고마워|고맙|감사|땡큐|thank|최고|굿|짱/i.test(t)) {
-      bot('도움이 됐다니 기뻐요! 🦊 즐거운 여행 되세요 ✈️\n또 궁금한 게 생기면 언제든 불러주세요!');
+    if (n <= 10 && /(고마워|고맙|감사|땡큐|thank|최고|짱)/i.test(t)) {
+      bot('도움이 됐다니 기뻐요! 🦊 즐거운 여행 되세요 ✈️');
       return homeChips();
     }
     if (/누구야|누구세요|이름이뭐|정체가/.test(t)) {
       bot('저는 JDISIM의 여행 도우미 여우 <strong>로미</strong>예요 🦊\n설치·사용량·리셋 시간 같은 건 즉시, 어려운 건 상담원과 함께 도와드려요!');
       return homeChips();
     }
-    if (/^(잘가|바이|빠이|안녕히|수고)/.test(t)) {
-      bot('네, 좋은 여행 되세요! ✈️🦊');
-      return homeChips();
-    }
-    // 국가 언급 시 컨텍스트 저장
-    for (var ck in RESET) if (t.indexOf(ck) !== -1) { CTX.country = ck; persist(); break; }
-    // 후속 질문: 국가 생략형 ("요금은?", "리셋 몇시야", "거기 얼마야")
-    if (CTX.country && !Object.keys(RESET).some(function(k){ return t.indexOf(k) !== -1; })) {
-      if (/^(요금|얼마|가격)/.test(t) || /(요금|얼마|가격)[은는이가]?[??]?$/.test(t)) {
-        var pr2 = priceFor(CTX.country); if (pr2) { bot(pr2); return homeChips(); }
-      }
-      if (/리셋|초기화|몇시/.test(t)) { bot('🌏 <strong>' + CTX.country + '</strong>의 일일 리셋은 <strong>현지 ' + RESET[CTX.country] + '</strong>예요 ↻'); return homeChips(); }
-    }
+    if (n <= 6 && /^(잘가|바이|빠이|안녕히)/.test(t)) { bot('네, 좋은 여행 되세요! ✈️🦊'); return homeChips(); }
+
+    // ── 확신 규칙 (정밀 키워드) ──
     if (/안터|안터져|안돼|안됨|신호없|서비스없|인터넷안|연결안|먹통|데이터가안/.test(t)) return aTrouble();
-    if (/설치|원클릭|QR|큐알|수동|등록방법/i.test(t)) return aInstall();
-    if (/사용량|얼마남|남은데이터|데이터확인|조회/.test(t)) return aUsage();
-    if (/리셋|초기화|충전시간|몇시에/.test(t)) {
-      for (var k in RESET) if (t.indexOf(k) !== -1) { bot('🇰🇷→ <strong>' + k + '</strong>의 일일 데이터 리셋은 <strong>현지 ' + RESET[k] + '</strong>예요 ↻'); return homeChips(); }
+    if (/설치[^가-힣]*(됐|되었|확인|여부|체크)|됐는지|깔렸|설치확인|잘설치/.test(t)) return aVerify();
+    if (/설치|원클릭|큐알|등록방법|QR/i.test(t)) return aInstall();
+    if (/사용량|얼마남|남은데이터|데이터확인/.test(t)) return aUsage();
+    if (/전화|통화|문자|SMS|인증번호|번호없음/i.test(t)) return aCalls();
+    if (/핫스팟|테더링|나눠|공유해/.test(t)) return aHotspot();
+    if (/리셋|충전시간|데이터초기화|몇시에(차|충|리)/.test(t)) {
+      if (cty) { bot('🌏 <strong>' + cty + '</strong>의 일일 데이터 리셋은 <strong>현지 ' + RESET[cty] + '</strong>예요 ↻'); return homeChips(); }
       return aReset();
     }
-    if (/유효|기간|만료|환불|취소|교환/.test(t)) return aValid();
-    if (/기종|기기|아이폰|갤럭시|폰에서|되나요|지원/.test(t)) {
-      var pr0 = priceFor(q); if (pr0 && /얼마|가격|요금/.test(t)) { bot(pr0); return homeChips(); }
-      return aDevice();
-    }
-    if (/상담|사람|문의|도와|연결|전화/.test(t)) return aAgent(q);
-    var pr = priceFor(q);
-    if (pr) { bot(pr); return homeChips(); }
-    for (var k2 in RESET) if (t.indexOf(k2) !== -1) {
-      bot('🌏 <strong>' + k2 + '</strong> 여행 준비 중이시군요!\n· 일일 리셋: 현지 ' + RESET[k2] + ' ↻\n· 요금이 궁금하면 "' + k2 + ' 요금"이라고 물어보세요!');
+    if (/유효기간|기간이|만료|환불|취소|교환/.test(t)) return aValid();
+    if (/기종|기기변경|내폰|폰에서되|아이폰\d|갤럭시(s|S|노트|폴드|플립)|EID|지원기종|기기확인/.test(t)) return aDevice();
+
+    // ── 국가 + 구매의도 → 상품 카드 (국가명만으로는 추천하지 않음!) ──
+    if (cty && /(이심|esim|요금|얼마|가격|추천|데이터|상품|살래|살까|구매|쓸만|어때)/i.test(t)) {
+      var pr = priceFor(cty);
+      if (pr) { bot(pr); return homeChips(); }
+      bot('🌏 <strong>' + cty + '</strong> 상품은 스토어에서 확인할 수 있어요!\n· 일일 리셋: 현지 ' + RESET[cty] + ' ↻');
       return homeChips();
     }
+    // 후속 질문 (국가 생략형: "요금은?", "거기 리셋 몇시?")
+    if (!cty && CTX.country) {
+      if (/^(요금|얼마|가격)/.test(t) || /(요금|얼마|가격)(은|는|이|가)?[??]?$/.test(t)) {
+        var pr2 = priceFor(CTX.country); if (pr2) { bot(pr2); return homeChips(); }
+      }
+      if (/리셋|몇시/.test(t)) { bot('🌏 <strong>' + CTX.country + '</strong>의 일일 리셋은 <strong>현지 ' + RESET[CTX.country] + '</strong>예요 ↻'); return homeChips(); }
+    }
+    if (/상담원|상담사|사람연결|사람이랑|직원/.test(t)) return aAgent(q);
+
+    // ── 그 외 전부: AI가 맥락으로 판단 (국가 컨텍스트 동봉) ──
     aAgent(q);
   }
 
