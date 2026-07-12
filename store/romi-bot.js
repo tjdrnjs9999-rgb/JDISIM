@@ -23,6 +23,12 @@
     '#rbFab .rb-badge{position:absolute;top:-4px;right:-2px;background:#0f172a;color:#fff;font-size:.56rem;font-weight:800;padding:3px 7px;border-radius:9px;font-family:Pretendard,sans-serif;}' +
     '#rbPanel{position:fixed;right:12px;bottom:calc(' + BOTTOM + ' + 68px);z-index:99901;width:min(360px,calc(100vw - 24px));max-height:min(560px,70vh);background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(15,23,42,0.3);display:none;flex-direction:column;overflow:hidden;font-family:Pretendard,"Apple SD Gothic Neo",sans-serif;}' +
     '#rbPanel.on{display:flex;animation:rbUp .28s cubic-bezier(.2,.9,.3,1) both;}@keyframes rbUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}' +
+    /* 모바일: 챗 열면 풀스크린 */
+    '@media(max-width:640px){#rbPanel{left:0;right:0;bottom:0;top:0;width:100vw;height:100dvh;max-height:none;border-radius:0;}}' +
+    /* FAB 라벨: "이게 챗봇" 인지용 말풍선 */
+    '#rbTip{position:fixed;right:82px;bottom:calc(' + BOTTOM + ' + 12px);z-index:99900;background:#0f172a;color:#fff;font-size:.74rem;font-weight:800;padding:9px 13px;border-radius:14px 14px 4px 14px;box-shadow:0 8px 22px rgba(15,23,42,.28);font-family:Pretendard,sans-serif;white-space:nowrap;animation:rbTipIn .4s .8s cubic-bezier(.2,.9,.3,1) both, rbTipBob 2.6s 1.4s ease-in-out infinite;pointer-events:none;}' +
+    '#rbTip::after{content:"";position:absolute;right:-5px;bottom:6px;border:6px solid transparent;border-left-color:#0f172a;}' +
+    '@keyframes rbTipIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}@keyframes rbTipBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}' +
     '.rb-hd{display:flex;align-items:center;gap:10px;padding:13px 15px;background:linear-gradient(120deg,#101623,#25314F);}' +
     '.rb-hd img{width:36px;height:36px;object-fit:contain;}.rb-hd b{color:#fff;font-size:.92rem;font-weight:900;}.rb-hd span{display:block;color:#8FA3D9;font-size:.66rem;font-weight:700;margin-top:1px;}' +
     '.rb-x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:none;color:#fff;font-weight:900;cursor:pointer;}' +
@@ -48,6 +54,10 @@
   var fab = document.createElement('button');
   fab.id = 'rbFab'; fab.setAttribute('aria-label', '로미에게 물어보기');
   fab.innerHTML = '<img src="images/fox-hello.png" alt="" onerror="this.outerHTML=\'🦊\'"><span class="rb-badge">로미</span>';
+  var tip = document.createElement('div');
+  tip.id = 'rbTip';
+  tip.textContent = '💬 궁금한 건 로미챗에게!';
+  if (sessionStorage.getItem('rbTipSeen')) tip.style.display = 'none';
   var panel = document.createElement('div');
   panel.id = 'rbPanel';
   panel.innerHTML =
@@ -55,6 +65,7 @@
     '<div class="rb-body" id="rbBody"></div>' +
     '<div class="rb-ft"><input id="rbInput" placeholder="궁금한 걸 물어보세요 (예: 일본 요금)"><button id="rbSend">↑</button></div>';
   document.body.appendChild(fab);
+  document.body.appendChild(tip);
   document.body.appendChild(panel);
 
   var body = panel.querySelector('#rbBody');
@@ -458,6 +469,7 @@
   var opened = false;
   fab.onclick = function(){
     panel.classList.toggle('on');
+    if (panel.classList.contains('on')) { tip.style.display = 'none'; sessionStorage.setItem('rbTipSeen', '1'); }
     if (panel.classList.contains('on') && !opened) {
       opened = true;
       if (LIVE.id) pollLive();
@@ -485,17 +497,24 @@
   if (window.visualViewport) {
     var vv = window.visualViewport;
     function kbAdjust(){
-      if (!panel.classList.contains('on')) { panel.style.transform = ''; panel.style.maxHeight = ''; return; }
+      if (!panel.classList.contains('on')) { panel.style.transform = ''; panel.style.maxHeight = ''; panel.style.height = ''; return; }
       var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      var full = window.matchMedia('(max-width:640px)').matches;   // 풀스크린 모드
       if (kb > 40) {                                   // 키보드 열림
         panel.style.animation = 'none';                // rbUp fill-mode가 transform을 덮는 것 방지
-        panel.style.transform = 'translateY(-' + kb + 'px)';
-        panel.style.maxHeight = Math.max(240, vv.height - 84) + 'px';  // 패널 상단이 화면 밖으로 안 나가게
+        if (full) {
+          panel.style.height = vv.height + 'px';       // 패널 하단 = 키보드 상단
+          panel.style.transform = 'translateY(' + vv.offsetTop + 'px)';
+        } else {
+          panel.style.transform = 'translateY(-' + kb + 'px)';
+          panel.style.maxHeight = Math.max(240, vv.height - 84) + 'px';  // 패널 상단이 화면 밖으로 안 나가게
+        }
         setTimeout(scrollDn, 60);                      // 대화 끝으로
       } else {                                         // 키보드 닫힘
         panel.style.animation = '';
         panel.style.transform = '';
         panel.style.maxHeight = '';
+        panel.style.height = '';
       }
     }
     vv.addEventListener('resize', kbAdjust);

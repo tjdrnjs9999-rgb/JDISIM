@@ -883,6 +883,13 @@
       scroll-snap-align: start;
       padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
     }
+    /* WHY 패널 로미: 하단바(65px)와 챗봇 버튼(우측 하단 58px)에 가리지 않게
+       버튼 왼쪽·하단바 위로 재배치 */
+    html.home-snap #view-home .why-panel .wp-fox {
+      right: 78px;
+      bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+      width: 136px;
+    }
 
     .trust-strip {
       display: flex;
@@ -4353,6 +4360,6 @@
       document.addEventListener('click', function(e){ if (!sg.contains(e.target) && e.target !== inp) hide(); });
     })();
 </script>
-  <script src="romi-bot.js?v=20260713" defer></script>
+  <script src="romi-bot.js?v=20260713b" defer></script>
 </body>
 </html>
