@@ -152,6 +152,60 @@
         .catch(function(){ bot('접수 서버가 잠시 쉬는 중이에요 — 카톡으로 바로 연결해 드릴게요!\n<a href="' + KAKAO + '" target="_blank" rel="noopener">💬 카톡 상담 열기 →</a>'); homeChips(); });
     };
   }
+  // QR/티켓 미수신 → 봇이 직접 찾아서 재전달 (셀프 재발급)
+  function aNotReceived(){
+    bot('걱정 마세요, 제가 <strong>직접 찾아드릴게요</strong> 🦊\n결제 후 QR은 카톡(알림톡)과 문자로 자동 발송되는데, 가끔 <strong>스팸함이나 차단 목록</strong>에 들어가는 경우가 있어요.\n\n구매하신 이름과 전화번호를 알려주시면 티켓을 바로 다시 꺼내드릴게요!');
+    var f = document.createElement('div'); f.className = 'rb-form';
+    f.innerHTML = '<input id="rbFn" placeholder="이름" style="max-width:88px;"><input id="rbFp" type="tel" placeholder="01012345678"><button>찾기</button>';
+    body.appendChild(f); scrollDn();
+    f.querySelector('button').onclick = function(){
+      var nm = f.querySelector('#rbFn').value.trim();
+      var ph = f.querySelector('#rbFp').value.replace(/[^0-9]/g, '');
+      if (ph.length < 10) { bot('전화번호를 확인해 주세요! (예: 01012345678)'); return; }
+      me((nm ? nm + ' · ' : '') + ph.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-****-$3'));
+      var w = typing();
+      fetch(CARE + '?action=history&phone=' + encodeURIComponent(ph))
+        .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+        .then(function(d){
+          var list = d && (d.esims || []);
+          var pick = null;
+          for (var i = 0; i < list.length; i++) { if (list[i] && (list[i].iccid || list[i].ICCID)) { pick = list[i]; break; } }
+          if (!pick) throw 1;
+          USERINFO = { nm: nm, ph: ph };
+          var iccid = String(pick.iccid || pick.ICCID);
+          var prod = pick.prodName || pick.option || '';
+          var care = 'https://jdisim.co.kr/issue.html?care=' + encodeURIComponent(iccid) + (pick.option ? '&plan=' + encodeURIComponent(pick.option) : '') + (nm ? '&n=' + encodeURIComponent(nm) : '');
+          w.innerHTML = '✅ 찾았어요! ' + (nm ? nm + ' 님의 ' : '') + (prod ? '<strong>' + esc0(prod) + '</strong>' : 'eSIM') + '\n\n<a href="' + care + '" target="_blank" rel="noopener">🎫 내 티켓 열기 (QR·설치·사용량) →</a>\n\n이 링크를 <strong>즐겨찾기</strong>해두시면 여행 내내 편해요!';
+          homeChips();
+        })
+        .catch(function(){
+          w.innerHTML = '해당 번호로 주문을 못 찾았어요 😢 결제 시 입력한 번호가 다를 수 있어요.\n담당자가 직접 찾아드릴게요!';
+          offerHuman('QR/티켓 미수신 — 주문 조회 요청');
+        });
+    };
+  }
+  // eSIM 삭제 사고 — 긴급
+  function aDeleted(){
+    bot('⚠️ 잠깐! 지금부터가 중요해요.\neSIM은 삭제하면 <strong>같은 QR로 재설치가 안 되는 경우가 많아요</strong>. 혹시 아직 안 지우셨다면 <strong>절대 삭제하지 마시고</strong>, 이미 지우셨다면 추가 조작 없이 그대로 두세요.\n\n상황(개통 전/후, 사용 중이었는지)에 따라 조치가 달라서 <strong>담당자가 직접</strong> 확인해 드릴게요 — 최대한 빨리 도와드릴게요!');
+    offerHuman('eSIM 삭제 관련 긴급 문의');
+  }
+  // 속도 저하
+  function aSlow(){
+    bot('속도가 느려지는 원인은 보통 3가지예요 🦊\n\n① <strong>오늘의 고속 데이터 소진</strong> — 일 용량 상품은 소진 후 저속 무제한으로 전환돼요. 현지 리셋 시간에 다시 빨라져요! (사용량 조회로 확인 가능)\n② <strong>현지 통신망 혼잡</strong> — 통신사 수동 선택으로 다른 망을 잡아보세요\n③ <strong>5G 불안정</strong> — 설정에서 <strong>4G/LTE로 고정</strong>하면 오히려 안정적이에요\n\n📊 지금 고속 데이터가 남았는지 확인해 볼까요?');
+    chips([['📊 내 사용량 확인하기', aUsage]]);
+    homeChips();
+  }
+  // 연장/소진 → 재구매 퍼널
+  function aExtend(){
+    var cty = CTX.country || '';
+    bot('여행 중 연장은 아주 간단해요 🦊\n지금 쓰시는 eSIM은 그대로 두고, <strong>같은 국가 상품을 하나 더 구매</strong>해서 설치하면 이어서 쓸 수 있어요. (와이파이에서 설치 → 기존 게 끝나면 새 걸로 전환)\n\n' + (cty ? '<strong>' + cty + '</strong> 상품 바로 보여드릴게요!' : '어느 나라에서 쓰실 건가요? 스토어에서 바로 고를 수 있어요!'));
+    chips([[ cty ? '➕ ' + cty + ' 연장 상품 보기' : '🛒 스토어에서 고르기', function(){
+      me('연장 상품 보기');
+      if (window.switchNav) { switchNav('store'); var i2 = document.getElementById('storeSearchInput'); if (i2 && cty) { i2.value = cty; if (window.renderStoreProducts) renderStoreProducts('all', cty); } panel.classList.remove('on'); }
+      else location.href = 'https://jdisim.co.kr/mobile.html';
+    }]]);
+    homeChips();
+  }
   function aCalls(){
     bot('여행 eSIM은 <strong>데이터 전용</strong>이라 전화번호가 없고, 일반 전화·문자는 안 돼요.\n대신 데이터로 <strong>카톡·보이스톡·페이스타임</strong>은 전부 잘 돼요! 🦊\n\n💡 꿀팁: 한국 번호로 오는 <strong>인증문자를 받아야 한다면</strong> — 한국 유심 회선을 켜둔 채 <strong>데이터 로밍만 꺼두세요</strong>. 문자 수신은 무료라 요금 안 나와요. (전화를 받으면 로밍 통화료가 나오니 주의!)');
     homeChips();
@@ -310,12 +364,17 @@
     if (n <= 6 && /^(잘가|바이|빠이|안녕히)/.test(t)) { bot('네, 좋은 여행 되세요! ✈️🦊'); return homeChips(); }
 
     // ── 확신 규칙 (정밀 키워드) ──
+    // 미수신 (QR·티켓·카톡이 안 옴) — '설치'보다 먼저 검사해야 오작동 없음
+    if (/재발송|다시보내|재전송/.test(t) || (/(안와|안왔|못받|수신안|안오네|안온다|언제와|언제오)/.test(t) && /(qr|큐알|코드|티켓|카톡|문자|메일|링크|이심|esim)/i.test(t))) return aNotReceived();
+    if (/삭제했|삭제해버|지웠|지워버|날려버|없애버/.test(t)) return aDeleted();
     if (/안터|안터져|안돼|안됨|신호없|서비스없|인터넷안|연결안|먹통|데이터가안/.test(t)) return aTrouble();
     if (/설치[^가-힣]*(됐|되었|확인|여부|체크)|됐는지|깔렸|설치확인|잘설치/.test(t)) return aVerify();
     if (/설치|원클릭|큐알|등록방법|QR/i.test(t)) return aInstall();
     if (/사용량|얼마남|남은데이터|데이터확인/.test(t)) return aUsage();
     if (/전화|통화|문자|SMS|인증번호|번호없음/i.test(t)) return aCalls();
     if (/핫스팟|테더링|나눠|공유해/.test(t)) return aHotspot();
+    if (/느려|느림|속도가|버벅|답답/.test(t)) return aSlow();
+    if (/연장|추가구매|더쓰고|더사|다썼|다쓴|소진됐|기간늘/.test(t)) return aExtend();
     if (/리셋|충전시간|데이터초기화|몇시에(차|충|리)/.test(t)) {
       if (cty) { bot('🌏 <strong>' + cty + '</strong>의 일일 데이터 리셋은 <strong>현지 ' + RESET[cty] + '</strong>예요 ↻'); return homeChips(); }
       return aReset();
