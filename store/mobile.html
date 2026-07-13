@@ -1377,7 +1377,7 @@
     .jd-step .jd-step-head { margin: 0; cursor: default; align-items: center; gap: 8px; }
     .jd-step .jd-step-label { display: inline-flex; align-items: center; }
     .jd-step .jd-step-value {
-      margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F2751F;
+      margin-left: auto; font-size: 0.8rem; font-weight: 800; color: #F2751F;
       max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .jd-step .jd-step-state { font-size: 0.72rem; margin-left: 6px; flex-shrink: 0; }
@@ -1413,21 +1413,41 @@
     }
     .jd-step.done .jd-step-state,
     .jd-step.locked .jd-step-state { font-family: inherit; }
-    /* 활성 단계 옵션은 시선 중앙 정렬 + 큼직하게 (하나하나 누르는 맛) */
+    /* 활성 단계 옵션은 시선 중앙 정렬 + 큼직하고 선명하게 (하나하나 누르는 맛) */
     .jd-step.active .jd-center-pills { justify-content: center; }
     .jd-step.active .jd-center-pills .option-pill {
-      padding: 12px 18px !important; font-size: 0.85rem !important;
+      padding: 14px 18px !important; font-size: 0.96rem !important;
+      font-weight: 800; color: #0f172a; line-height: 1.4;
       border-width: 1.5px; min-width: 30%; text-align: center;
     }
+    /* 알약 보조설명: 흐릿한 opacity 대신 또렷한 진회색 */
+    .jd-pill-sub {
+      display: block; margin-top: 4px;
+      font-size: 0.76rem; font-weight: 700; color: #475569; opacity: 1;
+      letter-spacing: -0.01em; white-space: normal; word-break: keep-all;
+    }
+    .option-pill.active .jd-pill-sub { color: #b45309; }
+    /* 제공 방식 상세 설명 박스 (데일리 vs 총용량) */
+    .jd-plan-guide {
+      margin-top: 10px; border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 13px; background: #fff; overflow: hidden;
+    }
+    .jd-plan-guide > div {
+      padding: 11px 13px; font-size: 0.8rem; font-weight: 600;
+      color: #334155; line-height: 1.65; word-break: keep-all;
+    }
+    .jd-plan-guide > div + div { border-top: 1px dashed rgba(15, 23, 42, 0.1); }
+    .jd-plan-guide strong { color: #0f172a; font-weight: 800; }
+    .jd-plan-guide em { font-style: normal; color: #F2751F; font-weight: 800; }
     .jd-step .option-pill.active {
       background: rgba(249, 115, 22, 0.1); border-color: #F2751F; color: #b45309;
       box-shadow: 0 2px 10px rgba(249, 115, 22, 0.18);
     }
     /* 통신사 커스텀 드롭다운 */
     .jd-drop-btn {
-      width: 100%; min-height: 50px; border-radius: 14px; padding: 0 16px; margin-top: 6px;
+      width: 100%; min-height: 52px; border-radius: 14px; padding: 0 16px; margin-top: 6px;
       background: #fff; border: 1.5px solid rgba(249, 115, 22, 0.45); color: #0f172a;
-      font-weight: 700; font-size: 0.86rem; font-family: inherit;
+      font-weight: 800; font-size: 0.92rem; font-family: inherit;
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
       cursor: pointer; box-shadow: 0 3px 12px rgba(249, 115, 22, 0.1);
       transition: all 0.2s ease;
@@ -1443,7 +1463,7 @@
     .jd-drop-item {
       width: 100%; display: flex; align-items: center; gap: 8px; padding: 13px 14px;
       background: none; border: none; border-top: 1px solid rgba(15, 23, 42, 0.05);
-      font-family: inherit; font-size: 0.83rem; font-weight: 700; color: #0f172a;
+      font-family: inherit; font-size: 0.89rem; font-weight: 700; color: #0f172a;
       text-align: left; cursor: pointer;
     }
     .jd-drop-item:first-child { border-top: none; }
@@ -2276,7 +2296,7 @@
       <div class="jd-step-body">
         <div id="capacityPills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
       </div>
-      <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.74rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
+      <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.78rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
     </div>
 
     <div class="jd-step locked" id="step-days" style="margin-bottom: 16px;">
@@ -2287,7 +2307,7 @@
       <div class="jd-step-body">
         <div id="daysPills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
       </div>
-      <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.72rem;font-weight:700;color:#64748b;line-height:1.55;padding:0 2px;"></div>
+      <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.78rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
     </div>
 
     <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
@@ -3605,9 +3625,9 @@
 
       const box = document.getElementById('netTypePills');
       const LBL = {
-        '로컬망': '🏠 로컬망<br><small style="font-weight:600;opacity:.75;">현지 직통·최고 속도</small>',
-        '로밍망': '📡 로밍망<br><small style="font-weight:600;opacity:.75;">간편·가성비</small>',
-        '멀티': '🌏 멀티국가<br><small style="font-weight:600;opacity:.75;">여러 나라 겸용</small>'
+        '로컬망': '🏠 로컬망<span class="jd-pill-sub">현지 통신사 직통 · 최고 속도</span>',
+        '로밍망': '📡 로밍망<span class="jd-pill-sub">설정 간편 · 가성비 좋음</span>',
+        '멀티': '🌏 멀티국가<span class="jd-pill-sub">여러 나라를 한 장으로</span>'
       };
       if (box) {
         box.innerHTML = avail.map(sc =>
@@ -3745,8 +3765,16 @@
       const box = document.getElementById('planTypePills');
       if (box) {
         box.innerHTML = typeList.map(t =>
-          `<button type="button" class="option-pill" data-plan="${t}">${t === '데일리' ? '📅 데일리<br><small style="font-weight:600;opacity:.75;">매일 리셋</small>' : '🎒 총용량<br><small style="font-weight:600;opacity:.75;">전체 기간</small>'}</button>`
+          `<button type="button" class="option-pill" data-plan="${t}">${t === '데일리' ? '📅 데일리<span class="jd-pill-sub">매일 새 용량 충전</span>' : '🎒 총용량<span class="jd-pill-sub">기간 내 자유 분배</span>'}</button>`
         ).join('');
+        // 데일리 vs 총용량 — 뭐가 다른지 확실히 설명
+        const GUIDE = {
+          '데일리': '<div><strong>📅 데일리</strong> — <em>매일 용량이 새로 충전</em>돼요. 오늘 다 써도 다음날 다시 꽉 차니까, 매일 지도·유튜브·인스타 많이 쓰는 일반 여행에 가장 무난해요. (대부분 소진 시 그날만 저속 전환 → 다음날 고속 자동 복구)</div>',
+          '총용량': '<div><strong>🎒 총용량</strong> — 여행 기간 전체에서 <em>총 용량을 자유롭게 나눠</em> 써요. 많이 쓰는 날·안 쓰는 날 차이가 큰 일정이나 짧은 출장에 유리해요. (대부분 소진 후에도 저속으로 카톡·지도 정도는 계속 사용 가능, 일부 상품은 중단)</div>'
+        };
+        box.parentElement.querySelectorAll('[data-jd-guide]').forEach(el => el.remove()); // 재진입 시 이전 가이드 제거
+        box.insertAdjacentHTML('afterend',
+          `<div class="jd-plan-guide" data-jd-guide>${typeList.map(t => GUIDE[t]).join('')}</div>`);
         box.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', () => {
           box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
           onPlanTypeChange(b.getAttribute('data-plan'));
