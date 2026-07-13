@@ -1,6 +1,6 @@
 // JDISIM 서비스워커 v2 — 앱 셸 프리캐시 + 전략별 캐싱
 // 배포 시 VERSION만 올리면 이전 캐시 자동 정리
-const VERSION = 'jdisim-v2';
+const VERSION = 'jdisim-v3';
 const PRECACHE = [
   '/mobile.html', '/issue.html', '/index.html',
   '/jdisim-app.js', '/romi-bot.js', '/products-lite.js',
