@@ -16,6 +16,12 @@
     }}catch(e){}})();
   </script>
   <style>:root{color-scheme:only light}html{background-color:#FAF8F4}</style>
+  <style id="force-light">
+    @media (prefers-color-scheme: dark) {
+      :root { color-scheme: only light; }
+      html, body { background: #FAF8F4 !important; }
+    }
+  </style>
 <title>eSIM 발급 — JDISIM</title>
 <meta name="robots" content="noindex">
 <style>

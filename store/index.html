@@ -33,6 +33,12 @@
     }}catch(e){}})();
   </script>
   <style>:root{color-scheme:only light}html{background-color:#FAF8F4}</style>
+  <style id="force-light">
+    @media (prefers-color-scheme: dark) {
+      :root { color-scheme: only light; }
+      html, body { background: #FAF8F4 !important; }
+    }
+  </style>
   <link rel="manifest" href="manifest.webmanifest?v=3">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
