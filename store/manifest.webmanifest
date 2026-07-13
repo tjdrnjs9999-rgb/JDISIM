@@ -1,12 +1,32 @@
 {
+  "id": "/mobile.html",
   "name": "JDISIM — 여행 eSIM",
   "short_name": "JDISIM",
-  "start_url": "/mobile.html",
+  "description": "여행 eSIM 구매부터 QR 설치까지, 로미가 도와드려요",
+  "lang": "ko",
+  "start_url": "/mobile.html?src=pwa",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#FAF8F4",
   "theme_color": "#101623",
   "icons": [
-    { "src": "images/fox-hello.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "images/fox-hello.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "내 eSIM QR 지갑",
+      "short_name": "QR 지갑",
+      "url": "/issue.html?src=shortcut",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "요금제 찾기",
+      "short_name": "요금제",
+      "url": "/mobile.html?src=shortcut#search",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

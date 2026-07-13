@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <script>try{document.documentElement.style.fontSize=({"1":"18px","2":"20px","3":"22px"})[localStorage.getItem("jdisim_fs")||"1"]||"18px"}catch(e){}</script>
   <script>
     window.onerror = function(msg, url, lineNo, columnNo, error) {
       // 운영 모드: 방문자 화면에 에러를 띄우지 않고 콘솔에만 기록
@@ -394,7 +395,7 @@
       justify-content: center;
       gap: 4px;
       color: #64748b;
-      font-size: 0.65rem;
+      font-size: 0.74rem;
       font-weight: 700;
       transition: all 0.2s;
       cursor: pointer !important;
@@ -612,7 +613,7 @@
       position: absolute;
       top: 8px;
       left: 8px;
-      font-size: 0.62rem;
+      font-size: 0.74rem;
       font-weight: 800;
       padding: 3px 8px;
       border-radius: 20px;
@@ -654,7 +655,7 @@
       min-height: calc(0.8rem * 1.35 * 2); /* 1줄 카드도 높이 정렬 */
     }
     .store-card-meta {
-      font-size: 0.65rem;
+      font-size: 0.74rem;
       font-weight: 600;
       color: #94a3b8;
     }
@@ -672,7 +673,7 @@
       color: #0f172a;
     }
     .store-card-perday {
-      font-size: 0.65rem;
+      font-size: 0.74rem;
       font-weight: 700;
       color: #4f46e5;
     }
@@ -824,7 +825,7 @@
 
     /* 히어로 중앙 하단 스크롤 유도선(세로선) 제거 */
     /* ===== 가독성 리뉴얼: 루트 글자 크기 상향 (rem 기반 전체에 적용) ===== */
-    html { font-size: 17px; }
+    html { font-size: 18px; }
     body { -webkit-text-size-adjust: 100%; }
     /* 최소 가독 하한: 초소형 텍스트 계열 살짝 상향 */
     .m-rv-body { font-size: 0.8rem !important; line-height: 1.6 !important; }
@@ -901,7 +902,7 @@
       background: linear-gradient(135deg, rgba(242,117,31,0.06), rgba(245,158,11,0.06));
       border: 1px solid rgba(242,117,31,0.16);
       border-radius: 14px;
-      font-size: 0.68rem;
+      font-size: 0.74rem;
       font-weight: 800;
       color: #b45309;
       white-space: nowrap;
@@ -917,7 +918,7 @@
       margin: 10px 0 2px;
     }
     .recent-label {
-      font-size: 0.68rem;
+      font-size: 0.74rem;
       font-weight: 800;
       color: #94a3b8;
       flex-shrink: 0;
@@ -954,7 +955,7 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      font-size: 0.64rem;
+      font-size: 0.74rem;
       font-weight: 900;
       letter-spacing: 2.5px;
       color: #fbbf24;
@@ -993,7 +994,7 @@
     .db-cell.flip { animation: dbFlip 0.42s cubic-bezier(0.3, 0.9, 0.4, 1) both; }
     @keyframes dbFlip { 0% { transform: rotateX(-88deg); filter: brightness(1.8); } 100% { transform: rotateX(0); filter: brightness(1); } }
     .db-code { color: #fbbf24; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
-    .db-status { margin-left: auto; color: #4ade80; font-size: 0.62rem; font-weight: 900; letter-spacing: 1.5px; animation: dbPulse 2.2s ease-in-out infinite; }
+    .db-status { margin-left: auto; color: #4ade80; font-size: 0.74rem; font-weight: 900; letter-spacing: 1.5px; animation: dbPulse 2.2s ease-in-out infinite; }
     @media (prefers-reduced-motion: reduce) { .db-cell.flip, .db-live, .db-status { animation: none !important; } }
 
     /* ===== 🎫 보딩패스 카드 ===== */
@@ -1008,7 +1009,7 @@
       color: #0f172a;
       letter-spacing: 0.5px;
     }
-    .bp-route .bp-plane { flex: 1; display: flex; align-items: center; gap: 3px; margin: 0 7px; color: #cbd5e1; font-size: 0.62rem; }
+    .bp-route .bp-plane { flex: 1; display: flex; align-items: center; gap: 3px; margin: 0 7px; color: #cbd5e1; font-size: 0.74rem; }
     .bp-route .bp-plane::before, .bp-route .bp-plane::after { content: ''; flex: 1; border-top: 1.5px dashed #d7dee9; }
     .bp-perf {
       position: relative;
@@ -1572,6 +1573,7 @@
     }
 
   </style>
+  <script src="jdisim-app.js?v=1" defer></script>
 </head>
 <body>
 
@@ -1676,10 +1678,10 @@
       <div style="position:relative;">
         <div id="mGlobe" style="width:100%;height:min(92vw, 420px);margin-top:4px;"></div>
         <div style="position:absolute;right:2px;bottom:34px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none;animation:romiFloat 3.6s ease-in-out infinite;">
-          <div style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.66rem;font-weight:800;padding:7px 11px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 16px rgba(249,115,22,0.45);">궁금한 나라를 콕! 🌏</div>
+          <div style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:800;padding:7px 11px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 16px rgba(249,115,22,0.45);">궁금한 나라를 콕! 🌏</div>
           <img src="images/fox-hello.png" alt="로미" style="width:72px;filter:drop-shadow(0 8px 18px rgba(249,115,22,0.35));" onerror="this.parentNode.style.display='none'">
         </div>
-        <div style="text-align:center;font-size:0.68rem;font-weight:700;color:#475569;">👆 돌려보고, 국가 점을 탭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져요</span></div>
+        <div style="text-align:center;font-size:0.74rem;font-weight:700;color:#475569;">👆 돌려보고, 국가 점을 탭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져요</span></div>
       </div>
     </section>
 
@@ -1859,7 +1861,7 @@
     <div id="miniReviewContainer" style="margin-bottom: 24px;"></div>
 
     <!-- 사업자 정보 (카카오페이 등 PG 심사 필수 항목) -->
-    <footer style="margin-top: 8px; padding: 20px 4px 8px 4px; border-top: 1px solid rgba(15, 23, 42, 0.08); font-size: 0.68rem; color: #94a3b8; line-height: 1.7;">
+    <footer style="margin-top: 8px; padding: 20px 4px 8px 4px; border-top: 1px solid rgba(15, 23, 42, 0.08); font-size: 0.74rem; color: #94a3b8; line-height: 1.7;">
       <div style="font-weight: 800; color: #64748b; margin-bottom: 6px;">JDISIM 사업자 정보</div>
       상호명: 버튼(Butt'on) | 대표자: 김성권<br>
       사업자등록번호: 760-15-01594 | 통신판매업신고: 제 2021-서울성북-0526 호<br>
@@ -1959,14 +1961,14 @@
 
     <!-- 📡 실시간 사용량 조회 (ICCID) -->
     <div style="background:#fff;border:1px solid #eef2f7;border-radius:14px;padding:14px;margin:0 0 16px;box-shadow:0 4px 12px rgba(15,23,42,0.04);">
-      <div style="font-size:0.8rem;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:7px;">📡 실시간 사용량 조회 <span style="font-size:0.62rem;font-weight:800;color:#15803d;background:rgba(34,197,94,0.1);padding:3px 8px;border-radius:10px;">LIVE</span></div>
+      <div style="font-size:0.8rem;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:7px;">📡 실시간 사용량 조회 <span style="font-size:0.74rem;font-weight:800;color:#15803d;background:rgba(34,197,94,0.1);padding:3px 8px;border-radius:10px;">LIVE</span></div>
       <div style="font-size:0.7rem;color:#94a3b8;font-weight:600;margin:3px 0 9px;">구매하신 <strong>이름과 전화번호</strong>만 입력하면 바로 조회돼요</div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
         <input type="text" id="usageName" class="tracker-input" placeholder="이름" style="width:34%;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;">
         <input type="tel" id="usagePhone" class="tracker-input" placeholder="전화번호 (01012345678)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;">
       </div>
       <button onclick="lookupUsageByPhone()" style="width:100%;height:48px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.9rem;box-shadow:0 6px 16px rgba(249,115,22,0.28);cursor:pointer;">내 eSIM 사용량 조회</button>
-      <details style="margin-top:10px;"><summary style="list-style:none;font-size:0.68rem;font-weight:700;color:#94a3b8;cursor:pointer;">ICCID로 직접 조회 (고급) ▾</summary>
+      <details style="margin-top:10px;"><summary style="list-style:none;font-size:0.74rem;font-weight:700;color:#94a3b8;cursor:pointer;">ICCID로 직접 조회 (고급) ▾</summary>
       <div style="display:flex;gap:8px;">
         <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID 번호 (89로 시작)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;">
         <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 4px 12px rgba(249,115,22,0.25);">조회</button>
@@ -2104,14 +2106,14 @@
 
     <!-- 구매 여정 3단계 & 보장 -->
     <div style="margin-top:18px;padding:12px 14px;background:linear-gradient(135deg,rgba(242,117,31,0.05),rgba(245,158,11,0.05));border:1px solid rgba(242,117,31,0.15);border-radius:14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.68rem;font-weight:800;color:#0f172a;text-align:center;">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.74rem;font-weight:800;color:#0f172a;text-align:center;">
         <span style="flex:1;">💳<br>결제 완료</span>
         <span style="color:#F2751F;font-weight:900;">→</span>
         <span style="flex:1.2;">⚡<br>평균 5~15분 내<br>QR 발송</span>
         <span style="color:#F2751F;font-weight:900;">→</span>
         <span style="flex:1;">📶<br>현지 도착 시<br>자동 개통</span>
       </div>
-      <div style="margin-top:9px;padding-top:9px;border-top:1px dashed rgba(242,117,31,0.25);font-size:0.68rem;font-weight:700;color:#b45309;text-align:center;">🛡️ 미개통 시 100% 환불 · <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24시간 카카오톡 상담</a></div>
+      <div style="margin-top:9px;padding-top:9px;border-top:1px dashed rgba(242,117,31,0.25);font-size:0.74rem;font-weight:700;color:#b45309;text-align:center;">🛡️ 미개통 시 100% 환불 · <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24시간 카카오톡 상담</a></div>
     </div>
 
     <button class="order-action-btn" onclick="processMockCheckout()">🛒 안전하게 결제하고 QR 받기</button>
@@ -2470,7 +2472,7 @@
           <div class="product-info">
             <div style="display: flex; gap: 6px; align-items: center;">
               <span class="product-country-tag">HOT 추천</span>
-              <span style="font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
+              <span style="font-size: 0.74rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
             </div>
             <h4 class="product-title">${countryName} ${cleanCarrier(carrierName).split(' ')[0]} 요금제</h4>
             <div class="product-carrier-badge">
@@ -2851,7 +2853,7 @@
             <div style="flex:1;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.18);border-radius:12px;padding:9px 4px;text-align:center;">
               <div style="font-size:1rem;">${s[0]}</div>
               <div style="font-size:0.54rem;font-weight:800;color:#b45309;margin-top:3px;letter-spacing:0.5px;">${s[1]}</div>
-              <div style="font-size:0.64rem;font-weight:800;color:#0f172a;margin-top:1px;">${s[2]}</div>
+              <div style="font-size:0.74rem;font-weight:800;color:#0f172a;margin-top:1px;">${s[2]}</div>
             </div>`).join('')}</div>
         </div>
         <a href="issue.html?local=${encodeURIComponent(order.orderCode || '')}" style="display:block;width:100%;max-width:330px;margin-top:14px;text-align:center;padding:14px;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,0.25);${reduced ? '' : 'animation:tcFade 0.5s ease 0.55s both;'}">🎫 발급 페이지 열기 — 원하는 시점에 발급</a>
@@ -2931,11 +2933,11 @@
       box.style.display='block';
       box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">' +
         '<div style="display:flex;align-items:center;gap:8px;"><img src="images/fox-thumbsup.png" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
-        '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' <span style="font-size:0.62rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span></div>' +
-        (prod ? '<div style="font-size:0.68rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
+        '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' <span style="font-size:0.74rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span></div>' +
+        (prod ? '<div style="font-size:0.74rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
         '<div style="margin-top:10px;font-size:0.86rem;font-weight:900;color:#F2751F;">누적 사용 ' + gb(totalUsed) + '</div>' +
         (rows ? '<div style="margin-top:6px;border-top:1px dashed #f1e6d8;padding-top:6px;">' + rows + '</div>' : '') +
-        '<div style="margin-top:8px;font-size:0.66rem;color:#94a3b8;font-weight:600;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요 ↻</div></div>';
+        '<div style="margin-top:8px;font-size:0.74rem;color:#94a3b8;font-weight:600;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요 ↻</div></div>';
     }
 
     function checkUsage() {
@@ -2983,7 +2985,7 @@
         <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.76rem;font-weight:800;color:#0f172a;">
             <span>${d.plan_name || '내 eSIM'}</span>
-            <span style="color:${d.status === 'active' ? '#15803d' : '#64748b'};font-size:0.66rem;">${d.status === 'active' ? '● 사용 중' : d.status === 'expired' ? '만료됨' : '대기 중'}</span>
+            <span style="color:${d.status === 'active' ? '#15803d' : '#64748b'};font-size:0.74rem;">${d.status === 'active' ? '● 사용 중' : d.status === 'expired' ? '만료됨' : '대기 중'}</span>
           </div>
           ${total ? `
           <div style="margin-top:10px;height:9px;border-radius:6px;background:#f1f5f9;overflow:hidden;">
@@ -2993,7 +2995,7 @@
             <span>사용 ${gb(used)} / ${gb(total)}</span>
             <span style="color:#0f172a;">남은 데이터 <strong style="color:#F2751F;">${Math.round(remainGb * 10) / 10}GB</strong></span>
           </div>` : '<div style="margin-top:8px;font-size:0.72rem;font-weight:700;color:#15803d;">♾️ 무제한 요금제 — 마음껏 쓰세요!</div>'}
-          ${d.expires_at ? `<div style="margin-top:7px;font-size:0.68rem;font-weight:600;color:#94a3b8;">유효기간: ${d.expires_at} 까지</div>` : ''}
+          ${d.expires_at ? `<div style="margin-top:7px;font-size:0.74rem;font-weight:600;color:#94a3b8;">유효기간: ${d.expires_at} 까지</div>` : ''}
         </div>`;
     }
 
@@ -3065,7 +3067,7 @@
           <div style="font-size:0.7rem;font-weight:700;opacity:0.9;margin-top:2px;">지금 어떤 나라·어떤 망으로 접속 중인지 바로 판정해요</div>
         </button>
         <div id="smartCheckResult" style="display:none;margin-top:9px;"></div>
-        <div style="font-size:0.68rem;font-weight:700;color:#94a3b8;margin:8px 2px 2px;">또는 증상을 직접 골라주세요</div>
+        <div style="font-size:0.74rem;font-weight:700;color:#94a3b8;margin:8px 2px 2px;">또는 증상을 직접 골라주세요</div>
         ${Object.entries(DOCTOR_TREE).map(([k, v]) => `
           <button type="button" onclick="renderDoctorSteps('${k}')" style="display:flex;align-items:center;width:100%;text-align:left;gap:10px;margin-top:9px;padding:14px;border:1px solid #e5eaf2;border-radius:14px;background:#fff;font-size:0.84rem;font-weight:700;color:#0f172a;box-shadow:0 3px 10px rgba(15,23,42,0.04);">
             ${v.title}<span style="margin-left:auto;color:#F97316;">→</span>
@@ -3131,7 +3133,7 @@
         <div style="font-weight:800;font-size:0.98rem;color:#0f172a;margin-bottom:10px;">🩺 ${t.title}</div>
         ${t.steps.map((s, i) => `
           <div style="display:flex;gap:10px;padding:11px 0;${i ? 'border-top:1px solid rgba(15,23,42,0.05);' : ''}font-size:0.8rem;line-height:1.65;color:#334155;">
-            <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.68rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${i + 1}</span>
+            <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${i + 1}</span>
             <span>${s}</span>
           </div>`).join('')}
         <div style="display:flex;gap:9px;margin-top:16px;">
@@ -3148,7 +3150,7 @@
       layer = document.createElement('div');
       layer.id = 'installGuide';
       layer.style.cssText = 'position:fixed;inset:0;background:rgba(11,16,32,0.6);backdrop-filter:blur(4px);z-index:1000003;display:flex;align-items:flex-end;';
-      const step = (n, t) => `<div style="display:flex;gap:10px;padding:9px 0;font-size:0.79rem;line-height:1.6;color:#334155;"><span style="flex-shrink:0;width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.66rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${n}</span><span>${t}</span></div>`;
+      const step = (n, t) => `<div style="display:flex;gap:10px;padding:9px 0;font-size:0.79rem;line-height:1.6;color:#334155;"><span style="flex-shrink:0;width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${n}</span><span>${t}</span></div>`;
       layer.innerHTML = `
         <div style="background:#fdfefe;width:100%;border-radius:24px 24px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom,0px));max-height:86vh;overflow-y:auto;overscroll-behavior:contain;">
           <div style="width:42px;height:4.5px;border-radius:4px;background:#e2e8f0;margin:-6px auto 14px;"></div>
