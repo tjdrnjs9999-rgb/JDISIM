@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>if(/KAKAOTALK/i.test(navigator.userAgent))document.documentElement.classList.add('in-kakao');</script>
 <meta name="theme-color" content="#FFF8F2">
   <meta name="color-scheme" content="only light">
 <title>eSIM 발급 — JDISIM</title>
@@ -15,6 +16,13 @@
   ============================================================ */
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html { font-size:18px; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  /* 카카오톡 인앱: 확대 렌더링 보정 — 일반 모바일과 동일한 밀도로 */
+  html.in-kakao { font-size:16px; }
+  html.in-kakao .card, html.in-kakao .tkt { border-radius:16px; }
+  html.in-kakao .wrap { padding-left:12px; padding-right:12px; }
+  /* 의미 단위 줄바꿈: 한국어 어절 단위로만 줄이 바뀌게 (전역) */
+  h1,h2,h3,b,p,span,div,button,a { word-break:keep-all; }
+  .copyline .val, .tkt-detail .dr b { word-break:break-all; } /* 코드류는 예외 */
   html.fz2 { font-size:19px; } html.fz3 { font-size:21px; }
   body { font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; background:#FAF8F4; min-height:100dvh; color:#101623; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
   body::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
@@ -916,6 +924,11 @@ function brandFootHTML(){
     '<b>JDIS<i>I</i>M</b>' +
     '<p>여행자의 데이터를 가장 쉽게.<br>150개국+ 여행 eSIM, 결제 즉시 카톡으로.</p>' +
     '<div class="fl"><a class="go" href="https://jdisim.co.kr" target="_blank" rel="noopener">JDISIM 둘러보기</a><a class="ch" href="https://pf.kakao.com/_GSixcn" target="_blank" rel="noopener">카톡 채널 추가</a></div>' +
+    '<div class="trust" style="margin:14px 0 6px;">' +
+      '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
+      '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
+      '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
+    '</div>' +
     '<span class="fs">' + ico('shield', 13) + ' QR 코드는 이 기기에서만 생성되며 외부로 전송되지 않습니다<br>JDISIM 발급 시스템 v2</span>' +
     '</div>';
 }
@@ -1280,12 +1293,12 @@ function bpassHTML(o, opts){
     '<div class="tkt'+(opts.print?' printing':'')+'">' +
     '<div class="tkt-band"><span class="twm">JDISIM · E-SIM BOARDING PASS</span>'+st+'</div>' +
     '<div class="tkt-hero"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+qty+'</b><i>KOR → '+cc+' <em>· ' + (opts.issued ? '준비 완료, 좋은 여행 되세요 ✈️' : '곧 만나요 ✈️') + '</em></i></span></div>' +
+    (opts.issued ? '<div class="tz" id="instZone"></div><div class="tkt-perf"></div>' : '') +
     '<div class="specs">' + cells + '</div>' +
     '<div class="tkt-grid">' +
       '<div class="f"><div class="k">PASSENGER · 수령인</div><div class="v">'+esc(o.buyerName || '—')+'</div></div>' +
       '<div class="f"><div class="k">VALID · 유효기간</div><div class="v">'+esc(o.validity || 'QR 안내문 참조')+'</div></div>' +
     '</div>' +
-    '<div class="tkt-perf"></div>' +
     acts +
     '<div class="tkt-bar"><div class="barcode"></div></div>' + detail +
     '<img class="tkt-wm" src="images/fox-hello.png" alt="" onerror="this.remove()">' +
@@ -1499,10 +1512,7 @@ function renderIssued(lpa, revisit){
   setRoute(order && order.country);
   window._lpa = lpa;
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
-  h('<div class="card rv" id="installCard" style="border:1.5px solid rgba(242,117,31,0.4);box-shadow:0 8px 24px rgba(242,117,31,0.1);">' +
-    secHd('qr', 'INSTALL', 'eSIM 설치', '1분이면 끝나요') +
-    '<div class="tz" id="instZone" style="padding:4px 0 2px;"></div></div>' +
-    bpassHTML(order || {}, {issued:true, print:!revisit}) +
+  h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
     '<div class="warnband rv">' +
     '<div class="w red">'+ico('alert',16)+'<span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담</span></div>' +
     '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
@@ -1514,11 +1524,6 @@ function renderIssued(lpa, revisit){
     romiSay('', 'fox-qr') +
     buildBriefHTML((order&&order.country)||'') +
     sosHTML((order&&order.country)||'') +
-    '<div class="trust">' +
-      '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
-      '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
-      '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
-    '</div>' +
     brandFootHTML());
   romiArrival();
   if (window.RomiRSQ && order) RomiRSQ.init({ country: order.country || '', sku: order.productName || '' });
