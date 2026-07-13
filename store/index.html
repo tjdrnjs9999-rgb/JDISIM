@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260713b">
+  <link rel="stylesheet" href="styles.css?v=20260713c">
   <link rel="stylesheet" href="premium.css?v=20260713b">
   <script src="jdisim-app.js?v=2" defer></script>
 <style id="hero-light-critical">
@@ -71,6 +71,19 @@
         display: flex; flex-direction: column; justify-content: center;
         padding-top: 84px; /* 고정 헤더 보정 */
       }
+      /* 콘텐츠 세로 압착 금지: 뷰포트보다 크면 패널이 늘어나되 절대 구겨지지 않음 */
+      html.pc-snap #view-home .pc-panel > * { flex-shrink: 0; }
+      /* 노트북(낮은 뷰포트)에서 패널이 한 화면에 들어오도록 밀도 조절 */
+      html.pc-snap #view-home .app-info-section { padding: 28px 0 !important; }
+      html.pc-snap #view-home .app-info-title { margin-bottom: 24px !important; }
+      html.pc-snap #view-home .feature-split-section { padding: 32px 0 !important; }
+      html.pc-snap #view-home .feature-split-grid { gap: 40px !important; }
+      html.pc-snap #view-home .phone-mockup-wrapper {
+        height: clamp(400px, 62svh, 560px) !important;
+        width: clamp(200px, 31svh, 280px) !important;
+      }
+      html.pc-snap #view-home .globe-section { padding: 40px 24px !important; min-height: 0 !important; }
+      html.pc-snap #view-home #pcGlobe { height: clamp(380px, 62svh, 620px) !important; }
       html.pc-snap #view-home .pc-tail { scroll-snap-align: start; }
       /* 히어로 프레임은 패널을 꽉 채우게 */
       html.pc-snap #view-home .pc-panel .hero-video-frame { height: calc(100svh - 140px); margin: 0 auto; }
