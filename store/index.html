@@ -1365,7 +1365,7 @@
   <!-- 포트원(구 아임포트) 결제 SDK (무료 테스트 모드 연동) -->
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
   <script src="https://cdn.portone.io/v2/payment.js"></script>
-  <script src="products-lite.js?v=20260710"></script>
+  <script src="products-lite.js?v=20260713"></script>
   <script>
     // ===== 요금제 데이터 2단 로딩: 요약(64KB) 즉시 → 전체(2.4MB) 백그라운드 =====
     window.__fullReady = false;
@@ -1377,7 +1377,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260709';
+      sc.src = 'products.js?v=20260713';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
