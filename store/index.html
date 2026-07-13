@@ -73,6 +73,11 @@
       }
       /* 콘텐츠 세로 압착 금지: 뷰포트보다 크면 패널이 늘어나되 절대 구겨지지 않음 */
       html.pc-snap #view-home .pc-panel > * { flex-shrink: 0; }
+      /* [핵심] flex 부모 안에서 margin:auto 컨테이너의 가로 붕괴 방지
+         (.container가 min-content 폭으로 쪼그라들어 글자가 세로로 떨어지던 원인) */
+      html.pc-snap #view-home .pc-panel > .container,
+      html.pc-snap #view-home .pc-panel .container { width: 100%; }
+      html.pc-snap #view-home .pc-panel > div { width: 100%; }
       /* 노트북(낮은 뷰포트)에서 패널이 한 화면에 들어오도록 밀도 조절 */
       html.pc-snap #view-home .app-info-section { padding: 28px 0 !important; }
       html.pc-snap #view-home .app-info-title { margin-bottom: 24px !important; }
@@ -264,7 +269,7 @@
 
       <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
       <section class="globe-section" style="position:relative;margin:56px 0 8px;padding:72px 24px;min-height:100vh;display:flex;align-items:center;background:radial-gradient(1200px 600px at 70% 40%, #EAF6FF 0%, #FFF6EC 55%, #FBF3E8 100%);overflow:hidden;">
-        <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:0.9fr 1.1fr;gap:32px;align-items:center;position:relative;">
+        <div style="width:100%;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:0.9fr 1.1fr;gap:32px;align-items:center;position:relative;">
           <div>
             <span style="display:inline-block;font-size:0.78rem;font-weight:800;letter-spacing:2.5px;color:#FB923C;margin-bottom:14px;">LIVE CONNECTED WORLD</span>
             <h2 style="margin:0;font-size:2.6rem;line-height:1.25;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
