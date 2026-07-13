@@ -2142,9 +2142,15 @@
       </button>
     </div>
 
-    <!-- 1. Carrier -->
+    <!-- 1. Network scope (로컬/로밍/멀티) -->
+    <div id="netTypeSection" style="margin-bottom: 12px;">
+      <div class="option-group-title"><span class="step-num">1</span>연결 방식 선택</div>
+      <div id="netTypePills" class="option-pills" style="margin-top: 6px;"></div>
+    </div>
+
+    <!-- 2. Carrier -->
     <div id="carrierSection" style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">1</span>통신사 선택</div>
+      <div class="option-group-title"><span class="step-num">2</span>통신사 선택</div>
       <select id="carrierSelect" class="tracker-input" onchange="onCarrierChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
       <div id="activationNotice" style="display:none;margin-top:8px;padding:10px 12px;border-radius:12px;font-size:0.74rem;font-weight:700;line-height:1.6;"></div>
@@ -2152,14 +2158,14 @@
 
     <!-- 2. Plan Type -->
     <div style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">2</span>제공 방식 선택</div>
+      <div class="option-group-title"><span class="step-num">3</span>제공 방식 선택</div>
       <select id="planTypeSelect" class="tracker-input" onchange="onPlanTypeChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
     </div>
 
     <!-- 3. Capacity -->
     <div style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">3</span>데이터 용량 선택</div>
+      <div class="option-group-title"><span class="step-num">4</span>데이터 용량 선택</div>
       <select id="capacitySelect" class="tracker-input" onchange="onCapacityChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
       <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.74rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
@@ -2167,7 +2173,7 @@
 
     <!-- 4. Duration -->
     <div style="margin-bottom: 16px;">
-      <div class="option-group-title"><span class="step-num">4</span>사용 기간 선택</div>
+      <div class="option-group-title"><span class="step-num">5</span>사용 기간 선택</div>
       <select id="daysSelect" class="tracker-input" onchange="onDaysChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
       </select>
       <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.72rem;font-weight:700;color:#64748b;line-height:1.55;padding:0 2px;"></div>
@@ -2703,12 +2709,11 @@
             <div class="store-card-scrim"></div>
             <span class="store-net-badge${onlyLocal ? ' local' : ''}">${netLabel}</span>
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
-            <span class="store-card-country">${countryName} eSIM</span>
           </div>
           <div style="height: 9px;"></div>
           <div class="bp-perf"></div>
           <div class="store-card-body">
-            <h4 class="store-card-title">${carrierLine}</h4>
+            <h4 class="store-card-title">${countryName} eSIM</h4>
             <div class="store-card-meta">통신사 ${entry.carriers.length}곳 · 요금제 ${entry.planCount.toLocaleString()}종</div>
             <div class="store-card-price-row">
               <span class="store-card-price">${entry.minPrice.toLocaleString()}원~</span>
@@ -3332,8 +3337,8 @@
       document.body.style.overflow = 'hidden'; // 뒤 페이지 스크롤 잠금 (스크롤바 이탈 방지)
       saveRecentCountry(countryName);
       
-      carrierOptions = window.PRODUCTS_DATA.filter(g => g.country === countryName);
-      if (carrierOptions.length === 0) return;
+      allCarrierOptions = window.PRODUCTS_DATA.filter(g => g.country === countryName);
+      if (allCarrierOptions.length === 0) return;
 
       document.getElementById('sheetProductTitle').innerText = `${countryName} 데이터 요금제 선택`;
       const flagEl = document.getElementById('sheetFlagImg');
@@ -3344,11 +3349,9 @@
       renderSheetLocalTime(countryName);
       __lastTotal = 0; // 시트 열릴 때 가격이 0부터 촤르륵 올라오게
       
-      activeCarrier = carrierOptions.find(co => co.carrier === defaultCarrier) || carrierOptions[0];
-      selectedCarrier = activeCarrier.carrier;
-      
-      const carriers = carrierOptions.map(co => co.carrier);
-      renderCarrierPills(carriers);
+      // 딥링크로 특정 통신사가 지정됐으면 그 통신사가 속한 스코프를 기본 선택
+      const wanted = allCarrierOptions.find(co => co.carrier === defaultCarrier);
+      initNetScope(wanted ? netScope(wanted) : '', defaultCarrier);
 
       document.getElementById('bottomSheetBackdrop').classList.add('active');
       document.getElementById('bottomSheet').classList.add('active');
@@ -3389,13 +3392,58 @@
       })(t0);
     } 
 
+    // ===== 연결 방식(로컬/로밍/멀티) 계층 — 멀티국가 겸용 상품 자동 분리 =====
+    let allCarrierOptions = [];
+    let selectedNetScope = '';
+    const __SCOPE_CO = ['중국','홍콩','마카오','대만','미국','캐나다','멕시코','일본','태국','싱가포르','말레이시아','베트남'];
+    function netScope(g) {
+      const car = String(g.carrier || '');
+      const hits = __SCOPE_CO.filter(c => car.includes(c)).length;
+      if (hits >= 2 || /겸용|복수국가/.test(car)) return '멀티';
+      return g.network_type === '로컬망' ? '로컬망' : '로밍망';
+    }
+    function initNetScope(prefer, preferCarrier) {
+      const order = ['로컬망', '로밍망', '멀티'];
+      const avail = order.filter(sc => allCarrierOptions.some(g => netScope(g) === sc));
+      selectedNetScope = (prefer && avail.includes(prefer)) ? prefer : avail[0];
+      const box = document.getElementById('netTypePills');
+      const sec = document.getElementById('netTypeSection');
+      window.__preferCarrier = preferCarrier || '';
+      if (!box || !sec) { applyNetScope(); return; }
+      window.__preferCarrier = preferCarrier || '';
+      if (avail.length <= 1) { sec.style.display = 'none'; applyNetScope(); return; }
+      sec.style.display = 'block';
+      const LBL = {
+        '로컬망': '🏠 로컬망 <small style="font-weight:600;opacity:.75;">현지 직통·최고 속도</small>',
+        '로밍망': '📡 로밍망 <small style="font-weight:600;opacity:.75;">간편·가성비</small>',
+        '멀티': '🌏 멀티국가 <small style="font-weight:600;opacity:.75;">여러 나라 겸용</small>'
+      };
+      box.innerHTML = avail.map(sc =>
+        `<button type="button" class="option-pill${sc === selectedNetScope ? ' active' : ''}" data-scope="${sc}">${LBL[sc]}</button>`
+      ).join('');
+      box.querySelectorAll('[data-scope]').forEach(b => b.addEventListener('click', () => {
+        selectedNetScope = b.getAttribute('data-scope');
+        box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+        applyNetScope();
+      }));
+      applyNetScope();
+    }
+    function applyNetScope() {
+      carrierOptions = allCarrierOptions.filter(g => netScope(g) === selectedNetScope);
+      if (!carrierOptions.length) carrierOptions = allCarrierOptions.slice();
+      activeCarrier = carrierOptions.find(co => co.carrier === window.__preferCarrier) || carrierOptions[0];
+      window.__preferCarrier = '';
+      selectedCarrier = activeCarrier.carrier;
+      renderCarrierPills(carrierOptions.map(co => co.carrier));
+    }
+
     function renderCarrierPills(carriers) {
       const select = document.getElementById('carrierSelect');
       if (!select) return;
       
       // 통신사명이 같아도 망 종류·플랜 구성이 다른 그룹을 구분할 수 있도록 인덱스로 선택
       select.innerHTML = carrierOptions.map((co, i) => {
-        const label = cleanCarrier(co.carrier) + (co.network_type ? ` · ${co.network_type}` : '') + (co.calls === '가능' ? ' · 📞전화가능' : '');
+        const label = cleanCarrier(co.carrier) + (co.calls === '가능' ? ' · 📞전화가능' : '');
         return `<option value="${i}" data-name="${co.carrier}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${co === activeCarrier ? 'selected' : ''}>${label}</option>`;
       }).join('');
       
