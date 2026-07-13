@@ -1366,6 +1366,96 @@
       box-shadow: 0 2px 10px rgba(79, 70, 229, 0.15);
     }
 
+    /* ===== ROMI Step Sheet: 단계 잠금 위저드 ===== */
+    .jd-step {
+      border-radius: 16px;
+      border: 1px solid transparent;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .jd-step .jd-step-head { margin: 0; cursor: default; align-items: center; gap: 8px; }
+    .jd-step .jd-step-label { display: inline-flex; align-items: center; }
+    .jd-step .jd-step-value {
+      margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F2751F;
+      max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .jd-step .jd-step-state { font-size: 0.72rem; margin-left: 6px; flex-shrink: 0; }
+    .jd-step.locked {
+      opacity: 0.45;
+      background: rgba(15, 23, 42, 0.025);
+      pointer-events: none;
+      user-select: none;
+    }
+    .jd-step.active {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.055), rgba(245, 158, 11, 0.04));
+      border-color: rgba(249, 115, 22, 0.35);
+      box-shadow: 0 6px 22px rgba(249, 115, 22, 0.12);
+      animation: jdStepIn 0.32s cubic-bezier(0.34, 1.3, 0.64, 1);
+    }
+    .jd-step.active .jd-step-state { display: none; }
+    .jd-step.active .option-group-title { color: #0f172a; }
+    @keyframes jdStepIn {
+      from { transform: translateY(10px) scale(0.985); opacity: 0.4; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .jd-step.done {
+      background: #fff;
+      border-color: rgba(15, 23, 42, 0.08);
+      padding-top: 8px; padding-bottom: 8px;
+    }
+    .jd-step.done .jd-step-head { cursor: pointer; }
+    .jd-step.done .jd-step-body { display: none; }
+    .jd-step.done .jd-step-state::before { content: '변경'; }
+    .jd-step.done .jd-step-state {
+      font-size: 0.68rem; font-weight: 800; color: #64748b;
+      background: rgba(15, 23, 42, 0.05); border-radius: 10px; padding: 3px 8px;
+    }
+    .jd-step.done .jd-step-state,
+    .jd-step.locked .jd-step-state { font-family: inherit; }
+    /* 활성 단계 옵션은 시선 중앙 정렬 + 큼직하게 (하나하나 누르는 맛) */
+    .jd-step.active .jd-center-pills { justify-content: center; }
+    .jd-step.active .jd-center-pills .option-pill {
+      padding: 12px 18px !important; font-size: 0.85rem !important;
+      border-width: 1.5px; min-width: 30%; text-align: center;
+    }
+    .jd-step .option-pill.active {
+      background: rgba(249, 115, 22, 0.1); border-color: #F2751F; color: #b45309;
+      box-shadow: 0 2px 10px rgba(249, 115, 22, 0.18);
+    }
+    /* 통신사 커스텀 드롭다운 */
+    .jd-drop-btn {
+      width: 100%; min-height: 50px; border-radius: 14px; padding: 0 16px; margin-top: 6px;
+      background: #fff; border: 1.5px solid rgba(249, 115, 22, 0.45); color: #0f172a;
+      font-weight: 700; font-size: 0.86rem; font-family: inherit;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      cursor: pointer; box-shadow: 0 3px 12px rgba(249, 115, 22, 0.1);
+      transition: all 0.2s ease;
+    }
+    .jd-drop-btn.open { border-radius: 14px 14px 4px 4px; border-color: #F2751F; }
+    .jd-drop-btn.open i, .jd-drop-btn.open svg { transform: rotate(180deg); }
+    .jd-drop-btn i, .jd-drop-btn svg { transition: transform 0.2s ease; }
+    .jd-drop-list {
+      border: 1.5px solid #F2751F; border-top: none; border-radius: 4px 4px 14px 14px;
+      background: #fff; overflow: hidden; box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
+      animation: jdStepIn 0.22s ease;
+    }
+    .jd-drop-item {
+      width: 100%; display: flex; align-items: center; gap: 8px; padding: 13px 14px;
+      background: none; border: none; border-top: 1px solid rgba(15, 23, 42, 0.05);
+      font-family: inherit; font-size: 0.83rem; font-weight: 700; color: #0f172a;
+      text-align: left; cursor: pointer;
+    }
+    .jd-drop-item:first-child { border-top: none; }
+    .jd-drop-item:active { background: rgba(249, 115, 22, 0.07); }
+    .jd-drop-item .jd-net-badge {
+      flex-shrink: 0; font-size: 0.66rem; font-weight: 800; padding: 2px 7px; border-radius: 9px;
+    }
+    .jd-net-badge.local { background: rgba(34, 197, 94, 0.12); color: #15803d; }
+    .jd-net-badge.roam { background: rgba(59, 130, 246, 0.1); color: #1d4ed8; }
+    .jd-checkout-area { animation: jdStepIn 0.35s ease; }
+    .bottom-sheet .jd-step .jd-step-head { margin: 0 !important; }
+
     /* Pricing Row inside drawer */
     .checkout-footer {
       border-top: 1px solid rgba(15, 23, 42, 0.08);
@@ -2142,43 +2232,65 @@
       </button>
     </div>
 
-    <!-- 1. Network scope (로컬/로밍/멀티) -->
-    <div id="netTypeSection" style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">1</span>연결 방식 선택</div>
-      <div id="netTypePills" class="option-pills" style="margin-top: 6px;"></div>
+    <!-- ROMI Step Sheet: 단계 잠금 위저드 (하나씩 눌러야 다음 단계 오픈) -->
+    <div class="jd-step locked" id="step-scope">
+      <div class="jd-step-head option-group-title" onclick="reopenStep('scope')">
+        <span class="jd-step-label"><span class="step-num">1</span>연결 방식 선택</span>
+        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
+      </div>
+      <div class="jd-step-body">
+        <div id="netTypePills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
+      </div>
     </div>
 
-    <!-- 2. Carrier -->
-    <div id="carrierSection" style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">2</span>통신사 선택</div>
-      <select id="carrierSelect" class="tracker-input" onchange="onCarrierChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
-      </select>
+    <div class="jd-step locked" id="step-carrier">
+      <div class="jd-step-head option-group-title" onclick="reopenStep('carrier')">
+        <span class="jd-step-label"><span class="step-num">2</span>통신사 선택</span>
+        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
+      </div>
+      <div class="jd-step-body">
+        <button type="button" id="carrierDropBtn" class="jd-drop-btn" onclick="toggleCarrierDrop()">
+          <span id="carrierDropLabel">눌러서 통신사 선택</span>
+          <i data-lucide="chevron-down" style="width:17px;height:17px;flex-shrink:0;"></i>
+        </button>
+        <div id="carrierDropList" class="jd-drop-list" style="display:none;"></div>
+      </div>
       <div id="activationNotice" style="display:none;margin-top:8px;padding:10px 12px;border-radius:12px;font-size:0.74rem;font-weight:700;line-height:1.6;"></div>
     </div>
 
-    <!-- 2. Plan Type -->
-    <div style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">3</span>제공 방식 선택</div>
-      <select id="planTypeSelect" class="tracker-input" onchange="onPlanTypeChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
-      </select>
+    <div class="jd-step locked" id="step-plan">
+      <div class="jd-step-head option-group-title" onclick="reopenStep('plan')">
+        <span class="jd-step-label"><span class="step-num">3</span>제공 방식 선택</span>
+        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
+      </div>
+      <div class="jd-step-body">
+        <div id="planTypePills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
+      </div>
     </div>
 
-    <!-- 3. Capacity -->
-    <div style="margin-bottom: 12px;">
-      <div class="option-group-title"><span class="step-num">4</span>데이터 용량 선택</div>
-      <select id="capacitySelect" class="tracker-input" onchange="onCapacityChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
-      </select>
+    <div class="jd-step locked" id="step-cap">
+      <div class="jd-step-head option-group-title" onclick="reopenStep('cap')">
+        <span class="jd-step-label"><span class="step-num">4</span>데이터 용량 선택</span>
+        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
+      </div>
+      <div class="jd-step-body">
+        <div id="capacityPills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
+      </div>
       <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.74rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
     </div>
 
-    <!-- 4. Duration -->
-    <div style="margin-bottom: 16px;">
-      <div class="option-group-title"><span class="step-num">5</span>사용 기간 선택</div>
-      <select id="daysSelect" class="tracker-input" onchange="onDaysChange(this.value)" style="width: 100%; height: 48px; border-radius: 12px; padding: 0 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(15, 23, 42, 0.1); color: #0f172a; font-weight: 600; outline: none; margin-top: 4px;">
-      </select>
+    <div class="jd-step locked" id="step-days" style="margin-bottom: 16px;">
+      <div class="jd-step-head option-group-title" onclick="reopenStep('days')">
+        <span class="jd-step-label"><span class="step-num">5</span>사용 기간 선택</span>
+        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
+      </div>
+      <div class="jd-step-body">
+        <div id="daysPills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
+      </div>
       <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.72rem;font-weight:700;color:#64748b;line-height:1.55;padding:0 2px;"></div>
     </div>
 
+    <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
     <!-- Quantity & Price Calculator -->
     <div class="checkout-footer">
       <div>
@@ -2215,6 +2327,7 @@
 
     <button class="order-action-btn" onclick="processMockCheckout()">🛒 안전하게 결제하고 QR 받기</button>
     <a id="smartstoreAltBtn" href="#" target="_blank" rel="noopener" class="smartstore-alt-btn" style="display:none;">🟢 네이버 스마트스토어에서 구매하기</a>
+    </div><!-- /sheetCheckoutArea -->
   </div>
 
   <!-- Device compatibility check modal -->
@@ -3392,9 +3505,75 @@
       })(t0);
     } 
 
-    // ===== 연결 방식(로컬/로밍/멀티) 계층 — 멀티국가 겸용 상품 자동 분리 =====
+    // ===== ROMI Step Sheet: 단계 잠금 위저드 =====
+    // 흐름: ①연결방식 → ②통신사(드롭다운) → ③제공방식 → ④용량 → ⑤기간 → 결제영역 오픈
+    // 이전 단계를 누르기 전까지 다음 단계는 잠금. 옵션이 1개뿐인 단계는 자동 통과.
     let allCarrierOptions = [];
     let selectedNetScope = '';
+    const JD_STEPS = ['scope', 'carrier', 'plan', 'cap', 'days'];
+
+    function jdStepEl(step) { return document.getElementById('step-' + step); }
+    function jdSetStep(step, state) {
+      const el = jdStepEl(step);
+      if (!el) return;
+      el.classList.remove('locked', 'active', 'done');
+      el.classList.add(state);
+      const stateEl = el.querySelector('.jd-step-state');
+      if (stateEl) stateEl.textContent = state === 'locked' ? '🔒' : '';
+      if (state !== 'done') {
+        const v = el.querySelector('.jd-step-value');
+        if (v) v.textContent = '';
+      }
+    }
+    function jdActivateStep(step) {
+      jdSetStep(step, 'active');
+      const el = jdStepEl(step);
+      if (el && el.scrollIntoView) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+      if (navigator.vibrate) navigator.vibrate(6);
+    }
+    function jdCompleteStep(step, valueText) {
+      jdSetStep(step, 'done');
+      const el = jdStepEl(step);
+      const v = el && el.querySelector('.jd-step-value');
+      if (v) v.textContent = valueText || '';
+    }
+    // 해당 단계 이후를 전부 잠금으로 리셋 (+결제영역 숨김)
+    function jdResetAfter(step) {
+      const from = JD_STEPS.indexOf(step);
+      for (let i = from + 1; i < JD_STEPS.length; i++) jdSetStep(JD_STEPS[i], 'locked');
+      const co = document.getElementById('sheetCheckoutArea');
+      if (co) co.style.display = 'none';
+      if (step !== 'days') {
+        const an = document.getElementById('activationNotice');
+        if (an && from < 1) an.style.display = 'none';
+        const cf = document.getElementById('capacityFeel');
+        if (cf && from < 3) cf.style.display = 'none';
+        const df = document.getElementById('daysFeel');
+        if (df && from < 4) df.style.display = 'none';
+      }
+      const dl = document.getElementById('carrierDropList');
+      const db = document.getElementById('carrierDropBtn');
+      if (from < 1 && dl) { dl.style.display = 'none'; if (db) db.classList.remove('open'); }
+    }
+    // 완료된 단계 헤더 탭 → 다시 열기 (이후 단계는 다시 잠금)
+    function reopenStep(step) {
+      const el = jdStepEl(step);
+      if (!el || !el.classList.contains('done')) return;
+      jdResetAfter(step);
+      jdActivateStep(step);
+      if (step === 'carrier') {
+        const lbl = document.getElementById('carrierDropLabel');
+        if (lbl) lbl.textContent = '눌러서 통신사 선택';
+      }
+    }
+    function jdCheckoutOpen() {
+      const co = document.getElementById('sheetCheckoutArea');
+      if (!co) return;
+      co.style.display = 'block';
+      if (co.scrollIntoView) setTimeout(() => co.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
+      if (navigator.vibrate) navigator.vibrate([8, 30, 12]);
+    }
+
     const __SCOPE_CO = ['중국','홍콩','마카오','대만','미국','캐나다','멕시코','일본','태국','싱가포르','말레이시아','베트남'];
     function netScope(g) {
       const car = String(g.carrier || '');
@@ -3402,58 +3581,102 @@
       if (hits >= 2 || /겸용|복수국가/.test(car)) return '멀티';
       return g.network_type === '로컬망' ? '로컬망' : '로밍망';
     }
+
     function initNetScope(prefer, preferCarrier) {
+      // 시트 오픈 시 전체 위저드 리셋
+      JD_STEPS.forEach(s => jdSetStep(s, 'locked'));
+      const co = document.getElementById('sheetCheckoutArea');
+      if (co) co.style.display = 'none';
+      ['activationNotice', 'capacityFeel', 'daysFeel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      const lbl = document.getElementById('carrierDropLabel');
+      if (lbl) lbl.textContent = '눌러서 통신사 선택';
+      const dl = document.getElementById('carrierDropList');
+      if (dl) dl.style.display = 'none';
+      const db = document.getElementById('carrierDropBtn');
+      if (db) db.classList.remove('open');
+
       const order = ['로컬망', '로밍망', '멀티'];
       const avail = order.filter(sc => allCarrierOptions.some(g => netScope(g) === sc));
-      selectedNetScope = (prefer && avail.includes(prefer)) ? prefer : avail[0];
+      window.__preferCarrier = preferCarrier || '';
+      selectedNetScope = '';
+
       const box = document.getElementById('netTypePills');
-      const sec = document.getElementById('netTypeSection');
-      window.__preferCarrier = preferCarrier || '';
-      if (!box || !sec) { applyNetScope(); return; }
-      window.__preferCarrier = preferCarrier || '';
-      if (avail.length <= 1) { sec.style.display = 'none'; applyNetScope(); return; }
-      sec.style.display = 'block';
       const LBL = {
-        '로컬망': '🏠 로컬망 <small style="font-weight:600;opacity:.75;">현지 직통·최고 속도</small>',
-        '로밍망': '📡 로밍망 <small style="font-weight:600;opacity:.75;">간편·가성비</small>',
-        '멀티': '🌏 멀티국가 <small style="font-weight:600;opacity:.75;">여러 나라 겸용</small>'
+        '로컬망': '🏠 로컬망<br><small style="font-weight:600;opacity:.75;">현지 직통·최고 속도</small>',
+        '로밍망': '📡 로밍망<br><small style="font-weight:600;opacity:.75;">간편·가성비</small>',
+        '멀티': '🌏 멀티국가<br><small style="font-weight:600;opacity:.75;">여러 나라 겸용</small>'
       };
-      box.innerHTML = avail.map(sc =>
-        `<button type="button" class="option-pill${sc === selectedNetScope ? ' active' : ''}" data-scope="${sc}">${LBL[sc]}</button>`
-      ).join('');
-      box.querySelectorAll('[data-scope]').forEach(b => b.addEventListener('click', () => {
-        selectedNetScope = b.getAttribute('data-scope');
-        box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+      if (box) {
+        box.innerHTML = avail.map(sc =>
+          `<button type="button" class="option-pill" data-scope="${sc}">${LBL[sc]}</button>`
+        ).join('');
+        box.querySelectorAll('[data-scope]').forEach(b => b.addEventListener('click', () => {
+          selectedNetScope = b.getAttribute('data-scope');
+          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+          jdCompleteStep('scope', selectedNetScope === '멀티' ? '🌏 멀티국가' : (selectedNetScope === '로컬망' ? '🏠 로컬망' : '📡 로밍망'));
+          jdResetAfter('scope');
+          applyNetScope();
+        }));
+      }
+
+      // 딥링크(특정 통신사 카드에서 진입) → 1·2단계 자동 통과, 옵션 1개면 자동 통과
+      const wanted = allCarrierOptions.find(cx => cx.carrier === preferCarrier);
+      if (wanted) {
+        selectedNetScope = netScope(wanted);
+        jdCompleteStep('scope', selectedNetScope === '멀티' ? '🌏 멀티국가' : (selectedNetScope === '로컬망' ? '🏠 로컬망' : '📡 로밍망'));
+        if (box) box.querySelectorAll('[data-scope]').forEach(x => x.classList.toggle('active', x.getAttribute('data-scope') === selectedNetScope));
         applyNetScope();
-      }));
-      applyNetScope();
+        return;
+      }
+      if (avail.length === 1) {
+        selectedNetScope = avail[0];
+        jdCompleteStep('scope', selectedNetScope === '멀티' ? '🌏 멀티국가' : (selectedNetScope === '로컬망' ? '🏠 로컬망' : '📡 로밍망'));
+        if (box) box.querySelectorAll('[data-scope]').forEach(x => x.classList.add('active'));
+        applyNetScope();
+        return;
+      }
+      jdActivateStep('scope');
     }
+
     function applyNetScope() {
       carrierOptions = allCarrierOptions.filter(g => netScope(g) === selectedNetScope);
       if (!carrierOptions.length) carrierOptions = allCarrierOptions.slice();
-      activeCarrier = carrierOptions.find(co => co.carrier === window.__preferCarrier) || carrierOptions[0];
-      window.__preferCarrier = '';
-      selectedCarrier = activeCarrier.carrier;
-      renderCarrierPills(carrierOptions.map(co => co.carrier));
+      renderCarrierDropdown();
     }
 
-    function renderCarrierPills(carriers) {
-      const select = document.getElementById('carrierSelect');
-      if (!select) return;
-      
-      // 통신사명이 같아도 망 종류·플랜 구성이 다른 그룹을 구분할 수 있도록 인덱스로 선택
-      select.innerHTML = carrierOptions.map((co, i) => {
-        const label = cleanCarrier(co.carrier) + (co.calls === '가능' ? ' · 📞전화가능' : '');
-        return `<option value="${i}" data-name="${co.carrier}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${co === activeCarrier ? 'selected' : ''}>${label}</option>`;
+    function toggleCarrierDrop() {
+      const list = document.getElementById('carrierDropList');
+      const btn = document.getElementById('carrierDropBtn');
+      if (!list || !btn) return;
+      const opening = list.style.display === 'none';
+      list.style.display = opening ? 'block' : 'none';
+      btn.classList.toggle('open', opening);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderCarrierDropdown() {
+      const list = document.getElementById('carrierDropList');
+      const lbl = document.getElementById('carrierDropLabel');
+      if (!list) return;
+      list.innerHTML = carrierOptions.map((cx, i) => {
+        const net = cx.network_type === '로컬망' ? '<span class="jd-net-badge local">로컬망</span>' : '<span class="jd-net-badge roam">로밍망</span>';
+        const call = cx.calls === '가능' ? ' <span style="font-size:0.7rem;color:#15803d;font-weight:800;">📞전화</span>' : '';
+        return `<button type="button" class="jd-drop-item" onclick="onCarrierChange('${i}')">${net}<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;">${cleanCarrier(cx.carrier)}</span>${call}</button>`;
       }).join('');
-      
-      if (carrierOptions.length <= 1) {
-        document.getElementById('carrierSection').style.display = 'none';
-      } else {
-        document.getElementById('carrierSection').style.display = 'block';
-      }
-      
-      onCarrierChange(String(Math.max(0, carrierOptions.indexOf(activeCarrier))));
+      list.style.display = 'none';
+      const btn = document.getElementById('carrierDropBtn');
+      if (btn) btn.classList.remove('open');
+      if (lbl) lbl.textContent = '눌러서 통신사 선택';
+
+      // 딥링크 통신사 → 자동 선택 / 통신사 1개 → 자동 통과
+      const preferIdx = carrierOptions.findIndex(cx => cx.carrier === window.__preferCarrier);
+      window.__preferCarrier = '';
+      if (preferIdx >= 0) { onCarrierChange(String(preferIdx)); return; }
+      if (carrierOptions.length === 1) { onCarrierChange('0'); return; }
+      jdActivateStep('carrier');
     }
 
     // 개통 방식에 따라 언제 사야 하는지 자동 안내
@@ -3496,73 +3719,114 @@
     }
 
     function onCarrierChange(val) {
-      // val은 carrierOptions 배열 인덱스 (호환을 위해 통신사명 문자열도 허용)
+      // val = carrierOptions 인덱스 (호환 위해 통신사명 문자열도 허용)
       const idx = Number(val);
       activeCarrier = (Number.isInteger(idx) && carrierOptions[idx])
         ? carrierOptions[idx]
-        : (carrierOptions.find(co => co.carrier === val) || carrierOptions[0]);
+        : (carrierOptions.find(cx => cx.carrier === val) || carrierOptions[0]);
       selectedCarrier = activeCarrier.carrier;
+      const lbl = document.getElementById('carrierDropLabel');
+      if (lbl) lbl.textContent = cleanCarrier(activeCarrier.carrier);
+      const ddl = document.getElementById('carrierDropList');
+      if (ddl) ddl.style.display = 'none';
+      const ddb = document.getElementById('carrierDropBtn');
+      if (ddb) ddb.classList.remove('open');
       renderActivationNotice();
-      
+      jdCompleteStep('carrier', cleanCarrier(activeCarrier.carrier));
+      jdResetAfter('carrier');
+
+      // ③ 제공 방식 옵션 구성
       const types = new Set();
       activeCarrier.plans.forEach(p => {
         if (p.service_type === '데일리' || p.service_type === '무제한') types.add('데일리');
-        else if (p.service_type === '총용량' || p.data_limit.includes('총')) types.add('총용량');
         else types.add('총용량');
       });
       const typeList = Array.from(types);
-      
-      const typeSelect = document.getElementById('planTypeSelect');
-      typeSelect.innerHTML = typeList.map(t => `<option value="${t}">${t === '데일리' ? '📅 데일리 (매일 리셋)' : '🎒 총용량 (전체 기간)'}</option>`).join('');
-      
-      selectedPlanType = typeList[0];
-      onPlanTypeChange(selectedPlanType);
+      const box = document.getElementById('planTypePills');
+      if (box) {
+        box.innerHTML = typeList.map(t =>
+          `<button type="button" class="option-pill" data-plan="${t}">${t === '데일리' ? '📅 데일리<br><small style="font-weight:600;opacity:.75;">매일 리셋</small>' : '🎒 총용량<br><small style="font-weight:600;opacity:.75;">전체 기간</small>'}</button>`
+        ).join('');
+        box.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', () => {
+          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+          onPlanTypeChange(b.getAttribute('data-plan'));
+        }));
+      }
+      if (typeList.length === 1) {
+        if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
+        onPlanTypeChange(typeList[0]);
+        return;
+      }
+      jdActivateStep('plan');
     }
 
     function onPlanTypeChange(val) {
       selectedPlanType = val;
+      jdCompleteStep('plan', val === '데일리' ? '📅 데일리' : '🎒 총용량');
+      jdResetAfter('plan');
       const isDaily = (val === '데일리');
       const filteredPlans = activeCarrier.plans.filter(p => (p.service_type === '데일리' || p.service_type === '무제한') === isDaily);
-      
+
       const caps = new Set();
       filteredPlans.forEach(p => {
         const c = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
         caps.add(c);
       });
-      const capList = Array.from(caps).sort((a,b) => {
-         const parseSize = s => parseFloat(s.replace(/[^\d.]/g, '')) * (s.includes('MB') ? 1 : 1024);
-         return parseSize(a) - parseSize(b);
+      const capList = Array.from(caps).sort((a, b) => {
+        const parseSize = s => parseFloat(s.replace(/[^\d.]/g, '')) * (s.includes('MB') ? 1 : 1024);
+        return parseSize(a) - parseSize(b);
       });
-      
-      const capSelect = document.getElementById('capacitySelect');
-      capSelect.innerHTML = capList.map(c => `<option value="${c}">${c}</option>`).join('');
-      
-      selectedCapacity = capList[0];
-      onCapacityChange(selectedCapacity);
+
+      const box = document.getElementById('capacityPills');
+      if (box) {
+        box.innerHTML = capList.map(c => `<button type="button" class="option-pill" data-cap="${c}">${c}</button>`).join('');
+        box.querySelectorAll('[data-cap]').forEach(b => b.addEventListener('click', () => {
+          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+          onCapacityChange(b.getAttribute('data-cap'));
+        }));
+      }
+      if (capList.length === 1) {
+        if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
+        onCapacityChange(capList[0]);
+        return;
+      }
+      jdActivateStep('cap');
     }
 
     function onCapacityChange(val) {
       selectedCapacity = val;
+      jdCompleteStep('cap', val);
+      jdResetAfter('cap');
       const isDaily = (selectedPlanType === '데일리');
+      renderCapacityFeel(val, isDaily);
       const matchingPlans = activeCarrier.plans.filter(p => {
-         const pLimit = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
-         return (p.service_type === '데일리' || p.service_type === '무제한') === isDaily && pLimit === val.trim();
+        const pLimit = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
+        return (p.service_type === '데일리' || p.service_type === '무제한') === isDaily && pLimit === val.trim();
       });
 
       const days = Array.from(new Set(matchingPlans.map(p => p.duration))).sort((a, b) => a - b);
-      selectedDays = days[0];
-      
-      const daysSelect = document.getElementById('daysSelect');
-      daysSelect.innerHTML = days.map(d => `<option value="${d}">${d}일</option>`).join('');
-      
-      renderCapacityFeel(val, isDaily);
-      onDaysChange(selectedDays);
+      const box = document.getElementById('daysPills');
+      if (box) {
+        box.innerHTML = days.map(d => `<button type="button" class="option-pill" data-days="${d}">${d}일</button>`).join('');
+        box.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => {
+          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+          onDaysChange(b.getAttribute('data-days'));
+        }));
+      }
+      if (days.length === 1) {
+        if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
+        onDaysChange(days[0]);
+        return;
+      }
+      jdActivateStep('days');
     }
 
     function onDaysChange(val) {
       selectedDays = parseInt(val);
+      jdCompleteStep('days', selectedDays + '일');
       renderDaysFeel(selectedDays);
       updatePricing();
+      jdCheckoutOpen(); // 5단계 모두 완료 → 결제 영역 공개
     }
 
     // 일수 계산 도우미: "4일권 = 3박 4일" — 잘못 산 일수를 미리 방지
@@ -4269,24 +4533,25 @@
     }
     function romiOpenPlan(country, carrier, dataLimit, days) {
       switchNav('home');
-      openBottomSheet(country, carrier);
-      const chain = [
-        ['typeSelect', /매일/.test(dataLimit) ? '데일리' : '총용량'],
-        ['capacitySelect', dataLimit],
-        ['daysSelect', String(days)]
-      ];
-      let delay = 220;
-      chain.forEach(([id, val]) => {
-        setTimeout(() => {
-          const sel = document.getElementById(id);
-          if (!sel) return;
-          const opt = [...sel.options].find(o => o.value === val || val.includes(o.value) || o.value.includes(val));
-          if (opt && sel.value !== opt.value) {
-            sel.value = opt.value;
-            sel.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }, delay);
-        delay += 160;
+      openBottomSheet(country, carrier); // 위저드 1·2단계는 딥링크로 자동 통과
+      const capVal = String(dataLimit).replace('매일 ', '').replace('총 ', '').trim();
+      const clickPill = (boxId, attr, val) => {
+        const box = document.getElementById(boxId);
+        if (!box) return false;
+        const btns = [...box.querySelectorAll('[' + attr + ']')];
+        const hit = btns.find(b => b.getAttribute(attr) === val)
+          || btns.find(b => val.includes(b.getAttribute(attr)) || b.getAttribute(attr).includes(val));
+        if (hit) { hit.click(); return true; }
+        return false;
+      };
+      let delay = 260;
+      [
+        ['planTypePills', 'data-plan', /매일/.test(dataLimit) ? '데일리' : '총용량'],
+        ['capacityPills', 'data-cap', capVal],
+        ['daysPills', 'data-days', String(days)]
+      ].forEach(([boxId, attr, val]) => {
+        setTimeout(() => clickPill(boxId, attr, val), delay);
+        delay += 180;
       });
     }
     // ===== 스냅 스크롤 경험: 진행 인디케이터 + 등장 연출 + 카운트업 =====
