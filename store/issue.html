@@ -1225,6 +1225,26 @@ function sosHTML(country){
     '</div></div>';
 }
 
+
+// ===== ROMI 도착 감지 (독자기술) — 타임존이 한국이 아니면 현지 도착으로 판단 =====
+// 위치권한 불필요·오프라인 동작. 도착 직후 가장 필요한 두 가지(신호 잡기·사용량)를 바로 제안.
+function romiArrival(){
+  try {
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (!tz || tz === 'Asia/Seoul') return;
+    if (sessionStorage.getItem('romi_arv') === '1') return;
+    var app = $('app'); if (!app) return;
+    var d = document.createElement('div');
+    d.id = 'arvBand';
+    d.style.cssText = 'display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(43,179,163,0.12),rgba(249,115,22,0.1));border:1px solid rgba(43,179,163,0.35);font-size:0.85rem;font-weight:700;color:#0f5f57;';
+    d.innerHTML = '<span style="font-size:1.15rem;">🛬</span><span style="flex:1;">현지 도착을 감지했어요!<br><span style="font-weight:600;color:#4a6b66;font-size:0.78rem;">데이터가 안 잡히면 초기화 없이 3단계로 잡아드려요</span></span>' +
+      '<button type="button" onclick="openSignalFix()" style="flex:none;border:none;border-radius:11px;padding:10px 13px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:800;font-size:0.8rem;cursor:pointer;">📶 신호 잡기</button>' +
+      '<button type="button" onclick="this.parentNode.remove();sessionStorage.setItem(\'romi_arv\',\'1\')" style="flex:none;border:none;background:transparent;color:#7d8c88;font-size:1rem;cursor:pointer;padding:4px;">✕</button>';
+    app.insertBefore(d, app.firstChild);
+    buzz([14, 40, 14]);
+  } catch(e) {}
+}
+
 // ---------------- 보딩패스 티켓 ----------------
 function bpassHTML(o, opts){
   opts = opts || {};
@@ -1266,7 +1286,7 @@ function bpassHTML(o, opts){
       '<div class="f"><div class="k">VALID · 유효기간</div><div class="v">'+esc(o.validity || 'QR 안내문 참조')+'</div></div>' +
     '</div>' +
     '<div class="tkt-perf"></div>' +
-    (opts.issued ? '<div class="tz" id="instZone"></div>' : '') + acts +
+    acts +
     '<div class="tkt-bar"><div class="barcode"></div></div>' + detail +
     '<img class="tkt-wm" src="images/fox-hello.png" alt="" onerror="this.remove()">' +
     '</div>';
@@ -1479,24 +1499,29 @@ function renderIssued(lpa, revisit){
   setRoute(order && order.country);
   window._lpa = lpa;
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
-  h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
+  h('<div class="card rv" id="installCard" style="border:1.5px solid rgba(242,117,31,0.4);box-shadow:0 8px 24px rgba(242,117,31,0.1);">' +
+    secHd('qr', 'INSTALL', 'eSIM 설치', '1분이면 끝나요') +
+    '<div class="tz" id="instZone" style="padding:4px 0 2px;"></div></div>' +
+    bpassHTML(order || {}, {issued:true, print:!revisit}) +
+    '<div class="warnband rv">' +
+    '<div class="w red">'+ico('alert',16)+'<span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담</span></div>' +
+    '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
+    '</div>' +
+    '<div class="card rv" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
+    '<div id="usageBody" class="center" style="margin-top:8px;"><div class="muted" style="padding:4px 0 10px;">현지에서 개통되면 여기에 실시간 사용량이 표시돼요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
+    journeyHTML() +
     skyWHTML() +
+    romiSay('', 'fox-qr') +
+    buildBriefHTML((order&&order.country)||'') +
+    sosHTML((order&&order.country)||'') +
     '<div class="trust">' +
       '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
       '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
       '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
     '</div>' +
-    romiSay('', 'fox-qr') +
-    journeyHTML() +
-    '<div class="card rv" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
-    '<div id="usageBody" class="center" style="margin-top:8px;"><div class="muted" style="padding:4px 0 10px;">현지에서 개통되면 여기에 실시간 사용량이 표시돼요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
-    buildBriefHTML((order&&order.country)||'') +
-    sosHTML((order&&order.country)||'') +
-    '<div class="warnband rv">' +
-    '<div class="w red">'+ico('alert',16)+'<span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담</span></div>' +
-    '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
-    '</div>' +
     brandFootHTML());
+  romiArrival();
+  if (window.RomiRSQ && order) RomiRSQ.init({ country: order.country || '', sku: order.productName || '' });
   renderInstallCard();
   paintSkyW(); renderRomi(); reveal(); loadWeather();
   renderJourney();
@@ -1683,6 +1708,7 @@ function renderError(title,msg){
 loadOrder();
 </script>
 <script src="signalfix.js?v=20260713" defer></script>
+<script src="rsq-collect.js?v=1" defer></script>
 <script>
 function openSignalFix(){
   var old = document.getElementById('sfxOverlay');
@@ -1760,9 +1786,10 @@ function runDiagnose(){
   });
 }
 </script>
+  <script>
+  // 로미 챗봇 로드 (발급링크에서도 상담 가능)
+  (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js'; sc.defer = true; document.body.appendChild(sc); })();
+  </script>
   <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
 </body>
 </html>
-
-// 로미 챗봇 로드 (발급링크에서도 상담 가능)
-(function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js'; sc.defer = true; document.body.appendChild(sc); })();
