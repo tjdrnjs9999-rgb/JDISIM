@@ -1711,13 +1711,25 @@ function runDiagnose(){
   ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
   document.body.appendChild(ov);
 
-  var iccid = '', cty = '';
-  try { iccid = (typeof order !== 'undefined' && order && order.iccid) || ''; cty = (order && order.country) || ''; } catch(e){}
+  var iccid = '', cty = '', optRaw = '';
+  try {
+    iccid = (typeof order !== 'undefined' && order && order.iccid) || '';
+    cty = (order && order.country) || '';
+    optRaw = (order && (order.option || order.sku)) || '';
+  } catch(e){}
   var t0 = Date.now();
   var api = (window.CARE_API ? CARE_API.replace('/api/esim', '/api/diagnose') : 'https://jdisim-proxy.vercel.app/api/diagnose');
 
-  fetch(api, { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ iccid: iccid, country: cty }) })
+  // 상품 프리픽스로 망종류(로밍/로컬)·APN을 찾아 동봉 → 로밍망 경유지(홍콩/중국) 오진 방지
+  var mm = String(optRaw).match(/([A-Za-z]{2,6})_[^\s\/|,)]+?_\d{1,3}일/);
+  var prefix = mm ? mm[1].toUpperCase() : (String(optRaw).split('_')[0] || '').toUpperCase();
+  fetch('/signal-map.json').then(function(r){ return r.ok ? r.json() : {}; }).catch(function(){ return {}; })
+  .then(function(map){
+    var info = map[prefix] || {};
+    return fetch(api, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ iccid: iccid, country: cty || info.c || '',
+                             nw: info.nw || '', apn: info.apn || '', prefix: prefix }) });
+  })
   .then(function(r){ return r.json(); })
   .then(function(d){
     var ms = Date.now() - t0;
