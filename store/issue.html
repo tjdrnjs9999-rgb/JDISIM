@@ -1337,6 +1337,7 @@ function loadCare(){
         '<div class="ch-t"><div class="ey">CARE DESK</div><b>' + (order.buyerName ? esc(order.buyerName) + ' 님의 여행 케어 데스크 🦊' : '로미의 여행 케어 데스크 🦊') + '</b>' +
         '<p>설치 · 사용량 · 문제 해결까지, 여행 내내 이 티켓 하나면 돼요.</p>' +
         '<div class="care-chips"><button type="button" onclick="goUsage()">📊 사용량 새로고침</button>' +
+        '<button type="button" onclick="runDiagnose()">🔍 원클릭 진단</button>' +
         '<button type="button" onclick="openSignalFix()">📶 신호 안 잡혀요</button>' +
         '<button type="button" onclick="openHelp()">🩺 로미 닥터 상담</button></div></div></div>');
       setTimeout(loadUsage, 700);
@@ -1694,6 +1695,54 @@ function openSignalFix(){
   var opt = '';
   try { opt = (typeof order !== 'undefined' && order && (order.option || order.sku)) || ''; } catch(e){}
   if (window.RomiSignalFix) RomiSignalFix.mount(document.getElementById('sfxMount'), { opt: opt });
+}
+
+// ===== ROMI Doctor 원탭 진단 =====
+function runDiagnose(){
+  var old = document.getElementById('rdOverlay');
+  if (old) old.remove();
+  var ov = document.createElement('div');
+  ov.id = 'rdOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:99950;display:flex;align-items:flex-end;justify-content:center;';
+  ov.innerHTML = '<div style="background:#FFFDFB;border-radius:22px 22px 0 0;width:min(560px,100%);max-height:86vh;overflow-y:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));font-family:inherit;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><b style="font-size:1rem;">🔍 로미 닥터 원클릭 진단</b>' +
+    '<button onclick="document.getElementById(\'rdOverlay\').remove()" style="border:none;background:#F1F5F9;border-radius:50%;width:32px;height:32px;font-weight:900;cursor:pointer;">✕</button></div>' +
+    '<div id="rdBody" style="text-align:center;padding:26px 0;font-weight:800;color:#64748b;">진단 중… 상태·경로·통신을 확인하고 있어요 🦊</div></div>';
+  ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+
+  var iccid = '', cty = '';
+  try { iccid = (typeof order !== 'undefined' && order && order.iccid) || ''; cty = (order && order.country) || ''; } catch(e){}
+  var t0 = Date.now();
+  var api = (window.CARE_API ? CARE_API.replace('/api/esim', '/api/diagnose') : 'https://jdisim-proxy.vercel.app/api/diagnose');
+
+  fetch(api, { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ iccid: iccid, country: cty }) })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var ms = Date.now() - t0;
+    var v = d.verdict || {}; var f = d.facts || {};
+    var actBtn = '';
+    if (v.next === 'signalfix') actBtn = '<button onclick="document.getElementById(\'rdOverlay\').remove();openSignalFix()" style="width:100%;margin-top:12px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:900;font-size:.9rem;cursor:pointer;">📶 시그널 리셋 바로 시작</button>';
+    else if (v.next === 'usage') actBtn = '<button onclick="document.getElementById(\'rdOverlay\').remove();goUsage()" style="width:100%;margin-top:12px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:900;font-size:.9rem;cursor:pointer;">📊 사용량 확인</button>';
+    else if (v.next === 'redo') actBtn = '<button onclick="runDiagnose()" style="width:100%;margin-top:12px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:900;font-size:.9rem;cursor:pointer;">와이파이 껐어요 — 다시 진단</button>';
+
+    var facts = '';
+    if (f.access) facts += '<div style="font-size:.7rem;color:#94a3b8;font-weight:700;margin-top:10px;">접속 경로: ' + (f.access.country||'?') + (f.access.isp ? ' · ' + f.access.isp : '') + ' · 응답 ' + ms + 'ms' +
+      (f.esim && f.esim.totalMb ? ' · 데이터 ' + Math.round(f.esim.usedMb||0) + '/' + Math.round(f.esim.totalMb) + 'MB' : '') + '</div>';
+
+    document.getElementById('rdBody').style.cssText = 'text-align:left;padding:4px 0 6px;';
+    document.getElementById('rdBody').innerHTML =
+      '<div style="background:#fff;border:1.5px solid #F0E8E0;border-radius:16px;padding:16px;">' +
+      '<div style="font-size:1rem;font-weight:900;margin-bottom:6px;">' + (v.title || '진단 결과') + '</div>' +
+      '<div style="font-size:.82rem;color:#4b5563;font-weight:600;line-height:1.65;">' + (v.why || '') + '</div>' +
+      '<div style="margin-top:10px;background:#FFF8F2;border-radius:12px;padding:12px;font-size:.82rem;font-weight:800;">👉 ' + (v.action || '') + '</div>' +
+      actBtn + facts + '</div>';
+  })
+  .catch(function(){
+    document.getElementById('rdBody').innerHTML = '데이터 연결 자체가 막혀 있어요.<br><span style="font-size:.78rem;font-weight:700;">와이파이를 잠깐 켜고 다시 진단하거나, 시그널 리셋을 진행해 주세요.</span>' +
+      '<button onclick="document.getElementById(\'rdOverlay\').remove();openSignalFix()" style="width:100%;margin-top:14px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:900;cursor:pointer;">📶 시그널 리셋 시작</button>';
+  });
 }
 </script>
 </body>
