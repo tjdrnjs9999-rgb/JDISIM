@@ -40,17 +40,37 @@
       .then(function () { return Math.round(performance.now() - t0); })
       .catch(function () { return 0; });
   }
+  /* Quality Graph 차원: OS 대분류+메이저버전, 기기 계열 (정밀 모델·식별자 수집 안 함) */
+  function osFamily() {
+    var ua = navigator.userAgent;
+    var m;
+    if ((m = ua.match(/iPhone OS (\d+)|iPad; CPU OS (\d+)/))) return 'ios' + (m[1] || m[2]);
+    if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+    if ((m = ua.match(/Android (\d+)/))) return 'android' + m[1];
+    return /Android/i.test(ua) ? 'android' : 'other';
+  }
+  function devFamily() {
+    var ua = navigator.userAgent;
+    if (/iPhone/i.test(ua)) return 'iphone';
+    if (/iPad/i.test(ua)) return 'ipad';
+    if (/SM-|Samsung/i.test(ua)) return 'galaxy';
+    if (/Pixel/i.test(ua)) return 'pixel';
+    if (/Redmi|Xiaomi|Mi \d/i.test(ua)) return 'xiaomi';
+    return /Android/i.test(ua) ? 'android-etc' : 'etc';
+  }
   function sample() {
     if (!navigator.onLine || !abroad() || !underCap()) return;
     var conn = navigator.connection || {};
     measureRtt().then(function (rtt) {
       var body = JSON.stringify({
+        ev: 'probe',
         c: ctx.country || '',
         sku: ctx.sku || '',
         net: conn.effectiveType || '4g',
         dl: conn.downlink || 0,
         rtt: rtt,
-        os: /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android'
+        os: osFamily(),
+        dev: devFamily()
       });
       if (navigator.sendBeacon) {
         navigator.sendBeacon(API, new Blob([body], { type: 'application/json' }));
@@ -60,7 +80,20 @@
     });
   }
 
+  function send(body) {
+    var payload = JSON.stringify(body);
+    if (navigator.sendBeacon) navigator.sendBeacon(API, new Blob([payload], { type: 'application/json' }));
+    else fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(function () {});
+  }
+
   window.RomiRSQ = {
+    /* 연결 이벤트 보고: ev='ok'|'fail' (ConnectGuard Quality Graph 축적) */
+    report: function (ev, o) {
+      o = o || {};
+      send({ ev: ev === 'ok' ? 'ok' : 'fail', c: o.country || (ctx && ctx.country) || '',
+             sku: (ctx && ctx.sku) || '', reason: String(o.reason || '').slice(0, 80),
+             rtt: o.httpsMs || 0, os: osFamily(), dev: devFamily(), net: (navigator.connection || {}).effectiveType || '' });
+    },
     init: function (o) {
       ctx = o || {};
       if (!ctx.country) return;                 // 국가 모르면 수집 안 함

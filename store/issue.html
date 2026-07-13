@@ -1256,6 +1256,20 @@ function sosHTML(country){
 }
 
 
+
+// ===== ROMI 연결 보장 모드 (ConnectGuard Rescue) =====
+function startRescue(){
+  if (!window.RomiRescue) { openSignalFix(); return; }   // 폴백
+  RomiRescue.start({
+    careId: (typeof CARE !== 'undefined' && CARE) || (order && order.iccid) || 'x',
+    country: (order && order.country) || '',
+    issued: !!(order && (order.status === 'ISSUED' || window._lpa)),
+  }, {
+    onOpenSignalFix: function(){ openSignalFix(); },
+    onCheckUsage: function(done){ try { loadUsage(); } catch(e){} setTimeout(function(){ done && done(); }, 2500); }
+  });
+}
+
 // ===== ROMI 도착 감지 (독자기술) — 타임존이 한국이 아니면 현지 도착으로 판단 =====
 // 위치권한 불필요·오프라인 동작. 도착 직후 가장 필요한 두 가지(신호 잡기·사용량)를 바로 제안.
 function romiArrival(){
@@ -1268,7 +1282,7 @@ function romiArrival(){
     d.id = 'arvBand';
     d.style.cssText = 'display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(43,179,163,0.12),rgba(249,115,22,0.1));border:1px solid rgba(43,179,163,0.35);font-size:0.85rem;font-weight:700;color:#0f5f57;';
     d.innerHTML = '<span style="font-size:1.15rem;">🛬</span><span style="flex:1;">현지 도착을 감지했어요!<br><span style="font-weight:600;color:#4a6b66;font-size:0.78rem;">데이터가 안 잡히면 초기화 없이 3단계로 잡아드려요</span></span>' +
-      '<button type="button" onclick="openSignalFix()" style="flex:none;border:none;border-radius:11px;padding:10px 13px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:800;font-size:0.8rem;cursor:pointer;">📶 신호 잡기</button>' +
+      '<button type="button" onclick="startRescue()" style="flex:none;border:none;border-radius:11px;padding:10px 13px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-weight:800;font-size:0.8rem;cursor:pointer;">🛟 연결 보장 모드</button>' +
       '<button type="button" onclick="this.parentNode.remove();sessionStorage.setItem(\'romi_arv\',\'1\')" style="flex:none;border:none;background:transparent;color:#7d8c88;font-size:1rem;cursor:pointer;padding:4px;">✕</button>';
     app.insertBefore(d, app.firstChild);
     buzz([14, 40, 14]);
@@ -1730,7 +1744,8 @@ function renderError(title,msg){
 loadOrder();
 </script>
 <script src="signalfix.js?v=20260713" defer></script>
-<script src="rsq-collect.js?v=1" defer></script>
+<script src="rsq-collect.js?v=2" defer></script>
+<script src="romi-rescue.js?v=1" defer></script>
 <script>
 function openSignalFix(){
   var old = document.getElementById('sfxOverlay');
