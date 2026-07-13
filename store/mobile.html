@@ -169,6 +169,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
   <meta name="theme-color" content="#F97316">
+  <meta name="color-scheme" content="only light">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1574,6 +1575,7 @@
 
   </style>
   <script src="jdisim-app.js?v=2" defer></script>
+  <script src="rsq-collect.js?v=1" defer></script>
 <style id="hero-light-critical">
     /* 라이트 히어로 강제 — 캐시된 구 CSS 무력화 */
     .m-hero, .hero-video-frame { background: linear-gradient(165deg,#FFFDFB 0%,#FFF1E2 42%,#DFF4F1 100%) !important; }
@@ -1586,6 +1588,16 @@
     .m-hero-stats { border-top-color: rgba(34,21,16,0.12) !important; color: #221510 !important; }
     .m-hero-stats strong { color: #E8590C !important; }
     .m-hero-stat-div { background: rgba(34,21,16,0.14) !important; }
+  </style>
+<style id="compact-home">
+    /* 컴팩트 홈: 풀스크린 스냅 해제, 섹션 자연 높이 */
+    #view-home .why-panel { min-height: 0 !important; padding: 26px 22px 30px !important; margin: 12px -16px !important; justify-content: flex-start !important; }
+    #view-home .wp-fox { width: 96px !important; right: 6px !important; bottom: 6px !important; }
+    #view-home .finder-panel { min-height: 0 !important; padding: 10px 0 18px !important; }
+    #view-home .globe-panel { padding: 26px 20px 18px !important; }
+    #view-home #mGlobe { height: min(78vw, 320px) !important; }
+    .m-hero { min-height: 88svh !important; }
+    .snap-dots { display: none !important; }
   </style>
 </head>
 <body>
@@ -1679,14 +1691,11 @@
     </section>
 
     <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
-    <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;margin-left:-16px;margin-right:-16px;background:radial-gradient(140% 90% at 50% 30%, #16204a 0%, #0b1020 60%, #070b18 100%);overflow:hidden;padding:40px 20px;">
-      <div style="position:absolute;inset:0;background-image:radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0, transparent 100%),radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.4) 0, transparent 100%),radial-gradient(1.5px 1.5px at 85% 70%, rgba(255,255,255,0.3) 0, transparent 100%),radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.35) 0, transparent 100%);"></div>
-      <span class="shooting-star" style="top:10%;right:6%;"></span>
-      <span class="shooting-star s2" style="top:26%;right:40%;"></span>
+    <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;margin-left:-16px;margin-right:-16px;background:radial-gradient(140% 90% at 50% 30%, #EAF6FF 0%, #F6FBFF 55%, #FFF8F0 100%);overflow:hidden;padding:40px 20px;">
       <div style="position:relative;text-align:center;">
         <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#FB923C;">LIVE CONNECTED WORLD</span>
-        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#fff;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
-        <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#94a3b8;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#f97316;">직접 탭</strong>하면 요금제가 바로 열려요</p>
+        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
+        <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#6b5d52;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#f97316;">직접 탭</strong>하면 요금제가 바로 열려요</p>
       </div>
       <div style="position:relative;">
         <div id="mGlobe" style="width:100%;height:min(92vw, 420px);margin-top:4px;"></div>
@@ -2257,7 +2266,6 @@
 
     function switchNav(targetView) {
       // 홈에서만 스냅 스크롤 활성화
-      document.documentElement.classList.toggle('home-snap', targetView === 'home');
       // 브라우저 히스토리 기록 (뒤로가기 지원)
       if (!suppressHistory && location.hash !== '#' + targetView) {
         history.pushState({ view: targetView }, '', '#' + targetView);
@@ -4102,28 +4110,10 @@
     };
 
     function scrollToRomi() {
-      try {
-        const el = document.querySelector('.finder-panel') || document.querySelector('.romi-finder');
-        if (!el) return;
-        const root = document.documentElement;
-        const hadSnap = root.classList.contains('home-snap');
-        if (hadSnap) root.classList.remove('home-snap');   // 이동 중 스냅 개입 차단
-        const t0 = performance.now();
-        const startY = window.pageYOffset;
-        const dur = 750;
-        const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        (function step(now) {
-          // 이미지 로딩 등으로 레이아웃이 밀려도 정확히 붙도록 매 프레임 목표 재계산
-          const targetY = window.pageYOffset + el.getBoundingClientRect().top;
-          const p = Math.min(1, (now - t0) / dur);
-          window.scrollTo(0, startY + (targetY - startY) * ease(p));
-          if (p < 1) requestAnimationFrame(step);
-          else {
-            el.scrollIntoView({ behavior: 'instant', block: 'start' });   // 스냅 지점에 강제 정렬
-            if (hadSnap) requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('home-snap')));
-          }
-        })(t0);
-      } catch (e) { /* 미지원 환경 무시 */ }
+      const el = document.querySelector('.finder-panel') || document.querySelector('.romi-finder');
+      if (!el) return;
+      const y = window.pageYOffset + el.getBoundingClientRect().top - 58; // 헤더 높이 보정
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
 
     // ===== 로미의 3초 요금제 매칭 =====
@@ -4185,7 +4175,6 @@
     // ===== 스냅 스크롤 경험: 진행 인디케이터 + 등장 연출 + 카운트업 =====
     function initSnapExperience() {
       if (document.querySelector('.snap-dots')) return; // 중복 초기화 방지
-      document.documentElement.classList.add('home-snap');
       const panels = [...document.querySelectorAll('#view-home .snap-panel')];
       if (!panels.length) return;
       // 우측 진행 점 생성
@@ -4389,5 +4378,21 @@
     })();
 </script>
   <script src="romi-bot.js?v=20260713b" defer></script>
+  <script>
+    // ROMI RSQ: 매칭 결과에 실측 품질 뱃지 (표본 5건 이상일 때만 노출)
+    document.addEventListener('DOMContentLoaded', function () {
+      var go = document.getElementById('rfGoBtn');
+      if (!go || !window.RomiRSQ) return;
+      go.addEventListener('click', function () {
+        var c = (document.getElementById('rfCountry') || {}).value || '';
+        if (!c.trim()) return;
+        var head = document.querySelector('.rf-head .rf-sub');
+        if (!head) return;
+        var b = document.getElementById('rsqBadge');
+        if (!b) { b = document.createElement('div'); b.id = 'rsqBadge'; b.style.cssText = 'display:none;margin-top:6px;font-size:0.78rem;font-weight:800;color:#0f766e;background:rgba(43,179,163,0.1);padding:4px 10px;border-radius:10px;width:fit-content;'; head.parentNode.appendChild(b); }
+        RomiRSQ.badge(c.trim(), b);
+      });
+    });
+  </script>
 </body>
 </html>
