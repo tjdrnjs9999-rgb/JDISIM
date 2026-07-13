@@ -19,7 +19,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260713';
+      sc.src = 'products.js?v=20260713b';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
@@ -2230,7 +2230,7 @@
   <!-- JavaScript imports -->
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
-  <script src="products-lite.js?v=20260713" defer></script>
+  <script src="products-lite.js?v=20260713b" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -3394,7 +3394,7 @@
       
       // 통신사명이 같아도 망 종류·플랜 구성이 다른 그룹을 구분할 수 있도록 인덱스로 선택
       select.innerHTML = carrierOptions.map((co, i) => {
-        const label = cleanCarrier(co.carrier) + (co.network_type ? ` · ${co.network_type}` : '');
+        const label = cleanCarrier(co.carrier) + (co.network_type ? ` · ${co.network_type}` : '') + (co.calls === '가능' ? ' · 📞전화가능' : '');
         return `<option value="${i}" data-name="${co.carrier}" data-net="${co.network_type || ''}" data-speed="${co.network_speed || ''}" ${co === activeCarrier ? 'selected' : ''}>${label}</option>`;
       }).join('');
       
