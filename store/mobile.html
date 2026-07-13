@@ -1640,6 +1640,33 @@
     /* 안드로이드 시스템 글꼴 확대가 레이아웃을 깨지 않게 텍스트 자동확대 고정 */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   </style>
+<style id="store-compact">
+    /* ===== 상품 페이지 컴팩트 모드 (기능 유지, 밀도 압축) ===== */
+    /* 상품 카드: 국기 이미지 높이 축소 = 화면당 상품 수 증가 */
+    #view-store .store-card-media { aspect-ratio: 16 / 10 !important; }
+    #view-store .store-card { border-radius: 14px !important; box-shadow: 0 3px 10px rgba(15,23,42,0.05) !important; }
+    #view-store .store-card-body { padding: 8px 10px 10px !important; gap: 3px !important; }
+    #view-store .product-list { gap: 10px !important; }
+    /* 검색바 */
+    #view-store .jd-search { margin-bottom: 10px !important; }
+    #view-store .jd-box input { padding: 8px 6px !important; font-size: 0.86rem !important; }
+    /* 카테고리 탭 */
+    #view-store .m-cat { margin-bottom: 10px !important; padding-bottom: 2px !important; }
+    #view-store .m-cat-btn { padding: 7px 12px !important; font-size: 0.76rem !important; }
+    /* 신뢰 스트립·전광판·진단 배너: 슬림 */
+    #view-store .trust-strip { margin: 8px 0 !important; padding: 6px 8px !important; gap: 8px !important; }
+    #view-store .trust-strip span, #view-store .trust-strip a { font-size: 0.7rem !important; }
+    #view-store .departure-board { padding: 9px 11px !important; margin: 8px 0 !important; }
+    #view-store .device-check-banner { padding: 10px 12px !important; margin: 8px 0 10px !important; border-radius: 14px !important; }
+    #view-store .device-check-banner .dcb-text strong { font-size: 0.84rem !important; }
+    #view-store .device-check-banner .dcb-text span { font-size: 0.72rem !important; }
+    /* 섹션 사이 공통 리듬: 붕 뜨는 여백 제거 */
+    #view-store > div, #view-store > section { margin-top: 0 !important; }
+    /* 옵션 선택 시트: 알약·그룹 압축 */
+    .bottom-sheet .option-pill { padding: 8px 13px !important; font-size: 0.78rem !important; }
+    .bottom-sheet .option-pills { gap: 7px !important; }
+    .bottom-sheet .option-group-title { margin: 12px 0 8px !important; font-size: 0.85rem !important; }
+  </style>
 </head>
 <body>
 
@@ -1940,7 +1967,7 @@
     <div class="jd-search">
       <div class="jd-box">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
-        <input type="text" id="storeSearchInput" placeholder="어디로 가시나요? 국가명이나 통신사를 적어보세요." autocomplete="off">
+        <input type="text" id="storeSearchInput" placeholder="국가·통신사 검색 (예: 일본)" autocomplete="off">
         <button type="button" class="jd-x" id="jdClear" aria-label="지우기">✕</button>
         <button type="button" class="jd-go" id="storeSearchBtn">검색</button>
       </div>
