@@ -5,10 +5,10 @@
   --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
   
   /* Color Palette - Premium Light Mode Redesign */
-  --bg-primary: #f8fafc;         /* Soft slate background */
+  --bg-primary: #FBF6EF;         /* Soft slate background */
   --bg-secondary: #ffffff;       /* Pure white for panels and cards */
-  --bg-tertiary: #f1f5f9;        /* Slate 100 for secondary backgrounds */
-  --bg-glass: rgba(255, 255, 255, 0.85); /* Frosty light glassmorphism */
+  --bg-tertiary: #F7EFE5;        /* Slate 100 for secondary backgrounds */
+  --bg-glass: rgba(255, 252, 247, 0.88); /* Frosty light glassmorphism */
   --bg-glass-card: rgba(0, 0, 0, 0.02);
   
   --accent: #4f46e5;             /* Trustworthy Indigo 600 */

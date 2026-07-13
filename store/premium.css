@@ -19,7 +19,7 @@
 }
 
 /* ---------- 공통 컴포넌트 리스킨 ---------- */
-body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%); }
+body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF5EC 22%, #FBF6EF 60%, #F9F2E9 100%); }
 
 .logo-icon, .app-logo-badge {
   background: var(--accent-gradient) !important;
