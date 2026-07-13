@@ -2063,6 +2063,11 @@
 
     <!-- 사업자 정보 (카카오페이 등 PG 심사 필수 항목) -->
     <footer style="margin-top: 8px; padding: 20px 4px 8px 4px; border-top: 1px solid rgba(15, 23, 42, 0.08); font-size: 0.74rem; color: #94a3b8; line-height: 1.7;">
+      <div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:10px;font-weight:700;">
+        <a href="terms.html" style="color:#64748b;text-decoration:underline;text-underline-offset:2px;">이용약관</a>
+        <a href="privacy.html" style="color:#475569;text-decoration:underline;text-underline-offset:2px;">개인정보처리방침</a>
+        <a href="refund.html" style="color:#64748b;text-decoration:underline;text-underline-offset:2px;">취소·환불 규정</a>
+      </div>
       <div style="font-weight: 800; color: #64748b; margin-bottom: 6px;">JDISIM 사업자 정보</div>
       상호명: 버튼(Butt'on) | 대표자: 김성권<br>
       사업자등록번호: 760-15-01594 | 통신판매업신고: 제 2021-서울성북-0526 호<br>
@@ -2211,6 +2216,9 @@
         💬 카카오톡 1:1 실시간 문의하기
       </a>
       <div style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
+        <div style="font-size:0.75rem;font-weight:700;margin-bottom:12px;">
+          <a href="terms.html" style="color:#64748b;">이용약관</a> · <a href="privacy.html" style="color:#64748b;">개인정보처리방침</a> · <a href="refund.html" style="color:#64748b;">취소·환불 규정</a>
+        </div>
         <a href="index.html?desktop=true" style="font-size: 0.75rem; color: #64748b; text-decoration: underline;">🖥️ PC 버전으로 보기</a>
       </div>
     </div>
@@ -3467,6 +3475,7 @@
         return;
       }
       currentSelectedCountry = countryName;
+      jdTrack('sheet_open', { country: countryName, deeplink: !!defaultCarrier });
       document.body.style.overflow = 'hidden'; // 뒤 페이지 스크롤 잠금 (스크롤바 이탈 방지)
       saveRecentCountry(countryName);
       
@@ -3525,6 +3534,17 @@
       })(t0);
     } 
 
+    // ===== 퍼널 계측: dataLayer/gtag 준비형 (GA4 태그 설치 전에도 무해하게 동작) =====
+    // GA4 연결법: <head>에 gtag.js 스니펫 추가하면 아래 이벤트가 자동 수집됨.
+    // 이벤트: sheet_open → wizard_step(scope/carrier/plan/cap/days) → checkout_reveal → checkout_click
+    function jdTrack(ev, params) {
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(Object.assign({ event: ev }, params || {}));
+        if (typeof gtag === 'function') gtag('event', ev, params || {});
+      } catch (e) {}
+    }
+
     // ===== ROMI Step Sheet: 단계 잠금 위저드 =====
     // 흐름: ①연결방식 → ②통신사(드롭다운) → ③제공방식 → ④용량 → ⑤기간 → 결제영역 오픈
     // 이전 단계를 누르기 전까지 다음 단계는 잠금. 옵션이 1개뿐인 단계는 자동 통과.
@@ -3556,6 +3576,7 @@
       const el = jdStepEl(step);
       const v = el && el.querySelector('.jd-step-value');
       if (v) v.textContent = valueText || '';
+      jdTrack('wizard_step', { step: step, value: valueText || '', country: currentSelectedCountry || '' });
     }
     // 해당 단계 이후를 전부 잠금으로 리셋 (+결제영역 숨김)
     function jdResetAfter(step) {
@@ -3589,6 +3610,11 @@
     function jdCheckoutOpen() {
       const co = document.getElementById('sheetCheckoutArea');
       if (!co) return;
+      jdTrack('checkout_reveal', {
+        country: currentSelectedCountry || '',
+        carrier: (activeCarrier && activeCarrier.carrier) || '',
+        plan_type: selectedPlanType || '', capacity: selectedCapacity || '', days: selectedDays || 0
+      });
       co.style.display = 'block';
       if (co.scrollIntoView) setTimeout(() => co.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
       if (navigator.vibrate) navigator.vibrate([8, 30, 12]);
@@ -4018,6 +4044,11 @@
 
     // [1단계] 결제 버튼 → 스펙 & 주의사항 최종 확인 레이어
     function processMockCheckout() {
+      jdTrack('checkout_click', {
+        country: currentSelectedCountry || '',
+        carrier: (activeCarrier && activeCarrier.carrier) || '',
+        value: (activePlan ? activePlan.final_price * purchaseQty : 0), currency: 'KRW'
+      });
       const name = document.getElementById('buyerName').value.trim();
       const phone = document.getElementById('buyerPhone').value.trim();
       const email = document.getElementById('buyerEmail').value.trim();
@@ -4068,7 +4099,7 @@
               const item = (t, first) => `<div style="display:flex;gap:9px;padding:8px 0;${first ? '' : 'border-top:1px solid rgba(15,23,42,0.05);'}"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${t}</span></div>`;
               const list = getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).concat([
                 '<strong>기종 확인:</strong> 키패드에 *#06# 입력 시 <strong>EID 번호</strong>가 보여야 사용 가능해요 (중국/홍콩/마카오 구매 아이폰 불가)',
-                '<strong>단순 변심:</strong> QR코드 발송 후에는 디지털 상품 특성상 취소/환불이 불가해요',
+                '<strong>취소/환불:</strong> eSIM <strong>설치(다운로드) 전까지 100% 환불</strong> 가능, 설치 후에는 디지털 상품 특성상 불가해요 (<a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a>)',
                 '<strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#2563eb;font-weight:800;">카톡 고객센터</a>로 접수 시 미해결 100% 환불 보장'
               ]);
               return list.map((t, i) => item(t, i === 0)).join('');
@@ -4080,6 +4111,7 @@
               <button type="button" onclick="var d=document.getElementById('mDetailPrivacy');d.style.display=d.style.display==='block'?'none':'block';this.textContent=d.style.display==='block'?'접기':'자세히 보기';" style="background:none;border:none;color:#2563eb;font-weight:700;font-size:0.75rem;text-decoration:underline;font-family:inherit;">자세히 보기</button>
             </div>
             <div id="mDetailPrivacy" style="display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin:4px 0 8px;line-height:1.65;color:#64748b;">
+              <a href="privacy.html" target="_blank" style="color:#2563eb;font-weight:800;">📄 개인정보처리방침 전문 보기</a><br>
               · 수집 항목: 수령인 이름, 휴대폰 번호, 이메일<br>
               · 목적: 주문 처리, eSIM QR코드 발송, 고객 상담<br>
               · 보유: 전자상거래법에 따라 5년 보관 후 파기<br>
