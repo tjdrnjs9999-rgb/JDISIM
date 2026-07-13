@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script>try{document.documentElement.style.fontSize=({"1":"18px","2":"20px","3":"22px"})[localStorage.getItem("jdisim_fs")||"1"]||"18px"}catch(e){}</script>
+  <script>try{document.documentElement.style.fontSize=({"0":"18px","1":"20px","2":"22px"})[localStorage.getItem("jd_fz")||"0"]||"18px"}catch(e){}</script>
   <script>
     window.onerror = function(msg, url, lineNo, columnNo, error) {
       // 운영 모드: 방문자 화면에 에러를 띄우지 않고 콘솔에만 기록
@@ -181,7 +181,7 @@
   <link rel="stylesheet" href="premium.css?v=20260708">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" defer onload="lucide.createIcons()"></script>
   
   <style>
     /* Global Word Break Keep-All to prevent squishing text vertically */
@@ -1573,7 +1573,7 @@
     }
 
   </style>
-  <script src="jdisim-app.js?v=1" defer></script>
+  <script src="jdisim-app.js?v=2" defer></script>
 </head>
 <body>
 
@@ -1619,9 +1619,6 @@
 
   <!-- Background Video -->
   <div class="video-bg-container">
-    <video autoplay muted loop playsinline id="bgVideo">
-      <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
-    </video>
     <div class="video-bg-overlay"></div>
   </div>
 
@@ -1641,9 +1638,6 @@
     <main id="view-home" class="mobile-view active">
     <!-- 시네마틱 풀스크린 히어로 -->
     <section class="m-hero snap-panel">
-      <video class="m-hero-video" id="mHeroVideo" autoplay muted loop playsinline preload="metadata">
-        <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
-      </video>
       <div class="m-hero-overlay"></div>
       <div class="m-hero-content">
         <span class="m-hero-badge">🦊 JDISIM × 로미</span>
