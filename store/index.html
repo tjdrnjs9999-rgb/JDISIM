@@ -23,7 +23,17 @@
   <meta name="description" content="전 세계 150개국 데이터를 공항 대기 없이 QR코드로 간편하게 로밍하세요. 속도 저하 없는 1등 로컬망 요금제를 가장 합리적인 가격에 선보입니다.">
   <meta name="theme-color" content="#F97316">
   <meta name="color-scheme" content="only light">
-  <link rel="manifest" href="manifest.webmanifest">
+  <script>
+  /* 빌드 체크: 버전이 바뀌면 옛 캐시·SW를 1회 완전 청소 (안드로이드 스테일 캐시 종결) */
+  (function(){var B='20260713b';try{
+    if(localStorage.getItem('jd_build')!==B){
+      localStorage.setItem('jd_build',B);
+      if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})});
+      if(navigator.serviceWorker)navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.update()})});
+    }}catch(e){}})();
+  </script>
+  <style>:root{color-scheme:only light}html{background-color:#FAF8F4}</style>
+  <link rel="manifest" href="manifest.webmanifest?v=3">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>

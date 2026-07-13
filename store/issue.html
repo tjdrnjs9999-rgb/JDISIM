@@ -6,6 +6,16 @@
 <script>if(/KAKAOTALK/i.test(navigator.userAgent))document.documentElement.classList.add('in-kakao');</script>
 <meta name="theme-color" content="#FFF8F2">
   <meta name="color-scheme" content="only light">
+  <script>
+  /* 빌드 체크: 버전이 바뀌면 옛 캐시·SW를 1회 완전 청소 (안드로이드 스테일 캐시 종결) */
+  (function(){var B='20260713b';try{
+    if(localStorage.getItem('jd_build')!==B){
+      localStorage.setItem('jd_build',B);
+      if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})});
+      if(navigator.serviceWorker)navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.update()})});
+    }}catch(e){}})();
+  </script>
+  <style>:root{color-scheme:only light}html{background-color:#FAF8F4}</style>
 <title>eSIM 발급 — JDISIM</title>
 <meta name="robots" content="noindex">
 <style>
@@ -394,7 +404,7 @@
   }
 </style>
   <script src="jdisim-app.js?v=2" defer></script>
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.webmanifest?v=3">
 </head>
 <body>
 <div class="offbar" id="offBar">오프라인 상태예요 — 이미 발급된 QR은 계속 볼 수 있어요</div>
