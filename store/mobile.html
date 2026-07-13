@@ -170,6 +170,7 @@
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
   <meta name="theme-color" content="#F97316">
   <meta name="color-scheme" content="only light">
+  <meta name="supported-color-schemes" content="light">
   <script>
   /* 빌드 체크: 버전이 바뀌면 옛 캐시·SW를 1회 완전 청소 (안드로이드 스테일 캐시 종결) */
   (function(){var B='20260713b';try{
@@ -1624,6 +1625,20 @@
     #view-home #mGlobe { height: min(88vw, 400px) !important; }
     /* 매칭 결과가 화면보다 길어지면 패널 내부 스크롤 허용 (스냅에 갇히지 않게) */
     html.home-snap #view-home .finder-panel { max-height: 100svh; overflow-y: auto; overscroll-behavior: contain; }
+  </style>
+<style id="android-fit">
+    /* ===== 안드로이드 가로 넘침 방지 (시스템 글꼴 확대 대응) ===== */
+    html, body { max-width: 100%; overflow-x: clip; }
+    .mobile-view, .snap-panel, .bottom-sheet { max-width: 100vw; overflow-x: clip; }
+    img, svg, video, canvas, table { max-width: 100%; }
+    /* 플렉스 자식이 부모보다 커지는 것 원천 차단 */
+    .m-hero-content *, .bottom-sheet *, #view-store * { min-width: 0; }
+    /* nowrap 알약 줄(신뢰 스트립 등): 좁은 화면에선 줄바꿈 허용 */
+    .trust-strip { flex-wrap: wrap !important; row-gap: 6px; }
+    /* 초협소·글꼴확대 기기: 기본 배율 한 단계 다운 → 히어로 스탯 한 줄 유지 */
+    @media (max-width: 379px) { html { font-size: 16.5px; } }
+    /* 안드로이드 시스템 글꼴 확대가 레이아웃을 깨지 않게 텍스트 자동확대 고정 */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   </style>
 </head>
 <body>

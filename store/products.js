@@ -2594,7 +2594,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "말레이시아",
-    "carrier": "Maxis / Celcom / Digi",
+    "carrier": "Celcom",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -5204,7 +5204,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "인도네시아",
-    "carrier": "Telkomsel / XL Axiata",
+    "carrier": "Telkomsel",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -7328,7 +7328,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "태국",
-    "carrier": "AIS (1티어 로밍망)",
+    "carrier": "AIS / True / dtac (로밍망)",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "apn": "mobile.three.com.hk 또는 plus",
@@ -22148,7 +22148,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "차이나유니콤 / 차이나텔레콤",
+    "carrier": "차이나모바일 / 차이나텔레콤",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -25568,7 +25568,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "중국",
-    "carrier": "차이나유니콤 / 차이나텔레콤",
+    "carrier": "차이나모바일 / 차이나텔레콤",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -27206,7 +27206,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "SmarTone",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -28709,7 +28709,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "SmarTone",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -32453,7 +32453,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "대만",
-    "carrier": "중화텔레콤 / 원전텔레콤",
+    "carrier": "청화텔레콤",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -35873,7 +35873,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "SmarTone",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -42884,7 +42884,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "SmarTone",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -48347,7 +48347,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "홍콩",
-    "carrier": "CSL / 3 HK",
+    "carrier": "SmarTone",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -48437,8 +48437,8 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "대만",
-    "carrier": "중화텔레콤 / 원전텔레콤",
-    "network_type": "로컬망",
+    "carrier": "중국·홍콩·마카오·대만 (유니콤·CSL·CTM·CHT)",
+    "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
     "sms": "불가능",
@@ -75950,7 +75950,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -76319,7 +76319,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -80045,7 +80045,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -80783,7 +80783,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -87533,7 +87533,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
@@ -88640,7 +88640,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "북미괌사이판",
     "country": "미국",
-    "carrier": "티모바일 (T-Mobile) / 버라이즌",
+    "carrier": "티모바일 (T-Mobile)",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "가능",
