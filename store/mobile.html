@@ -1667,6 +1667,7 @@
     .bottom-sheet .option-pills { gap: 7px !important; }
     .bottom-sheet .option-group-title { margin: 12px 0 8px !important; font-size: 0.85rem !important; }
   </style>
+<style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
 </head>
 <body>
 
@@ -4469,6 +4470,18 @@
         RomiRSQ.badge(c.trim(), b);
       });
     });
+  </script>
+  <script>
+  /* 콘텐츠 보호 (경량): 이미지 우클릭·드래그 억제 + 저작권 콘솔 고지 */
+  (function () {
+    document.addEventListener('contextmenu', function (e) {
+      if (e.target && e.target.tagName === 'IMG') e.preventDefault();  // 이미지에서만 — 텍스트 우클릭은 허용 (UX 보호)
+    });
+    document.addEventListener('dragstart', function (e) {
+      if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+    });
+    try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F2751F;font-weight:bold;font-size:14px'); } catch (e) {}
+  })();
   </script>
 </body>
 </html>
