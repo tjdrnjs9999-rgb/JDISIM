@@ -1589,15 +1589,25 @@
     .m-hero-stats strong { color: #E8590C !important; }
     .m-hero-stat-div { background: rgba(34,21,16,0.14) !important; }
   </style>
-<style id="compact-home">
-    /* 컴팩트 홈: 풀스크린 스냅 해제, 섹션 자연 높이 */
-    #view-home .why-panel { min-height: 0 !important; padding: 26px 22px 30px !important; margin: 12px -16px !important; justify-content: flex-start !important; }
-    #view-home .wp-fox { width: 96px !important; right: 6px !important; bottom: 6px !important; }
-    #view-home .finder-panel { min-height: 0 !important; padding: 10px 0 18px !important; }
-    #view-home .globe-panel { padding: 26px 20px 18px !important; }
-    #view-home #mGlobe { height: min(78vw, 320px) !important; }
-    .m-hero { min-height: 88svh !important; }
-    .snap-dots { display: none !important; }
+<style id="premium-snap">
+    /* ROMI Journey Scroll: 활성 점 옆 미니 라벨 */
+    .snap-dot { position: relative; }
+    .snap-dot.active::after {
+      content: attr(data-label);
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      font-size: 0.62rem; font-weight: 800; color: #C2410C; letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.88); border: 1px solid rgba(242,117,31,0.25);
+      padding: 2px 7px; border-radius: 8px; white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(242,117,31,0.12); pointer-events: none;
+    }
+    /* 스냅 패널 내부 콘텐츠가 하단바·챗봇과 겹치지 않게 (원본 규칙 보강) */
+    html.home-snap #view-home .snap-panel { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+    html.home-snap #view-home .why-panel .wp-fox { right: 82px !important; bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important; width: 128px !important; }
+    html.home-snap #view-home .finder-panel { padding-left: 4px !important; padding-right: 4px !important; }
+    /* 지구본: 풀스크린 패널에 맞게 복원 */
+    #view-home #mGlobe { height: min(88vw, 400px) !important; }
+    /* 매칭 결과가 화면보다 길어지면 패널 내부 스크롤 허용 (스냅에 갇히지 않게) */
+    html.home-snap #view-home .finder-panel { max-height: 100svh; overflow-y: auto; overscroll-behavior: contain; }
   </style>
 </head>
 <body>
@@ -2266,6 +2276,7 @@
 
     function switchNav(targetView) {
       // 홈에서만 스냅 스크롤 활성화
+      document.documentElement.classList.toggle('home-snap', targetView === 'home');
       // 브라우저 히스토리 기록 (뒤로가기 지원)
       if (!suppressHistory && location.hash !== '#' + targetView) {
         history.pushState({ view: targetView }, '', '#' + targetView);
@@ -4112,8 +4123,7 @@
     function scrollToRomi() {
       const el = document.querySelector('.finder-panel') || document.querySelector('.romi-finder');
       if (!el) return;
-      const y = window.pageYOffset + el.getBoundingClientRect().top - 58; // 헤더 높이 보정
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' }); // 스냅이 패널 시작점에 정확히 안착
     }
 
     // ===== 로미의 3초 요금제 매칭 =====
@@ -4175,15 +4185,19 @@
     // ===== 스냅 스크롤 경험: 진행 인디케이터 + 등장 연출 + 카운트업 =====
     function initSnapExperience() {
       if (document.querySelector('.snap-dots')) return; // 중복 초기화 방지
+      document.documentElement.classList.add('home-snap');
       const panels = [...document.querySelectorAll('#view-home .snap-panel')];
       if (!panels.length) return;
       // 우측 진행 점 생성
       const dots = document.createElement('div');
       dots.className = 'snap-dots';
-      panels.forEach((p) => {
+      const LABELS = ['홈', '지구', '속도', '개통', '케어', '매칭'];
+      panels.forEach((p, i) => {
         const d = document.createElement('button');
         d.className = 'snap-dot';
         d.type = 'button';
+        d.setAttribute('data-label', LABELS[i] || '');
+        d.setAttribute('aria-label', (LABELS[i] || '섹션') + '으로 이동');
         d.addEventListener('click', () => { try { p.scrollIntoView({ behavior: 'smooth' }); } catch (e) {} });
         dots.appendChild(d);
       });
@@ -4214,6 +4228,10 @@
             en.target.classList.add('in-view');
             en.target.querySelectorAll('[data-count]').forEach(countUp);
             const idx = panels.indexOf(en.target);
+            if (idx !== window.__snapIdx) {
+              window.__snapIdx = idx;
+              if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} } // 페이지 넘김 햅틱
+            }
             dotEls.forEach((d, i) => d.classList.toggle('active', i === idx));
           });
         }, { threshold: 0.5 });
