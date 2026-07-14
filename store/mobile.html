@@ -3842,8 +3842,8 @@
         f.push({ i: '🚨', t: '<strong>QR 스캔 즉시 개통 (Three)</strong> — <span>출국 직전 또는</span> <span>현지 공항에서 설치하세요.</span>' });
         f.push({ i: '🗑️', t: '<strong>프로필 삭제 금지</strong> — <span>임의 삭제 시 복구 불가.</span>' });
       }
-      const vm = String(activeCarrier.validity || '').match(/구매일로부터\s*(\d+)일/);
-      if (vm && parseInt(vm[1], 10) <= 15) f.push({ i: '⏳', t: `<strong>구매일로부터 ${vm[1]}일 안에 현지 개통 필수</strong> — <span>출국 ${vm[1]}일 전 이내에 구매하세요.</span>` });
+      const vm = String(activeCarrier.validity || '').match(/(구매일|발급일)로부터\s*(\d+)일/);
+      if (vm && parseInt(vm[2], 10) <= 15) f.push({ i: '⏳', t: `<strong>${vm[1]}로부터 ${vm[2]}일 안에 현지 개통 필수</strong> — <span>출국 ${vm[2]}일 전 이내에 구매하세요.</span>${act.includes('희망일') ? ` <span>개통 희망일도 ${vm[2]}일 안쪽으로!</span>` : ''}` });
       if (nc.includes('대만')) f.push({ i: '🪪', t: '<strong>여권 실명등록(KYC) 필수</strong> — <span>설치 후 현지 수신 문자 링크로</span> <span>등록해야 데이터가 열려요.</span>' });
       if (nc.includes('중국') || nc.includes('홍콩') || nc.includes('마카오')) f.push({ i: '🍎', t: '<strong>중국·홍콩·마카오 구매 아이폰 사용 불가</strong> — <span>eSIM이 비활성화된 기기예요.</span>' });
       if (nc.includes('한국') || nc.includes('대한민국')) f.push({ i: '🚨', t: '<strong>QR 스캔 즉시 일수 차감</strong> — <span>사용 개시일에 등록하세요.</span>' });
@@ -3889,14 +3889,15 @@
         el.style.display = 'none';
         return;
       }
-      // 유효기간 경고: "구매일로부터 N일" 상품은 구매 타이밍이 중요
-      const vm = String(activeCarrier.validity || '').match(/구매일로부터\s*(\d+)일/);
+      // 유효기간 경고: "구매일/발급일로부터 N일" 상품은 구매 타이밍이 중요
+      // 희망일 상품과 겹치면 개통 안내 + 유효기간 두 주의가 모두 표시됨 (2026-07-14 지시)
+      const vm = String(activeCarrier.validity || '').match(/(구매일|발급일)로부터\s*(\d+)일/);
       if (vm) {
-        const days = parseInt(vm[1], 10);
+        const days = parseInt(vm[2], 10);
         if (days <= 15) {
-          html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);color:#b91c1c;">⏳ <strong>구매일로부터 ${days}일 안에 현지 개통 필수!</strong> 출국 ${days}일 전 이내에 구매하세요</div>`;
+          html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);color:#b91c1c;">⏳ <strong>${vm[1]}로부터 ${days}일 안에 현지 개통 필수!</strong> 출국 ${days}일 전 이내에 구매하세요${act.includes('희망일') ? ` — 개통 희망일도 ${days}일 안쪽으로 지정` : ''}</div>`;
         } else {
-          html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);opacity:0.85;">⏳ 구매일로부터 ${days}일 내 현지 개통 — 여행 ${days}일 전 이내 구매 권장</div>`;
+          html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);opacity:0.85;">⏳ ${vm[1]}로부터 ${days}일 내 현지 개통 — 여행 ${days}일 전 이내 구매 권장</div>`;
         }
       }
       el.innerHTML = html;

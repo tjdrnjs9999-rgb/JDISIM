@@ -1261,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 상세 모달 내 주의사항 탭 내용 동적 주입
     const tabPrecautionsInfo = document.getElementById('tab-precautions-info');
     if (tabPrecautionsInfo) {
-      const customPrecs = getCustomPrecautions(activeCarrier.country, activeCarrier.carrier, activeCarrier.activation);
+      const customPrecs = getCustomPrecautions(activeCarrier.country, activeCarrier.carrier, activeCarrier.activation, activeCarrier.validity);
       let precHTML = `<div style="font-size:0.8rem; line-height:1.6; display:flex; flex-direction:column; gap:10px;">`;
       customPrecs.forEach(p => {
         let bgStyle = 'background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color);';
@@ -1391,19 +1391,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   function leadTimeBadge(lead) {
     return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.82rem;font-weight:900;padding:6px 14px;border-radius:999px;margin-bottom:4px;box-shadow:0 4px 12px rgba(239,68,68,0.3);">⏰ 출국 ${lead} 전 주문 필수</div>`;
   }
-  function getCustomPrecautions(country, carrier, activation) {
+  function getCustomPrecautions(country, carrier, activation, validity) {
     const list = [];
     const normalizedCountry = country.toLowerCase();
     const normalizedCarrier = carrier.toLowerCase();
     const actStr = String(activation || '');
+    const isWishDate = actStr.includes('희망일');
 
     // 0. 주문 타이밍 배지 — 개통희망일 지정 상품에만 (activation 필드 기반, 국가 뭉뚱그림 금지)
     //    오늘 기준 "가장 빠른 개통 가능일"을 실제 날짜로 계산해 보여줌
-    if (actStr.includes('희망일')) {
+    if (isWishDate) {
       const ea = earliestActivationInfo(country);
       list.push(leadTimeBadge(`최소 ${ea.days}일`) + `<strong>개통 희망일 지정 상품</strong> — 오늘 주문하면 <strong>${ea.label}부터</strong> 개통일로 지정할 수 있어요.${ea.days === 3 ? ' 미주·유럽은 시차로 하루 더 여유가 필요합니다.' : ''} 개통일 등록은 구매 후 케어 안내로 도와드립니다.`);
     } else if (normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
       list.push("<strong>현지 도착 후 개통 문자로 시작:</strong> 도착해서 개통 문자가 발송되는 시점부터 사용일이 카운트돼요 — 미리 구매해 두셔도 기간이 줄지 않습니다.");
+    }
+
+    // 0.5 유효기간 경고 — "구매일/발급일로부터 N일" 상품은 개통 타이밍과 별개로 항상 표시
+    //     (희망일 상품과 겹치면 두 주의가 모두 나와야 함 — 2026-07-14 지시)
+    const vm = String(validity || '').match(/(구매일|발급일)로부터\s*(\d+)일/);
+    if (vm) {
+      const vDays = parseInt(vm[2], 10);
+      if (vDays <= 15) {
+        list.push(`<strong>⏳ ${vm[1]}로부터 ${vDays}일 안에 현지 개통 필수:</strong> 기간이 지나면 사용할 수 없어요 — 출국 ${vDays}일 전 이내에 구매하세요.${isWishDate ? ` 개통 희망일도 ${vm[1]}로부터 ${vDays}일 안쪽으로 지정해야 합니다.` : ''}`);
+      } else {
+        list.push(`<strong>⏳ 유효기간:</strong> ${vm[1]}로부터 ${vDays}일 내 현지 개통 — 여행 ${vDays}일 전 이내 구매를 권장해요.`);
+      }
     }
 
     // 5. 국가별/통신사별 상세 맞춤 특이사항 (크롤링 및 매칭)
@@ -1419,7 +1432,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       list.push("<strong>베트남 시간 기준 일일 리셋:</strong> 매일 23:00(베트남 시간 기준)에 일일 사용 용량이 자동 리셋/초기화됩니다.");
       list.push("<strong>비엣텔망 수동 고정:</strong> 신호 연결 시 속도가 느린 Vietnamobile로 자동 지정되는 경우, 셀룰러 설정에서 수동으로 'Viettel'망을 강제 고정해 주세요.");
       list.push("<strong>ChatGPT 접속 제한 안내:</strong> 본 상품은 홍콩 IP를 경유하므로 보안상 ChatGPT 등의 특수 해외 서비스 접속이 원활하지 않을 수 있습니다.");
-      list.push("<strong>15일 유효기간 준수:</strong> 발급일로부터 15일 이내에 반드시 현지 신호 연결을 최초 활성화하셔야 정상 작동됩니다.");
     }
 
     if (normalizedCountry.includes('대만')) {
@@ -1570,7 +1582,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 국가/통신사별 전용 안내 아코디언 (있을 경우만 노출)
     let combinedPrecs = [];
     items.forEach(item => {
-      const precs = getCustomPrecautions(item.product.country, item.product.carrier, item.product.activation);
+      const precs = getCustomPrecautions(item.product.country, item.product.carrier, item.product.activation, item.product.validity);
       precs.forEach(p => {
         if (!combinedPrecs.includes(p)) {
           combinedPrecs.push(p);
@@ -1661,12 +1673,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     let requiresActivationDate = false;
     let checkoutLeadDays = 2;
     let leadCountry = '';
+    let validityCapDays = 0; // "구매일/발급일로부터 N일" 상품의 개통일 상한 (0 = 제한 없음)
     items.forEach(item => {
       const act = String(item.product.activation || '');
       if (act.includes('희망일')) {
         requiresActivationDate = true;
         const d = leadDaysFor(item.product.country);
         if (d > checkoutLeadDays || !leadCountry) { checkoutLeadDays = Math.max(checkoutLeadDays, d); leadCountry = item.product.country; }
+        const vm = String(item.product.validity || '').match(/(구매일|발급일)로부터\s*(\d+)일/);
+        if (vm) {
+          const vd = parseInt(vm[2], 10);
+          if (!validityCapDays || vd < validityCapDays) validityCapDays = vd;
+        }
       }
     });
 
@@ -1677,8 +1695,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       checkoutActivationDate.value = '';
       const ea = earliestActivationInfo(checkoutLeadDays === 3 ? '미국' : leadCountry);
       checkoutActivationDate.min = ea.iso;
+      let capHtml = '';
+      if (validityCapDays) {
+        // 유효기간 상한: 오늘 + N일까지만 개통일 지정 가능
+        const cap = new Date(); cap.setDate(cap.getDate() + validityCapDays);
+        const pad = n => String(n).padStart(2, '0');
+        checkoutActivationDate.max = `${cap.getFullYear()}-${pad(cap.getMonth() + 1)}-${pad(cap.getDate())}`;
+        capHtml = ` ⏳ 이 상품은 유효기간이 있어 개통일을 <strong style="color:#b91c1c;">${cap.getMonth() + 1}/${cap.getDate()}까지</strong>만 지정할 수 있어요.`;
+      } else {
+        checkoutActivationDate.removeAttribute('max');
+      }
       if (activationDateHint) {
-        activationDateHint.innerHTML = `📌 오늘 주문 기준 가장 빠른 개통일은 <strong style="color:#F2751F;">${ea.label}</strong>이에요 — ${ea.days === 3 ? '미주·유럽은 시차 때문에 개통 준비에 <strong>최소 3일</strong>' : '개통 준비에 <strong>최소 2일</strong>'}이 필요해요.`;
+        activationDateHint.innerHTML = `📌 오늘 주문 기준 가장 빠른 개통일은 <strong style="color:#F2751F;">${ea.label}</strong>이에요 — ${ea.days === 3 ? '미주·유럽은 시차 때문에 개통 준비에 <strong>최소 3일</strong>' : '개통 준비에 <strong>최소 2일</strong>'}이 필요해요.${capHtml}`;
         activationDateHint.style.display = 'block';
       }
     } else {
@@ -1686,6 +1714,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       checkoutActivationDate.required = false;
       checkoutActivationDate.value = '';
       checkoutActivationDate.removeAttribute('min');
+      checkoutActivationDate.removeAttribute('max');
       if (activationDateHint) { activationDateHint.style.display = 'none'; activationDateHint.innerHTML = ''; }
     }
     
@@ -1731,7 +1760,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (checkoutPrecautionCard && checkoutPrecautionList) {
       let combinedPrecs = [];
       items.forEach(item => {
-        const precs = getCustomPrecautions(item.product.country, item.product.carrier, item.product.activation);
+        const precs = getCustomPrecautions(item.product.country, item.product.carrier, item.product.activation, item.product.validity);
         precs.forEach(p => {
           if (!combinedPrecs.includes(p)) combinedPrecs.push(p);
         });
@@ -1791,6 +1820,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (checkoutActivationDate.min && checkoutActivationDate.value < checkoutActivationDate.min) {
         const [y, m, d] = checkoutActivationDate.min.split('-').map(Number);
         alert(`개통 준비 기간이 필요해 가장 빠른 개통 가능일은 ${m}월 ${d}일입니다.\n개통 희망일을 다시 선택해 주세요.\n(미주·유럽은 시차로 최소 3일, 그 외 지역은 최소 2일 전 주문이 필요해요)`);
+        return;
+      }
+      if (checkoutActivationDate.max && checkoutActivationDate.value > checkoutActivationDate.max) {
+        const [y2, m2, d2] = checkoutActivationDate.max.split('-').map(Number);
+        alert(`이 상품은 유효기간이 있어 ${m2}월 ${d2}일까지만 개통일로 지정할 수 있습니다.\n(구매/발급일로부터 유효기간 안에 개통해야 하는 상품이에요)\n여행이 그보다 늦다면 출국에 더 가까운 날짜에 구매해 주세요.`);
         return;
       }
     }
