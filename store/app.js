@@ -755,13 +755,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="card-img-wrap" style="background: ${cardBg}; display: flex; align-items: center; justify-content: center; position: relative;">
           ${imgHTML}
           <div class="card-tags">
-            <span class="card-tag local" style="background-color:#10b981;">인기 상품</span>
+            <span class="card-tag hot">인기 상품</span>
           </div>
         </div>
         <div class="card-body">
           <div class="card-title">
             <span>${g.country}</span>
-            <span class="card-carrier" style="font-size: 0.75rem; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${carriersStr}</span>
+            <span class="card-carrier" style="font-size: 0.75rem;">${carriersStr}</span>
           </div>
           <div class="card-specs">
             <div class="card-spec-item">📶 ${speedsStr}</div>
@@ -869,13 +869,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${imgHTML}
           <div class="card-tags">
             <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType}</span>
-            ${g.has_unlimited ? '<span class="card-tag best" style="background-color:#a855f7; color:#fff;">무제한</span>' : ''}
+            ${g.has_unlimited ? '<span class="card-tag best">무제한</span>' : ''}
           </div>
         </div>
         <div class="card-body">
           <div class="card-title">
             <span>${g.country}</span>
-            <span class="card-carrier" style="font-size: 0.75rem; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${carriersStr}</span>
+            <span class="card-carrier" style="font-size: 0.75rem;">${carriersStr}</span>
           </div>
           <div class="card-specs">
             <div class="card-spec-item">📶 ${speedsStr}</div>
