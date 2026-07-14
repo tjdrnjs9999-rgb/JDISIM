@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow">
+<title>Wi-Fi 통화 딥링크 테스트 · JDISIM 내부용</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FBF6EF;color:#0f172a;margin:0;padding:20px 16px 60px;word-break:keep-all}
+  .wrap{max-width:480px;margin:0 auto}
+  h1{font-size:1.05rem;font-weight:800;margin:0 0 4px}
+  .sub{font-size:.74rem;font-weight:700;color:#94a3b8;margin-bottom:16px}
+  .env{background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:14px;padding:12px 14px;font-size:.74rem;font-weight:600;color:#475569;line-height:1.7;margin-bottom:16px}
+  .env b{color:#0f172a}
+  .warn{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:10px 12px;font-size:.72rem;font-weight:700;color:#991b1b;line-height:1.6;margin-bottom:16px}
+  button{display:block;width:100%;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:.88rem;font-weight:800;cursor:pointer;margin-bottom:9px;text-align:left}
+  .p{background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;box-shadow:0 6px 18px rgba(249,115,22,.25)}
+  .s{background:#fff;color:#0f172a;border:1.5px solid rgba(15,23,42,.12)}
+  .log{background:#0f172a;color:#a7f3d0;border-radius:12px;padding:12px;font-size:.7rem;line-height:1.7;font-family:ui-monospace,monospace;white-space:pre-wrap;min-height:60px;margin-top:14px}
+  small{display:block;font-weight:600;font-size:.68rem;opacity:.75;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📞 Wi-Fi 통화 딥링크 테스트</h1>
+  <div class="sub">JDISIM 내부용 · 갤럭시/안드로이드에서 열어 테스트 (아이폰은 OS 정책상 설정 딥링크 불가)</div>
+
+  <div class="env" id="env">환경 판독 중...</div>
+  <div class="warn" id="inappWarn" style="display:none">⚠️ 카카오톡/네이버 등 인앱 브라우저로 보입니다. intent 딥링크가 차단될 수 있어요 — 크롬으로 열어서 다시 테스트하세요.</div>
+
+  <button class="p" onclick="go('android.settings.WIFI_CALLING_SETTINGS','① Wi-Fi 통화 설정 직행')">① Wi-Fi 통화 설정 직행<small>android.settings.WIFI_CALLING_SETTINGS</small></button>
+  <button class="s" onclick="go('android.settings.WIRELESS_SETTINGS','② 연결 설정')">② 연결 설정 (폴백 1)<small>android.settings.WIRELESS_SETTINGS</small></button>
+  <button class="s" onclick="go('android.settings.SETTINGS','③ 설정 홈')">③ 설정 홈 (폴백 2)<small>android.settings.SETTINGS</small></button>
+  <button class="s" onclick="ladder()">🪜 사다리 자동 실행 (romi-mode.js 동일 로직)<small>①→②→③ 순서, 화면 이탈 시 다음 폴백 중단</small></button>
+
+  <div class="log" id="log">대기 중 — 버튼을 누르면 결과가 여기 기록됩니다.
+확인 포인트: ①에서 바로 Wi-Fi 통화 토글 화면이 뜨는지 (기종별 상이)</div>
+</div>
+<script>
+  var logEl = document.getElementById('log');
+  function log(t){ logEl.textContent += '\n[' + new Date().toTimeString().slice(0,8) + '] ' + t; }
+  (function(){
+    var ua = navigator.userAgent || '';
+    var plat = /iPhone|iPad|iPod/i.test(ua) ? 'iOS (딥링크 불가)' : /SM-|Samsung/i.test(ua) ? '갤럭시' : /Android/i.test(ua) ? 'Android' : '기타';
+    var inapp = /KAKAOTALK|NAVER|Instagram|FBAN|FBAV|Line\//i.test(ua);
+    document.getElementById('env').innerHTML = '<b>플랫폼:</b> ' + plat + '<br><b>인앱 브라우저:</b> ' + (inapp ? '예 ⚠️' : '아니오') + '<br><b>UA:</b> ' + ua;
+    if (inapp) document.getElementById('inappWarn').style.display = 'block';
+    if (plat.indexOf('iOS') === 0) log('iOS 감지 — 설정 딥링크는 웹에서 차단됩니다 (가이드 카드가 최대치)');
+  })();
+  function go(action, label){
+    log(label + ' 발사');
+    try { location.href = 'intent://#Intent;action=' + action + ';end'; }
+    catch(e){ log('예외: ' + e.message); }
+    setTimeout(function(){ log(document.hidden ? '→ 화면 이탈 감지 (성공 추정)' : '→ 화면 그대로 (차단/미지원 추정)'); }, 1000);
+  }
+  function ladder(){
+    log('사다리 시작');
+    try { location.href = 'intent://#Intent;action=android.settings.WIFI_CALLING_SETTINGS;end'; } catch(e){}
+    setTimeout(function(){
+      if (document.hidden) { log('① 성공 — 종료'); return; }
+      log('① 실패 → ② 발사');
+      try { location.href = 'intent://#Intent;action=android.settings.WIRELESS_SETTINGS;end'; } catch(e){}
+      setTimeout(function(){
+        if (document.hidden) { log('② 성공 — 종료'); return; }
+        log('② 실패 → ③ 발사');
+        try { location.href = 'intent://#Intent;action=android.settings.SETTINGS;end'; } catch(e){}
+      }, 900);
+    }, 1200);
+  }
+</script>
+</body>
+</html>

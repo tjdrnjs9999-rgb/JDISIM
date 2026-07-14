@@ -2318,7 +2318,7 @@
       <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.78rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
     </div>
 
-    <div class="jd-step locked" id="step-days" style="margin-bottom: 16px;">
+    <div class="jd-step locked" id="step-days">
       <div class="jd-step-head option-group-title" onclick="reopenStep('days')">
         <span class="jd-step-label"><span class="step-num">5</span>사용 기간 선택</span>
         <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
@@ -2329,24 +2329,33 @@
       <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.78rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
     </div>
 
-    <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
-    <!-- ✚ 마지막 선택: 내 한국번호 그대로 통화 세팅 (애드온 · Wi-Fi 통화 기반이지만 기능명 노출 금지 — 혜택 중심 카피 유지) -->
-    <div id="krCallAddon" onclick="toggleKrCallAddon()" style="cursor:pointer;margin:4px 0 16px;padding:14px;border:1.5px solid rgba(249,115,22,0.35);border-radius:16px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.04));transition:border-color .15s, box-shadow .15s;">
-      <div style="display:flex;align-items:flex-start;gap:11px;">
-        <div id="krCallAddonBox" style="flex-shrink:0;width:22px;height:22px;border-radius:7px;border:2px solid rgba(249,115,22,0.55);background:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#fff;margin-top:1px;"></div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:0.7rem;font-weight:800;color:#F2751F;margin-bottom:3px;">마지막 하나만 더 — 선택 사항</div>
-          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;line-height:1.45;word-break:keep-all;">📞 해외에서도 <em style="font-style:normal;color:#F2751F;">내 한국번호</em>로 전화 받고 걸기</div>
-          <div style="font-size:0.76rem;font-weight:600;color:#475569;line-height:1.6;margin-top:4px;word-break:keep-all;">은행·병원·회사 전화, 010 내 번호 그대로 — 로밍 수신료 걱정 없이. 출국 전 카톡 1:1로 세팅을 끝까지 봐드려요 <strong style="color:#b45309;">(완료 못 하면 이 요금 100% 환불)</strong></div>
-          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:7px;">
-            <span id="krCallAddonPrice" style="font-size:0.9rem;font-weight:900;color:#F2751F;"></span>
-            <span style="font-size:0.7rem;font-weight:700;color:#94a3b8;">눌러서 담기</span>
-          </div>
-          <div style="font-size:0.66rem;font-weight:600;color:#94a3b8;line-height:1.55;margin-top:7px;border-top:1px dashed rgba(15,23,42,0.08);padding-top:6px;word-break:keep-all;">세팅 케어 서비스 요금입니다. 통화 기능 자체는 통신사(SKT/KT/LGU+)가 제공하며 지원 기종·명칭이 다를 수 있어요. 발신은 국내 기준 요금(통신사별 상이), 자세한 기준은 통신사 앱에서 확인.</div>
+    <!-- ⑥ 전화 걸고 받기 — 필수 선택 단계 (선택함/선택 안 함 중 하나를 눌러야 결제 영역 공개) -->
+    <style>.jd-ku>span{display:inline-block}</style>
+    <div class="jd-step locked" id="step-krcall" style="margin-bottom: 16px;">
+      <div class="jd-step-head option-group-title" onclick="reopenStep('krcall')">
+        <span class="jd-step-label"><span class="step-num">6</span>전화 걸고 받기</span>
+        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
+      </div>
+      <div class="jd-step-body">
+        <div class="jd-ku" style="margin-top:6px;font-size:0.84rem;font-weight:800;color:#0f172a;line-height:1.55;">
+          <span>📞 해외에서도</span> <span style="color:#F2751F;">내&nbsp;한국번호로</span> <span>전화 받고 걸기</span>
+        </div>
+        <div class="jd-ku" style="margin-top:4px;font-size:0.76rem;font-weight:600;color:#475569;line-height:1.65;">
+          <span>은행·병원·회사 전화,</span> <span>010 내 번호 그대로 —</span> <span>로밍 수신료 걱정 없이.</span>
+          <span>출국 전 카톡 1:1로</span> <span>세팅을 끝까지 봐드려요</span>
+          <strong style="color:#b45309;display:inline-block;">(완료 못 하면 이 요금 100% 환불)</strong>
+        </div>
+        <div id="krCallPills" class="option-pills jd-center-pills" style="margin-top: 10px;"></div>
+        <div class="jd-ku" style="margin-top:8px;font-size:0.66rem;font-weight:600;color:#94a3b8;line-height:1.6;">
+          <span>세팅 케어 서비스 요금입니다.</span> <span>통화 기능 자체는</span> <span>통신사(SKT/KT/LGU+)&nbsp;제공이며</span>
+          <span>지원 기종·명칭이 다를 수 있어요.</span> <span>발신은 국내 기준 요금</span> <span>(통신사별 상이) —</span>
+          <span>자세한 기준은</span> <span>통신사 앱에서 확인.</span>
         </div>
       </div>
     </div>
-    <div id="krCallStoreNote" style="display:none;margin:-8px 0 14px;padding:9px 12px;border-radius:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);font-size:0.72rem;font-weight:700;color:#166534;line-height:1.55;word-break:keep-all;">🟢 스마트스토어로 구매하실 땐 추가상품 <strong>‘한국번호 통화 세팅’</strong>을 함께 담아주세요 (미등록 시 카톡으로 요청 가능)</div>
+
+    <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
+    <div id="krCallStoreNote" class="jd-ku" style="display:none;margin:4px 0 14px;padding:9px 12px;border-radius:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);font-size:0.72rem;font-weight:700;color:#166534;line-height:1.6;">🟢 <span>스마트스토어로 구매하실 땐</span> <span>추가상품 <strong>‘한국번호 통화 세팅’</strong>을</span> <span>함께 담아주세요</span> <span style="color:#4b8a5f;">(미등록 시 카톡으로 요청 가능)</span></div>
     <!-- Quantity & Price Calculator -->
     <div class="checkout-footer">
       <div>
@@ -2431,38 +2440,39 @@
     let PORTONE_MERCHANT_ID = "";
     let SMARTSTORE_URL = "https://smartstore.naver.com/butt_on"; // 스마트스토어 대체 구매 링크
 
-    // ===== 애드온: 내 한국번호 그대로 통화 세팅 =====
+    // ===== ⑥단계: 전화 걸고 받기 (한국번호 통화 세팅) =====
     // ⚠️ 가격 확정 필요 (스마트스토어 추가상품 가격과 반드시 일치시킬 것)
     const KRCALL_ADDON = { key: 'krcall', name: '내 한국번호 그대로 통화 세팅', price: 3900 };
     let krCallAddonOn = false;
-    function renderKrCallAddon() {
-      const card = document.getElementById('krCallAddon');
-      const box = document.getElementById('krCallAddonBox');
-      const priceEl = document.getElementById('krCallAddonPrice');
-      const note = document.getElementById('krCallStoreNote');
-      if (!card || !box || !priceEl) return;
-      priceEl.textContent = '+' + KRCALL_ADDON.price.toLocaleString() + '원';
-      if (krCallAddonOn) {
-        box.textContent = '✓';
-        box.style.background = 'linear-gradient(135deg,#F97316,#F59E0B)';
-        box.style.borderColor = 'transparent';
-        card.style.borderColor = '#F97316';
-        card.style.boxShadow = '0 6px 18px rgba(249,115,22,0.18)';
-      } else {
-        box.textContent = '';
-        box.style.background = '#fff';
-        box.style.borderColor = 'rgba(249,115,22,0.55)';
-        card.style.borderColor = 'rgba(249,115,22,0.35)';
-        card.style.boxShadow = 'none';
-      }
-      if (note) note.style.display = krCallAddonOn ? 'block' : 'none';
+    let krCallChosen = false; // 선택함/안 함 중 하나를 눌렀는지 (누르기 전엔 결제 영역 비공개)
+    function renderKrCallPills() {
+      const box = document.getElementById('krCallPills');
+      if (!box) return;
+      box.innerHTML = `<button type="button" class="option-pill" data-krcall="on">📞 선택함 · +${KRCALL_ADDON.price.toLocaleString()}원</button>`
+        + `<button type="button" class="option-pill" data-krcall="off">선택 안 함</button>`;
+      box.querySelectorAll('[data-krcall]').forEach(b => b.addEventListener('click', () => {
+        box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+        onKrCallChange(b.getAttribute('data-krcall') === 'on');
+      }));
     }
-    function toggleKrCallAddon() {
-      krCallAddonOn = !krCallAddonOn;
-      renderKrCallAddon();
-      jdTrack('addon_toggle', { addon: KRCALL_ADDON.key, on: krCallAddonOn, country: currentSelectedCountry || '' });
+    function onKrCallChange(on) {
+      krCallAddonOn = on;
+      krCallChosen = true;
+      const note = document.getElementById('krCallStoreNote');
+      if (note) note.style.display = on ? 'block' : 'none';
+      jdCompleteStep('krcall', on ? `선택함 +${KRCALL_ADDON.price.toLocaleString()}원` : '선택 안 함');
+      jdTrack('addon_toggle', { addon: KRCALL_ADDON.key, on: on, country: currentSelectedCountry || '' });
       if (navigator.vibrate) navigator.vibrate(6);
       updatePricing();
+      jdCheckoutOpen(); // 6단계까지 모두 완료 → 결제 영역 공개
+    }
+    function resetKrCallStep() {
+      krCallAddonOn = false;
+      krCallChosen = false;
+      const box = document.getElementById('krCallPills');
+      if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
+      const note = document.getElementById('krCallStoreNote');
+      if (note) note.style.display = 'none';
     }
     let PORTONE_PG_PROVIDER = "";
     
@@ -3612,7 +3622,7 @@
     // 이전 단계를 누르기 전까지 다음 단계는 잠금. 옵션이 1개뿐인 단계는 자동 통과.
     let allCarrierOptions = [];
     let selectedNetScope = '';
-    const JD_STEPS = ['scope', 'carrier', 'plan', 'cap', 'days'];
+    const JD_STEPS = ['scope', 'carrier', 'plan', 'cap', 'days', 'krcall'];
 
     function jdStepEl(step) { return document.getElementById('step-' + step); }
     function jdSetStep(step, state) {
@@ -3646,6 +3656,7 @@
       for (let i = from + 1; i < JD_STEPS.length; i++) jdSetStep(JD_STEPS[i], 'locked');
       const co = document.getElementById('sheetCheckoutArea');
       if (co) co.style.display = 'none';
+      if (from < JD_STEPS.indexOf('krcall')) resetKrCallStep(); // ⑥단계보다 앞이 바뀌면 통화 선택도 초기화
       if (step !== 'days') {
         const an = document.getElementById('activationNotice');
         if (an && from < 1) an.style.display = 'none';
@@ -3675,7 +3686,8 @@
       jdTrack('checkout_reveal', {
         country: currentSelectedCountry || '',
         carrier: (activeCarrier && activeCarrier.carrier) || '',
-        plan_type: selectedPlanType || '', capacity: selectedCapacity || '', days: selectedDays || 0
+        plan_type: selectedPlanType || '', capacity: selectedCapacity || '', days: selectedDays || 0,
+        addon_krcall: krCallAddonOn
       });
       co.style.display = 'block';
       if (co.scrollIntoView) setTimeout(() => co.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
@@ -3695,7 +3707,7 @@
       JD_STEPS.forEach(s => jdSetStep(s, 'locked'));
       const co = document.getElementById('sheetCheckoutArea');
       if (co) co.style.display = 'none';
-      krCallAddonOn = false; renderKrCallAddon(); // 애드온도 초기화
+      resetKrCallStep(); renderKrCallPills(); // ⑥단계도 초기화
       ['activationNotice', 'capacityFeel', 'daysFeel'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
@@ -3941,9 +3953,10 @@
     function onDaysChange(val) {
       selectedDays = parseInt(val);
       jdCompleteStep('days', selectedDays + '일');
+      jdResetAfter('days'); // ⑥단계 재잠금 (기간 재선택 시 통화 선택도 다시)
       renderDaysFeel(selectedDays);
       updatePricing();
-      jdCheckoutOpen(); // 5단계 모두 완료 → 결제 영역 공개
+      jdActivateStep('krcall'); // ⑥ 전화 걸고 받기 — 선택함/안 함을 눌러야 결제 영역 공개
     }
 
     // 일수 계산 도우미: "4일권 = 3박 4일" — 잘못 산 일수를 미리 방지
