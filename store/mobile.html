@@ -2213,6 +2213,16 @@
         <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">반드시 기기 설정에서 [데이터 로밍 ON]이 활성화되어 있는지 확인해 주세요. 로컬 회선 설정 완료에 1~3분 정도 시간이 걸릴 수 있습니다.</p>
       </div>
 
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #4f46e5;">Q. 여행 중에 한국 은행·카카오 인증문자를 받을 수 있나요?</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">네! 한국 회선을 켜두고(데이터 로밍만 OFF) 데이터는 JDISIM eSIM으로 쓰는 듀얼심 설정이면 인증문자를 그대로 받아요. <a href="guide/dualsim.html" style="color:#F2751F;font-weight:800;">5분 설정 가이드 보기 →</a></p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 12px;">
+        <h4 style="margin: 0 0 6px 0; font-size: 0.9rem; color: #4f46e5;">Q. 부모님이 가시는데 설치가 걱정돼요.</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: #334155; line-height: 1.4;">출국 전날 저희가 부모님께 직접 전화드려 설치·듀얼심 세팅·테스트까지 끝내드리는 <a href="care-plus.html" style="color:#F2751F;font-weight:800;">안심 출국 케어 🧡</a>를 이용해 보세요. 완료 보장!</p>
+      </div>
+
       <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" class="order-action-btn cta-sheen" style="text-align: center; text-decoration: none; display: block; box-sizing: border-box;">
         💬 카카오톡 1:1 실시간 문의하기
       </a>
@@ -2320,6 +2330,23 @@
     </div>
 
     <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
+    <!-- ✚ 마지막 선택: 내 한국번호 그대로 통화 세팅 (애드온 · Wi-Fi 통화 기반이지만 기능명 노출 금지 — 혜택 중심 카피 유지) -->
+    <div id="krCallAddon" onclick="toggleKrCallAddon()" style="cursor:pointer;margin:4px 0 16px;padding:14px;border:1.5px solid rgba(249,115,22,0.35);border-radius:16px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.04));transition:border-color .15s, box-shadow .15s;">
+      <div style="display:flex;align-items:flex-start;gap:11px;">
+        <div id="krCallAddonBox" style="flex-shrink:0;width:22px;height:22px;border-radius:7px;border:2px solid rgba(249,115,22,0.55);background:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#fff;margin-top:1px;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.7rem;font-weight:800;color:#F2751F;margin-bottom:3px;">마지막 하나만 더 — 선택 사항</div>
+          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;line-height:1.45;word-break:keep-all;">📞 해외에서도 <em style="font-style:normal;color:#F2751F;">내 한국번호</em>로 전화 받고 걸기</div>
+          <div style="font-size:0.76rem;font-weight:600;color:#475569;line-height:1.6;margin-top:4px;word-break:keep-all;">은행·병원·회사 전화, 010 내 번호 그대로 — 로밍 수신료 걱정 없이. 출국 전 카톡 1:1로 세팅을 끝까지 봐드려요 <strong style="color:#b45309;">(완료 못 하면 이 요금 100% 환불)</strong></div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:7px;">
+            <span id="krCallAddonPrice" style="font-size:0.9rem;font-weight:900;color:#F2751F;"></span>
+            <span style="font-size:0.7rem;font-weight:700;color:#94a3b8;">눌러서 담기</span>
+          </div>
+          <div style="font-size:0.66rem;font-weight:600;color:#94a3b8;line-height:1.55;margin-top:7px;border-top:1px dashed rgba(15,23,42,0.08);padding-top:6px;word-break:keep-all;">세팅 케어 서비스 요금입니다. 통화 기능 자체는 통신사(SKT/KT/LGU+)가 제공하며 지원 기종·명칭이 다를 수 있어요. 발신은 국내 기준 요금(통신사별 상이), 자세한 기준은 통신사 앱에서 확인.</div>
+        </div>
+      </div>
+    </div>
+    <div id="krCallStoreNote" style="display:none;margin:-8px 0 14px;padding:9px 12px;border-radius:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);font-size:0.72rem;font-weight:700;color:#166534;line-height:1.55;word-break:keep-all;">🟢 스마트스토어로 구매하실 땐 추가상품 <strong>‘한국번호 통화 세팅’</strong>을 함께 담아주세요 (미등록 시 카톡으로 요청 가능)</div>
     <!-- Quantity & Price Calculator -->
     <div class="checkout-footer">
       <div>
@@ -2403,6 +2430,40 @@
     
     let PORTONE_MERCHANT_ID = "";
     let SMARTSTORE_URL = "https://smartstore.naver.com/butt_on"; // 스마트스토어 대체 구매 링크
+
+    // ===== 애드온: 내 한국번호 그대로 통화 세팅 =====
+    // ⚠️ 가격 확정 필요 (스마트스토어 추가상품 가격과 반드시 일치시킬 것)
+    const KRCALL_ADDON = { key: 'krcall', name: '내 한국번호 그대로 통화 세팅', price: 3900 };
+    let krCallAddonOn = false;
+    function renderKrCallAddon() {
+      const card = document.getElementById('krCallAddon');
+      const box = document.getElementById('krCallAddonBox');
+      const priceEl = document.getElementById('krCallAddonPrice');
+      const note = document.getElementById('krCallStoreNote');
+      if (!card || !box || !priceEl) return;
+      priceEl.textContent = '+' + KRCALL_ADDON.price.toLocaleString() + '원';
+      if (krCallAddonOn) {
+        box.textContent = '✓';
+        box.style.background = 'linear-gradient(135deg,#F97316,#F59E0B)';
+        box.style.borderColor = 'transparent';
+        card.style.borderColor = '#F97316';
+        card.style.boxShadow = '0 6px 18px rgba(249,115,22,0.18)';
+      } else {
+        box.textContent = '';
+        box.style.background = '#fff';
+        box.style.borderColor = 'rgba(249,115,22,0.55)';
+        card.style.borderColor = 'rgba(249,115,22,0.35)';
+        card.style.boxShadow = 'none';
+      }
+      if (note) note.style.display = krCallAddonOn ? 'block' : 'none';
+    }
+    function toggleKrCallAddon() {
+      krCallAddonOn = !krCallAddonOn;
+      renderKrCallAddon();
+      jdTrack('addon_toggle', { addon: KRCALL_ADDON.key, on: krCallAddonOn, country: currentSelectedCountry || '' });
+      if (navigator.vibrate) navigator.vibrate(6);
+      updatePricing();
+    }
     let PORTONE_PG_PROVIDER = "";
     
     let currentSelectedCountry = '';
@@ -3634,6 +3695,7 @@
       JD_STEPS.forEach(s => jdSetStep(s, 'locked'));
       const co = document.getElementById('sheetCheckoutArea');
       if (co) co.style.display = 'none';
+      krCallAddonOn = false; renderKrCallAddon(); // 애드온도 초기화
       ['activationNotice', 'capacityFeel', 'daysFeel'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
@@ -3933,12 +3995,13 @@
       }
 
       if (activePlan) {
-        const total = activePlan.final_price * purchaseQty;
+        const esimTotal = activePlan.final_price * purchaseQty;
+        const total = esimTotal + (krCallAddonOn ? KRCALL_ADDON.price : 0);
         setTotalPriceAnimated(total);
         const perDayEl = document.getElementById('perDayPrice');
         if (perDayEl) {
           const days = parseInt(activePlan.duration) || selectedDays || 1;
-          perDayEl.innerText = days > 1 ? `☕ 하루 약 ${Math.round(total / purchaseQty / days).toLocaleString()}원 꼴` : '';
+          perDayEl.innerText = days > 1 ? `☕ 하루 약 ${Math.round(esimTotal / purchaseQty / days).toLocaleString()}원 꼴` : '';
         }
       }
     }
@@ -4048,7 +4111,8 @@
       jdTrack('checkout_click', {
         country: currentSelectedCountry || '',
         carrier: (activeCarrier && activeCarrier.carrier) || '',
-        value: (activePlan ? activePlan.final_price * purchaseQty : 0), currency: 'KRW'
+        addon_krcall: krCallAddonOn,
+        value: (activePlan ? activePlan.final_price * purchaseQty : 0) + (krCallAddonOn ? KRCALL_ADDON.price : 0), currency: 'KRW'
       });
       const name = document.getElementById('buyerName').value.trim();
       const phone = document.getElementById('buyerPhone').value.trim();
@@ -4065,7 +4129,7 @@
     }
 
     function showMobileConfirmLayer() {
-      const priceVal = activePlan.final_price * purchaseQty;
+      const priceVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
       let layer = document.getElementById('mobileConfirmLayer');
       if (layer) layer.remove();
       layer = document.createElement('div');
@@ -4089,6 +4153,7 @@
                 + row('📅', '유효기간', activeCarrier.validity || '-').replace('border-bottom:1px solid rgba(15,23,42,0.05);', '')
                 + '</div>';
             })()}
+            ${krCallAddonOn ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:700;color:#0f172a;"><span>📞 ${KRCALL_ADDON.name} <span style="font-size:0.68rem;color:#94a3b8;font-weight:600;">카톡 1:1 · 완료 보장</span></span><span>+${KRCALL_ADDON.price.toLocaleString()}원</span></div>` : ''}
             <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
               <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;font-size:1.05rem;">${priceVal.toLocaleString()}원</span>
             </div>
@@ -4184,10 +4249,10 @@
 
       await loadEnvForPayment();
 
-      const priceVal = activePlan.final_price * purchaseQty;
+      const priceVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
       const orderCode = 'JD' + Date.now().toString().slice(-8);
       const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);
-      const paymentName = `${currentSelectedCountry} ${activeCarrier.carrier} eSIM`;
+      const paymentName = `${currentSelectedCountry} ${activeCarrier.carrier} eSIM` + (krCallAddonOn ? ' + 한국번호 통화 세팅' : '');
 
       const lookupKey = `${activePlan.product_code}_${selectedDays}일`;
       let targetOptionText = (window.OPTION_CODES_MAP && window.OPTION_CODES_MAP[lookupKey]);
@@ -4215,7 +4280,14 @@
             price: activePlan.final_price,
             iccid: randIccid
           }
-        ]
+        ].concat(krCallAddonOn ? [{
+          productCode: 'SVC-KRCALL',
+          productName: KRCALL_ADDON.name,
+          optionName: '카톡 1:1 원격 세팅 · 완료 보장',
+          quantity: 1,
+          price: KRCALL_ADDON.price,
+          iccid: ''
+        }] : [])
       };
 
       function submitRealOrder() {

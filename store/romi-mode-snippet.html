@@ -1,0 +1,14 @@
+<!-- ============================================================
+  ROMI Mode 삽입 스니펫 — issue.html(케어링크)에 붙여넣기
+  위치 추천: 보딩패스 티켓의 설치존 "아래" (설치가 항상 최우선)
+  ============================================================ -->
+
+<!-- ① 티켓 본문 안, 설치존 다음 위치에: -->
+<div id="romiModeSlot"></div>
+
+<!-- ② </body> 직전에: -->
+<script src="romi-mode.js?v=20260714a"></script>
+<script>
+  // gateParams: aligo_bridge v6.3 실측 — care(항상)/o/n/bd/plan(조건부). 하나라도 있으면 구매자 판정.
+  RomiMode.init({ gateParams: ['care', 'o', 'n', 'bd', 'plan'] });
+</script>
