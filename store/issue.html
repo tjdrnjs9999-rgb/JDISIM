@@ -383,12 +383,17 @@
     .rv { opacity:1; transform:none; transition:none; }
     .tkt.printing { animation:none; } .donut-fg,.gauge i { transition:none; }
   }
-  /* 📖 가독성 플로어 (2026-07-14): 마이크로 라벨 하한 한 단계 상향
-     — 본문(0.86~0.95rem)은 우상단 글자크기 버튼(fz2/fz3)으로 확대 가능 */
+  /* 📖 가독성 플로어 (2026-07-14): 마이크로 라벨 하한 한 단계 상향 */
   .ey, .specs .sk, .specs .s2, .fzbtn span { font-size:0.66rem; }
   .tkt-band .twm, .trust span, .sw-note { font-size:0.7rem; }
   .tkt-hero .nm i, .tz-h span, .acc-h .acnt, .chip { font-size:0.72rem; }
   .st, .specs .sv small, .tkt-more { font-size:0.76rem; }
+  /* 📖 본문 플로어 (2026-07-15): 발급링크 본문 최소 16px (base 17px 기준 0.94rem)
+     — 스토어와 동일 정책. 글자크기 버튼(fz2/fz3)으로 추가 확대 가능 */
+  .muted, .irow .tx, .tip, .romi .bub, .notice, .agree-box, .chk, .qrfull .qf-tip,
+  .acc-h, .srow, .jbtns .btn, .btn-ghost, .tz-h, .tkt-grid .v { font-size:0.94rem; }
+  .tab, .sq, .pow-line { font-size:0.92rem; }
+  .tkt-acts button, .stp-note, .offbar, .copyline .val, .sw-fc, .sw-wx { font-size:0.9rem; }
 </style>
 </head>
 <body>
@@ -1767,10 +1772,10 @@ function runDiagnose(){
 }
 </script>
 <!-- ROMI Mode 위젯 (여행모드/한국모드 — 구매자 전용, 비구매자 자동 숨김) -->
-<script src="romi-mode.js?v=20260714b"></script>
+<script src="romi-mode.js?v=20260715a"></script>
 <script>
-  // gateParams: aligo_bridge v6.3 실측 — care(항상) / o / n / bd / plan(조건부). 하나라도 있으면 구매자 판정.
-  RomiMode.init({ gateParams: ['care', 'o', 'n', 'bd', 'plan'] });
+  // gateParams: aligo_bridge v6.3 실측 — care(항상) / o / n / bd / plan(조건부) + local(내 여행 카드 → 이 기기 주문). 하나라도 있으면 구매자 판정.
+  RomiMode.init({ gateParams: ['care', 'o', 'n', 'bd', 'plan', 'local'] });
   // 로미 챗봇 로드 (발급링크에서도 상담 가능)
   // ⚠️ 기존엔 이 코드가 </html> 뒤 생텍스트로 있어 화면에 노출 + 챗봇 미로드 — 2026-07-14 수정
   (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260714a'; sc.defer = true; document.body.appendChild(sc); })();
