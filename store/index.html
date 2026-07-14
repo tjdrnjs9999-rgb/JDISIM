@@ -796,7 +796,7 @@
 
         <!-- Store Metadata -->
         <div class="store-meta">
-          <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 좌측 스텁 + 보장 3행) -->
+          <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 좌측 스텁 + 보장 3열) -->
           <div class="rg-ticket" style="margin: 4px 0 18px;">
             <div class="rg-edge"></div>
             <div class="rg-inner">
@@ -830,11 +830,14 @@
             </div>
           </div>
           <style>
-            .rg-ticket { position: relative; background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%); border: 1px solid rgba(242,117,31,0.16); border-radius: 20px; overflow: hidden; box-shadow: 0 12px 32px rgba(242,117,31,0.1); }
-            .rg-edge { height: 5px; background: linear-gradient(90deg, #F97316, #F59E0B 55%, #2BB3A3); }
-            .rg-inner { display: grid; grid-template-columns: 264px 2px 1fr; align-items: stretch; gap: 0 26px; padding: 0; }
+            /* store-meta: 티켓·배너·카운트를 세로 스택 풀폭으로 (flex 짓눌림 방지) */
+            .store-meta { display: block; }
+            .rg-ticket { position: relative; background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%); border: 1px solid rgba(242,117,31,0.16); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 36px rgba(242,117,31,0.1); }
+            .rg-edge { height: 5px; background: linear-gradient(90deg, #F97316, #F59E0B 40%, #2BB3A3 70%, #F97316); background-size: 200% 100%; animation: rgEdgeFlow 8s linear infinite; }
+            @keyframes rgEdgeFlow { 0% { background-position: 0 0; } 100% { background-position: 200% 0; } }
+            .rg-inner { display: grid; grid-template-columns: 282px 2px 1fr; align-items: stretch; gap: 0 24px; padding: 0; }
             /* ── 좌측 티켓 스텁 ── */
-            .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 24px 22px 24px 26px; background: linear-gradient(170deg, rgba(249,115,22,0.055), rgba(245,158,11,0.02) 70%); }
+            .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 26px 22px 26px 28px; background: linear-gradient(170deg, rgba(249,115,22,0.055), rgba(245,158,11,0.02) 70%); }
             .rg-eyebrow { font-size: 0.68rem; font-weight: 900; letter-spacing: 2.8px; color: #F97316; }
             .rg-title { font-size: 1.22rem; font-weight: 900; line-height: 1.4; color: #221510; letter-spacing: -0.018em; word-break: keep-all; }
             .rg-code { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
@@ -847,24 +850,23 @@
             .rg-perf::before, .rg-perf::after { content: ''; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #FAF8F4; border: 1px solid rgba(242,117,31,0.16); }
             .rg-perf::before { top: -8px; }
             .rg-perf::after { bottom: -8px; }
-            /* ── 우측 보장 3행 ── */
-            .rg-rows { display: flex; flex-direction: column; justify-content: center; padding: 14px 26px 14px 0; }
-            .rg-row { display: flex; align-items: center; gap: 15px; min-width: 0; padding: 13px 14px; border-radius: 15px; text-decoration: none; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), background 0.22s, box-shadow 0.22s; }
-            .rg-row + .rg-row { border-top: 1px dashed rgba(34,21,16,0.08); }
-            .rg-row:hover { transform: translateX(5px); background: rgba(255,255,255,0.92); box-shadow: 0 8px 20px rgba(242,117,31,0.1); }
+            /* ── 우측 보장 3열 (카드형) ── */
+            .rg-rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-content: center; padding: 22px 26px 22px 0; }
+            .rg-row { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic badge" "txt txt"; row-gap: 13px; align-items: start; min-width: 0; padding: 18px 16px 17px; border-radius: 17px; background: rgba(255,255,255,0.75); border: 1px dashed rgba(242,117,31,0.2); text-decoration: none; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.25s, box-shadow 0.25s, border-color 0.25s; }
+            .rg-row:hover { transform: translateY(-4px); background: #FFFFFF; border-color: rgba(242,117,31,0.4); box-shadow: 0 14px 28px rgba(242,117,31,0.13); }
             .rg-row:hover .rg-badge { transform: scale(1.14) rotate(-6deg); }
-            .rg-ic { flex-shrink: 0; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.28rem; }
+            .rg-ic { grid-area: ic; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.28rem; }
             .rg-ic-orange { background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(249,115,22,0.05)); }
             .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.05)); }
             .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.05)); }
-            .rg-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-            .rg-txt strong { font-size: 0.94rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.4; }
-            .rg-txt span { font-size: 0.76rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.45; }
-            .rg-badge { margin-left: auto; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
+            .rg-txt { grid-area: txt; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+            .rg-txt strong { font-size: 0.93rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.42; }
+            .rg-txt span { font-size: 0.76rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.48; }
+            .rg-badge { grid-area: badge; justify-self: end; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
             .rg-b-orange { background: linear-gradient(135deg, #F97316, #FB923C); box-shadow: 0 3px 9px rgba(249,115,22,0.35); }
             .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
             .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
-            @media (max-width: 860px) {
+            @media (max-width: 959px) {
               .rg-inner { grid-template-columns: 1fr; gap: 0; }
               .rg-stub { padding: 20px 20px 16px; }
               .rg-fox { width: 64px; bottom: 8px; }
@@ -872,21 +874,37 @@
               .rg-perf::before, .rg-perf::after { top: -8px; bottom: auto; }
               .rg-perf::before { left: -24px; }
               .rg-perf::after { left: auto; right: -24px; }
-              .rg-rows { padding: 6px 14px 10px; }
+              .rg-rows { grid-template-columns: 1fr; gap: 10px; padding: 14px 16px 16px; }
+              .rg-row { grid-template-columns: auto 1fr auto; grid-template-areas: "ic txt badge"; row-gap: 0; column-gap: 13px; align-items: center; padding: 12px 14px; }
+              .rg-badge { justify-self: auto; }
               .rg-row:hover { transform: none; }
             }
-            @media (prefers-reduced-motion: reduce) { .rg-fox { animation: none !important; } .rg-row, .rg-badge { transition: none !important; } }
+            @media (prefers-reduced-motion: reduce) { .rg-fox, .rg-edge { animation: none !important; } .rg-row, .rg-badge { transition: none !important; } }
+            /* ── 📱 자가진단 배너 (웜 팔레트 · 티켓 자매 디자인) ── */
+            .dc-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 15px 20px; background: linear-gradient(165deg, #FFFFFF, #FFF9F3); border: 1px dashed rgba(242,117,31,0.28); border-radius: 18px; box-shadow: 0 6px 18px rgba(242,117,31,0.06); cursor: pointer; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, border-color 0.2s; }
+            .dc-banner:hover { transform: translateY(-2px); border-color: rgba(242,117,31,0.5); box-shadow: 0 12px 26px rgba(242,117,31,0.12); }
+            .dc-banner:focus-visible { outline: 2px solid rgba(249,115,22,0.55); outline-offset: 2px; }
+            .dc-ic { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(245,158,11,0.08)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+            .dc-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+            .dc-tx strong { font-size: 0.95rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
+            .dc-tx span { font-size: 0.78rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; }
+            .dc-go { margin-left: auto; flex-shrink: 0; font-size: 0.82rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #F97316, #F59E0B); padding: 10px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(249,115,22,0.3); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+            .dc-banner:hover .dc-go { transform: translateX(3px); }
+            @media (max-width: 640px) { .dc-go { padding: 9px 14px; font-size: 0.78rem; } }
+            /* ── 검색 결과 카운트 칩 ── */
+            .store-meta .product-count { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 14px; padding: 9px 17px; background: #FFFFFF; border: 1px solid rgba(242,117,31,0.14); border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #8a7a6d; box-shadow: 0 4px 12px rgba(242,117,31,0.05); }
+            .store-meta .product-count span { color: #F97316; font-weight: 900; }
           </style>
           <!-- 📱 기종 자가진단 배너 -->
-          <div onclick="var b=document.getElementById('navDeviceCheckBtn'); if(b) b.click();" style="display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:15px 20px;background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,0.05);cursor:pointer;transition:transform 0.18s ease, box-shadow 0.18s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 26px rgba(15,23,42,0.09)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(15,23,42,0.05)';">
-            <div style="width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(249,115,22,0.12),rgba(245,158,11,0.12));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📱</div>
-            <div style="display:flex;flex-direction:column;gap:2px;">
-              <strong style="font-size:0.95rem;font-weight:800;color:#0f172a;">내 폰에서 이심이 될까요?</strong>
-              <span style="font-size:0.78rem;font-weight:600;color:#94a3b8;">구매 전 10초 자가진단 — 기종만 고르면 바로 확인돼요</span>
+          <div class="dc-banner" role="button" tabindex="0" aria-label="기종 자가진단 열기" onclick="var b=document.getElementById('navDeviceCheckBtn'); if(b) b.click();" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <div class="dc-ic">📱</div>
+            <div class="dc-tx">
+              <strong>내 폰에서 이심이 될까요?</strong>
+              <span>구매 전 10초 자가진단 — 기종만 고르면 바로 확인돼요</span>
             </div>
-            <span style="margin-left:auto;flex-shrink:0;font-size:0.82rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#F97316,#F59E0B);padding:10px 18px;border-radius:24px;box-shadow:0 4px 12px rgba(249,115,22,0.3);">진단하기 →</span>
+            <span class="dc-go">진단하기 →</span>
           </div>
-          <div class="product-count">총 <span id="productCountNum">0</span>개의 여행지가 검색됨</div>
+          <div class="product-count">✈️ 총 <span id="productCountNum">0</span>개의 여행지가 검색됨</div>
         </div>
 
         <!-- Products Grid -->

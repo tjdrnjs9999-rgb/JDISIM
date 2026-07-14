@@ -634,10 +634,10 @@
       gap: 11px;
       margin: 10px 0 2px;
       padding: 12px 14px;
-      background: #ffffff;
-      border: 1px solid #eef2f7;
+      background: linear-gradient(165deg, #FFFFFF, #FFF9F3);
+      border: 1px dashed rgba(242, 117, 31, 0.26);
       border-radius: 16px;
-      box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+      box-shadow: 0 5px 16px rgba(242, 117, 31, 0.06);
       cursor: pointer;
       transition: transform 0.18s ease;
     }
@@ -651,8 +651,8 @@
       flex-shrink: 0;
     }
     .dcb-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-    .dcb-text strong { font-size: 0.84rem; font-weight: 800; color: #0f172a; }
-    .dcb-text span { font-size: 0.7rem; font-weight: 600; color: #94a3b8; }
+    .dcb-text strong { font-size: 0.84rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; }
+    .dcb-text span { font-size: 0.7rem; font-weight: 600; color: #8a7a6d; }
     .dcb-arrow {
       margin-left: auto;
       flex-shrink: 0;
@@ -924,8 +924,11 @@
     }
     .rg-edge {
       height: 5px;
-      background: linear-gradient(90deg, #F97316, #F59E0B 55%, #2BB3A3);
+      background: linear-gradient(90deg, #F97316, #F59E0B 40%, #2BB3A3 70%, #F97316);
+      background-size: 200% 100%;
+      animation: rgEdgeFlow 8s linear infinite;
     }
+    @keyframes rgEdgeFlow { 0% { background-position: 0 0; } 100% { background-position: 200% 0; } }
     .rg-top {
       display: flex;
       align-items: center;
@@ -1015,7 +1018,7 @@
     .rg-b-orange { background: linear-gradient(135deg, #F97316, #FB923C); box-shadow: 0 3px 9px rgba(249,115,22,0.35); }
     .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
     .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
-    @media (prefers-reduced-motion: reduce) { .rg-fox { animation: none !important; } }
+    @media (prefers-reduced-motion: reduce) { .rg-fox, .rg-edge { animation: none !important; } }
 
     /* ===== 🎫 보딩패스 카드 ===== */
     .bp-route {
