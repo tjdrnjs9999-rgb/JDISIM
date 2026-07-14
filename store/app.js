@@ -1159,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         <div class="modal-cta-zone">
           <div style="display:flex;justify-content:center;gap:10px;font-size:0.7rem;font-weight:800;color:#b45309;background:linear-gradient(135deg,rgba(242,117,31,0.07),rgba(245,158,11,0.07));border:1px solid rgba(242,117,31,0.18);border-radius:12px;padding:8px 10px;margin-bottom:10px;white-space:nowrap;">
-            <span>⚡ 평균 5~15분 QR 발송</span><span style="opacity:0.35;">|</span><span>🛡️ 미개통 100% 환불</span><span style="opacity:0.35;">|</span><a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24h 카톡 상담</a>
+            <span>⚡ ${(window.JD_STATS && window.JD_STATS.issue && window.JD_STATS.issue.p50_min != null) ? '실측 평균 ' + Math.round(window.JD_STATS.issue.p50_min) + '분 QR 발송' : '평균 5~15분 QR 발송'}</span><span style="opacity:0.35;">|</span><span>🛡️ 미개통 100% 환불</span><span style="opacity:0.35;">|</span><a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24h 카톡 상담</a>
           </div>
           <button class="cta-buy" id="buyNowBtn">
             <span class="cta-buy-main">⚡ 즉시 구매하기</span>

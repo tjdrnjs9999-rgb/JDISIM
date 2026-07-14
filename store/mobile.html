@@ -2111,7 +2111,7 @@
       <div class="rg-rows">
         <div class="rg-row">
           <span class="rg-ic rg-ic-orange">⚡</span>
-          <span class="rg-txt"><strong>결제 후 평균 5~15분 QR 발송</strong><span>카톡·문자로 자동 전송돼요</span></span>
+          <span class="rg-txt"><strong data-jd-stat="issue">결제 후 평균 5~15분 QR 발송</strong><span>카톡·문자로 자동 전송돼요</span></span>
           <span class="rg-badge rg-b-orange">✓</span>
         </div>
         <div class="rg-row">
@@ -2432,6 +2432,7 @@
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="speed-truth.js?v=20260714a" defer></script>
+  <script src="jd-stats.js?v=20260715a" defer></script>
   <script src="products-lite.js?v=20260714b" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
@@ -3890,6 +3891,16 @@
         bg = 'rgba(59,130,246,0.06)'; border = 'rgba(59,130,246,0.25)'; color = '#1d4ed8';
       } else if (act.includes('자동')) {
         html = '✅ 현지 도착해 <strong>신호가 잡히는 순간 자동 개통</strong> — 미리 사두셔도 안심이에요';
+        // 실측 지표(jd-stats.js): 국가별 우선, 없으면 전체 — 표본 미달이면 자동 비표시
+        try {
+          var S = window.JD_STATS || {};
+          var row = (S.by_country || {})[currentSelectedCountry] || {};
+          var rate = row.act_within_1h_rate != null ? row.act_within_1h_rate : (S.activation || {}).within_1h_rate;
+          var n = row.act_n != null ? row.act_n : (S.activation || {}).n;
+          if (rate != null && n) {
+            html += '<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);font-weight:800;">📊 실측: 최근 도착 고객 <strong>' + Math.round(rate * 100) + '%가 1시간 내 개통</strong> <span style="opacity:0.7;font-weight:600;">(' + n + '건 측정 ✓)</span></div>';
+          }
+        } catch (e) {}
         bg = 'rgba(34,197,94,0.07)'; border = 'rgba(34,197,94,0.25)'; color = '#15803d';
       } else {
         el.style.display = 'none';
