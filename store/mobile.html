@@ -376,6 +376,16 @@
       font-size: 1.3rem;
     }
 
+    /* 하단바 라벨은 절대 두 줄로 접히지 않게 — 좁은 안드로이드(360px)에서
+       "eSIM 스토어"가 공백 개행돼 탭 하나만 찌그러지던 버그 (2026-07-15) */
+    .nav-item span {
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 379px) {
+      .nav-item span { font-size: 0.7rem; }
+    }
+
     .nav-item.active {
       color: #F2751F;
     }
