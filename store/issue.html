@@ -1344,6 +1344,16 @@ function loadCare(){
         lpa: e.qrCodeContent || '', storeId: d.storeId
       };
       setModeChip('care');
+      // 실주문 케어링크 기억 (이 브라우저 한정) — 스토어 '내 여행' 카드가 최우선으로 사용.
+      // ⚠️ localStorage는 브라우저별 분리: 카톡 인앱에서 연 기억은 카톡 인앱에만 남음.
+      //    다른 브라우저에서의 복구는 카톡 링크 재클릭(URL 자기완결) 또는 주문 조회가 담당.
+      try {
+        localStorage.setItem('jd_last_care', JSON.stringify({
+          url: location.pathname + location.search,
+          country: order.country || '', productName: (order.productName || '').slice(0, 60),
+          orderCode: order.orderCode || '', at: new Date().toISOString().slice(0, 10)
+        }));
+      } catch (e) {}
       renderIssued(order.lpa, true);
       var tk = document.querySelector('#app .tkt');
       if (tk) tk.insertAdjacentHTML('beforebegin',

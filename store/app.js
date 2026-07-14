@@ -1868,7 +1868,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (rsp.code != null) {
             alert(`결제에 실패하였습니다.\n사유: ${rsp.message}`);
             const forcePay = confirm("테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?");
-            if (forcePay) submitPayment(orderCode, priceVal);
+            if (forcePay) submitPayment(orderCode, priceVal, true);
           } else {
             submitPayment(orderCode, priceVal);
           }
@@ -1889,15 +1889,15 @@ document.addEventListener('DOMContentLoaded', async () => {
           } else {
             const forcePay = confirm(`결제에 실패하였습니다.\n사유: ${rsp.error_msg}\n\n[테스트 환경 안내]\n로컬 실행 환경(file:// 프로토콜 등)에서는 보안 정책으로 인해 PG사 결제창이 작동하지 않을 수 있습니다.\n\n테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?`);
             if (forcePay) {
-              submitPayment(orderCode, priceVal);
+              submitPayment(orderCode, priceVal, true);
             }
           }
         });
       } else {
-        submitPayment(orderCode, priceVal);
+        submitPayment(orderCode, priceVal, true); // PG SDK 미로드 = 가상 결제
       }
     } else {
-      submitPayment(orderCode, priceVal);
+      submitPayment(orderCode, priceVal, true); // PG 미설정 = 가상 결제
     }
   }
 
@@ -1967,7 +1967,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return html;
   }
 
-  function submitPayment(orderCode, finalPriceVal) {
+  function submitPayment(orderCode, finalPriceVal, isTest) {
     const buyerName = checkoutNameInput ? checkoutNameInput.value.trim() : '';
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
@@ -1981,6 +1981,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       email: email,
       phone: phone,
       totalPrice: finalPriceVal,
+      test: isTest === true, // 가상 결제 여부 — 내 여행 카드가 "테스트 주문" 라벨 표시에 사용
       activationDate: activationDateVal || '',
       items: checkoutItems.map(item => {
         const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);

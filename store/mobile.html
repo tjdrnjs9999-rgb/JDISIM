@@ -5119,19 +5119,27 @@
     'use strict';
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-    /* ── ① 내 여행 동반자 카드 ── */
+    /* ── ① 내 여행 동반자 카드 ──
+       우선순위: 실주문 케어링크 기억(jd_last_care — issue.html?care= 방문 시 저장) > 자사몰 로컬 주문(esim_orders).
+       ⚠️ localStorage는 브라우저별 분리 — 카톡 인앱에서 연 케어링크는 카톡 인앱에서만 기억됨 (다른 브라우저 복구 = 카톡 링크 재클릭 or 주문 조회) */
     function renderMyTrip() {
       var slot = document.getElementById('myTripCard');
       if (!slot) return;
-      var orders;
-      try { orders = JSON.parse(localStorage.getItem('esim_orders') || '[]'); } catch (e) { orders = []; }
-      if (!orders.length) return;
-      var o = orders[0];
-      var item = (o.items && o.items[0]) || {};
-      var country = item.country || '여행';
+      var care = null, orders = [];
+      try { care = JSON.parse(localStorage.getItem('jd_last_care') || 'null'); } catch (e) {}
+      try { orders = JSON.parse(localStorage.getItem('esim_orders') || '[]'); } catch (e) {}
+      var o = orders[0] || null;
+      if (!care && !o) return;
+
+      var isCare = !!(care && care.url);
+      var country = isCare ? (care.country || '여행') : (((o.items && o.items[0]) || {}).country || '여행');
+      var item = o ? ((o.items && o.items[0]) || {}) : {};
+      var orderCode = isCare ? (care.orderCode || '') : (o ? o.orderCode : '');
+      var isTest = !isCare && o && o.test === true;
+
       // 케어링크에서 등록한 출국일 (jd_dep_주문코드) → D-day
       var dep = '';
-      try { dep = localStorage.getItem('jd_dep_' + o.orderCode) || ''; } catch (e) {}
+      try { if (orderCode) dep = localStorage.getItem('jd_dep_' + orderCode) || ''; } catch (e) {}
       var ddayHtml = '';
       if (dep) {
         var today = new Date(); today.setHours(0, 0, 0, 0);
@@ -5140,19 +5148,26 @@
         if (diff > 0) ddayHtml = '<span style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;box-shadow:0 3px 9px rgba(249,115,22,0.3);">✈️ D-' + diff + '</span>';
         else if (diff === 0) ddayHtml = '<span style="background:linear-gradient(135deg,#2BB3A3,#40CDBE);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;">✈️ 오늘 출국!</span>';
       }
+      var testBadge = isTest ? ' <span style="background:#EEF2F7;color:#64748B;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:999px;vertical-align:middle;">테스트 주문</span>' : '';
+      var subLine = isCare
+        ? esc(care.productName || '') + (care.at ? ' · 케어링크 저장 ' + esc(care.at) : '')
+        : esc(item.planLimit || '') + (item.planDuration ? ' · ' + esc(item.planDuration) + '일' : '') + ' · 주문 ' + esc(o && o.date || '');
+      var careHref = isCare ? care.url : ('issue.html?local=' + encodeURIComponent(orderCode));
+      var careLabel = isCare ? '🎫 여행 케어 데스크 열기' : '🎫 내 케어링크 열기';
+
       slot.innerHTML =
         '<div style="position:relative;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(242,117,31,0.22);border-radius:18px;padding:0 0 12px;margin:12px 0 14px;overflow:hidden;box-shadow:0 10px 26px rgba(242,117,31,0.09);">'
         + '<div style="height:4px;background:linear-gradient(90deg,#F97316,#F59E0B 55%,#2BB3A3);"></div>'
         + '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px 4px;">'
         +   '<div style="flex:1;min-width:0;">'
         +     '<div style="font-size:0.68rem;font-weight:900;letter-spacing:2px;color:#F97316;">MY TRIP · 내 여행</div>'
-        +     '<div style="font-size:0.98rem;font-weight:800;color:#221510;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + '</div>'
-        +     '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">' + esc(item.planLimit || '') + (item.planDuration ? ' · ' + esc(item.planDuration) + '일' : '') + ' · 주문 ' + esc(o.date || '') + '</div>'
+        +     '<div style="font-size:0.98rem;font-weight:800;color:#221510;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + testBadge + '</div>'
+        +     '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">' + subLine + '</div>'
         +   '</div>'
         +   '<img src="images/fox-thumbsup.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
         + '</div>'
         + '<div style="display:flex;gap:8px;padding:10px 14px 0;">'
-        +   '<a href="issue.html?local=' + encodeURIComponent(o.orderCode || '') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(249,115,22,0.28);">🎫 내 케어링크 열기</a>'
+        +   '<a href="' + careHref.replace(/"/g, '&quot;') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(249,115,22,0.28);">' + careLabel + '</a>'
         +   '<button type="button" data-mt-rebuy style="flex:1;background:#fff;border:1.5px solid rgba(242,117,31,0.4);color:#F2751F;font-family:inherit;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;cursor:pointer;">같은 나라 재구매</button>'
         + '</div></div>';
       var rb = slot.querySelector('[data-mt-rebuy]');
