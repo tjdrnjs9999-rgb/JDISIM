@@ -47,8 +47,7 @@
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260713c">
-  <link rel="stylesheet" href="premium.css?v=20260713b">
-  <script src="jdisim-app.js?v=2" defer></script>
+  <link rel="stylesheet" href="premium.css?v=20260714a">
 <style id="hero-light-critical">
     /* 라이트 히어로 강제 — 캐시된 구 CSS 무력화 */
     .m-hero, .hero-video-frame { background: linear-gradient(165deg,#FFFDFB 0%,#FFF1E2 42%,#DFF4F1 100%) !important; }
@@ -1225,6 +1224,7 @@
         <div class="checkout-form-group" id="checkoutActivationDateGroup" style="display: none; margin-top: 20px;">
           <label class="checkout-label" for="checkoutActivationDate">📅 현지 개통 희망일 지정 (필수)</label>
           <input type="date" class="checkout-input" id="checkoutActivationDate" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.95rem;">
+          <div id="activationDateHint" style="display:none; margin-top:9px; padding:10px 13px; background:linear-gradient(165deg,#FFFFFF,#FFF9F3); border:1px dashed rgba(242,117,31,0.3); border-radius:12px; font-size:0.8rem; font-weight:600; color:#8a7a6d; line-height:1.55; word-break:keep-all;"></div>
           <p style="font-size: 0.75rem; color: var(--accent-warning); margin-top: 6px; line-height: 1.4; font-weight: 500;">
             ※ 해당 상품은 사전 개통 예약이 필수입니다. 현지 도착 즉시 원활한 개통 완료를 위해, 실제 사용 예정일보다 <strong>하루 전날</strong>로 개통일을 지정해 주시기 바랍니다.
           </p>
@@ -1511,7 +1511,7 @@
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="jdisim-datacalc.js?v=20260713" defer></script>
-  <script src="app.js?v=20260708"></script>
+  <script src="app.js?v=20260714b"></script>
   <script src="globe.js?v=20260720" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {

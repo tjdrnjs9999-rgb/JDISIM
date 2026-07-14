@@ -2900,7 +2900,7 @@
             <div class="store-card-scrim"></div>
             <span class="store-net-badge${onlyLocal ? ' local' : ''}">${netLabel}</span>
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
-            ${warnChip ? `<span class="store-warn-badge">${warnChip}</span>` : ''}
+            ${warnChip ? `<span class="store-warn-badge"${warnChip.includes('문자') ? ' style="background:linear-gradient(135deg,#3B82F6,#60A5FA);box-shadow:0 2px 8px rgba(59,130,246,0.35);"' : ''}>${warnChip}</span>` : ''}
           </div>
           <div style="height: 9px;"></div>
           <div class="bp-perf"></div>
@@ -3052,9 +3052,9 @@
       '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
       '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
       '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅', '🛂 비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
-      '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 1~2일 전 개통일 등록이 필요해요', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
-      '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
-      '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
+      '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
+      '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['이심은 현지 도착 후 개통 문자로 시작 — 미리 사도 기간이 줄지 않아요'] },
+      '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['이심은 현지 도착 후 개통 문자로 시작 — 미리 사도 기간이 줄지 않아요'] },
       '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },
       '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)', '🛂 발리는 도착비자(VOA) — e-VOA로 미리 신청하면 줄이 짧아요'] },
       '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요', '🛂 ETA(전자여행허가)를 앱으로 사전 신청해야 해요'] },
@@ -3756,11 +3756,23 @@
     }
 
     // 개통 방식에 따라 언제 사야 하는지 자동 안내
-    // 미주·유럽은 시차로 현지 날짜가 하루 어긋날 수 있어 리드타임을 3~4일로 상향
-    const LONG_LEAD_REGIONS = ['미국','캐나다','멕시코','북미','하와이','남미','브라질','아르헨티나','페루','칠레','유럽','영국','프랑스','독일','이탈리아','스페인','포르투갈','스위스','네덜란드','벨기에','오스트리아','체코','헝가리','폴란드','크로아티아','그리스','북유럽','동유럽','아이슬란드','튀르키예','터키'];
+    // 리드타임 정책 (2026-07-14 확정): 개통희망일 지정 상품 = 최소 2일 전 주문,
+    // 미주·유럽은 시차로 현지 날짜가 어긋날 수 있어 최소 3일 전 주문 (PC와 동일 정책)
+    const LONG_LEAD_REGIONS = ['미국','캐나다','멕시코','북미','하와이','남미','브라질','아르헨티나','페루','칠레','유럽','영국','프랑스','독일','이탈리아','스페인','포르투갈','스위스','네덜란드','벨기에','오스트리아','체코','헝가리','폴란드','크로아티아','그리스','북유럽','동유럽','아이슬란드','튀르키예','터키','보다폰ES'];
     function isLongLeadCountry(name) {
       const c = String(name || '');
       return LONG_LEAD_REGIONS.some(k => c.includes(k));
+    }
+    function leadDaysFor(countryName) {
+      return isLongLeadCountry(countryName) ? 3 : 2;
+    }
+    // 오늘 주문 기준 가장 빠른 개통 가능일 계산 (동적 캘린더 안내, PC와 동일)
+    function earliestActivationInfo(countryName) {
+      const days = leadDaysFor(countryName);
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      const yo = ['일','월','화','수','목','금','토'][d.getDay()];
+      return { days, label: `${d.getMonth() + 1}/${d.getDate()}(${yo})` };
     }
     // 카드용 칩: 국가 묶음(acts 배열) 또는 단일 통신사 activation을 받아 구매 타이밍 칩 텍스트 반환
     function activationChip(acts, countryName) {
@@ -3768,8 +3780,9 @@
       const has = s => arr.some(a => String(a || '').includes(s));
       const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
       if (all('즉시 개통')) return '🚨 설치 즉시 시작';
-      if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 3~4일 전 주문' : '⏰ 1~2일 전 주문';
+      if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 최소 3일 전 주문' : '⏰ 최소 2일 전 주문';
       if (has('즉시 개통') || has('희망일')) return '⏰ 구매 타이밍 확인';
+      if (has('개통문자')) return '💬 도착 후 문자 개통';
       return '';
     }
     // 결제 전 꼭 알기: 선택된 상품의 치명 특이사항만 추출 (최대 4개)
@@ -3780,7 +3793,7 @@
       const nk = String(activeCarrier.carrier || '').toLowerCase();
       const nc = String(currentSelectedCountry || '');
       const longLead = isLongLeadCountry(nc);
-      if (act.includes('희망일')) f.push({ i: '⏰', t: `<strong>출국 ${longLead ? '3~4일' : '1~2일'} 전 주문 필수</strong> — 개통 희망일 지정 상품${longLead ? ' · <span>미주·유럽은 시차로</span> <span>현지 날짜가 하루 어긋날 수 있어요</span>' : ''}. <span>개통일 등록은</span> <span>구매 후 케어 안내로 도와드려요.</span>` });
+      if (act.includes('희망일')) { const ea = earliestActivationInfo(nc); f.push({ i: '⏰', t: `<strong>출국 최소 ${ea.days}일 전 주문 필수</strong> — <span>오늘 주문하면</span> <span><strong>${ea.label}부터</strong> 개통일 지정 가능</span>${longLead ? ' · <span>미주·유럽은 시차로</span> <span>하루 더 여유가 필요해요</span>' : ''}. <span>개통일 등록은</span> <span>구매 후 케어 안내로 도와드려요.</span>` }); }
       if (act.includes('즉시 개통')) f.push({ i: '🚨', t: '<strong>QR 발급·설치 즉시 사용일 시작</strong> — <span>미리 사면 여행 전에 기간이 녹아요.</span> <span>출국 직전에 구매하고,</span> <span>설치는 출발 당일이나 현지에서!</span>' });
       if (nk.includes('보다폰') || nk.includes('vodafone')) {
         f.push({ i: '🚨', t: '<strong>QR 발송 즉시 개통 시작 (보다폰)</strong> — <span>일정 확정 후 구매하세요.</span>' });
@@ -3816,11 +3829,11 @@
       const longLead = isLongLeadCountry(currentSelectedCountry);
       let html = '', bg = '', border = '', color = '';
       if (act.includes('희망일')) {
-        const lead = longLead ? '3~4일' : '1~2일';
-        html = timingBadge(lead, true)
-          + '<div>📆 <strong>개통 희망일 지정 상품</strong> — 개통일 등록은 구매 후 케어 안내로 도와드려요.</div>'
+        const ea = earliestActivationInfo(currentSelectedCountry);
+        html = timingBadge(`최소 ${ea.days}일`, true)
+          + `<div>📆 <strong>개통 희망일 지정 상품</strong> — 오늘 주문하면 <strong>${ea.label}부터</strong> 개통일로 지정할 수 있어요. 개통일 등록은 구매 후 케어 안내로 도와드려요.</div>`
           + (longLead
-            ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 현지 날짜가 하루 어긋날 수 있어요 — 여유 있게 <strong>출국 3~4일 전에 주문</strong>해 주세요.</div>'
+            ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 현지 날짜가 하루 어긋날 수 있어요 — 여유 있게 <strong>출국 최소 3일 전에 주문</strong>해 주세요.</div>'
             : '');
         bg = 'rgba(249,115,22,0.07)'; border = 'rgba(249,115,22,0.35)'; color = '#9a5b16';
       } else if (act.includes('즉시 개통')) {
@@ -4088,8 +4101,10 @@
       if (nc.includes('대만')) {
         list.push("<strong>실명 인증(KYC) 등록 필수:</strong> 대만 통신법에 따라 eSIM 스캔 직후 수신되는 문자 링크로 여권 실명 등록을 완료해야 데이터 차단이 해제됩니다.");
       }
+      if (nc.includes('괌') || nc.includes('사이판')) {
+        list.push("<strong>현지 도착 후 개통 문자로 시작:</strong> 도착해서 개통 문자가 발송되는 시점부터 사용일이 카운트돼요 — 미리 구매해 두셔도 기간이 줄지 않습니다.");
+      }
       if (nc.includes('미국') || nc.includes('캐나다') || nc.includes('괌') || nc.includes('사이판')) {
-        list.push("<strong>사전 개통 희망일 지정 필수:</strong> 결제 후 전송되는 링크/안내 메일로 <strong>출국 최소 1~2일 전 개통 날짜를 등록</strong>해야 정상 활성화됩니다.");
         list.push("<strong>단말기 컨트리락 해제 확인:</strong> 컨트리락이 해제된 기기에서만 사용 가능하므로 출국 전 통신사에 락 해제 여부를 확인하세요.");
       }
       if (nc.includes('몰디브')) {

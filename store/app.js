@@ -1253,7 +1253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 상세 모달 내 주의사항 탭 내용 동적 주입
     const tabPrecautionsInfo = document.getElementById('tab-precautions-info');
     if (tabPrecautionsInfo) {
-      const customPrecs = getCustomPrecautions(activeCarrier.country, activeCarrier.carrier);
+      const customPrecs = getCustomPrecautions(activeCarrier.country, activeCarrier.carrier, activeCarrier.activation);
       let precHTML = `<div style="font-size:0.8rem; line-height:1.6; display:flex; flex-direction:column; gap:10px;">`;
       customPrecs.forEach(p => {
         let bgStyle = 'background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color);';
@@ -1339,11 +1339,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 12.45 국가/통신사별 맞춤형 실시간 주의사항 및 스펙 정보 반환 함수
-  // 미주·유럽: 시차로 현지 날짜가 하루 어긋날 수 있어 주문 리드타임 3~4일 (모바일과 동일 정책)
-  const LONG_LEAD_REGIONS = ['미국','캐나다','멕시코','북미','하와이','남미','브라질','아르헨티나','페루','칠레','유럽','영국','프랑스','독일','이탈리아','스페인','포르투갈','스위스','네덜란드','벨기에','오스트리아','체코','헝가리','폴란드','크로아티아','그리스','북유럽','동유럽','아이슬란드','튀르키예','터키'];
+  // 리드타임 정책 (2026-07-14 확정): 개통희망일 지정 상품 = 최소 2일 전 주문,
+  // 미주·유럽은 시차로 현지 날짜가 어긋날 수 있어 최소 3일 전 주문 (모바일과 동일 정책)
+  const LONG_LEAD_REGIONS = ['미국','캐나다','멕시코','북미','하와이','남미','브라질','아르헨티나','페루','칠레','유럽','영국','프랑스','독일','이탈리아','스페인','포르투갈','스위스','네덜란드','벨기에','오스트리아','체코','헝가리','폴란드','크로아티아','그리스','북유럽','동유럽','아이슬란드','튀르키예','터키','보다폰ES'];
   function isLongLeadCountry(name) {
     const c = String(name || '');
     return LONG_LEAD_REGIONS.some(k => c.includes(k));
+  }
+  function leadDaysFor(countryName) {
+    return isLongLeadCountry(countryName) ? 3 : 2;
+  }
+  // 오늘 주문 기준 가장 빠른 개통 가능일 계산 (동적 캘린더 안내)
+  function earliestActivationInfo(countryName) {
+    const days = leadDaysFor(countryName);
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    const yo = ['일','월','화','수','목','금','토'][d.getDay()];
+    const pad = n => String(n).padStart(2, '0');
+    return {
+      days,
+      label: `${d.getMonth() + 1}/${d.getDate()}(${yo})`,
+      iso: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+    };
   }
   // 카드용 칩: 국가 그룹(g.carriers)의 activation을 종합해 구매 타이밍 칩 반환 (모바일과 동일 정책)
   function activationChip(acts, countryName) {
@@ -1351,30 +1368,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const has = s => arr.some(a => String(a || '').includes(s));
     const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
     if (all('즉시 개통')) return '🚨 설치 즉시 시작';
-    if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 3~4일 전 주문' : '⏰ 1~2일 전 주문';
+    if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 최소 3일 전 주문' : '⏰ 최소 2일 전 주문';
     if (has('즉시 개통') || has('희망일')) return '⏰ 구매 타이밍 확인';
+    if (has('개통문자')) return '💬 도착 후 문자 개통';
     return '';
   }
-  // 카드 세 번째 스펙 칩: 치명 타이밍이 있으면 빨간 경고 칩, 없으면 기존 '⚡ 즉시 개통' 유지
+  // 카드 세 번째 스펙 칩: 치명 타이밍 = 빨간 경고 / 개통문자 = 파란 안내 / 없으면 '⚡ 즉시 개통'
   function actChipHtml(g) {
     const txt = activationChip((g.carriers || []).map(c => (c && c.activation) || ''), g.country);
-    return txt
-      ? `<div class="card-spec-item" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.28);color:#dc2626;font-weight:800;">${txt}</div>`
-      : '<div class="card-spec-item">⚡ 즉시 개통</div>';
+    if (!txt) return '<div class="card-spec-item">⚡ 즉시 개통</div>';
+    if (txt.includes('문자')) return `<div class="card-spec-item" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;font-weight:800;">${txt}</div>`;
+    return `<div class="card-spec-item" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.28);color:#dc2626;font-weight:800;">${txt}</div>`;
   }
   function leadTimeBadge(lead) {
     return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.82rem;font-weight:900;padding:6px 14px;border-radius:999px;margin-bottom:4px;box-shadow:0 4px 12px rgba(239,68,68,0.3);">⏰ 출국 ${lead} 전 주문 필수</div>`;
   }
-  function getCustomPrecautions(country, carrier) {
+  function getCustomPrecautions(country, carrier, activation) {
     const list = [];
     const normalizedCountry = country.toLowerCase();
     const normalizedCarrier = carrier.toLowerCase();
+    const actStr = String(activation || '');
 
-    // 0. 주문 타이밍 배지 — 리스트 최상단 (날짜 입력 방법 코칭은 하지 않음: 개통일 등록은 구매 후 케어 안내로 진행)
-    if (isLongLeadCountry(country)) {
-      list.push(leadTimeBadge('3~4일') + "<strong>미주·유럽은 시차로 현지 날짜가 하루 어긋날 수 있어요</strong> — 여유 있게 출국 3~4일 전에 주문해 주세요. 개통일 등록은 구매 후 케어 안내로 도와드립니다.");
+    // 0. 주문 타이밍 배지 — 개통희망일 지정 상품에만 (activation 필드 기반, 국가 뭉뚱그림 금지)
+    //    오늘 기준 "가장 빠른 개통 가능일"을 실제 날짜로 계산해 보여줌
+    if (actStr.includes('희망일')) {
+      const ea = earliestActivationInfo(country);
+      list.push(leadTimeBadge(`최소 ${ea.days}일`) + `<strong>개통 희망일 지정 상품</strong> — 오늘 주문하면 <strong>${ea.label}부터</strong> 개통일로 지정할 수 있어요.${ea.days === 3 ? ' 미주·유럽은 시차로 하루 더 여유가 필요합니다.' : ''} 개통일 등록은 구매 후 케어 안내로 도와드립니다.`);
     } else if (normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
-      list.push(leadTimeBadge('1~2일') + "이 상품은 <strong>출국 1~2일 전 주문</strong>이 필요해요. 개통일 등록은 구매 후 케어 안내로 도와드립니다.");
+      list.push("<strong>현지 도착 후 개통 문자로 시작:</strong> 도착해서 개통 문자가 발송되는 시점부터 사용일이 카운트돼요 — 미리 구매해 두셔도 기간이 줄지 않습니다.");
     }
 
     // 5. 국가별/통신사별 상세 맞춤 특이사항 (크롤링 및 매칭)
@@ -1435,7 +1456,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     if (normalizedCarrier.includes('오렌지스페인') || normalizedCarrier.includes('orange스페인')) {
-      list.push("<strong>개통 예약형 상품 (Orange):</strong> 출국 3~4일 전 주문해 주세요 — 개통 예약은 구매 후 케어 안내에 따라 진행됩니다.");
+      list.push("<strong>개통 예약형 상품 (Orange):</strong> 개통 예약은 구매 후 케어 안내에 따라 진행됩니다.");
     }
 
     if (normalizedCarrier.includes('오렌지프랑스') || normalizedCarrier.includes('orange프랑스')) {
@@ -1541,7 +1562,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 국가/통신사별 전용 안내 아코디언 (있을 경우만 노출)
     let combinedPrecs = [];
     items.forEach(item => {
-      const precs = getCustomPrecautions(item.product.country, item.product.carrier);
+      const precs = getCustomPrecautions(item.product.country, item.product.carrier, item.product.activation);
       precs.forEach(p => {
         if (!combinedPrecs.includes(p)) {
           combinedPrecs.push(p);
@@ -1627,25 +1648,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkoutPhoneInput.value = '';
     
     // 개통 희망일 입력 박스 초기화 및 활성화 여부 제어
+    // activation 필드 기반 판정 (원가표 정본): '입력한 개통희망일에 개통' 상품만 날짜 지정 필요
+    // 리드타임: 일반 최소 2일 / 미주·유럽 최소 3일 — date picker min으로 강제
     let requiresActivationDate = false;
+    let checkoutLeadDays = 2;
+    let leadCountry = '';
     items.forEach(item => {
-      const carrierName = item.product.carrier.toLowerCase();
-      const countryName = item.product.country.toLowerCase();
-      const isOrangeSpain = carrierName.includes('오렌지스페인') || carrierName.includes('orange스페인');
-      const isUSAOrCanada = countryName.includes('미국') || countryName.includes('캐나다') || countryName.includes('괌') || countryName.includes('사이판');
-      if (isOrangeSpain || isUSAOrCanada) {
+      const act = String(item.product.activation || '');
+      if (act.includes('희망일')) {
         requiresActivationDate = true;
+        const d = leadDaysFor(item.product.country);
+        if (d > checkoutLeadDays || !leadCountry) { checkoutLeadDays = Math.max(checkoutLeadDays, d); leadCountry = item.product.country; }
       }
     });
-    
+
+    const activationDateHint = document.getElementById('activationDateHint');
     if (requiresActivationDate) {
       checkoutActivationDateGroup.style.display = 'block';
       checkoutActivationDate.required = true;
       checkoutActivationDate.value = '';
+      const ea = earliestActivationInfo(checkoutLeadDays === 3 ? '미국' : leadCountry);
+      checkoutActivationDate.min = ea.iso;
+      if (activationDateHint) {
+        activationDateHint.innerHTML = `📌 오늘 주문 기준 가장 빠른 개통일은 <strong style="color:#F2751F;">${ea.label}</strong>이에요 — ${ea.days === 3 ? '미주·유럽은 시차 때문에 개통 준비에 <strong>최소 3일</strong>' : '개통 준비에 <strong>최소 2일</strong>'}이 필요해요.`;
+        activationDateHint.style.display = 'block';
+      }
     } else {
       checkoutActivationDateGroup.style.display = 'none';
       checkoutActivationDate.required = false;
       checkoutActivationDate.value = '';
+      checkoutActivationDate.removeAttribute('min');
+      if (activationDateHint) { activationDateHint.style.display = 'none'; activationDateHint.innerHTML = ''; }
     }
     
     // Render checking out items
@@ -1690,7 +1723,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (checkoutPrecautionCard && checkoutPrecautionList) {
       let combinedPrecs = [];
       items.forEach(item => {
-        const precs = getCustomPrecautions(item.product.country, item.product.carrier);
+        const precs = getCustomPrecautions(item.product.country, item.product.carrier, item.product.activation);
         precs.forEach(p => {
           if (!combinedPrecs.includes(p)) combinedPrecs.push(p);
         });
@@ -1741,10 +1774,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // 개통희망일 지정 유효성 검사
-    if (checkoutActivationDate.required && !checkoutActivationDate.value) {
-      alert('유럽 오렌지 스페인 및 북미 상품은 현지 개통을 위해 개통 희망일을 반드시 지정해 주셔야 합니다.');
-      return;
+    // 개통희망일 지정 유효성 검사 (리드타임 min 미달 선택도 차단)
+    if (checkoutActivationDate.required) {
+      if (!checkoutActivationDate.value) {
+        alert('개통 희망일 지정 상품이 담겨 있어요. 현지 개통을 위해 개통 희망일을 지정해 주세요.');
+        return;
+      }
+      if (checkoutActivationDate.min && checkoutActivationDate.value < checkoutActivationDate.min) {
+        const [y, m, d] = checkoutActivationDate.min.split('-').map(Number);
+        alert(`개통 준비 기간이 필요해 가장 빠른 개통 가능일은 ${m}월 ${d}일입니다.\n개통 희망일을 다시 선택해 주세요.\n(미주·유럽은 시차로 최소 3일, 그 외 지역은 최소 2일 전 주문이 필요해요)`);
+        return;
+      }
     }
 
     const priceVal = parseInt(paySubmitBtn.getAttribute('data-price'));
@@ -1851,9 +1891,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
     '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
     '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅', '🛂 비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
-    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 3~4일 전 주문이 필요해요 (시차 주의)', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
-    '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
-    '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
+    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
+    '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['이심은 현지 도착 후 개통 문자로 시작 — 미리 사도 기간이 줄지 않아요'] },
+    '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['이심은 현지 도착 후 개통 문자로 시작 — 미리 사도 기간이 줄지 않아요'] },
     '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },
     '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)', '🛂 발리는 도착비자(VOA) — e-VOA로 미리 신청하면 줄이 짧아요'] },
     '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요', '🛂 ETA(전자여행허가)를 앱으로 사전 신청해야 해요'] },
