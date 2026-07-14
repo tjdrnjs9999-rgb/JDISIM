@@ -776,6 +776,11 @@
     /* ===== 가독성 리뉴얼: 루트 글자 크기 상향 (rem 기반 전체에 적용) ===== */
     html { font-size: 18px; }
     body { -webkit-text-size-adjust: 100%; }
+    /* ===== 전역: 스크롤바 전면 숨김 (모든 스크롤 영역) ===== */
+    * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+    *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+    /* ===== 전역: 한글 의미단위 줄바꿈 · 말줄임(...) 금지 ===== */
+    body { word-break: keep-all; overflow-wrap: break-word; }
     /* 최소 가독 하한: 초소형 텍스트 계열 살짝 상향 */
     .m-rv-body { font-size: 0.8rem !important; line-height: 1.6 !important; }
     .m-rv-foot { font-size: 0.7rem !important; }
@@ -830,6 +835,35 @@
       scroll-snap-stop: always !important;
       /* 하단바(65px+safe)에 콘텐츠가 가리지 않게 패널 안쪽에서 공간 확보 */
       padding-bottom: calc(78px + max(env(safe-area-inset-bottom, 0px), 14px)) !important;
+    }
+    /* ===== 프리미엄 페이지 전환 안무: 패널 진입 시 콘텐츠 순차 부상 =====
+       (why-패널은 기존 wp-el 연출 유지 — 여기선 히어로·지구본·매칭 패널만) */
+    html.home-snap #view-home .m-hero .m-hero-content > *,
+    html.home-snap #view-home .globe-panel > div,
+    html.home-snap #view-home .finder-panel > * {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.85s cubic-bezier(0.19, 1, 0.22, 1);
+      will-change: opacity, transform;
+    }
+    html.home-snap #view-home .snap-panel.in-view .m-hero-content > *,
+    html.home-snap #view-home .globe-panel.in-view > div,
+    html.home-snap #view-home .finder-panel.in-view > * {
+      opacity: 1;
+      transform: none;
+    }
+    /* 순차 시차 (콘텐츠가 안무처럼 따라 올라옴) */
+    html.home-snap #view-home .snap-panel.in-view .m-hero-content > *:nth-child(2),
+    html.home-snap #view-home .globe-panel.in-view > div:nth-child(2),
+    html.home-snap #view-home .finder-panel.in-view > *:nth-child(2) { transition-delay: 0.09s; }
+    html.home-snap #view-home .snap-panel.in-view .m-hero-content > *:nth-child(3),
+    html.home-snap #view-home .finder-panel.in-view > *:nth-child(3) { transition-delay: 0.18s; }
+    html.home-snap #view-home .snap-panel.in-view .m-hero-content > *:nth-child(4) { transition-delay: 0.27s; }
+    html.home-snap #view-home .snap-panel.in-view .m-hero-content > *:nth-child(5) { transition-delay: 0.36s; }
+    @media (prefers-reduced-motion: reduce) {
+      html.home-snap #view-home .m-hero .m-hero-content > *,
+      html.home-snap #view-home .globe-panel > div,
+      html.home-snap #view-home .finder-panel > * { opacity: 1 !important; transform: none !important; transition: none !important; }
     }
     /* 히어로는 자체 padding-bottom(84px+safe) 규칙이 우선 적용되도록 예외 처리 */
     html.home-snap #view-home .m-hero.snap-panel {
@@ -965,7 +999,7 @@
     .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.06)); }
     .rg-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .rg-txt strong { font-size: 0.84rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; }
-    .rg-txt span { font-size: 0.7rem; font-weight: 600; color: #8a7a6d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rg-txt span { font-size: 0.7rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.45; }
     .rg-badge {
       margin-left: auto;
       flex-shrink: 0;
@@ -4721,7 +4755,7 @@
       if ('IntersectionObserver' in window) {
         const io = new IntersectionObserver((entries) => {
           entries.forEach((en) => {
-            if (!en.isIntersecting) return;
+            if (!en.isIntersecting) { en.target.classList.remove('in-view'); return; }
             en.target.classList.add('in-view');
             en.target.querySelectorAll('[data-count]').forEach(countUp);
             const idx = panels.indexOf(en.target);
