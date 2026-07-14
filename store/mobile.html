@@ -19,7 +19,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260714b';
+      sc.src = 'products.js?v=20260715a';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
@@ -2450,7 +2450,7 @@
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="speed-truth.js?v=20260714a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
-  <script src="products-lite.js?v=20260714b" defer></script>
+  <script src="products-lite.js?v=20260715a" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -5268,8 +5268,8 @@
         '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" style="display:flex;align-items:center;gap:13px;text-decoration:none;background:linear-gradient(135deg,#101623,#25314F);border-radius:18px;padding:16px;margin:0 0 14px;box-shadow:0 12px 30px rgba(16,22,35,0.25);">'
         + '<img src="images/fox-hello.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
         + '<span style="flex:1;min-width:0;color:#fff;">'
-        +   '<span style="display:block;font-size:0.95rem;font-weight:800;">휴대폰 번호로 1분 탑승 수속 ✈️</span>'
-        +   '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">모든 기기에서 내 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
+        +   '<span style="display:block;font-size:0.95rem;font-weight:800;">가입만 해도 <b style="color:#FDBA74;">2,000원 쿠폰</b> ✈️</span>'
+        +   '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
         + '</span>'
         + '<span style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(249,115,22,0.35);">로그인</span></a>';
     }
@@ -5286,10 +5286,10 @@
         +   '<button type="button" data-m-logout style="border:none;background:none;font-family:inherit;font-size:0.76rem;font-weight:700;color:#B0A28C;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px;">로그아웃</button>'
         + '</div>';
       // 🧡 웰컴백 쿠폰 하이라이트 (JDISIM 단독 — 도착 인텔리전스가 귀국을 감지해 자동 지급)
-      fresh.filter(function (c) { return c.reason === 'welcomeback'; }).slice(0, 2).forEach(function (c) {
+      fresh.filter(function (c) { return c.reason === 'welcomeback' || c.reason === 'welcome'; }).slice(0, 2).forEach(function (c) {
         html += '<div style="margin:0 12px 10px;padding:12px 14px;border:1.5px dashed rgba(242,117,31,0.5);border-radius:14px;background:rgba(249,115,22,0.05);">'
           + '<div style="font-size:0.88rem;font-weight:800;color:#221510;">🧡 ' + esc(c.name) + ' <b style="color:#F2751F;">' + Number(c.amount).toLocaleString() + '원</b></div>'
-          + '<div style="font-size:0.76rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + esc(c.note || '') + ' · ' + esc(c.expires) + '까지 · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div></div>';
+          + '<div style="font-size:0.76rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + esc(c.note || '') + ' · ' + esc(c.expires) + '까지' + (c.min_order ? ' · ' + Number(c.min_order).toLocaleString() + '원 이상' : '') + ' · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div></div>';
       });
       // 주문 목록 (케어링크 = 기기 무관 서버 URL!)
       orders.slice(0, 5).forEach(function (o) {
