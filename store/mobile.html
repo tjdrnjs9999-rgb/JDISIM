@@ -2441,7 +2441,9 @@
     let SMARTSTORE_URL = "https://smartstore.naver.com/butt_on"; // 스마트스토어 대체 구매 링크
 
     // ===== ⑥단계: 전화 걸고 받기 (한국번호 통화 세팅) =====
-    // ⚠️ 가격 확정 필요 (스마트스토어 추가상품 가격과 반드시 일치시킬 것)
+    // ⚠️ 판매 잠금 상태 (2026-07-14): 한국 통신사 표준 VoWiFi 미지원 확인 → 원래 카피 이행 불가.
+    //    착신전환+070 인터넷전화 재설계 검증 후 true로 전환할 것. 가격도 그때 확정.
+    const KRCALL_STEP_ENABLED = false;
     const KRCALL_ADDON = { key: 'krcall', name: '내 한국번호 그대로 통화 세팅', price: 3900 };
     let krCallAddonOn = false;
     let krCallChosen = false; // 선택함/안 함 중 하나를 눌렀는지 (누르기 전엔 결제 영역 비공개)
@@ -3708,6 +3710,8 @@
       const co = document.getElementById('sheetCheckoutArea');
       if (co) co.style.display = 'none';
       resetKrCallStep(); renderKrCallPills(); // ⑥단계도 초기화
+      const kc = document.getElementById('step-krcall');
+      if (kc) kc.style.display = KRCALL_STEP_ENABLED ? '' : 'none'; // 판매 잠금 시 단계 자체를 숨김
       ['activationNotice', 'capacityFeel', 'daysFeel'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
@@ -3956,7 +3960,8 @@
       jdResetAfter('days'); // ⑥단계 재잠금 (기간 재선택 시 통화 선택도 다시)
       renderDaysFeel(selectedDays);
       updatePricing();
-      jdActivateStep('krcall'); // ⑥ 전화 걸고 받기 — 선택함/안 함을 눌러야 결제 영역 공개
+      if (KRCALL_STEP_ENABLED) jdActivateStep('krcall'); // ⑥ 전화 걸고 받기 — 선택함/안 함을 눌러야 결제 영역 공개
+      else jdCheckoutOpen(); // 잠금 상태: 5단계 완료 즉시 결제 영역 공개
     }
 
     // 일수 계산 도우미: "4일권 = 3박 4일" — 잘못 산 일수를 미리 방지
