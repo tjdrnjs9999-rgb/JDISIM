@@ -197,7 +197,7 @@
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260713c">
-  <link rel="stylesheet" href="premium.css?v=20260714a">
+  <link rel="stylesheet" href="premium.css?v=20260715a">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" defer onload="lucide.createIcons()"></script>
@@ -598,8 +598,22 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      padding: 10px 12px 12px;
+      padding: 11px 12px 9px;
       flex: 1;
+    }
+    /* v3: "최저" 라벨 + 가격 강조 (하루 원꼴·바코드 제거 — 2026-07-15 카드 리디자인) */
+    .store-card-from {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #B0A28C;
+      letter-spacing: 0.06em;
+    }
+    .store-card-price em {
+      font-style: normal;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #8a7a6d;
+      margin-left: 1px;
     }
     .store-card-title {
       margin: 0;
@@ -1149,15 +1163,16 @@
     @keyframes tcConfetti { 0% { transform: translateY(0) rotate(0); } 100% { transform: translateY(105vh) rotate(640deg); opacity: 0.7; } }
     @media (prefers-reduced-motion: reduce) { [style*="romiFloat"] { animation: none !important; } }
 
+    /* v3: 카드 하단 풀폭 CTA (바코드·절취선 제거 후 카드 마감 요소) */
     .store-card-btn {
-      margin-top: 8px;
-      width: 100%;
+      margin: 2px 12px 12px;
+      width: calc(100% - 24px);
       background: linear-gradient(135deg, #F97316 0%, #F2751F 100%);
       border: none;
       color: #ffffff;
       font-size: 0.78rem;
       font-weight: 800;
-      padding: 9px 0;
+      padding: 10px 0;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(249, 115, 22, 0.22);
     }
@@ -2965,20 +2980,15 @@
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
             ${warnChip ? `<span class="store-warn-badge"${warnChip.includes('문자') ? ' style="background:linear-gradient(135deg,#3B82F6,#60A5FA);box-shadow:0 2px 8px rgba(59,130,246,0.35);"' : ''}>${warnChip}</span>` : ''}
           </div>
-          <div style="height: 9px;"></div>
-          <div class="bp-perf"></div>
           <div class="store-card-body">
             <h4 class="store-card-title">${countryName} eSIM</h4>
             <div class="store-card-meta">통신사 ${entry.carriers.length}곳 · 요금제 ${entry.planCount.toLocaleString()}종</div>
             <div class="store-card-price-row">
-              <span class="store-card-price">${entry.minPrice.toLocaleString()}원~</span>
-              <span class="store-card-perday">하루 ${entry.minPerDay.toLocaleString()}원꼴</span>
+              <span class="store-card-from">최저</span>
+              <span class="store-card-price">${entry.minPrice.toLocaleString()}<em>원~</em></span>
             </div>
           </div>
-          <div class="bp-barcode"></div>
-          <div style="padding: 4px 12px 12px;">
-            <button class="store-card-btn" type="button" style="margin-top:6px;">요금제 보기</button>
-          </div>
+          <button class="store-card-btn" type="button">요금제 보기 →</button>
         `;
         listContainer.appendChild(card);
       });
@@ -3181,6 +3191,7 @@
             </div>`).join('')}</div>
         </div>
         <a href="issue.html?local=${encodeURIComponent(order.orderCode || '')}" style="display:block;width:100%;max-width:330px;margin-top:14px;text-align:center;padding:14px;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,0.25);${reduced ? '' : 'animation:tcFade 0.5s ease 0.55s both;'}">🎫 발급 페이지 열기 — 원하는 시점에 발급</a>
+        ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : `<a href="login.html?return=${encodeURIComponent('mobile.html#orders')}" style="display:block;width:100%;max-width:330px;margin-top:9px;text-align:center;padding:13px;border-radius:14px;background:rgba(255,255,255,0.1);border:1.5px dashed rgba(255,255,255,0.45);color:#fff;font-weight:800;font-size:0.82rem;text-decoration:none;${reduced ? '' : 'animation:tcFade 0.5s ease 0.62s both;'}">💰 이 번호로 1분 가입하면 <b style="color:#fbbf24;">2,000원 쿠폰</b> + 주문·케어링크 평생 보관</a>`; } catch(e){ return ''; } })()}
         <div style="width:100%;max-width:330px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.7s both;'}">${buildTravelTipsHTML(country)}</div>
         <button id="tcShareBtn" style="margin-top:18px;padding:12px 22px;border:1.5px solid rgba(255,255,255,0.35);border-radius:24px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.8rem;font-weight:800;${reduced ? '' : 'animation:tcFade 0.5s ease 1.05s both;'}">📤 여행 메이트에게 공유하기</button>
         <button id="tcDoneBtn" style="margin:12px 0 8px;padding:14px 34px;border:none;border-radius:26px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.9rem;font-weight:800;box-shadow:0 10px 26px rgba(249,115,22,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.9s both;'}">주문 내역 확인하기 →</button>
@@ -4326,6 +4337,7 @@
             <button id="mobileConfirmPayBtn" style="flex:1.6;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;opacity:0.5;" disabled>동의하고 결제하기</button>
           </div>
           <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:11px;font-size:0.8rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
+          ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:8px;font-size:0.78rem;font-weight:700;color:#8a7a6d;text-decoration:none;">💰 회원이면 <b style="color:#F2751F;">2,000원 쿠폰</b> — 1분 가입하고 다음 결제부터 할인받기</a>'; } catch(e){ return ''; } })()}
         </div>`;
       document.body.appendChild(layer);
       const check = layer.querySelector('#mobileAgreeCheck');

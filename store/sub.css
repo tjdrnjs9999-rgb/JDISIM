@@ -164,3 +164,8 @@ footer a { color: var(--dim); }
 @media (prefers-reduced-motion: reduce) {
   .back, .card, .cta { transition: none !important; }
 }
+
+/* 의미단위 줄바꿈 보증 (2026-07-15): keep-all 전역 + 문단은 pretty, 제목은 balance — iOS·안드로이드 공통 */
+body { word-break: keep-all; overflow-wrap: break-word; }
+p, li, dd, span, td, th { text-wrap: pretty; }
+h1, h2, h3, h4, strong { text-wrap: balance; }

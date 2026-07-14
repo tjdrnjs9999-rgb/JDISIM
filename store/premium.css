@@ -1928,10 +1928,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .store-card-media { background: #F7F1E9 !important; }
 .store-net-badge { color: #F2751F !important; }
 .store-net-badge.local { color: #14A08F !important; }
-.store-card-perday { color: #F2751F !important; }
 .store-card-title { color: #221510 !important; }
 .store-card-meta { color: #8A7A6D !important; }
-.store-card-price { color: #221510 !important; }
+.store-card-price { color: #F2751F !important; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .m-cat-btn { border-color: rgba(242, 117, 31, 0.16) !important; color: #5D5049 !important; transition: transform 0.18s ease, border-color 0.18s, color 0.18s; }
 .m-cat-btn:active { transform: scale(0.95); }
 .m-cat-btn.active { color: #fff !important; }
