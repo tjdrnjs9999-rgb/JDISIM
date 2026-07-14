@@ -2163,9 +2163,12 @@
   <!-- ================= VIEW 3: MY 페이지 (내 여행 + 주문·QR 조회 통합, 2026-07-15 재편) ================= -->
   <main id="view-orders" class="mobile-view">
     <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #221510;">MY · 내 여행</h3>
-    <p style="font-size: 0.85rem; color: #8a7a6d; font-weight: 600; margin: 0 0 12px 0;">케어링크 · 주문 · QR을 한곳에서 — 로그인 없이 이 기기 기준이에요</p>
+    <p style="font-size: 0.85rem; color: #8a7a6d; font-weight: 600; margin: 0 0 12px 0;">주문 · 케어링크 · 쿠폰을 한곳에서</p>
 
-    <!-- 🧳 내 여행 동반자 카드 (실주문 케어링크 기억 > 이 기기 주문 — 없으면 자동 숨김) -->
+    <!-- 👤 회원 존: 로그인(전화 OTP) 시 = 서버에서 내 주문·쿠폰 / 비로그인 = 로그인 CTA -->
+    <div id="memberZone"></div>
+
+    <!-- 🧳 내 여행 동반자 카드 (비로그인 보조 — 이 기기 기억 기반, 로그인 시 자동 숨김) -->
     <div id="myTripCard" style="display:none;"></div>
 
     <h4 style="font-size: 0.95rem; font-weight: 800; margin: 18px 0 6px 0; color: #221510;">주문 및 eSIM QR코드 조회</h4>
@@ -5236,8 +5239,78 @@
     var isIOSSafari = /iPhone|iPad|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|KAKAOTALK|NAVER|Instagram|Line\//i.test(ua);
     window.addEventListener('load', function () {
       renderMyTrip();
+      renderMember();
       if (isIOSSafari && !isStandalone() && Date.now() > hidUntil()) renderPwaCard('ios');
     });
+
+    /* ── ③ MY 회원 존 (전화 OTP 로그인) ──
+       로그인 = 서버(/api/member)에서 그 번호의 모든 주문·케어링크·쿠폰 (기기 무관!)
+       비로그인 = 로그인 CTA + 아래 기기 기억 카드·게스트 조회 유지 */
+    var MEMBER_API = 'https://jdisim-proxy.vercel.app/api/member';
+    function memberToken() { try { return localStorage.getItem('jd_member_token') || ''; } catch (e) { return ''; } }
+    function renderMember() {
+      var zone = document.getElementById('memberZone');
+      if (!zone) return;
+      var token = memberToken();
+      if (!token) { renderMemberGuest(zone); return; }
+      fetch(MEMBER_API + '?action=me', { headers: { Authorization: 'Bearer ' + token } })
+        .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }); })
+        .then(function (x) {
+          if (x.s === 401) { try { localStorage.removeItem('jd_member_token'); } catch (e) {} renderMemberGuest(zone); return; }
+          if (x.s !== 200 || !x.j.ok) { renderMemberGuest(zone); return; }
+          renderMemberHome(zone, x.j);
+          var mt = document.getElementById('myTripCard'); if (mt) mt.style.display = 'none'; // 서버 데이터가 우선
+        })
+        .catch(function () { renderMemberGuest(zone); });
+    }
+    function renderMemberGuest(zone) {
+      zone.innerHTML =
+        '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" style="display:flex;align-items:center;gap:13px;text-decoration:none;background:linear-gradient(135deg,#101623,#25314F);border-radius:18px;padding:16px;margin:0 0 14px;box-shadow:0 12px 30px rgba(16,22,35,0.25);">'
+        + '<img src="images/fox-hello.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
+        + '<span style="flex:1;min-width:0;color:#fff;">'
+        +   '<span style="display:block;font-size:0.95rem;font-weight:800;">휴대폰 번호로 1분 탑승 수속 ✈️</span>'
+        +   '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">모든 기기에서 내 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
+        + '</span>'
+        + '<span style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(249,115,22,0.35);">로그인</span></a>';
+    }
+    function renderMemberHome(zone, me) {
+      var coupons = me.coupons || [], orders = me.orders || [];
+      var fresh = coupons.filter(function (c) { return !c.used; });
+      var html =
+        '<div style="background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(242,117,31,0.22);border-radius:18px;overflow:hidden;margin:0 0 14px;box-shadow:0 10px 26px rgba(242,117,31,0.09);">'
+        + '<div style="height:4px;background:linear-gradient(90deg,#F97316,#F59E0B 55%,#2BB3A3);"></div>'
+        + '<div style="display:flex;align-items:center;gap:10px;padding:13px 15px 10px;">'
+        +   '<span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(249,115,22,0.14),rgba(245,158,11,0.08));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</span>'
+        +   '<span style="flex:1;min-width:0;"><b style="font-size:0.98rem;color:#221510;">' + esc(me.phoneMasked || '여행자') + ' 님</b>'
+        +   '<span style="display:block;font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:1px;">주문 ' + orders.length + '건 · 쿠폰 ' + fresh.length + '장</span></span>'
+        +   '<button type="button" data-m-logout style="border:none;background:none;font-family:inherit;font-size:0.76rem;font-weight:700;color:#B0A28C;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px;">로그아웃</button>'
+        + '</div>';
+      // 🧡 웰컴백 쿠폰 하이라이트 (JDISIM 단독 — 도착 인텔리전스가 귀국을 감지해 자동 지급)
+      fresh.filter(function (c) { return c.reason === 'welcomeback'; }).slice(0, 2).forEach(function (c) {
+        html += '<div style="margin:0 12px 10px;padding:12px 14px;border:1.5px dashed rgba(242,117,31,0.5);border-radius:14px;background:rgba(249,115,22,0.05);">'
+          + '<div style="font-size:0.88rem;font-weight:800;color:#221510;">🧡 ' + esc(c.name) + ' <b style="color:#F2751F;">' + Number(c.amount).toLocaleString() + '원</b></div>'
+          + '<div style="font-size:0.76rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + esc(c.note || '') + ' · ' + esc(c.expires) + '까지 · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div></div>';
+      });
+      // 주문 목록 (케어링크 = 기기 무관 서버 URL!)
+      orders.slice(0, 5).forEach(function (o) {
+        html += '<div style="display:flex;align-items:center;gap:10px;margin:0 12px 9px;padding:11px 13px;background:#fff;border:1px solid #F0E7DB;border-radius:14px;">'
+          + '<span style="flex:1;min-width:0;"><b style="font-size:0.88rem;color:#221510;">' + esc(o.country || '여행') + '</b>'
+          + '<span style="display:block;font-size:0.72rem;font-weight:600;color:#8a7a6d;margin-top:1px;">' + esc((o.plan || '').slice(0, 30)) + ' · ' + esc((o.at || '').slice(0, 10)) + '</span></span>'
+          + (o.care_url ? '<a href="' + o.care_url.replace(/"/g, '&quot;') + '" style="flex-shrink:0;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.76rem;font-weight:800;padding:8px 13px;border-radius:20px;">🎫 케어링크</a>' : '')
+          + '</div>';
+      });
+      if (!orders.length) html += '<div style="margin:0 12px 12px;padding:14px;text-align:center;font-size:0.82rem;font-weight:600;color:#8a7a6d;background:#FFFDFB;border:1px dashed #EDE4D8;border-radius:14px;">아직 연결된 주문이 없어요 — 구매하시면 여기에 자동으로 모여요</div>';
+      html += '<div style="height:8px;"></div></div>';
+      zone.innerHTML = html;
+      var lo = zone.querySelector('[data-m-logout]');
+      if (lo) lo.addEventListener('click', function () {
+        var t = memberToken();
+        try { localStorage.removeItem('jd_member_token'); localStorage.removeItem('jd_member_phone'); } catch (e) {}
+        fetch(MEMBER_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'logout', token: t }) }).catch(function () {});
+        renderMember();
+        var mt = document.getElementById('myTripCard'); if (mt && mt.innerHTML) mt.style.display = 'block';
+      });
+    }
   })();
   </script>
 </body>
