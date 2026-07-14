@@ -80,19 +80,33 @@ window.RomiMode = (function () {
     ];
   }
 
-  // 안드로이드 한정: Wi-Fi 통화 토글 화면까지 딥링크 사다리 (토글 자체는 OS 보안상 자동화 불가)
-  // ① WIFI_CALLING_SETTINGS(토글 화면 직행) → ② WIRELESS_SETTINGS(연결 설정) → ③ SETTINGS(설정 홈)
-  // 앞 단계가 성공해 화면을 떠났으면(document.hidden) 다음 폴백은 발화하지 않음
-  function tryOpenSettings() {
-    try { location.href = 'intent://#Intent;action=android.settings.WIFI_CALLING_SETTINGS;end'; } catch (e) {}
-    setTimeout(function () {
-      if (document.hidden) return;
-      try { location.href = 'intent://#Intent;action=android.settings.WIRELESS_SETTINGS;end'; } catch (e) {}
-      setTimeout(function () {
-        if (document.hidden) return;
-        try { location.href = 'intent://#Intent;action=android.settings.SETTINGS;end'; } catch (e) {}
-      }, 900);
-    }, 1200);
+  // 웹에서 android.settings.* 인텐트는 크로미움 BROWSABLE 정책으로 전면 차단됨 (2026-07-14 갤럭시 실측)
+  // → 웹 최대치: "Wi-Fi 통화" 검색어 복사 → 설정 앱 검색창에 붙여넣기 (갤럭시·아이폰 공통 동작)
+  // → 설정 화면 직행 딥링크는 자사 앱 출시 시 앱 인텐트로 부활 예정
+  function copySearchTerm(btn) {
+    var txt = 'Wi-Fi 통화';
+    function done(ok) {
+      btn.textContent = ok
+        ? '✅ 복사 완료! 설정 앱을 열고 맨 위 검색창에 붙여넣으세요'
+        : '설정 앱 검색창에 "Wi-Fi 통화"를 직접 입력해 주세요';
+      btn.disabled = true;
+      btn.style.opacity = '0.85';
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { fallbackCopy(); });
+      } else { fallbackCopy(); }
+    } catch (e) { done(false); }
+    function fallbackCopy() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = txt; ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        done(!!ok);
+      } catch (e) { done(false); }
+    }
   }
 
   var css = '.rm-card{background:linear-gradient(135deg,rgba(249,115,22,.07),rgba(245,158,11,.05));border:1.5px solid rgba(249,115,22,.35);border-radius:16px;padding:16px;margin:14px 0;word-break:keep-all;font-family:inherit}'
@@ -138,13 +152,13 @@ window.RomiMode = (function () {
       + s.map(function (st) {
           return '<div class="rm-step"><div class="rm-ic">' + st.icon + '</div><div><div class="rm-t">' + st.title + '</div><div class="rm-b">' + st.body + '</div></div></div>';
         }).join('')
-      + ((plat === 'android' || plat === 'samsung') ? '<button class="rm-open" data-rm-open>⚙️ 설정 화면 바로 열기 시도</button>' : '')
+      + '<button class="rm-open" data-rm-open>🔍 "Wi-Fi 통화" 복사 — 설정 검색창에 붙여넣으면 바로 나와요</button>'
       + '<button class="rm-done" data-rm-done>' + (target === 'travel' ? '✅ 세팅 완료! 여행 모드 시작' : '✅ 복귀 완료! 수고했어요') + '</button>'
       + '<button class="rm-x" data-rm-x>다음에 할게요</button>'
       + '</div>';
     document.body.appendChild(ov);
     var openBtn = ov.querySelector('[data-rm-open]');
-    if (openBtn) openBtn.addEventListener('click', tryOpenSettings);
+    if (openBtn) openBtn.addEventListener('click', function () { copySearchTerm(openBtn); });
     ov.querySelector('[data-rm-done]').addEventListener('click', function () {
       setMode(target);
       track('romi_mode_change', { to: target, platform: plat });
