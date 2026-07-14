@@ -381,14 +381,10 @@
     /* PC 스크롤 유도선 제거 */
     .pc-hero-cue { display: none !important; }
 
-    /* ===== PC 풀페이지 스냅: 한 화면씩 착착 고정 ===== */
-    @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-      html.snap-on { scroll-snap-type: y mandatory; scroll-padding-top: 64px; }
-      html.snap-on #view-home > section { scroll-snap-align: start; }
-      html.snap-on #view-home > .faq-section, html.snap-on #view-home > .guide-image-section { scroll-snap-align: none; } /* 긴 콘텐츠는 자유 스크롤 */
-      html.snap-on .footer { scroll-snap-align: end; }
-      /* 스토어·주문 등 다른 뷰에서는 자유 스크롤 유지 (해당 뷰엔 snap-align이 없음) */
-    }
+    /* ===== [비활성화됨] 구 PC 풀페이지 스냅 =====
+       인스턴트 페이저(v2)가 이동을 전담하므로 CSS 스냅은 전면 소거.
+       (구 규칙은 후기/CTA 섹션에 mandatory 스냅을 걸어, 스냅 제외였던
+        가이드·FAQ로 내려가려 하면 후기 상단으로 되감기는 스크롤 트랩을 만들었음) */
 
     /* ===== 전역 마이크로 디테일 ===== */
     ::selection { background: rgba(249, 115, 22, 0.22); }
