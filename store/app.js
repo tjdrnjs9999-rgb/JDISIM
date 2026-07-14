@@ -766,7 +766,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="card-specs">
             <div class="card-spec-item">📶 ${speedsStr}</div>
             <div class="card-spec-item">📞 ${callsStr}</div>
-            <div class="card-spec-item">⚡ 즉시 개통</div>
+            ${actChipHtml(g)}
           </div>
           <div class="card-footer">
             <div>
@@ -880,7 +880,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="card-specs">
             <div class="card-spec-item">📶 ${speedsStr}</div>
             <div class="card-spec-item">📞 ${callsStr}</div>
-            <div class="card-spec-item">⚡ 즉시 개통</div>
+            ${actChipHtml(g)}
           </div>
           <div class="card-footer">
             <div>
@@ -1344,6 +1344,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   function isLongLeadCountry(name) {
     const c = String(name || '');
     return LONG_LEAD_REGIONS.some(k => c.includes(k));
+  }
+  // 카드용 칩: 국가 그룹(g.carriers)의 activation을 종합해 구매 타이밍 칩 반환 (모바일과 동일 정책)
+  function activationChip(acts, countryName) {
+    const arr = Array.isArray(acts) ? acts : [acts];
+    const has = s => arr.some(a => String(a || '').includes(s));
+    const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
+    if (all('즉시 개통')) return '🚨 설치 즉시 시작';
+    if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 3~4일 전 주문' : '⏰ 1~2일 전 주문';
+    if (has('즉시 개통') || has('희망일')) return '⏰ 구매 타이밍 확인';
+    return '';
+  }
+  // 카드 세 번째 스펙 칩: 치명 타이밍이 있으면 빨간 경고 칩, 없으면 기존 '⚡ 즉시 개통' 유지
+  function actChipHtml(g) {
+    const txt = activationChip((g.carriers || []).map(c => (c && c.activation) || ''), g.country);
+    return txt
+      ? `<div class="card-spec-item" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.28);color:#dc2626;font-weight:800;">${txt}</div>`
+      : '<div class="card-spec-item">⚡ 즉시 개통</div>';
   }
   function leadTimeBadge(lead) {
     return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.82rem;font-weight:900;padding:6px 14px;border-radius:999px;margin-bottom:4px;box-shadow:0 4px 12px rgba(239,68,68,0.3);">⏰ 출국 ${lead} 전 주문 필수</div>`;
