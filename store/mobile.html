@@ -188,7 +188,7 @@
       html, body { background: #FAF8F4 !important; }
     }
   </style>
-  <link rel="manifest" href="manifest.webmanifest?v=3">
+  <link rel="manifest" href="manifest.webmanifest?v=4">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -2004,6 +2004,9 @@
     </section>
     <div class="snap-tail">
 
+    <!-- 📲 PWA 설치 카드 (설치 미완 + 유도 가능 환경에서만 JS가 표시) -->
+    <div id="pwaCard" style="display:none;"></div>
+
     <!-- Quick Utilities Dashboard Links -->
     <h3 style="font-size: 0.95rem; font-weight: 800; margin: 28px 0 16px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
       <i data-lucide="layout-grid" style="color: #F2751F; width: 18px; height: 18px;"></i> 퀵 서비스 메뉴
@@ -2090,6 +2093,9 @@
       <button class="m-cat-btn" data-cat="남미">🐆 남미</button>
       <button class="m-cat-btn" data-cat="글로벌">✈️ 글로벌</button>
     </div>
+
+    <!-- 🧳 내 여행 동반자 카드 (구매 이력 있을 때만 JS가 렌더 — 케어링크·재구매 원탭) -->
+    <div id="myTripCard" style="display:none;"></div>
 
     <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 구매 보장 3종) -->
     <div class="rg-ticket">
@@ -5089,6 +5095,109 @@
       }
       jump(idx() + (dy > 0 ? 1 : -1));
     }, { passive: true });
+  })();
+  </script>
+  <script>
+  /* ============================================================
+     📲 앱 선점 패키지 (2026-07-14)
+     ① 내 여행 동반자 카드 — 구매 이력(esim_orders) 기반: D-day·케어링크·재구매 원탭
+     ② PWA 설치 유도 — "다운로드 없이 앱처럼": A2HS 프롬프트 + iOS 수동 안내
+     타사 앱 = 구매 도구. 우리 웹 = 여행 동반자 + 제로 마찰 설치가 선점 포인트.
+     ============================================================ */
+  (function () {
+    'use strict';
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    /* ── ① 내 여행 동반자 카드 ── */
+    function renderMyTrip() {
+      var slot = document.getElementById('myTripCard');
+      if (!slot) return;
+      var orders;
+      try { orders = JSON.parse(localStorage.getItem('esim_orders') || '[]'); } catch (e) { orders = []; }
+      if (!orders.length) return;
+      var o = orders[0];
+      var item = (o.items && o.items[0]) || {};
+      var country = item.country || '여행';
+      // 케어링크에서 등록한 출국일 (jd_dep_주문코드) → D-day
+      var dep = '';
+      try { dep = localStorage.getItem('jd_dep_' + o.orderCode) || ''; } catch (e) {}
+      var ddayHtml = '';
+      if (dep) {
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        var d = new Date(dep); d.setHours(0, 0, 0, 0);
+        var diff = Math.round((d - today) / 86400000);
+        if (diff > 0) ddayHtml = '<span style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;box-shadow:0 3px 9px rgba(249,115,22,0.3);">✈️ D-' + diff + '</span>';
+        else if (diff === 0) ddayHtml = '<span style="background:linear-gradient(135deg,#2BB3A3,#40CDBE);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;">✈️ 오늘 출국!</span>';
+      }
+      slot.innerHTML =
+        '<div style="position:relative;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(242,117,31,0.22);border-radius:18px;padding:0 0 12px;margin:12px 0 14px;overflow:hidden;box-shadow:0 10px 26px rgba(242,117,31,0.09);">'
+        + '<div style="height:4px;background:linear-gradient(90deg,#F97316,#F59E0B 55%,#2BB3A3);"></div>'
+        + '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px 4px;">'
+        +   '<div style="flex:1;min-width:0;">'
+        +     '<div style="font-size:0.68rem;font-weight:900;letter-spacing:2px;color:#F97316;">MY TRIP · 내 여행</div>'
+        +     '<div style="font-size:0.98rem;font-weight:800;color:#221510;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + '</div>'
+        +     '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">' + esc(item.planLimit || '') + (item.planDuration ? ' · ' + esc(item.planDuration) + '일' : '') + ' · 주문 ' + esc(o.date || '') + '</div>'
+        +   '</div>'
+        +   '<img src="images/fox-thumbsup.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;padding:10px 14px 0;">'
+        +   '<a href="issue.html?o=' + encodeURIComponent(o.orderCode || '') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(249,115,22,0.28);">🎫 내 케어링크 열기</a>'
+        +   '<button type="button" data-mt-rebuy style="flex:1;background:#fff;border:1.5px solid rgba(242,117,31,0.4);color:#F2751F;font-family:inherit;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;cursor:pointer;">같은 나라 재구매</button>'
+        + '</div></div>';
+      var rb = slot.querySelector('[data-mt-rebuy]');
+      if (rb) rb.addEventListener('click', function () {
+        if (typeof openBottomSheet === 'function') openBottomSheet(country);
+      });
+      slot.style.display = 'block';
+    }
+
+    /* ── ② PWA 설치 유도 ── */
+    var deferredPrompt = null;
+    function isStandalone() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+    function hidUntil() {
+      try { return parseInt(localStorage.getItem('jd_a2hs_hide') || '0', 10); } catch (e) { return 0; }
+    }
+    function renderPwaCard(mode) {
+      var slot = document.getElementById('pwaCard');
+      if (!slot) return;
+      slot.innerHTML =
+        '<div style="position:relative;display:flex;align-items:center;gap:12px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(242,117,31,0.35);border-radius:16px;padding:13px 14px;margin:6px 0 20px;">'
+        + '<img src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;box-shadow:0 4px 10px rgba(242,117,31,0.2);" onerror="this.remove()">'
+        + '<div style="flex:1;min-width:0;">'
+        +   '<div style="font-size:0.88rem;font-weight:800;color:#221510;">앱스토어 없이, 1초만에 앱으로</div>'
+        +   '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">홈 화면에 추가하면 주문·QR·케어를 앱처럼 써요</div>'
+        + '</div>'
+        + (mode === 'ios'
+          ? '<span style="flex-shrink:0;font-size:0.72rem;font-weight:800;color:#F2751F;text-align:center;line-height:1.4;">공유 버튼 →<br>홈 화면에 추가</span>'
+          : '<button type="button" data-pwa-go style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);border:none;color:#fff;font-family:inherit;font-size:0.8rem;font-weight:800;padding:10px 15px;border-radius:22px;cursor:pointer;box-shadow:0 4px 12px rgba(249,115,22,0.3);">설치</button>')
+        + '<button type="button" data-pwa-x aria-label="닫기" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#c9b8a9;font-size:0.9rem;cursor:pointer;padding:4px;">✕</button>'
+        + '</div>';
+      var go = slot.querySelector('[data-pwa-go]');
+      if (go) go.addEventListener('click', function () {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function () { deferredPrompt = null; slot.style.display = 'none'; });
+      });
+      slot.querySelector('[data-pwa-x]').addEventListener('click', function () {
+        try { localStorage.setItem('jd_a2hs_hide', String(Date.now() + 30 * 86400000)); } catch (e) {}
+        slot.style.display = 'none';
+      });
+      slot.style.display = 'block';
+    }
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (!isStandalone() && Date.now() > hidUntil()) renderPwaCard('android');
+    });
+    // iOS 사파리: beforeinstallprompt 없음 → 수동 안내 (인앱 브라우저 제외)
+    var ua = navigator.userAgent;
+    var isIOSSafari = /iPhone|iPad|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|KAKAOTALK|NAVER|Instagram|Line\//i.test(ua);
+    window.addEventListener('load', function () {
+      renderMyTrip();
+      if (isIOSSafari && !isStandalone() && Date.now() > hidUntil()) renderPwaCard('ios');
+    });
   })();
   </script>
 </body>

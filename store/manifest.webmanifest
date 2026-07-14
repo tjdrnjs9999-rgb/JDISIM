@@ -1,61 +1,38 @@
 {
-  "id": "/mobile.html",
-  "name": "JDISIM — 여행 eSIM",
+  "name": "JDISIM — 여행 eSIM · 로미 케어",
   "short_name": "JDISIM",
-  "description": "여행 eSIM 구매부터 QR 설치까지, 로미가 도와드려요",
-  "lang": "ko",
+  "description": "여행 eSIM 구매부터 설치·개통 케어까지 — 다운로드 없이 앱처럼 쓰는 JDISIM",
+  "id": "/mobile.html",
   "start_url": "/mobile.html?src=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
+  "lang": "ko",
   "background_color": "#FAF8F4",
-  "theme_color": "#F97316",
+  "theme_color": "#FBF6EF",
   "icons": [
-    {
-      "src": "images/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "images/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "images/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     {
-      "name": "내 eSIM QR 지갑",
-      "short_name": "QR 지갑",
-      "url": "/issue.html?src=shortcut",
-      "icons": [
-        {
-          "src": "images/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "name": "여행지 스토어",
+      "short_name": "스토어",
+      "url": "/mobile.html?src=pwa#store",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "요금제 찾기",
-      "short_name": "요금제",
-      "url": "/mobile.html?src=shortcut#search",
-      "icons": [
-        {
-          "src": "images/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "name": "내 주문 · QR 조회",
+      "short_name": "내 주문",
+      "url": "/mobile.html?view=orders&src=pwa",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "로미 닥터 (긴급 진단)",
+      "short_name": "로미 닥터",
+      "url": "/mobile.html?view=doctor&src=pwa",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
-  ],
-  "display_override": [
-    "standalone",
-    "minimal-ui"
   ]
 }
