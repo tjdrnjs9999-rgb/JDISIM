@@ -796,30 +796,34 @@
 
         <!-- Store Metadata -->
         <div class="store-meta">
-          <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 구매 보장 3종) -->
+          <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 좌측 스텁 + 보장 3행) -->
           <div class="rg-ticket" style="margin: 4px 0 18px;">
             <div class="rg-edge"></div>
             <div class="rg-inner">
-              <div class="rg-head">
+              <div class="rg-stub">
                 <span class="rg-eyebrow">ROMI GUARANTEE</span>
-                <strong class="rg-title">구매하는 순간,<br>로미가 끝까지 책임져요</strong>
+                <strong class="rg-title">구매하는 순간,<br>로미가 끝까지<br>책임져요</strong>
+                <div class="rg-code">
+                  <i class="rg-barcode"></i>
+                  <span>JDISIM · OFFICIAL CARE</span>
+                </div>
                 <img src="images/fox-thumbsup.png" alt="엄지척 로미" class="rg-fox" onerror="this.style.display='none'">
               </div>
               <div class="rg-perf"></div>
               <div class="rg-rows">
                 <div class="rg-row">
                   <span class="rg-ic rg-ic-orange">⚡</span>
-                  <span class="rg-txt"><strong>결제 후 평균 5~15분 QR 발송</strong><span>카톡·문자로 자동 전송돼요</span></span>
+                  <span class="rg-txt"><strong>결제 후 평균 5~15분 QR 발송</strong><span>카카오톡·문자로 자동 전송돼요</span></span>
                   <span class="rg-badge rg-b-orange">✓</span>
                 </div>
                 <div class="rg-row">
                   <span class="rg-ic rg-ic-amber">🛡️</span>
-                  <span class="rg-txt"><strong>미개통 시 100% 환불</strong><span>현지에서 안 터지면 전액 보장</span></span>
+                  <span class="rg-txt"><strong>미개통 시 100% 환불</strong><span>현지에서 안 터지면 전액 보장해 드려요</span></span>
                   <span class="rg-badge rg-b-amber">✓</span>
                 </div>
                 <a class="rg-row" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">
                   <span class="rg-ic rg-ic-teal">💬</span>
-                  <span class="rg-txt"><strong>24시간 카톡 1:1 케어</strong><span>새벽에도 실시간 — 여행 내내 곁에</span></span>
+                  <span class="rg-txt"><strong>24시간 카톡 1:1 케어</strong><span>새벽에도 실시간 — 여행 내내 곁에 있어요</span></span>
                   <span class="rg-badge rg-b-teal">→</span>
                 </a>
               </div>
@@ -828,41 +832,50 @@
           <style>
             .rg-ticket { position: relative; background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%); border: 1px solid rgba(242,117,31,0.16); border-radius: 20px; overflow: hidden; box-shadow: 0 12px 32px rgba(242,117,31,0.1); }
             .rg-edge { height: 5px; background: linear-gradient(90deg, #F97316, #F59E0B 55%, #2BB3A3); }
-            .rg-inner { display: grid; grid-template-columns: minmax(220px, 250px) 2px 1fr; align-items: center; gap: 0 22px; padding: 16px 22px; }
-            .rg-head { position: relative; padding-right: 8px; }
-            .rg-eyebrow { display: block; font-size: 0.68rem; font-weight: 900; letter-spacing: 2.8px; color: #F97316; margin-bottom: 7px; }
-            .rg-title { display: block; font-size: 1.08rem; font-weight: 900; line-height: 1.35; color: #221510; letter-spacing: -0.015em; }
-            .rg-fox { position: absolute; right: -4px; bottom: -14px; width: 62px; filter: drop-shadow(0 6px 14px rgba(249,115,22,0.28)); animation: rgFoxFloat 3.6s ease-in-out infinite; }
-            @keyframes rgFoxFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-            /* 세로 절취선 (보딩패스 펀칭) */
-            .rg-perf { position: relative; width: 0; height: calc(100% + 32px); margin: -16px 0; border-left: 2px dashed rgba(242,117,31,0.22); }
+            .rg-inner { display: grid; grid-template-columns: 264px 2px 1fr; align-items: stretch; gap: 0 26px; padding: 0; }
+            /* ── 좌측 티켓 스텁 ── */
+            .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 24px 22px 24px 26px; background: linear-gradient(170deg, rgba(249,115,22,0.055), rgba(245,158,11,0.02) 70%); }
+            .rg-eyebrow { font-size: 0.68rem; font-weight: 900; letter-spacing: 2.8px; color: #F97316; }
+            .rg-title { font-size: 1.22rem; font-weight: 900; line-height: 1.4; color: #221510; letter-spacing: -0.018em; word-break: keep-all; }
+            .rg-code { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
+            .rg-barcode { display: block; width: 128px; height: 24px; opacity: 0.62; background: repeating-linear-gradient(90deg, #221510 0 2px, transparent 2px 4px, #221510 4px 5px, transparent 5px 9px, #221510 9px 12px, transparent 12px 14px); }
+            .rg-code span { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.2px; color: #b09a8a; font-family: 'SF Mono', 'Courier New', monospace; }
+            .rg-fox { position: absolute; right: 12px; bottom: 10px; width: 78px; filter: drop-shadow(0 6px 14px rgba(249,115,22,0.28)); animation: rgFoxFloat 3.6s ease-in-out infinite; }
+            @keyframes rgFoxFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+            /* ── 세로 절취선 (펀칭홀) ── */
+            .rg-perf { position: relative; width: 0; border-left: 2px dashed rgba(242,117,31,0.22); }
             .rg-perf::before, .rg-perf::after { content: ''; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #FAF8F4; border: 1px solid rgba(242,117,31,0.16); }
             .rg-perf::before { top: -8px; }
             .rg-perf::after { bottom: -8px; }
-            .rg-rows { display: grid; grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); gap: 10px 14px; }
-            .rg-row { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 10px 12px; border-radius: 15px; text-decoration: none; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), background 0.2s, box-shadow 0.2s; }
-            .rg-row:hover { transform: translateY(-3px); background: rgba(255,255,255,0.9); box-shadow: 0 10px 22px rgba(242,117,31,0.12); }
-            .rg-ic { flex-shrink: 0; width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 1.16rem; }
-            .rg-ic-orange { background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(249,115,22,0.06)); }
-            .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.06)); }
-            .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.06)); }
-            .rg-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-            .rg-txt strong { font-size: 0.86rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.4; }
-            .rg-txt span { font-size: 0.72rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.45; }
-            .rg-badge { margin-left: auto; flex-shrink: 0; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.76rem; font-weight: 900; color: #fff; }
+            /* ── 우측 보장 3행 ── */
+            .rg-rows { display: flex; flex-direction: column; justify-content: center; padding: 14px 26px 14px 0; }
+            .rg-row { display: flex; align-items: center; gap: 15px; min-width: 0; padding: 13px 14px; border-radius: 15px; text-decoration: none; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), background 0.22s, box-shadow 0.22s; }
+            .rg-row + .rg-row { border-top: 1px dashed rgba(34,21,16,0.08); }
+            .rg-row:hover { transform: translateX(5px); background: rgba(255,255,255,0.92); box-shadow: 0 8px 20px rgba(242,117,31,0.1); }
+            .rg-row:hover .rg-badge { transform: scale(1.14) rotate(-6deg); }
+            .rg-ic { flex-shrink: 0; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.28rem; }
+            .rg-ic-orange { background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(249,115,22,0.05)); }
+            .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.05)); }
+            .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.05)); }
+            .rg-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+            .rg-txt strong { font-size: 0.94rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.4; }
+            .rg-txt span { font-size: 0.76rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.45; }
+            .rg-badge { margin-left: auto; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
             .rg-b-orange { background: linear-gradient(135deg, #F97316, #FB923C); box-shadow: 0 3px 9px rgba(249,115,22,0.35); }
             .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
             .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
-            @media (max-width: 980px) {
-              .rg-inner { grid-template-columns: 1fr; gap: 12px; }
-              .rg-perf { width: auto; height: 0; margin: 0; border-left: none; border-top: 2px dashed rgba(242,117,31,0.22); }
+            @media (max-width: 860px) {
+              .rg-inner { grid-template-columns: 1fr; gap: 0; }
+              .rg-stub { padding: 20px 20px 16px; }
+              .rg-fox { width: 64px; bottom: 8px; }
+              .rg-perf { width: auto; height: 0; margin: 0 16px; border-left: none; border-top: 2px dashed rgba(242,117,31,0.22); }
               .rg-perf::before, .rg-perf::after { top: -8px; bottom: auto; }
-              .rg-perf::before { left: -30px; }
-              .rg-perf::after { left: auto; right: -30px; }
-              .rg-rows { grid-template-columns: 1fr; gap: 4px; }
-              .rg-fox { bottom: -8px; }
+              .rg-perf::before { left: -24px; }
+              .rg-perf::after { left: auto; right: -24px; }
+              .rg-rows { padding: 6px 14px 10px; }
+              .rg-row:hover { transform: none; }
             }
-            @media (prefers-reduced-motion: reduce) { .rg-fox { animation: none !important; } .rg-row { transition: none !important; } }
+            @media (prefers-reduced-motion: reduce) { .rg-fox { animation: none !important; } .rg-row, .rg-badge { transition: none !important; } }
           </style>
           <!-- 📱 기종 자가진단 배너 -->
           <div onclick="var b=document.getElementById('navDeviceCheckBtn'); if(b) b.click();" style="display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:15px 20px;background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,0.05);cursor:pointer;transition:transform 0.18s ease, box-shadow 0.18s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 26px rgba(15,23,42,0.09)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(15,23,42,0.05)';">
