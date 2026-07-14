@@ -632,6 +632,18 @@
       inset: 0;
       background: linear-gradient(180deg, rgba(15,23,42,0) 45%, rgba(15,23,42,0.55) 100%);
     }
+    .store-warn-badge {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #EF4444, #F97316);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+    }
     .store-net-badge {
       position: absolute;
       top: 8px;
@@ -2363,6 +2375,8 @@
     </div>
 
     <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
+    <!-- 결제 전 꼭 알기: 스텝 자동통과로 2단계 고지를 놓쳐도 여기서 반드시 봄 -->
+    <div id="criticalCard" class="jd-ku" style="display:none;margin:4px 0 14px;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(249,115,22,0.05));"></div>
     <div id="krCallStoreNote" class="jd-ku" style="display:none;margin:4px 0 14px;padding:9px 12px;border-radius:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);font-size:0.72rem;font-weight:700;color:#166534;line-height:1.6;">🟢 <span>스마트스토어로 구매하실 땐</span> <span>추가상품 <strong>‘한국번호 통화 세팅’</strong>을</span> <span>함께 담아주세요</span> <span style="color:#4b8a5f;">(미등록 시 카톡으로 요청 가능)</span></div>
     <!-- Quantity & Price Calculator -->
     <div class="checkout-footer">
@@ -2777,6 +2791,7 @@
         const minPerDay = Math.min(...validPlans.map(p => Math.round(p.final_price / (parseInt(p.duration) || 1))));
         const flagSrc = countryImg(countryName);
 
+        const warnChip = activationChip(group.activation, countryName);
         let networkBadgeStyle = '';
         if (networkType === '로컬망') {
           networkBadgeStyle = `background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.16); color: #16a34a;`;
@@ -2793,6 +2808,7 @@
             <div style="display: flex; gap: 6px; align-items: center;">
               <span class="product-country-tag">HOT 추천</span>
               <span style="font-size: 0.74rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
+              ${warnChip ? `<span style="font-size:0.7rem;font-weight:800;padding:1px 6px;border-radius:10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#dc2626;">${warnChip}</span>` : ''}
             </div>
             <h4 class="product-title">${countryName} ${cleanCarrier(carrierName).split(' ')[0]} 요금제</h4>
             <div class="product-carrier-badge">
@@ -2874,10 +2890,11 @@
         if (window._mCat && window._mCat !== 'ALL' && (group.category || '') !== window._mCat) return;
         let entry = countryMap.get(group.country);
         if (!entry) {
-          entry = { country: group.country, category: group.category || '', carriers: [], nets: new Set(), speeds: new Set(), planCount: 0, minPrice: Infinity, minPerDay: Infinity };
+          entry = { country: group.country, category: group.category || '', carriers: [], nets: new Set(), speeds: new Set(), planCount: 0, minPrice: Infinity, minPerDay: Infinity, acts: [] };
           countryMap.set(group.country, entry);
         }
         if (!entry.carriers.includes(group.carrier)) entry.carriers.push(group.carrier);
+        entry.acts.push(group.activation || '');
         entry.nets.add(group.network_type || '로밍망');
         entry.speeds.add(group.network_speed || '5G/LTE');
         entry.planCount += st.count;
@@ -2922,6 +2939,7 @@
           ? `${cleaned.slice(0, 2).join(' · ')} 외 ${cleaned.length - 2}곳`
           : cleaned.join(' · ');
 
+        const warnChip = activationChip(entry.acts, countryName);
         const card = document.createElement('div');
         card.className = 'store-card';
         card.style.animationDelay = `${(listContainer.children.length % 8) * 45}ms`;
@@ -2932,6 +2950,7 @@
             <div class="store-card-scrim"></div>
             <span class="store-net-badge${onlyLocal ? ' local' : ''}">${netLabel}</span>
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
+            ${warnChip ? `<span class="store-warn-badge">${warnChip}</span>` : ''}
           </div>
           <div style="height: 9px;"></div>
           <div class="bp-perf"></div>
@@ -3699,6 +3718,7 @@
         plan_type: selectedPlanType || '', capacity: selectedCapacity || '', days: selectedDays || 0,
         addon_krcall: krCallAddonOn
       });
+      renderCriticalCard(); // 결제 전 꼭 알기 — 스텝을 건너뛰어도 여기서 반드시 노출
       co.style.display = 'block';
       if (co.scrollIntoView) setTimeout(() => co.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
       if (navigator.vibrate) navigator.vibrate([8, 30, 12]);
@@ -3818,6 +3838,50 @@
     function isLongLeadCountry(name) {
       const c = String(name || '');
       return LONG_LEAD_REGIONS.some(k => c.includes(k));
+    }
+    // 카드용 칩: 국가 묶음(acts 배열) 또는 단일 통신사 activation을 받아 구매 타이밍 칩 텍스트 반환
+    function activationChip(acts, countryName) {
+      const arr = Array.isArray(acts) ? acts : [acts];
+      const has = s => arr.some(a => String(a || '').includes(s));
+      const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
+      if (all('즉시 개통')) return '🚨 설치 즉시 시작';
+      if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 3~4일 전 주문' : '⏰ 1~2일 전 주문';
+      if (has('즉시 개통') || has('희망일')) return '⏰ 구매 타이밍 확인';
+      return '';
+    }
+    // 결제 전 꼭 알기: 선택된 상품의 치명 특이사항만 추출 (최대 4개)
+    function getCriticalFlags() {
+      const f = [];
+      if (!activeCarrier) return f;
+      const act = String(activeCarrier.activation || '');
+      const nk = String(activeCarrier.carrier || '').toLowerCase();
+      const nc = String(currentSelectedCountry || '');
+      const longLead = isLongLeadCountry(nc);
+      if (act.includes('희망일')) f.push({ i: '⏰', t: `<strong>출국 ${longLead ? '3~4일' : '1~2일'} 전 주문 필수</strong> — 개통 희망일 지정 상품${longLead ? ' · <span>미주·유럽은 시차로</span> <span>현지 날짜가 하루 어긋날 수 있어요</span>' : ''}. <span>개통일 등록은</span> <span>구매 후 케어 안내로 도와드려요.</span>` });
+      if (act.includes('즉시 개통')) f.push({ i: '🚨', t: '<strong>QR 발급·설치 즉시 사용일 시작</strong> — <span>미리 사면 여행 전에 기간이 녹아요.</span> <span>출국 직전에 구매하고,</span> <span>설치는 출발 당일이나 현지에서!</span>' });
+      if (nk.includes('보다폰') || nk.includes('vodafone')) {
+        f.push({ i: '🚨', t: '<strong>QR 발송 즉시 개통 시작 (보다폰)</strong> — <span>일정 확정 후 구매하세요.</span>' });
+        f.push({ i: '🗑️', t: '<strong>eSIM 프로필 삭제 금지</strong> — <span>삭제하면 재등록이 불가능해요.</span>' });
+      }
+      if (nk.includes('쓰리') || nk.includes('three')) {
+        f.push({ i: '🚨', t: '<strong>QR 스캔 즉시 개통 (Three)</strong> — <span>출국 직전 또는</span> <span>현지 공항에서 설치하세요.</span>' });
+        f.push({ i: '🗑️', t: '<strong>프로필 삭제 금지</strong> — <span>임의 삭제 시 복구 불가.</span>' });
+      }
+      const vm = String(activeCarrier.validity || '').match(/구매일로부터\s*(\d+)일/);
+      if (vm && parseInt(vm[1], 10) <= 15) f.push({ i: '⏳', t: `<strong>구매일로부터 ${vm[1]}일 안에 현지 개통 필수</strong> — <span>출국 ${vm[1]}일 전 이내에 구매하세요.</span>` });
+      if (nc.includes('대만')) f.push({ i: '🪪', t: '<strong>여권 실명등록(KYC) 필수</strong> — <span>설치 후 현지 수신 문자 링크로</span> <span>등록해야 데이터가 열려요.</span>' });
+      if (nc.includes('중국') || nc.includes('홍콩') || nc.includes('마카오')) f.push({ i: '🍎', t: '<strong>중국·홍콩·마카오 구매 아이폰 사용 불가</strong> — <span>eSIM이 비활성화된 기기예요.</span>' });
+      if (nc.includes('한국') || nc.includes('대한민국')) f.push({ i: '🚨', t: '<strong>QR 스캔 즉시 일수 차감</strong> — <span>사용 개시일에 등록하세요.</span>' });
+      return f.filter((x, i, a) => a.findIndex(y => y.t === x.t) === i).slice(0, 4);
+    }
+    function renderCriticalCard() {
+      const el = document.getElementById('criticalCard');
+      if (!el) return;
+      const f = getCriticalFlags();
+      if (!f.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+      el.innerHTML = '<div style="font-size:0.82rem;font-weight:900;color:#b91c1c;margin-bottom:4px;">🔎 결제 전 꼭 알기 — 이 상품의 특이사항</div>'
+        + f.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.76rem;font-weight:600;color:#7f1d1d;line-height:1.65;"><span style="flex-shrink:0;">${x.i}</span><span class="jd-ku">${x.t}</span></div>`).join('');
+      el.style.display = 'block';
     }
     function timingBadge(lead, must) {
       return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.76rem;font-weight:900;padding:5px 12px;border-radius:999px;margin-bottom:7px;box-shadow:0 4px 12px rgba(239,68,68,0.3);animation:jdTbPulse 1.5s ease-in-out 3;">⏰ 출국 ${lead} 전 구매 ${must ? '필수' : '권장'}</div>`;
