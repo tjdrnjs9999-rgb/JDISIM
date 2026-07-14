@@ -107,6 +107,22 @@
   .perk .new { display:inline-block; font-size:0.64rem; font-weight:900; color:#fff; background:linear-gradient(135deg,#F97316,#F59E0B);
     border-radius:999px; padding:2px 8px; margin-left:5px; vertical-align:2px; letter-spacing:0.06em; }
 
+  /* 가입 동의 (개보법 §15 — 필수/선택 분리 체크) */
+  .agree { margin-top:16px; border:1.5px solid var(--line); border-radius:15px; background:#FFFDFB; padding:6px 14px; }
+  .ag { display:flex; align-items:center; gap:11px; padding:11px 2px; font-size:0.9rem; font-weight:600; color:var(--sub); cursor:pointer; }
+  .ag + .ag, .ag-detail + .ag { border-top:1px dashed rgba(34,21,16,0.08); }
+  .ag input { width:21px; height:21px; accent-color:var(--orange); flex-shrink:0; }
+  .ag span { flex:1; min-width:0; line-height:1.5; }
+  .ag a { color:var(--teal); font-weight:800; }
+  .ag em { font-style:normal; color:var(--dim); font-size:0.82rem; }
+  .ag.all { font-size:0.96rem; }
+  .ag.all b { color:var(--ink); }
+  .ag-more { flex-shrink:0; border:1px solid var(--line); background:#fff; border-radius:999px; padding:5px 12px;
+    font-family:inherit; font-size:0.76rem; font-weight:800; color:var(--dim); cursor:pointer; }
+  .ag-detail { display:none; font-size:0.82rem; font-weight:600; color:var(--dim); line-height:1.7;
+    background:rgba(249,115,22,0.05); border:1px dashed rgba(249,115,22,0.3); border-radius:11px; padding:11px 13px; margin:2px 0 10px; }
+  .ag-detail.on { display:block; }
+
   /* 성공 스탬프 */
   .stamp-wrap { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:50;
     background:rgba(250,248,244,0.86); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
@@ -167,6 +183,30 @@
       </div>
       <button class="btn" id="verifyBtn" type="button">확인하고 탑승하기</button>
       <div class="msg" id="msg2"></div>
+    </div>
+
+    <!-- STEP 3: 첫 가입 — 이름·이메일 + 법적 동의 (기존 회원은 건너뜀) -->
+    <div id="step3" class="hide">
+      <label class="lbl" for="nameInput">이름 <b style="color:var(--orange);">*</b></label>
+      <div class="phone-row"><input id="nameInput" type="text" autocomplete="name" maxlength="20" placeholder="주문할 때 쓰는 이름"></div>
+      <label class="lbl" for="emailInput">이메일 <span style="font-weight:600;color:var(--dim);">(선택 — QR 발송 백업용)</span></label>
+      <div class="phone-row"><input id="emailInput" type="email" autocomplete="email" maxlength="60" placeholder="you@example.com"></div>
+
+      <div class="agree">
+        <label class="ag all"><input type="checkbox" id="agAll"><span><b>전체 동의</b> <em>(선택 동의 포함)</em></span></label>
+        <label class="ag"><input type="checkbox" class="ag-req" id="ag14"><span>[필수] 만 14세 이상입니다</span></label>
+        <label class="ag"><input type="checkbox" class="ag-req" id="agTerms"><span>[필수] <a href="terms.html" target="_blank" rel="noopener">이용약관</a> 동의</span></label>
+        <label class="ag"><input type="checkbox" class="ag-req" id="agPriv"><span>[필수] <a href="privacy.html" target="_blank" rel="noopener">개인정보 수집·이용</a> 동의</span>
+          <button type="button" class="ag-more" data-ag-toggle>보기</button></label>
+        <div class="ag-detail" id="agDetail">
+          수집 항목: 휴대폰 번호·이름·이메일(선택) / 목적: 회원 식별, 주문·케어링크 연결, QR 발송, 고객 지원 /
+          보유 기간: 회원 탈퇴 시 지체 없이 파기 (단, 전자상거래법에 따라 계약·결제 기록 5년, 소비자 불만·분쟁 기록 3년 보존)
+        </div>
+        <label class="ag"><input type="checkbox" id="agMkt"><span>[선택] 쿠폰·혜택 알림 수신 동의 <em>— 웰컴백 쿠폰 소식을 받아요 🧡</em></span></label>
+      </div>
+
+      <button class="btn" id="joinBtn" type="button">가입 완료하고 탑승하기 ✈️</button>
+      <div class="msg" id="msg3"></div>
     </div>
   </div>
 
@@ -291,12 +331,62 @@
           localStorage.setItem('jd_member_phone', x.j.phoneMasked || '');
         } catch(e){}
         clearInterval(timerIv);
-        $('stampWrap').classList.add('on');
-        setTimeout(function(){ location.href = RETURN_TO; }, 1100);
+        if (x.j.needProfile) {
+          // 첫 가입: 이름·동의 스텝으로 (기존 회원은 바로 탑승)
+          $('step2').classList.add('hide');
+          $('step3').classList.remove('hide');
+          $('nameInput').focus();
+          return;
+        }
+        board();
       })
       .catch(function(){ verifying = false; $('verifyBtn').disabled = false; say($('msg2'), '연결이 원활하지 않아요 — 잠시 후 다시', 'err'); });
   }
   $('verifyBtn').addEventListener('click', verify);
+
+  function board(){
+    $('stampWrap').classList.add('on');
+    setTimeout(function(){ location.href = RETURN_TO; }, 1100);
+  }
+
+  // ── STEP 3: 가입 (이름 + 법적 동의) ──
+  var reqs = [].slice.call(document.querySelectorAll('.ag-req'));
+  $('agAll').addEventListener('change', function(){
+    var on = this.checked;
+    reqs.forEach(function(c){ c.checked = on; });
+    $('agMkt').checked = on;
+  });
+  function syncAll(){
+    $('agAll').checked = reqs.every(function(c){ return c.checked; }) && $('agMkt').checked;
+  }
+  reqs.concat([$('agMkt')]).forEach(function(c){ c.addEventListener('change', syncAll); });
+  document.querySelector('[data-ag-toggle]').addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    $('agDetail').classList.toggle('on');
+    this.textContent = $('agDetail').classList.contains('on') ? '접기' : '보기';
+  });
+  $('joinBtn').addEventListener('click', function(){
+    var name = $('nameInput').value.trim();
+    var email = $('emailInput').value.trim();
+    if (name.length < 2) { say($('msg3'), '이름을 입력해 주세요', 'err'); $('nameInput').focus(); return; }
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { say($('msg3'), '이메일 형식을 확인해 주세요', 'err'); $('emailInput').focus(); return; }
+    if (!reqs.every(function(c){ return c.checked; })) { say($('msg3'), '필수 동의 항목을 체크해 주세요', 'err'); return; }
+    var btn = this; btn.disabled = true;
+    say($('msg3'), '가입하는 중…');
+    fetch(API, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({
+      action:'profile', token: localStorage.getItem('jd_member_token') || '',
+      name: name, email: email,
+      over14: true, terms: true, privacy: true, marketing: $('agMkt').checked
+    }) })
+      .then(function(r){ return r.json().then(function(j){ return { s:r.status, j:j }; }); })
+      .then(function(x){
+        btn.disabled = false;
+        if (x.s !== 200) { say($('msg3'), (x.j && x.j.error) || '가입에 실패했어요', 'err'); return; }
+        try { localStorage.setItem('jd_member_phone', name + ' 님'); } catch(e){}
+        board();
+      })
+      .catch(function(){ btn.disabled = false; say($('msg3'), '연결이 원활하지 않아요 — 잠시 후 다시', 'err'); });
+  });
 })();
 </script>
 </body>
