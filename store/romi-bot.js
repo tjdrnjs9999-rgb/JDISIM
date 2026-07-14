@@ -11,7 +11,7 @@
   var CARE = window.CARE_API || 'https://jdisim-proxy.vercel.app/api/esim';
   function rbBuzz(ms){ try { if (navigator.vibrate) navigator.vibrate(ms || 12); } catch (e) {} }
   var isMobilePage = /mobile\.html|issue\.html/.test(location.pathname) || document.querySelector('.bottom-nav') || document.querySelector('.bbar');
-  var BOTTOM = isMobilePage ? 'calc(80px + env(safe-area-inset-bottom, 0px))' : '24px';
+  var BOTTOM = isMobilePage ? 'calc(88px + env(safe-area-inset-bottom, 0px))' : '30px';
 
   var RESET = { '일본':'새벽 1시','한국':'새벽 1시','베트남':'밤 11시','태국':'밤 11시','라오스':'밤 11시','캄보디아':'밤 11시','중국':'자정','대만':'자정','필리핀':'자정','싱가포르':'자정','말레이시아':'자정','홍콩':'자정','마카오':'자정','몰디브':'밤 9시','괌':'새벽 2시','사이판':'새벽 2시','호주':'새벽 2시','뉴질랜드':'새벽 4시','미국':'서부 08:00 · 동부 11:00' };
 
@@ -20,15 +20,12 @@
   css.textContent =
     '#rbFab{position:fixed;right:16px;bottom:' + BOTTOM + ';z-index:99900;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#F97316,#F59E0B);box-shadow:0 10px 26px rgba(249,115,22,0.45);display:flex;align-items:center;justify-content:center;transition:transform .2s;}' +
     '#rbFab:active{transform:scale(.92)}#rbFab img{width:38px;height:38px;object-fit:contain;pointer-events:none;}' +
-    '#rbFab .rb-badge{position:absolute;top:-4px;right:-2px;background:#0f172a;color:#fff;font-size:.56rem;font-weight:800;padding:3px 7px;border-radius:9px;font-family:Pretendard,sans-serif;}' +
     '#rbPanel{position:fixed;right:12px;bottom:calc(' + BOTTOM + ' + 68px);z-index:99901;width:min(360px,calc(100vw - 24px));max-height:min(560px,70vh);background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(15,23,42,0.3);display:none;flex-direction:column;overflow:hidden;font-family:Pretendard,"Apple SD Gothic Neo",sans-serif;}' +
     '#rbPanel.on{display:flex;animation:rbUp .28s cubic-bezier(.2,.9,.3,1) both;}@keyframes rbUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}' +
     /* 모바일: 챗 열면 풀스크린 */
     '@media(max-width:640px){#rbPanel{left:0;right:0;bottom:0;top:0;width:100vw;height:100dvh;max-height:none;border-radius:0;}}' +
-    /* FAB 라벨: "이게 챗봇" 인지용 말풍선 */
-    '#rbTip{position:fixed;right:82px;bottom:calc(' + BOTTOM + ' + 12px);z-index:99900;background:#0f172a;color:#fff;font-size:.74rem;font-weight:800;padding:9px 13px;border-radius:14px 14px 4px 14px;box-shadow:0 8px 22px rgba(15,23,42,.28);font-family:Pretendard,sans-serif;white-space:nowrap;animation:rbTipIn .4s .8s cubic-bezier(.2,.9,.3,1) both, rbTipBob 2.6s 1.4s ease-in-out infinite;pointer-events:none;}' +
-    '#rbTip::after{content:"";position:absolute;right:-5px;bottom:6px;border:6px solid transparent;border-left-color:#0f172a;}' +
-    '@keyframes rbTipIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}@keyframes rbTipBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}' +
+    /* FAB 라벨: 아이콘 아래 짧은 명찰 (말풍선 제거) */
+    '#rbFab .rb-label{position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:.58rem;font-weight:800;letter-spacing:.4px;padding:3px 9px;border-radius:9px;white-space:nowrap;box-shadow:0 4px 10px rgba(15,23,42,.25);font-family:Pretendard,sans-serif;pointer-events:none;}' +
     '.rb-hd{display:flex;align-items:center;gap:10px;padding:13px 15px;background:linear-gradient(120deg,#101623,#25314F);}' +
     '.rb-hd img{width:36px;height:36px;object-fit:contain;}.rb-hd b{color:#fff;font-size:.92rem;font-weight:900;}.rb-hd span{display:block;color:#8FA3D9;font-size:.66rem;font-weight:700;margin-top:1px;}' +
     '.rb-x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:none;color:#fff;font-weight:900;cursor:pointer;}' +
@@ -53,11 +50,7 @@
   // ---------- 마크업 ----------
   var fab = document.createElement('button');
   fab.id = 'rbFab'; fab.setAttribute('aria-label', '로미에게 물어보기');
-  fab.innerHTML = '<img src="images/fox-hello.png" alt="" onerror="this.outerHTML=\'🦊\'"><span class="rb-badge">로미</span>';
-  var tip = document.createElement('div');
-  tip.id = 'rbTip';
-  tip.textContent = '💬 궁금한 건 로미챗에게!';
-  if (sessionStorage.getItem('rbTipSeen')) tip.style.display = 'none';
+  fab.innerHTML = '<img src="images/fox-hello.png" alt="" onerror="this.outerHTML=\'🦊\'"><span class="rb-label">챗봇</span>';
   var panel = document.createElement('div');
   panel.id = 'rbPanel';
   panel.innerHTML =
@@ -65,7 +58,6 @@
     '<div class="rb-body" id="rbBody"></div>' +
     '<div class="rb-ft"><input id="rbInput" placeholder="궁금한 걸 물어보세요 (예: 일본 요금)"><button id="rbSend">↑</button></div>';
   document.body.appendChild(fab);
-  document.body.appendChild(tip);
   document.body.appendChild(panel);
 
   var body = panel.querySelector('#rbBody');
@@ -469,7 +461,6 @@
   var opened = false;
   fab.onclick = function(){
     panel.classList.toggle('on');
-    if (panel.classList.contains('on')) { tip.style.display = 'none'; sessionStorage.setItem('rbTipSeen', '1'); }
     if (panel.classList.contains('on') && !opened) {
       opened = true;
       if (LIVE.id) pollLive();
