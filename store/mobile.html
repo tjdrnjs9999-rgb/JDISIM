@@ -614,10 +614,14 @@
     .store-card-media {
       position: relative;
       width: 100%;
-      aspect-ratio: 4 / 3;
+      height: 0;
+      padding-bottom: 75%; /* 4:3 고정 — aspect-ratio 미지원 웹뷰에서도 전 카드 동일 높이 보장 */
       background: #e2e8f0;
+      overflow: hidden;
     }
     .store-card-img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -1656,6 +1660,9 @@
       height: 60px;
       border-radius: 12px;
       flex-shrink: 0;
+      object-fit: cover;           /* 원본 비율 무관 크기 통일 */
+      background: #e2e8f0;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
     }
     .product-info {
       flex: 1;
@@ -2330,7 +2337,8 @@
     </div>
 
     <!-- ⑥ 전화 걸고 받기 — 필수 선택 단계 (선택함/선택 안 함 중 하나를 눌러야 결제 영역 공개) -->
-    <style>.jd-ku>span{display:inline-block}</style>
+    <style>.jd-ku>span{display:inline-block}
+    @keyframes jdTbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>
     <div class="jd-step locked" id="step-krcall" style="margin-bottom: 16px;">
       <div class="jd-step-head option-group-title" onclick="reopenStep('krcall')">
         <span class="jd-step-label"><span class="step-num">6</span>전화 걸고 받기</span>
@@ -2780,7 +2788,7 @@
         card.className = 'mobile-product-card';
         card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
-          <img src="${flagSrc}" class="product-flag-img" alt="${countryName}">
+          <img src="${flagSrc}" class="product-flag-img" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
           <div class="product-info">
             <div style="display: flex; gap: 6px; align-items: center;">
               <span class="product-country-tag">HOT 추천</span>
@@ -2920,7 +2928,7 @@
         card.onclick = () => openBottomSheet(countryName);
         card.innerHTML = `
           <div class="store-card-media">
-            <img src="${flagSrc}" class="store-card-img" loading="lazy" alt="${countryName}">
+            <img src="${flagSrc}" class="store-card-img" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
             <div class="store-card-scrim"></div>
             <span class="store-net-badge${onlyLocal ? ' local' : ''}">${netLabel}</span>
             ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
@@ -3805,16 +3813,32 @@
     }
 
     // 개통 방식에 따라 언제 사야 하는지 자동 안내
+    // 미주·유럽은 시차로 현지 날짜가 하루 어긋날 수 있어 리드타임을 3~4일로 상향
+    const LONG_LEAD_REGIONS = ['미국','캐나다','멕시코','북미','하와이','남미','브라질','아르헨티나','페루','칠레','유럽','영국','프랑스','독일','이탈리아','스페인','포르투갈','스위스','네덜란드','벨기에','오스트리아','체코','헝가리','폴란드','크로아티아','그리스','북유럽','동유럽','아이슬란드','튀르키예','터키'];
+    function isLongLeadCountry(name) {
+      const c = String(name || '');
+      return LONG_LEAD_REGIONS.some(k => c.includes(k));
+    }
+    function timingBadge(lead, must) {
+      return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.76rem;font-weight:900;padding:5px 12px;border-radius:999px;margin-bottom:7px;box-shadow:0 4px 12px rgba(239,68,68,0.3);animation:jdTbPulse 1.5s ease-in-out 3;">⏰ 출국 ${lead} 전 구매 ${must ? '필수' : '권장'}</div>`;
+    }
     function renderActivationNotice() {
       const el = document.getElementById('activationNotice');
       if (!el || !activeCarrier) return;
       const act = String(activeCarrier.activation || '');
+      const longLead = isLongLeadCountry(currentSelectedCountry);
       let html = '', bg = '', border = '', color = '';
       if (act.includes('희망일')) {
-        html = '📆 <strong>희망 개통일 지정 상품</strong> — 결제 시 입력한 날짜에 개통돼요. <strong>출국 1~2일 전 구매</strong>를 추천!';
-        bg = 'rgba(249,115,22,0.07)'; border = 'rgba(249,115,22,0.3)'; color = '#9a5b16';
+        const lead = longLead ? '3~4일' : '1~2일';
+        html = timingBadge(lead, true)
+          + '<div>📆 <strong>희망 개통일 지정 상품</strong> — 결제 시 입력한 날짜에 개통돼요.</div>'
+          + (longLead
+            ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 한국 날짜로 입력하면 현지에선 하루 어긋날 수 있어요. 여유 있게 <strong>3~4일 전에 구매</strong>하고, 개통 희망일은 <strong>현지 도착 날짜 기준</strong>(애매하면 도착 전날)으로 입력하세요.</div>'
+            : '');
+        bg = 'rgba(249,115,22,0.07)'; border = 'rgba(249,115,22,0.35)'; color = '#9a5b16';
       } else if (act.includes('즉시 개통')) {
-        html = '🚨 <strong>QR 발급·설치 즉시 사용일 시작</strong> — 출국 직전이나 현지 도착 후에 설치하세요!';
+        html = timingBadge('직전(1~2일)', true)
+          + '<div>🚨 <strong>QR 발급·설치 즉시 사용일 시작</strong> — 미리 사면 여행 전에 기간이 녹아요. 출국 직전에 구매하고, 설치는 출발 당일이나 현지 도착 후에!</div>';
         bg = 'rgba(239,68,68,0.06)'; border = 'rgba(239,68,68,0.3)'; color = '#b91c1c';
       } else if (act.includes('개통문자')) {
         html = '💬 현지 도착 후 <strong>개통 문자 발송 시</strong> 사용일이 시작돼요 — 미리 사두셔도 괜찮아요';
