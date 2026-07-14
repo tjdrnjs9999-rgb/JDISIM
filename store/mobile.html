@@ -4947,5 +4947,60 @@
     try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F2751F;font-weight:bold;font-size:14px'); } catch (e) {}
   })();
   </script>
+  <script>
+  /* 모바일 인스턴트 페이저 — 스와이프 시 스크롤 모션 없이 페이지가 즉시 전환 (홈 스냅 구역 한정)
+     · 자유 구역(.snap-tail 이후)은 자연 스크롤, 경계에서 위로 스와이프하면 페이저 복귀
+     · 바텀시트/모달/국가 파인더/로미봇 등 오버레이·내부 스크롤 UI는 하이재킹 제외 */
+  (function () {
+    var panels = Array.prototype.slice.call(document.querySelectorAll('#view-home .snap-panel'));
+    var tail = document.querySelector('#view-home .snap-tail');
+    if (!panels.length || !tail) return;
+    var EXEMPT = '.finder-panel, .bottom-sheet, .mobile-modal, .bottom-sheet-backdrop, #mobileConfirmLayer, .rm-ov, [data-noswipe]';
+    function on() {
+      return document.documentElement.classList.contains('home-snap')
+        && document.body.style.overflow !== 'hidden'; // 시트/모달 열림 시 전체 비활성
+    }
+    var lock = false, sy = null, sx = null, exempt = false, startFree = false;
+    function jump(i) {
+      i = Math.max(0, Math.min(panels.length, i));
+      var y = i < panels.length ? panels[i].offsetTop : tail.offsetTop;
+      lock = true;
+      window.scrollTo({ top: y, behavior: 'auto' }); // 인스턴트 점프 — 모션 없음
+      setTimeout(function () { lock = false; }, 500);
+    }
+    function idx() {
+      var y = window.scrollY;
+      if (y >= tail.offsetTop - 8) return panels.length;
+      var best = 0;
+      panels.forEach(function (p, i) { if (Math.abs(p.offsetTop - y) < Math.abs(panels[best].offsetTop - y)) best = i; });
+      return best;
+    }
+    document.addEventListener('touchstart', function (e) {
+      if (!on()) { sy = null; return; }
+      sy = e.touches[0].clientY; sx = e.touches[0].clientX;
+      exempt = !!(e.target.closest && e.target.closest(EXEMPT));
+      startFree = window.scrollY >= tail.offsetTop - 8;
+    }, { passive: true });
+    document.addEventListener('touchmove', function (e) {
+      if (!on() || sy === null || exempt) return;
+      if (window.scrollY >= tail.offsetTop - 8) return; // 자유 구역: 자연 스크롤
+      var dx = Math.abs(e.touches[0].clientX - sx), dy = Math.abs(e.touches[0].clientY - sy);
+      if (dx > dy) return; // 가로 제스처(캐러셀 등)는 통과
+      if (e.cancelable) e.preventDefault(); // 세로 스크롤 모션 차단
+    }, { passive: false });
+    document.addEventListener('touchend', function (e) {
+      if (sy === null) return;
+      var dy = sy - e.changedTouches[0].clientY; sy = null;
+      if (!on() || exempt || lock) return;
+      if (Math.abs(dy) < 46) return; // 짧은 터치(탭)는 무시
+      if (startFree) {
+        // 자유 구역에서 위로 스와이프해 경계를 넘었으면 마지막 페이지로 복귀
+        if (dy < 0 && window.scrollY < tail.offsetTop - 8) jump(panels.length - 1);
+        return;
+      }
+      jump(idx() + (dy > 0 ? 1 : -1));
+    }, { passive: true });
+  })();
+  </script>
 </body>
 </html>

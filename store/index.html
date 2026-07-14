@@ -95,6 +95,20 @@
       html.pc-snap #view-home .pc-tail { scroll-snap-align: start; }
       /* 히어로 프레임은 패널을 꽉 채우게 */
       html.pc-snap #view-home .pc-panel .hero-video-frame { height: calc(100svh - 130px); margin: 0 auto; }
+      /* ===== 인스턴트 페이저 (v2) ===== */
+      /* 스크롤 모션·스크롤바 숨김: 페이지가 "바뀌는" 느낌만 남김 */
+      html.pc-snap { scroll-snap-type: none; scroll-behavior: auto !important; scrollbar-width: none; }
+      html.pc-snap::-webkit-scrollbar { display: none; }
+      /* 신뢰 스트립이 로미·텍스트를 가리지 않게 히어로 콘텐츠를 스트립 위로 */
+      html.pc-snap #view-home .pc-panel .hero-video-content { padding-bottom: 180px; box-sizing: border-box; }
+      html.pc-snap #view-home .hero-fox-img { max-height: 44svh; width: auto; }
+      /* 여행지·로미케어를 정식 한 화면 패널로 (겹침 방지 밀도 조절) */
+      html.pc-snap #view-home .store-section { padding: 20px 0 !important; }
+      html.pc-snap #view-home .store-section .section-header { margin-bottom: 18px !important; }
+      html.pc-snap #view-home .fox-strip-section { padding: 20px 0 !important; }
+      html.pc-snap #view-home .fox-strip-title { margin-bottom: 8px !important; }
+      html.pc-snap #view-home .fox-strip-sub { margin-bottom: 18px !important; }
+      html.pc-snap #view-home .fox-card-stage img { max-height: 20svh; object-fit: contain; }
       /* 우측 진행 점 (ROMI Journey Scroll — PC) */
       .pc-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 900; display: none; flex-direction: column; gap: 10px; }
       html.pc-snap .pc-dots { display: flex; }
@@ -1675,18 +1689,18 @@
   <script src="romi-bot.js?v=20260713b" defer></script>
   <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
   <script>
-  /* PC 프리미엄 스냅 (ROMI Journey Scroll — PC) */
+  /* PC 프리미엄 스냅 v2 (ROMI Journey Scroll) — 인스턴트 페이저
+     휠/키 입력을 가로채 네이티브 스크롤 모션 없이 페이지가 즉시 전환됩니다.
+     마지막 패널(케어) 이후는 자유 스크롤(FAQ·가이드·푸터), 경계에서 위로 휠하면 페이저 복귀. */
   (function () {
     if (matchMedia('(max-width: 899px)').matches) return;
-    var ids = ['.hero-video-frame', '.globe-section', '.app-info-section', '.feature-split-section'];
-    var labels = ['홈', '지구', '앱', '기능'];
+    var ids = ['.hero-video-frame', '.globe-section', '.app-info-section', '.feature-split-section', '.store-section', '.fox-strip-section'];
+    var labels = ['홈', '지구', '앱', '기능', '여행지', '케어'];
     var panels = [];
     ids.forEach(function (sel) {
       var el = document.querySelector('#view-home ' + sel);
       if (el) { el.classList.add('pc-panel'); panels.push(el); }
     });
-    var tail = document.querySelector('#view-home .store-section');
-    if (tail) tail.classList.add('pc-tail');
     // 패널 사이 짧은 스트립이 스냅 화면에 겹쳐 보이지 않게 인접 패널 내부로 이동
     var strip = document.querySelector('#view-home .pc-trust-strip');
     var heroP = document.querySelector('#view-home .hero-video-frame');
@@ -1699,23 +1713,67 @@
     if (marq && appP) { marq.style.margin = '0 0 20px'; appP.insertBefore(marq, appP.firstChild); }
     if (!panels.length) return;
     document.documentElement.classList.add('pc-snap');
+    document.documentElement.classList.remove('snap-on'); // 구 CSS 스냅 전면 해제 — 이동은 페이저가 전담
+
+    function pagerOn() {
+      var home = document.getElementById('view-home');
+      return home && home.classList.contains('active') && document.documentElement.classList.contains('pc-snap');
+    }
+    var lastP = panels[panels.length - 1];
+    function tailTop() { return lastP.offsetTop + lastP.offsetHeight; } // 자유 구역 시작점
+    var lock = false;
+    var dotEls = [];
+    function setDots(i) { dotEls.forEach(function (d, k) { d.classList.toggle('active', k === i); }); }
+    function jump(i) {
+      i = Math.max(0, Math.min(panels.length, i));
+      var y = i < panels.length ? panels[i].offsetTop : tailTop();
+      lock = true;
+      window.scrollTo({ top: y, behavior: 'auto' }); // 인스턴트 점프 — 스크롤 모션 없음
+      setDots(Math.min(i, panels.length - 1));
+      setTimeout(function () { lock = false; }, 550);
+    }
+    function idx() {
+      var y = window.scrollY;
+      if (y >= tailTop() - 8) return panels.length;
+      var best = 0;
+      panels.forEach(function (p, i) { if (Math.abs(p.offsetTop - y) < Math.abs(panels[best].offsetTop - y)) best = i; });
+      return best;
+    }
+    window.addEventListener('wheel', function (e) {
+      if (!pagerOn()) return;
+      var y = window.scrollY, b = tailTop();
+      if (y >= b - 8) {
+        // 자유 구역: 자연 스크롤. 단, 경계에서 위로 휠하면 마지막 페이지로 복귀
+        if (e.deltaY < 0 && y <= b + 8 && !lock) { e.preventDefault(); jump(panels.length - 1); }
+        return;
+      }
+      e.preventDefault(); // 패널 구역: 네이티브 스크롤 모션 전면 차단
+      if (lock || Math.abs(e.deltaY) < 12) return;
+      jump(idx() + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: false });
+    window.addEventListener('keydown', function (e) {
+      if (!pagerOn() || lock) return;
+      var t = e.target; if (t && /INPUT|TEXTAREA|SELECT/.test(t.tagName)) return;
+      if (window.scrollY >= tailTop() - 8) return;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); jump(idx() + 1); }
+      else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); jump(idx() - 1); }
+    });
 
     var dots = document.createElement('div'); dots.className = 'pc-dots';
-    var dotEls = panels.map(function (p, i) {
+    dotEls = panels.map(function (p, i) {
       var d = document.createElement('button');
       d.className = 'pc-dot'; d.type = 'button';
       d.setAttribute('data-label', labels[i] || '');
-      d.addEventListener('click', function () { p.scrollIntoView({ behavior: 'smooth' }); });
+      d.addEventListener('click', function () { jump(i); });
       dots.appendChild(d); return d;
     });
     document.body.appendChild(dots);
-    if (dotEls[0]) dotEls[0].classList.add('active');
+    setDots(0);
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (en) {
           if (!en.isIntersecting) return;
-          var idx = panels.indexOf(en.target);
-          dotEls.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
+          setDots(panels.indexOf(en.target));
         });
       }, { threshold: 0.5 });
       panels.forEach(function (p) { io.observe(p); });
