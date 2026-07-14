@@ -1166,6 +1166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="cta-buy-sub">${finalPriceVal.toLocaleString()}원 · 카카오페이/카드</span>
           </button>
           <button class="cta-cart" id="addToCartBtn">🛒 장바구니 담기</button>
+          <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:9px;font-size:0.78rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
           ${SMARTSTORE_URL ? `
           <div class="cta-divider"><span>또는 네이버페이로 간편하게</span></div>
           <a href="${SMARTSTORE_URL}" target="_blank" rel="noopener" class="cta-smartstore">
