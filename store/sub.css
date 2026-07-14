@@ -1,0 +1,166 @@
+/* ============================================================
+   JDISIM Sub-page Design System · "Boarding Pass Warm"
+   care-plus · dualsim · terms · privacy · refund 공용
+   2026-07-14 울트라 패스 — 본문 최소 16px · 웜크림 · 보딩패스 모티프
+   ============================================================ */
+:root {
+  color-scheme: only light;
+  --ink: #221510;
+  --sub: #5D5049;
+  --dim: #8A7A6D;
+  --orange: #F2751F;
+  --amber: #F59E0B;
+  --teal: #1B8E82;
+  --line: #EDE4D8;
+  --cream: #FFF9F3;
+}
+* { box-sizing: border-box; }
+html { font-size: 17px; scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+body {
+  margin: 0;
+  font-family: 'Outfit', 'Noto Sans KR', 'Pretendard', -apple-system, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, #FFFDFB 0%, #FBF6EF 320px, #FAF8F4 100%);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+/* 은은한 도트 패턴 (issue.html 패스 페이지와 톤 통일) */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(rgba(34, 21, 16, 0.045) 1px, transparent 1px);
+  background-size: 23px 23px;
+}
+::selection { background: rgba(249, 115, 22, 0.22); }
+a:focus-visible, button:focus-visible { outline: 2px solid rgba(249, 115, 22, 0.55); outline-offset: 2px; }
+
+.wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 70px; }
+
+/* ── 상단 바 ── */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 22px; }
+.brand { font-weight: 800; font-size: 1.08rem; color: var(--orange); text-decoration: none; letter-spacing: -0.01em; }
+.back {
+  font-size: 0.84rem; font-weight: 700; color: var(--sub); text-decoration: none;
+  border: 1px solid var(--line); border-radius: 999px; padding: 8px 15px; background: #fff;
+  transition: transform 0.18s cubic-bezier(0.16,1,0.3,1), border-color 0.18s, color 0.18s;
+}
+.back:hover { transform: translateY(-1px); border-color: rgba(242,117,31,0.45); color: var(--orange); }
+
+/* ── 히어로 (보딩패스 스텁 무드) ── */
+.hero-badge {
+  display: inline-block; font-size: 0.78rem; font-weight: 800; color: var(--orange);
+  background: rgba(249, 115, 22, 0.09); border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: 999px; padding: 6px 14px; margin-bottom: 14px; letter-spacing: 0.02em;
+}
+h1 {
+  font-size: 1.62rem; font-weight: 900; margin: 0 0 12px;
+  letter-spacing: -0.025em; line-height: 1.32;
+  position: relative; padding-bottom: 14px;
+}
+/* h1 아래 티켓 엣지 그라디언트 바 */
+h1::after {
+  content: ''; position: absolute; left: 0; bottom: 0;
+  width: 76px; height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, #F97316, #F59E0B 55%, #2BB3A3);
+}
+.lead { font-size: 1rem; color: var(--sub); font-weight: 600; line-height: 1.8; margin-bottom: 26px; }
+.sub { font-size: 0.9rem; color: var(--dim); font-weight: 600; margin-bottom: 18px; }
+.lnav { font-size: 0.86rem; font-weight: 700; color: var(--dim); margin-bottom: 26px; }
+.lnav a { color: var(--sub); text-decoration: none; border-bottom: 1px solid var(--line); }
+.lnav a:hover { color: var(--orange); border-color: rgba(242,117,31,0.5); }
+
+/* ── 본문 타이포 (최소 16px 정책: 17px 기준 0.95rem = 16.2px) ── */
+h2 {
+  font-size: 1.12rem; font-weight: 800; margin: 34px 0 12px; padding-top: 20px;
+  border-top: 1px dashed rgba(242, 117, 31, 0.3); color: var(--ink);
+}
+h2:first-of-type { border-top: none; padding-top: 0; }
+p, li { font-size: 0.95rem; line-height: 1.85; color: #4B3F37; }
+ol, ul { padding-left: 20px; margin: 8px 0; }
+li { margin-bottom: 7px; }
+strong { color: var(--ink); }
+a { color: var(--teal); }
+
+/* ── 카드 ── */
+.card {
+  background: #fff; border: 1px solid var(--line); border-radius: 18px;
+  padding: 18px 20px; margin: 14px 0;
+  box-shadow: 0 6px 18px rgba(85, 60, 40, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover { border-color: rgba(242, 117, 31, 0.3); box-shadow: 0 10px 24px rgba(85, 60, 40, 0.08); }
+.card h3 { margin: 0 0 8px; font-size: 1rem; font-weight: 800; }
+
+/* ── 콜아웃 (티켓 점선 무드) ── */
+.callout {
+  background: linear-gradient(165deg, #FFFFFF, var(--cream));
+  border: 1px dashed rgba(249, 115, 22, 0.4); border-radius: 15px; padding: 15px 17px;
+  font-size: 0.92rem; font-weight: 700; color: #9A5B16; line-height: 1.8; margin: 16px 0;
+}
+.danger {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px dashed rgba(239, 68, 68, 0.35); color: #B91C1C;
+}
+
+/* ── 스텝 타임라인 ── */
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li { counter-increment: s; position: relative; padding-left: 44px; padding-bottom: 4px; margin-bottom: 14px; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0;
+  width: 29px; height: 29px;
+  background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+  border-radius: 50%; font-weight: 800; font-size: 0.86rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+}
+/* 스텝 사이 연결선 */
+.steps li:not(:last-child)::after {
+  content: ''; position: absolute; left: 14px; top: 33px; bottom: -12px;
+  border-left: 2px dashed rgba(242, 117, 31, 0.25);
+}
+
+/* ── CTA ── */
+.cta {
+  display: block; text-align: center;
+  background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+  font-weight: 800; font-size: 1rem; text-decoration: none;
+  border-radius: 17px; padding: 17px;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3); margin: 24px 0 8px;
+  transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s;
+}
+.cta:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(249, 115, 22, 0.38); }
+.cta:active { transform: translateY(0) scale(0.98); }
+.cta.ghost { background: #fff; color: var(--orange); border: 1.5px solid rgba(249, 115, 22, 0.5); box-shadow: none; }
+.cta.ghost:hover { box-shadow: 0 8px 20px rgba(249, 115, 22, 0.14); }
+.fineprint { font-size: 0.8rem; color: var(--dim); line-height: 1.7; margin-top: 6px; text-align: center; }
+
+/* ── 테이블 ── */
+table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-size: 0.88rem; margin: 14px 0; background: #fff;
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+}
+th, td { border-bottom: 1px solid var(--line); padding: 11px 12px; text-align: left; line-height: 1.6; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tr:last-child th, tr:last-child td { border-bottom: none; }
+th { background: var(--cream); font-weight: 800; color: var(--ink); white-space: nowrap; }
+
+/* ── 가격 ── */
+.price { font-size: 1.8rem; font-weight: 900; color: var(--orange); letter-spacing: -0.02em; }
+.strike { text-decoration: line-through; color: var(--dim); font-size: 1rem; font-weight: 700; }
+
+/* ── 푸터 ── */
+footer {
+  margin-top: 48px; padding-top: 18px; border-top: 1px dashed rgba(242, 117, 31, 0.25);
+  font-size: 0.8rem; color: var(--dim); line-height: 1.85;
+}
+footer strong { color: var(--sub); }
+footer a { color: var(--dim); }
+
+@media (prefers-reduced-motion: reduce) {
+  .back, .card, .cta { transition: none !important; }
+}

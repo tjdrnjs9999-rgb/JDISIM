@@ -1415,9 +1415,9 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
   .pc-hero-stats, .pc-hero-cue { animation: none !important; }
 }
 
-/* ================= 모바일 스냅 스크롤 홈 (로케비 스타일 + α) ================= */
-html.home-snap { scroll-snap-type: y proximity; }
-.snap-panel { scroll-snap-align: start; scroll-margin-top: 56px; }
+/* ================= 모바일 페이저 홈 (로케비 스타일 + α) =================
+   y축 CSS 스냅은 JS 인스턴트 페이저와 충돌(03 고정 버그)해 2026-07-14 제거 — 재도입 금지 */
+.snap-panel { scroll-margin-top: 56px; }
 
 /* WHY 풀스크린 패널 공통 */
 .why-panel {

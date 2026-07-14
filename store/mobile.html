@@ -823,16 +823,14 @@
       align-self: center !important;
     }
 
-    /* 스냅 스크롤: 섹션과 섹션 사이에 멈추지 않고 반드시 다음 섹션으로 넘어가게 */
-    html.home-snap {
-      scroll-snap-type: y mandatory !important;
-    }
+    /* 홈 페이징은 JS 인스턴트 페이저가 전담 (하단 스크립트).
+       CSS scroll-snap(mandatory)은 JS 점프 위치와 스냅 경계가 어긋날 때
+       03 패널로 되끌어당기는 버그 + 자유 구역(퀵 서비스 등) 스크롤 고정을
+       유발해 2026-07-14 제거 — 재도입 금지 */
     html.home-snap #view-home .snap-panel {
       min-height: 100vh;
       min-height: var(--jd-vh, 100svh);
       box-sizing: border-box;
-      scroll-snap-align: start !important;
-      scroll-snap-stop: always !important;
       /* 하단바(65px+safe)에 콘텐츠가 가리지 않게 패널 안쪽에서 공간 확보 */
       padding-bottom: calc(78px + max(env(safe-area-inset-bottom, 0px), 14px)) !important;
     }
@@ -869,9 +867,8 @@
     html.home-snap #view-home .m-hero.snap-panel {
       padding-bottom: calc(84px + max(env(safe-area-inset-bottom, 0px), 14px)) !important;
     }
-    /* 스냅 구간 이후의 일반 콘텐츠는 자유 스크롤 (뷰포트보다 큰 스냅 영역은 내부 자유 스크롤 허용) */
+    /* 스냅 구간 이후의 일반 콘텐츠(퀵 서비스 등)는 완전 자유 스크롤 — 스냅 정렬 없음 */
     html.home-snap #view-home .snap-tail {
-      scroll-snap-align: start;
       padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
     }
     /* WHY 패널 로미: 하단바(65px)와 챗봇 버튼(우측 하단 58px)에 가리지 않게
@@ -1782,6 +1779,47 @@
     .bottom-sheet .option-group-title { margin: 12px 0 8px !important; font-size: 0.85rem !important; }
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
+<style id="jd-readability">
+  /* ===== 📖 가독성 플로어 (2026-07-14) — "본문 최소 16px" 정책 =====
+     base 18px 기준 환산: 0.9rem=16.2px(본문 하한) / 0.8rem=14.4px(보조 하한) / 0.72rem=13px(마이크로 하한)
+     ⚠️ 반드시 마지막 스타일 블록 유지 — 동순위 !important는 소스 뒤쪽이 이김 */
+  /* 스토어 카드 */
+  .store-card-title { font-size: 0.92rem !important; min-height: calc(0.92rem * 1.35 * 2) !important; }
+  .store-card-meta { font-size: 0.8rem !important; }
+  .store-card-price { font-size: 1.12rem !important; }
+  .store-card-perday { font-size: 0.8rem !important; }
+  .store-card-btn { font-size: 0.9rem !important; }
+  .store-net-badge { font-size: 0.76rem !important; }
+  .store-warn-badge, .store-best-badge { font-size: 0.74rem !important; }
+  /* 검색바·카테고리 탭 */
+  .jd-search input, #view-store .jd-box input { font-size: 1rem !important; }
+  .jd-search .jd-go { font-size: 0.88rem !important; }
+  .m-cat-btn, #view-store .m-cat-btn { font-size: 0.85rem !important; padding: 9px 14px !important; }
+  .jd-sg b { font-size: 0.92rem !important; }
+  /* 로미 개런티 티켓·자가진단 배너 */
+  .rg-title { font-size: 1.08rem !important; }
+  .rg-txt strong { font-size: 0.9rem !important; }
+  .rg-txt span { font-size: 0.8rem !important; }
+  .dcb-text strong, #view-store .device-check-banner .dcb-text strong { font-size: 0.9rem !important; }
+  .dcb-text span, #view-store .device-check-banner .dcb-text span { font-size: 0.78rem !important; }
+  .dcb-arrow { font-size: 0.8rem !important; }
+  /* 하단 시트(옵션 선택 위저드) */
+  .bottom-sheet .option-pill { font-size: 0.85rem !important; }
+  .bottom-sheet .option-group-title { font-size: 0.9rem !important; }
+  .jd-step .jd-step-label { font-size: 0.9rem !important; }
+  .jd-step .jd-step-value { font-size: 0.85rem !important; }
+  /* WHY 패널·히어로·리뷰 본문 */
+  .wp-copy { font-size: 0.95rem !important; line-height: 1.75 !important; }
+  .m-hero-sub { font-size: 0.92rem !important; }
+  .m-rv-body { font-size: 0.9rem !important; line-height: 1.7 !important; }
+  /* 인라인 스타일 본문 플로어 — 퀵 서비스 메뉴·FAQ·주문 뷰의 p 본문 */
+  #view-home p, #view-orders p, #view-faq p { font-size: 0.9rem !important; line-height: 1.65 !important; }
+  /* 결제 전 꼭 알기·개통 방식 안내 — 구매 결정 정보라 특히 잘 읽혀야 함 */
+  #criticalCard, #criticalCard div { font-size: 0.85rem !important; line-height: 1.65 !important; }
+  #activationNotice, #activationNotice div { font-size: 0.85rem !important; line-height: 1.6 !important; }
+  /* 입력 요소 전역 16px+ — iOS는 16px 미만 입력 포커스 시 화면을 강제 확대함 */
+  input, select, textarea { font-size: 16px !important; }
+</style>
 </head>
 <body>
   <script>
