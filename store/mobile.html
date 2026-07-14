@@ -2175,66 +2175,45 @@
     <div data-jdisim-compare style="margin: 34px 0 10px;"></div>
   </main>
 
-  <!-- ================= VIEW 3: MY 페이지 (내 여행 + 주문·QR 조회 통합, 2026-07-15 재편) ================= -->
+  <!-- ================= VIEW 3: MY 페이지 — 딱 2섹션 (2026-07-15 정돈)
+       ① 회원 (로그인/가입 또는 회원 홈)  ② 비회원 주문 조회 (조회·사용량·로미닥터 통합) ================= -->
   <main id="view-orders" class="mobile-view">
-    <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #221510;">MY · 내 여행</h3>
-    <p style="font-size: 0.85rem; color: #8a7a6d; font-weight: 600; margin: 0 0 12px 0;">주문 · 케어링크 · 쿠폰을 한곳에서</p>
+    <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 14px 0; color: #221510;">MY</h3>
 
-    <!-- 👤 회원 존: 로그인(전화 OTP) 시 = 서버에서 내 주문·쿠폰 / 비로그인 = 로그인 CTA -->
+    <!-- ① 회원 존: 비로그인 = 로그인/가입 카드(혜택·최근 케어링크 흡수) / 로그인 = 회원 홈 -->
     <div id="memberZone"></div>
-
-    <!-- 🧳 내 여행 동반자 카드 (비로그인 보조 — 이 기기 기억 기반, 로그인 시 자동 숨김) -->
     <div id="myTripCard" style="display:none;"></div>
 
-    <h4 style="font-size: 0.95rem; font-weight: 800; margin: 18px 0 6px 0; color: #221510;">주문 및 eSIM QR코드 조회</h4>
-    <p style="font-size: 0.8rem; color: #8a7a6d; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다. 다른 기기에서 구매하셨어도 여기서 찾을 수 있어요.</p>
-
-    <!-- 📡 로미 닥터: eSIM 장애 자가진단 -->
-    <div class="device-check-banner" onclick="openRomiDoctor()" role="button" tabindex="0" style="margin: 0 0 14px;">
-      <div class="dcb-icon">🩺</div>
-      <div class="dcb-text">
-        <strong>이심이 안 되나요? 로미 닥터</strong>
-        <span>증상만 고르면 1분 안에 해결법을 찾아드려요</span>
+    <!-- ② 비회원 주문 조회 — 이름+전화 한 세트로 주문·사용량 모두 (중복 폼 통합) -->
+    <div style="background:#fff;border:1px solid #F0E7DB;border-radius:18px;padding:16px 15px 15px;margin:14px 0 16px;box-shadow:0 6px 18px rgba(85,60,40,0.05);">
+      <div style="font-size:0.98rem;font-weight:800;color:#221510;">비회원 주문 조회</div>
+      <div style="font-size:0.78rem;color:#8a7a6d;font-weight:600;margin:3px 0 12px;">구매할 때 쓴 이름·전화번호로 QR·주문·사용량을 확인해요 — 다른 기기 구매도 OK</div>
+      <div class="order-tracker-form" style="margin:0;">
+        <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름">
+        <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 (숫자만)">
+        <button class="tracker-btn" onclick="searchOrders()">📦 주문·QR 조회</button>
+        <button type="button" onclick="document.getElementById('usageName').value=document.getElementById('orderSearchName').value;document.getElementById('usagePhone').value=document.getElementById('orderSearchPhone').value;lookupUsageByPhone();" style="width:100%;height:48px;margin-top:8px;border:1.5px solid rgba(242,117,31,0.4);border-radius:12px;background:#fff;color:#F2751F;font-weight:800;font-size:0.9rem;cursor:pointer;">📡 실시간 사용량 조회</button>
       </div>
-      <div class="dcb-arrow">진단 시작</div>
-    </div>
-
-    <!-- 📊 사용량 확인 방법 (접이식) -->
-    <details style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin:0 0 16px;overflow:hidden;">
-      <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">📊 데이터 사용량 확인하는 법<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기 ▾</span></summary>
-      <div style="padding:2px 14px 13px;font-size:0.76rem;line-height:1.7;color:#334155;">
-        <strong style="color:#F2751F;">아이폰</strong> — 설정 → 셀룰러 → 여행 eSIM 회선 선택 → '현재 기간' 사용량 확인 (여행 시작 때 '통계 재설정'을 눌러두면 정확해요)<br>
-        <strong style="color:#F2751F;">갤럭시</strong> — 설정 → 연결 → 데이터 사용 → 해당 SIM 선택<br>
-        <strong style="color:#F2751F;">통신사 직접 조회</strong> — 몰디브: 727번으로 'myusage' 문자 · 몽골: *1411# 통화 · 프랑스 오렌지: 225 통화<br>
-        <span style="color:#94a3b8;">💡 실시간 잔여량 자동 조회 기능은 준비 중이에요</span>
-      </div>
-    </details>
-
-    <!-- 📡 실시간 사용량 조회 (ICCID) -->
-    <div style="background:#fff;border:1px solid #eef2f7;border-radius:14px;padding:14px;margin:0 0 16px;box-shadow:0 4px 12px rgba(15,23,42,0.04);">
-      <div style="font-size:0.8rem;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:7px;">📡 실시간 사용량 조회 <span style="font-size:0.74rem;font-weight:800;color:#15803d;background:rgba(34,197,94,0.1);padding:3px 8px;border-radius:10px;">LIVE</span></div>
-      <div style="font-size:0.7rem;color:#94a3b8;font-weight:600;margin:3px 0 9px;">구매하신 <strong>이름과 전화번호</strong>만 입력하면 바로 조회돼요</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input type="text" id="usageName" class="tracker-input" placeholder="이름" style="width:34%;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;">
-        <input type="tel" id="usagePhone" class="tracker-input" placeholder="전화번호 (01012345678)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;">
-      </div>
-      <button onclick="lookupUsageByPhone()" style="width:100%;height:48px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.9rem;box-shadow:0 6px 16px rgba(249,115,22,0.28);cursor:pointer;">내 eSIM 사용량 조회</button>
-      <details style="margin-top:10px;"><summary style="list-style:none;font-size:0.74rem;font-weight:700;color:#94a3b8;cursor:pointer;">ICCID로 직접 조회 (고급) ▾</summary>
-      <div style="display:flex;gap:8px;">
-        <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID 번호 (89로 시작)" style="flex:1;height:46px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;">
-        <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 4px 12px rgba(249,115,22,0.25);">조회</button>
-      </div>
-      </details>
+      <!-- 통합 폼 값 전달용 (lookupUsageByPhone·checkUsage가 읽는 기존 id 유지) -->
+      <input type="hidden" id="usageName"><input type="hidden" id="usagePhone">
       <div id="usageResult" style="display:none;margin-top:11px;"></div>
-    </div>
+      <div id="orderSearchResults"></div>
 
-    <div class="order-tracker-form">
-      <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름 입력">
-      <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 입력 (숫자만)">
-      <button class="tracker-btn" onclick="searchOrders()">주문 내역 조회하기</button>
-    </div>
+      <details style="margin-top:12px;border-top:1px dashed rgba(34,21,16,0.08);padding-top:10px;">
+        <summary style="list-style:none;font-size:0.78rem;font-weight:700;color:#8a7a6d;cursor:pointer;-webkit-tap-highlight-color:transparent;">📊 사용량 확인법 · ICCID 직접 조회 ▾</summary>
+        <div style="padding:9px 0 2px;font-size:0.78rem;line-height:1.7;color:#5D5049;">
+          <strong style="color:#F2751F;">아이폰</strong> — 설정 → 셀룰러 → 여행 eSIM 회선 → '현재 기간' (여행 시작 때 '통계 재설정' 추천)<br>
+          <strong style="color:#F2751F;">갤럭시</strong> — 설정 → 연결 → 데이터 사용 → 해당 SIM<br>
+          <strong style="color:#F2751F;">통신사 직접</strong> — 몰디브: 727로 'myusage' 문자 · 몽골: *1411# 통화 · 프랑스 오렌지: 225 통화
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID (89로 시작)" style="flex:1;height:44px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;margin:0;">
+          <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 16px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;">조회</button>
+        </div>
+      </details>
 
-    <div id="orderSearchResults"></div>
+      <button type="button" onclick="openRomiDoctor()" style="display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:11px 12px;border:1px dashed rgba(242,117,31,0.35);border-radius:13px;background:rgba(249,115,22,0.04);color:#221510;font-family:inherit;font-size:0.84rem;font-weight:800;cursor:pointer;text-align:left;">🩺 이심이 안 되나요? — 로미 닥터 1분 진단<span style="margin-left:auto;color:#F2751F;">→</span></button>
+    </div>
   </main>
 
   <!-- ================= VIEW 4: FAQ VIEW ================= -->
@@ -5250,7 +5229,6 @@
     var ua = navigator.userAgent;
     var isIOSSafari = /iPhone|iPad|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|KAKAOTALK|NAVER|Instagram|Line\//i.test(ua);
     window.addEventListener('load', function () {
-      renderMyTrip();
       renderMember();
       if (isIOSSafari && !isStandalone() && Date.now() > hidUntil()) renderPwaCard('ios');
     });
@@ -5259,6 +5237,15 @@
        로그인 = 서버(/api/member)에서 그 번호의 모든 주문·케어링크·쿠폰 (기기 무관!)
        비로그인 = 로그인 CTA + 아래 기기 기억 카드·게스트 조회 유지 */
     var MEMBER_API = 'https://jdisim-proxy.vercel.app/api/member';
+    // ?mtoken=… : 발급된 세션 토큰으로 즉시 로그인 (데모 계정 열람 등) — 저장 후 주소창에서 제거
+    try {
+      var _mt = new URLSearchParams(location.search).get('mtoken');
+      if (_mt) {
+        localStorage.setItem('jd_member_token', _mt);
+        var _u = new URL(location.href); _u.searchParams.delete('mtoken');
+        history.replaceState(null, '', _u.pathname + _u.search + (location.hash || '#orders'));
+      }
+    } catch (e) {}
     function memberToken() { try { return localStorage.getItem('jd_member_token') || ''; } catch (e) { return ''; } }
     function renderMember() {
       var zone = document.getElementById('memberZone');
@@ -5276,14 +5263,28 @@
         .catch(function () { renderMemberGuest(zone); });
     }
     function renderMemberGuest(zone) {
+      // 최근 케어링크·이 기기 주문(구 myTripCard)을 카드 하단 한 줄로 흡수 — MY 2섹션 원칙
+      var quick = '';
+      try {
+        var care = JSON.parse(localStorage.getItem('jd_last_care') || 'null');
+        var orders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
+        if (care && care.url) {
+          quick = '<a href="' + care.url.replace(/"/g, '&quot;') + '" style="display:flex;align-items:center;gap:8px;margin-top:11px;padding:10px 12px;border:1px dashed rgba(255,255,255,0.35);border-radius:12px;text-decoration:none;color:#fff;font-size:0.8rem;font-weight:700;">🎫 최근 케어링크 — ' + esc(care.country || '내 여행') + ' 티켓 열기<span style="margin-left:auto;">→</span></a>';
+        } else if (orders[0]) {
+          quick = '<a href="issue.html?local=' + encodeURIComponent(orders[0].orderCode || '') + '" style="display:flex;align-items:center;gap:8px;margin-top:11px;padding:10px 12px;border:1px dashed rgba(255,255,255,0.35);border-radius:12px;text-decoration:none;color:#fff;font-size:0.8rem;font-weight:700;">🎫 이 기기 주문 — ' + esc(((orders[0].items || [])[0] || {}).country || '내 여행') + ' 티켓 열기' + (orders[0].test ? ' <span style="font-size:0.66rem;background:rgba(255,255,255,0.18);padding:2px 7px;border-radius:999px;">테스트</span>' : '') + '<span style="margin-left:auto;">→</span></a>';
+        }
+      } catch (e) {}
       zone.innerHTML =
-        '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" style="display:flex;align-items:center;gap:13px;text-decoration:none;background:linear-gradient(135deg,#101623,#25314F);border-radius:18px;padding:16px;margin:0 0 14px;box-shadow:0 12px 30px rgba(16,22,35,0.25);">'
-        + '<img src="images/fox-hello.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
-        + '<span style="flex:1;min-width:0;color:#fff;">'
-        +   '<span style="display:block;font-size:0.95rem;font-weight:800;">가입만 해도 <b style="color:#FDBA74;">2,000원 쿠폰</b> ✈️</span>'
-        +   '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
-        + '</span>'
-        + '<span style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(249,115,22,0.35);">로그인</span></a>';
+        '<div style="background:linear-gradient(135deg,#101623,#25314F);border-radius:18px;padding:16px;margin:0 0 4px;box-shadow:0 12px 30px rgba(16,22,35,0.25);">'
+        + '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" style="display:flex;align-items:center;gap:13px;text-decoration:none;">'
+        +   '<img src="images/fox-hello.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
+        +   '<span style="flex:1;min-width:0;color:#fff;">'
+        +     '<span style="display:block;font-size:0.95rem;font-weight:800;">가입만 해도 <b style="color:#FDBA74;">2,000원 쿠폰</b> ✈️</span>'
+        +     '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
+        +   '</span>'
+        +   '<span style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(249,115,22,0.35);">로그인</span></a>'
+        + quick
+        + '</div>';
     }
     function renderMemberHome(zone, me) {
       var coupons = me.coupons || [], orders = me.orders || [];
