@@ -705,7 +705,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (pl.final_price < g.minPrice) {
             g.minPrice = pl.final_price;
           }
-          if (pl.data_limit === '무제한') {
+          // 무제한 정직 표기: 진짜 무제한(속도제한 없음, speed-truth.js 실측)일 때만 배지
+          if (pl.data_limit === '무제한' && window.JD_UNL && window.JD_UNL.isTrue(pl.product_code)) {
             g.has_unlimited = true;
           }
         });
@@ -1057,6 +1058,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 최종 금액 계산
     const basePrice = activePlan.final_price;
     const finalPriceVal = Math.round(basePrice + (activeQuantity - 1) * basePrice * 0.9);
+
+    // 무제한 정직 라벨 (speed-truth.js 실측): 진짜 무제한만 ∞, 저속전환형은 전환 속도 명시
+    const unlRepPlan = typeFilteredPlans.find(pl => pl.data_limit.replace('매일 ', '').replace('총 ', '').trim() === '무제한');
+    const unlOptLabel = (unlRepPlan && window.JD_UNL) ? window.JD_UNL.label(unlRepPlan.product_code) : '무제한';
+    const summaryDataLabel = (activeDataLimit.includes('무제한') && window.JD_UNL)
+      ? window.JD_UNL.label(activePlan.product_code)
+      : activeDataLimit;
     
         // 모달 본문 HTML 조합 (요청에 따라 제품코드 제거 완료)
     modalContent.innerHTML = `
@@ -1094,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="config-group">
           <div class="config-section-title">3. 데이터 용량 선택</div>
           <select id="capacitySelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
-            ${capList.map(c => `<option value="${c}" ${c === cleanActiveData ? 'selected' : ''}>${c}</option>`).join('')}
+            ${capList.map(c => `<option value="${c}" ${c === cleanActiveData ? 'selected' : ''}>${c === '무제한' ? unlOptLabel : c}</option>`).join('')}
           </select>
         </div>
 
@@ -1120,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="price-summary-box">
           <div class="summary-row">
             <span>선택한 데이터</span>
-            <span style="color:var(--text-main); font-weight:700;">${activeDataLimit} (${activePlan.service_type})</span>
+            <span style="color:var(--text-main); font-weight:700;">${summaryDataLabel} (${activePlan.service_type})</span>
           </div>
           <div class="summary-row">
             <span>이용 기간</span>

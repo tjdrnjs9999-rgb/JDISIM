@@ -2425,7 +2425,8 @@
   <!-- JavaScript imports -->
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
-  <script src="products-lite.js?v=20260713b" defer></script>
+  <script src="speed-truth.js?v=20260714a" defer></script>
+  <script src="products-lite.js?v=20260714a" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -3973,8 +3974,11 @@
       });
 
       const box = document.getElementById('capacityPills');
+      // 무제한 정직 라벨 (speed-truth.js 실측): 진짜 무제한만 ∞, 저속전환형은 전환 속도 명시
+      const unlRep = filteredPlans.find(p => p.data_limit.replace('매일 ', '').replace('총 ', '').trim() === '무제한');
+      const unlPillLabel = (unlRep && window.JD_UNL) ? window.JD_UNL.label(unlRep.product_code) : '무제한';
       if (box) {
-        box.innerHTML = capList.map(c => `<button type="button" class="option-pill" data-cap="${c}">${c}</button>`).join('');
+        box.innerHTML = capList.map(c => `<button type="button" class="option-pill" data-cap="${c}">${c === '무제한' ? unlPillLabel : c}</button>`).join('');
         box.querySelectorAll('[data-cap]').forEach(b => b.addEventListener('click', () => {
           box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
           onCapacityChange(b.getAttribute('data-cap'));
@@ -3990,14 +3994,16 @@
 
     function onCapacityChange(val) {
       selectedCapacity = val;
-      jdCompleteStep('cap', val);
-      jdResetAfter('cap');
       const isDaily = (selectedPlanType === '데일리');
-      renderCapacityFeel(val, isDaily);
       const matchingPlans = activeCarrier.plans.filter(p => {
         const pLimit = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
         return (p.service_type === '데일리' || p.service_type === '무제한') === isDaily && pLimit === val.trim();
       });
+      // 무제한 정직 라벨: 위저드 스텝 요약에도 전환 속도 명시
+      const stepLabel = (val === '무제한' && matchingPlans[0] && window.JD_UNL) ? window.JD_UNL.short(matchingPlans[0].product_code) : val;
+      jdCompleteStep('cap', stepLabel);
+      jdResetAfter('cap');
+      renderCapacityFeel(val, isDaily);
 
       const days = Array.from(new Set(matchingPlans.map(p => p.duration))).sort((a, b) => a - b);
       const box = document.getElementById('daysPills');
@@ -4223,7 +4229,7 @@
           <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.3);border-radius:16px;padding:14px 14px 12px;margin-bottom:14px;box-shadow:0 8px 24px rgba(242,117,31,0.1);position:relative;">
             <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">여행 티켓 · 선택하신 상품</div>
             <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
-            <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
+            <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${(activePlan.data_limit === '무제한' && window.JD_UNL) ? window.JD_UNL.label(activePlan.product_code) : activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
             ${(() => {
               const row = (icon, label, value) => `<div style="display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid rgba(15,23,42,0.05);font-size:0.78rem;"><span>${icon}</span><span style="color:#64748b;font-weight:600;flex-shrink:0;">${label}</span><strong style="margin-left:auto;text-align:right;color:#0f172a;">${value}</strong></div>`;
               return '<div style="margin-top:10px;border-top:1px dashed rgba(242,117,31,0.3);padding-top:4px;">'
@@ -4879,7 +4885,7 @@
           <div class="rf-card" onclick="romiOpenPlan('${country}', '${p.g.carrier.replace(/'/g, "\\'")}', '${p.pl.data_limit}', ${p.d})">
             <span class="rf-card-badge">${p.icon} ${p.label}</span>
             <div class="rf-card-body">
-              <div class="rf-card-title">${p.g.carrier.replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '')} · ${p.pl.data_limit}</div>
+              <div class="rf-card-title">${p.g.carrier.replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '')} · ${(p.pl.data_limit === '무제한' && window.JD_UNL) ? window.JD_UNL.short(p.pl.product_code) : p.pl.data_limit}</div>
               <div class="rf-card-sub">${p.d}일 · ${p.g.network_type || ''} ${p.g.network_speed || ''}</div>
             </div>
             <div class="rf-card-price">${p.pl.final_price.toLocaleString()}원<em>하루 ${Math.round(p.pl.final_price / p.d).toLocaleString()}원</em></div>
