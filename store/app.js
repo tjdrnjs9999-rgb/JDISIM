@@ -1339,10 +1339,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 12.45 국가/통신사별 맞춤형 실시간 주의사항 및 스펙 정보 반환 함수
+  // 미주·유럽: 시차로 현지 날짜가 하루 어긋날 수 있어 주문 리드타임 3~4일 (모바일과 동일 정책)
+  const LONG_LEAD_REGIONS = ['미국','캐나다','멕시코','북미','하와이','남미','브라질','아르헨티나','페루','칠레','유럽','영국','프랑스','독일','이탈리아','스페인','포르투갈','스위스','네덜란드','벨기에','오스트리아','체코','헝가리','폴란드','크로아티아','그리스','북유럽','동유럽','아이슬란드','튀르키예','터키'];
+  function isLongLeadCountry(name) {
+    const c = String(name || '');
+    return LONG_LEAD_REGIONS.some(k => c.includes(k));
+  }
+  function leadTimeBadge(lead) {
+    return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.82rem;font-weight:900;padding:6px 14px;border-radius:999px;margin-bottom:4px;box-shadow:0 4px 12px rgba(239,68,68,0.3);">⏰ 출국 ${lead} 전 주문 필수</div>`;
+  }
   function getCustomPrecautions(country, carrier) {
     const list = [];
     const normalizedCountry = country.toLowerCase();
     const normalizedCarrier = carrier.toLowerCase();
+
+    // 0. 주문 타이밍 배지 — 리스트 최상단 (날짜 입력 방법 코칭은 하지 않음: 개통일 등록은 구매 후 케어 안내로 진행)
+    if (isLongLeadCountry(country)) {
+      list.push(leadTimeBadge('3~4일') + "<strong>미주·유럽은 시차로 현지 날짜가 하루 어긋날 수 있어요</strong> — 여유 있게 출국 3~4일 전에 주문해 주세요. 개통일 등록은 구매 후 케어 안내로 도와드립니다.");
+    } else if (normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
+      list.push(leadTimeBadge('1~2일') + "이 상품은 <strong>출국 1~2일 전 주문</strong>이 필요해요. 개통일 등록은 구매 후 케어 안내로 도와드립니다.");
+    }
 
     // 5. 국가별/통신사별 상세 맞춤 특이사항 (크롤링 및 매칭)
     if (normalizedCountry.includes('일본')) {
@@ -1365,7 +1381,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (normalizedCountry.includes('미국') || normalizedCountry.includes('캐나다') || normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
-      list.push("<strong>사전 개통 희망일 지정 필수:</strong> 결제 후 전송되는 링크/안내 메일로 <strong>출국 최소 1~2일 전 개통 날짜를 등록</strong>해야 정상 활성화됩니다.");
       list.push("<strong>단말기 컨트리락 해제 확인:</strong> 컨트리락이 해제된 공기계에서만 해외 eSIM 사용이 가능하므로 출국 전 통신사에 락 해제 여부를 확인하세요.");
     }
 
@@ -1403,7 +1418,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     if (normalizedCarrier.includes('오렌지스페인') || normalizedCarrier.includes('orange스페인')) {
-      list.push("<strong>개통 예약 신청 필수 (Orange):</strong> 원활한 자동 개통을 위해 결제란에서 <strong>실제 여행 도착 예정일보다 하루 전날</strong>을 개통일로 꼭 기입해 주세요.");
+      list.push("<strong>개통 예약형 상품 (Orange):</strong> 출국 3~4일 전 주문해 주세요 — 개통 예약은 구매 후 케어 안내에 따라 진행됩니다.");
     }
 
     if (normalizedCarrier.includes('오렌지프랑스') || normalizedCarrier.includes('orange프랑스')) {
@@ -1819,7 +1834,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
     '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
     '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅', '🛂 비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
-    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 1~2일 전 개통일 등록이 필요해요', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
+    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '이 상품은 출국 3~4일 전 주문이 필요해요 (시차 주의)', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
     '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
     '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['출국 1~2일 전 개통일 등록이 필요해요'] },
     '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },

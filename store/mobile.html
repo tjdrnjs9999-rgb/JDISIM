@@ -3831,9 +3831,9 @@
       if (act.includes('희망일')) {
         const lead = longLead ? '3~4일' : '1~2일';
         html = timingBadge(lead, true)
-          + '<div>📆 <strong>희망 개통일 지정 상품</strong> — 결제 시 입력한 날짜에 개통돼요.</div>'
+          + '<div>📆 <strong>개통 희망일 지정 상품</strong> — 개통일 등록은 구매 후 케어 안내로 도와드려요.</div>'
           + (longLead
-            ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 한국 날짜로 입력하면 현지에선 하루 어긋날 수 있어요. 여유 있게 <strong>3~4일 전에 구매</strong>하고, 개통 희망일은 <strong>현지 도착 날짜 기준</strong>(애매하면 도착 전날)으로 입력하세요.</div>'
+            ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 현지 날짜가 하루 어긋날 수 있어요 — 여유 있게 <strong>출국 3~4일 전에 주문</strong>해 주세요.</div>'
             : '');
         bg = 'rgba(249,115,22,0.07)'; border = 'rgba(249,115,22,0.35)'; color = '#9a5b16';
       } else if (act.includes('즉시 개통')) {
