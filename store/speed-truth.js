@@ -152,18 +152,19 @@ window.JD_UNL = {
     var v = window.JD_SPEED_TRUTH[code];
     return (v && v !== '무제한' && v !== '0') ? v : '';
   },
-  // 선택 UI용 라벨
+  // 선택 UI용 라벨 — "무제한"은 진짜 무제한(소진 개념 없음)에만 사용 (2026-07-15 정본)
+  // 저속전환형은 '무제한' 단어 금지: 고속 소진 후 저속 계속임을 있는 그대로
   label: function (code) {
     var v = window.JD_SPEED_TRUTH[code];
     if (v === '무제한') return '무제한 ∞ (속도제한 없음)';
     var a = this.after(code);
-    return a ? ('무제한 (소진 시 ' + a + ' 저속)') : '무제한';
+    return a ? ('매일 고속 데이터 (소진 후 ' + a + ' 계속 사용)') : '무제한';
   },
   // 카드·좁은 영역용 짧은 라벨
   short: function (code) {
     var v = window.JD_SPEED_TRUTH[code];
     if (v === '무제한') return '무제한 ∞';
     var a = this.after(code);
-    return a ? ('무제한(' + a + ' 저속)') : '무제한';
+    return a ? ('고속+' + a) : '무제한';
   }
 };

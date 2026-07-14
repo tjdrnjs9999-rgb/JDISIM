@@ -19,7 +19,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260715a';
+      sc.src = 'products.js?v=20260715b';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
@@ -2184,8 +2184,8 @@
     <div id="memberZone"></div>
     <div id="myTripCard" style="display:none;"></div>
 
-    <!-- ② 비회원 주문 조회 — 이름+전화 한 세트로 주문·사용량 모두 (중복 폼 통합) -->
-    <div style="background:#fff;border:1px solid #F0E7DB;border-radius:18px;padding:16px 15px 15px;margin:14px 0 16px;box-shadow:0 6px 18px rgba(85,60,40,0.05);">
+    <!-- ② 비회원 주문 조회 — 이름+전화 한 세트로 주문·사용량 모두 (로그인 시 자동 숨김) -->
+    <div id="guestLookup" style="background:#fff;border:1px solid #F0E7DB;border-radius:18px;padding:16px 15px 15px;margin:14px 0 16px;box-shadow:0 6px 18px rgba(85,60,40,0.05);">
       <div style="font-size:0.98rem;font-weight:800;color:#221510;">비회원 주문 조회</div>
       <div style="font-size:0.78rem;color:#8a7a6d;font-weight:600;margin:3px 0 12px;">구매할 때 쓴 이름·전화번호로 QR·주문·사용량을 확인해요 — 다른 기기 구매도 OK</div>
       <div class="order-tracker-form" style="margin:0;">
@@ -2442,9 +2442,9 @@
   <!-- JavaScript imports -->
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
-  <script src="speed-truth.js?v=20260714a" defer></script>
+  <script src="speed-truth.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
-  <script src="products-lite.js?v=20260715a" defer></script>
+  <script src="products-lite.js?v=20260715b" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -4307,6 +4307,8 @@
               · 세부 사항은 각 결제대행사 표준 이용약관을 따릅니다
             </div>
           </div>
+          <!-- 💰 회원 쿠폰 적용 (로그인+사용 가능 쿠폰 있을 때만 JS가 채움) -->
+          <div id="mobileCouponBox" style="display:none;margin-bottom:14px;"></div>
           <label id="mobileAgreeBox" style="display:flex;align-items:center;gap:11px;margin-bottom:16px;cursor:pointer;padding:13px 14px;background:rgba(242,117,31,0.06);border:1.5px solid rgba(242,117,31,0.35);border-radius:14px;transition:all 0.2s;">
             <input type="checkbox" id="mobileAgreeCheck" style="width:21px;height:21px;accent-color:#F2751F;flex-shrink:0;">
             <span style="font-size:0.84rem;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고, 이용약관 및 결제에 동의합니다 <span style="color:#F2751F;">(필수)</span></span>
@@ -4344,6 +4346,48 @@
         layer.remove();
         proceedMockCheckout();
       });
+
+      // 💰 회원 쿠폰: 서버 지갑에서 사용 가능(미사용·만료 전·최소주문 충족)만 표시 — 선택 시 결제액 차감
+      //    보안: 표시는 편의일 뿐, 실제 차감 확정은 결제 후 서버(use_coupon)가 본인 지갑에서 검증·소진 처리
+      window._appliedCoupon = null;
+      (function loadCoupons() {
+        var token = '';
+        try { token = localStorage.getItem('jd_member_token') || ''; } catch (e) {}
+        if (!token) return;
+        var orderTotal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+        fetch('https://jdisim-proxy.vercel.app/api/member?action=me', { headers: { Authorization: 'Bearer ' + token } })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            if (!j || !j.ok) return;
+            var today = new Date().toISOString().slice(0, 10);
+            var usable = (j.coupons || []).filter(function (c) {
+              return !c.used && (!c.expires || c.expires >= today) && (!c.min_order || orderTotal >= c.min_order);
+            });
+            var box = layer.querySelector('#mobileCouponBox');
+            if (!box || !usable.length) return;
+            box.innerHTML = '<div style="border:1.5px dashed rgba(242,117,31,0.45);border-radius:14px;padding:12px 13px;background:rgba(249,115,22,0.04);">'
+              + '<div style="font-size:0.84rem;font-weight:800;color:#221510;margin-bottom:8px;">💰 쿠폰 적용</div>'
+              + usable.slice(0, 3).map(function (c, i) {
+                  return '<label style="display:flex;align-items:center;gap:9px;padding:7px 0;cursor:pointer;font-size:0.82rem;font-weight:700;color:#5D5049;">'
+                    + '<input type="radio" name="mCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F2751F;">'
+                    + '<span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F2751F;">-' + Number(c.amount).toLocaleString() + '원</b></span></label>';
+                }).join('')
+              + '<label style="display:flex;align-items:center;gap:9px;padding:7px 0;cursor:pointer;font-size:0.82rem;font-weight:700;color:#8a7a6d;">'
+              + '<input type="radio" name="mCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F2751F;"><span>적용 안 함</span></label>'
+              + '<div id="mCouponSum" style="border-top:1px dashed rgba(34,21,16,0.1);margin-top:6px;padding-top:9px;font-size:0.86rem;font-weight:800;color:#221510;text-align:right;">결제 금액 ' + orderTotal.toLocaleString() + '원</div></div>';
+            box.style.display = 'block';
+            box.querySelectorAll('input[name="mCoupon"]').forEach(function (r) {
+              r.addEventListener('change', function () {
+                var idx = parseInt(this.value, 10);
+                window._appliedCoupon = idx >= 0 ? usable[idx] : null;
+                var final_ = Math.max(0, orderTotal - (window._appliedCoupon ? window._appliedCoupon.amount : 0));
+                box.querySelector('#mCouponSum').innerHTML = window._appliedCoupon
+                  ? '쿠폰 -' + Number(window._appliedCoupon.amount).toLocaleString() + '원 → 결제 금액 <b style="color:#F2751F;">' + final_.toLocaleString() + '원</b>'
+                  : '결제 금액 ' + orderTotal.toLocaleString() + '원';
+              });
+            });
+          }).catch(function () {});
+      })();
     }
 
     // [2단계] 실제 결제 실행
@@ -4364,8 +4408,17 @@
 
       await loadEnvForPayment();
 
-      const priceVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+      // 쿠폰 차감 (표시용 — 실차감 확정은 아래 use_coupon 서버 검증. PG 재개 시 결제 검증과 함께 재확인)
+      const couponDiscount = window._appliedCoupon ? Math.min(Number(window._appliedCoupon.amount) || 0, activePlan.final_price * purchaseQty) : 0;
+      const priceVal = Math.max(0, activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0) - couponDiscount);
       const orderCode = 'JD' + Date.now().toString().slice(-8);
+      // 서버 쿠폰 소진 처리 (본인 지갑 검증 — 이중 사용·타인 코드 차단)
+      if (window._appliedCoupon) {
+        try {
+          fetch('https://jdisim-proxy.vercel.app/api/member', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + (localStorage.getItem('jd_member_token') || '') },
+            body: JSON.stringify({ action: 'use_coupon', code: window._appliedCoupon.code, order_total: activePlan.final_price * purchaseQty, mid: orderCode }) }).catch(function(){});
+        } catch (e) {}
+      }
       const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);
       const paymentName = `${currentSelectedCountry} ${activeCarrier.carrier} eSIM` + (krCallAddonOn ? ' + 한국번호 통화 세팅' : '');
 
@@ -5263,6 +5316,7 @@
         .catch(function () { renderMemberGuest(zone); });
     }
     function renderMemberGuest(zone) {
+      var gl = document.getElementById('guestLookup'); if (gl) gl.style.display = 'block';
       // 최근 케어링크·이 기기 주문(구 myTripCard)을 카드 하단 한 줄로 흡수 — MY 2섹션 원칙
       var quick = '';
       try {
@@ -5287,6 +5341,7 @@
         + '</div>';
     }
     function renderMemberHome(zone, me) {
+      var gl = document.getElementById('guestLookup'); if (gl) gl.style.display = 'none'; // 로그인 = 계정 페이지가 MY의 전부
       var coupons = me.coupons || [], orders = me.orders || [];
       var fresh = coupons.filter(function (c) { return !c.used; });
       var html =
@@ -5313,6 +5368,13 @@
           + '</div>';
       });
       if (!orders.length) html += '<div style="margin:0 12px 12px;padding:14px;text-align:center;font-size:0.82rem;font-weight:600;color:#8a7a6d;background:#FFFDFB;border:1px dashed #EDE4D8;border-radius:14px;">아직 연결된 주문이 없어요 — 구매하시면 여기에 자동으로 모여요</div>';
+      // 계정 관리 (프로필·쿠폰 사용법·탈퇴)
+      var pf = me.profile || {};
+      html += '<div style="margin:2px 12px 12px;padding:12px 13px;background:#FFFDFB;border:1px solid #F0E7DB;border-radius:14px;font-size:0.78rem;font-weight:600;color:#8a7a6d;line-height:1.75;">'
+        + '<div style="font-size:0.8rem;font-weight:800;color:#221510;margin-bottom:4px;">⚙️ 내 계정</div>'
+        + '이메일 ' + esc(pf.email || '미등록') + ' · 혜택 알림 ' + (pf.marketing ? 'ON' : 'OFF')
+        + '<br>💡 쿠폰은 <b style="color:#F2751F;">결제 직전 화면에서 선택</b>하면 자동 차감돼요 (조건 충족 시에만 표시)'
+        + '<br>정보 수정·탈퇴는 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#1B8E82;font-weight:800;">카카오톡 고객센터</a>로 — 탈퇴 시 즉시 파기돼요</div>';
       html += '<div style="height:8px;"></div></div>';
       zone.innerHTML = html;
       var lo = zone.querySelector('[data-m-logout]');
