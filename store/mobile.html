@@ -255,61 +255,6 @@
       object-fit: cover;
     }
 
-    /* Destinations Grid (Circular Buttons like Roaming Dokebi) */
-    .destinations-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px 12px;
-      margin-bottom: 24px;
-      background: rgba(255, 255, 255, 0.45);
-      border: 1px solid rgba(15, 23, 42, 0.05);
-      padding: 20px 14px;
-      border-radius: 24px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .dest-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .dest-item:active {
-      transform: scale(0.9);
-    }
-
-    .dest-icon-circle {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
-      transition: all 0.2s;
-    }
-
-    .dest-item:active .dest-icon-circle {
-      background: #ffffff;
-      border-color: #4f46e5;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-    }
-
-    .dest-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #334155;
-      white-space: nowrap;
-    }
-
     /* Screen view framework */
     .mobile-view {
       display: none;
@@ -548,37 +493,6 @@
     .jd-sg b { font-size: 0.88rem; font-weight: 800; color: #0f172a; }
     .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F2751F; }
 
-    .search-container {
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .search-input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(15, 23, 42, 0.1);
-      padding: 12px 16px 12px 42px;
-      border-radius: 30px;
-      color: #0f172a;
-      font-size: 0.9rem;
-      box-sizing: border-box;
-      outline: none;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
-    }
-
-    .search-input:focus {
-      border-color: #4f46e5;
-      background: #ffffff;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.08);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-    }
 
     /* Product Grid */
     .product-list {
@@ -875,7 +789,10 @@
     /* 전 페이지: 고정 하단바(65px)가 콘텐츠를 가리지 않도록 공통 여백 */
     .mobile-view { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important; }
     /* 히어로를 '실제 보이는 화면'(svh) 안에 맞춰 150+/10초/24h 스탯까지 첫 화면에 노출 */
-    .m-hero { height: 100svh !important; min-height: 100svh !important; max-height: 100svh !important; padding-top: max(52px, env(safe-area-inset-top, 0px)) !important; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; box-sizing: border-box !important; }
+    /* [FIX] 히어로 잘림: JS가 측정한 실제 가시 높이(--jd-vh)를 쓰고,
+       고정 클램프(max-height) 제거 — 화면이 작으면 패널이 늘어나 스탯이 절대 잘리지 않음.
+       하단 여백은 하단바 65px + safe-area(인앱 브라우저에서 0이어도 최소 14px 버퍼 보장) */
+    .m-hero { height: auto !important; min-height: var(--jd-vh, 100svh) !important; max-height: none !important; padding-top: max(52px, env(safe-area-inset-top, 0px)) !important; padding-bottom: calc(84px + max(env(safe-area-inset-bottom, 0px), 14px)) !important; box-sizing: border-box !important; }
     .m-hero-content { justify-content: flex-end !important; padding-bottom: 6px !important; }
     .m-hero-title { font-size: 1.72rem !important; line-height: 1.28 !important; margin-bottom: 8px !important; }
     .m-hero-sub { font-size: 0.85rem !important; margin-bottom: 14px !important; }
@@ -907,12 +824,16 @@
     }
     html.home-snap #view-home .snap-panel {
       min-height: 100vh;
-      min-height: 100svh;
+      min-height: var(--jd-vh, 100svh);
       box-sizing: border-box;
       scroll-snap-align: start !important;
       scroll-snap-stop: always !important;
       /* 하단바(65px+safe)에 콘텐츠가 가리지 않게 패널 안쪽에서 공간 확보 */
-      padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+      padding-bottom: calc(78px + max(env(safe-area-inset-bottom, 0px), 14px)) !important;
+    }
+    /* 히어로는 자체 padding-bottom(84px+safe) 규칙이 우선 적용되도록 예외 처리 */
+    html.home-snap #view-home .m-hero.snap-panel {
+      padding-bottom: calc(84px + max(env(safe-area-inset-bottom, 0px), 14px)) !important;
     }
     /* 스냅 구간 이후의 일반 콘텐츠는 자유 스크롤 (뷰포트보다 큰 스냅 영역은 내부 자유 스크롤 허용) */
     html.home-snap #view-home .snap-tail {
@@ -927,25 +848,6 @@
       width: 136px;
     }
 
-    .trust-strip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px 0 4px;
-      padding: 9px 12px;
-      background: linear-gradient(135deg, rgba(242,117,31,0.06), rgba(245,158,11,0.06));
-      border: 1px solid rgba(242,117,31,0.16);
-      border-radius: 14px;
-      font-size: 0.74rem;
-      font-weight: 800;
-      color: #b45309;
-      white-space: nowrap;
-    }
-    .trust-strip i {
-      width: 1px; height: 10px;
-      background: rgba(180, 83, 9, 0.25);
-    }
     .recent-row {
       display: flex;
       align-items: center;
@@ -976,17 +878,16 @@
       border: 1px solid #e2e8f0;
       color: #334155;
     }
-    /* ===== ✈ 공항 출발 전광판 ===== */
-    .departure-board {
-      margin: 12px 0 4px;
+    /* ===== 🛡️ JDISIM 보장 보드 (공항 전광판 무드 유지) ===== */
+    .benefit-board {
+      margin: 12px 0 16px;
       background: linear-gradient(180deg, #131a2b, #0d1322);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 16px;
-      padding: 12px 14px;
-      cursor: pointer;
+      padding: 12px 14px 6px;
       box-shadow: 0 8px 24px rgba(13, 19, 34, 0.35);
     }
-    .db-head {
+    .bb-head {
       display: flex;
       align-items: center;
       gap: 7px;
@@ -995,42 +896,39 @@
       letter-spacing: 2.5px;
       color: #fbbf24;
       font-family: 'SF Mono', 'Courier New', monospace;
+      padding-bottom: 9px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
     }
-    .db-head em { font-style: normal; letter-spacing: 0; color: #64748b; font-weight: 700; margin-left: auto; }
-    .db-live {
+    .bb-head em { font-style: normal; letter-spacing: 2px; color: #64748b; font-weight: 700; margin-left: auto; }
+    .bb-live {
       width: 7px; height: 7px; border-radius: 50%;
       background: #22c55e;
       box-shadow: 0 0 8px #22c55e;
-      animation: dbPulse 1.6s ease-in-out infinite;
+      animation: bbPulse 1.6s ease-in-out infinite;
     }
-    @keyframes dbPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-    .db-row {
+    @keyframes bbPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .bb-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-top: 9px;
+      gap: 10px;
+      padding: 9px 2px;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bb-row + .bb-row { border-top: 1px dashed rgba(255, 255, 255, 0.07); }
+    .bb-ic { font-size: 1.05rem; flex-shrink: 0; }
+    .bb-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .bb-txt strong { font-size: 0.82rem; font-weight: 800; color: #f8fafc; }
+    .bb-txt span { font-size: 0.7rem; font-weight: 600; color: #8b98b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bb-st {
+      margin-left: auto; flex-shrink: 0;
+      color: #4ade80;
+      font-size: 0.7rem; font-weight: 900; letter-spacing: 1.2px;
       font-family: 'SF Mono', 'Courier New', monospace;
-      white-space: nowrap;
-      overflow: hidden;
+      animation: bbPulse 2.4s ease-in-out infinite;
     }
-    .db-flag { font-size: 1.05rem; }
-    .db-cell {
-      display: inline-block;
-      background: linear-gradient(180deg, #222b42 48%, #1a2338 52%);
-      border-radius: 3px;
-      color: #f8fafc;
-      font-weight: 800;
-      font-size: 0.86rem;
-      padding: 4px 5px;
-      min-width: 15px;
-      text-align: center;
-      backface-visibility: hidden;
-    }
-    .db-cell.flip { animation: dbFlip 0.42s cubic-bezier(0.3, 0.9, 0.4, 1) both; }
-    @keyframes dbFlip { 0% { transform: rotateX(-88deg); filter: brightness(1.8); } 100% { transform: rotateX(0); filter: brightness(1); } }
-    .db-code { color: #fbbf24; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
-    .db-status { margin-left: auto; color: #4ade80; font-size: 0.74rem; font-weight: 900; letter-spacing: 1.5px; animation: dbPulse 2.2s ease-in-out infinite; }
-    @media (prefers-reduced-motion: reduce) { .db-cell.flip, .db-live, .db-status { animation: none !important; } }
+    .bb-st-amber { color: #fbbf24; }
+    @media (prefers-reduced-motion: reduce) { .bb-live, .bb-st { animation: none !important; } }
 
     /* ===== 🎫 보딩패스 카드 ===== */
     .bp-route {
@@ -1764,7 +1662,6 @@
     /* 플렉스 자식이 부모보다 커지는 것 원천 차단 */
     .m-hero-content *, .bottom-sheet *, #view-store * { min-width: 0; }
     /* nowrap 알약 줄(신뢰 스트립 등): 좁은 화면에선 줄바꿈 허용 */
-    .trust-strip { flex-wrap: wrap !important; row-gap: 6px; }
     /* 초협소·글꼴확대 기기: 기본 배율 한 단계 다운 → 히어로 스탯 한 줄 유지 */
     @media (max-width: 379px) { html { font-size: 16.5px; } }
     /* 안드로이드 시스템 글꼴 확대가 레이아웃을 깨지 않게 텍스트 자동확대 고정 */
@@ -1784,8 +1681,6 @@
     #view-store .m-cat { margin-bottom: 10px !important; padding-bottom: 2px !important; }
     #view-store .m-cat-btn { padding: 7px 12px !important; font-size: 0.76rem !important; }
     /* 신뢰 스트립·전광판·진단 배너: 슬림 */
-    #view-store .trust-strip { margin: 8px 0 !important; padding: 6px 8px !important; gap: 8px !important; }
-    #view-store .trust-strip span, #view-store .trust-strip a { font-size: 0.7rem !important; }
     #view-store .departure-board { padding: 9px 11px !important; margin: 8px 0 !important; }
     #view-store .device-check-banner { padding: 10px 12px !important; margin: 8px 0 10px !important; border-radius: 14px !important; }
     #view-store .device-check-banner .dcb-text strong { font-size: 0.84rem !important; }
@@ -1800,6 +1695,24 @@
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
 </head>
 <body>
+  <script>
+    /* [FIX] 실제 가시 뷰포트 높이(--jd-vh) 측정 — svh를 잘못 계산하는
+       인앱 브라우저(네이버·카톡 등) 포함 모든 기기에서 히어로가 정확히 한 화면에 맞음.
+       키보드가 열려 있는 동안(입력 포커스 중)은 갱신하지 않아 레이아웃 점프 방지 */
+    (function () {
+      function setVH() {
+        var a = document.activeElement;
+        if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
+        var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+        if (h > 0) document.documentElement.style.setProperty('--jd-vh', Math.round(h) + 'px');
+      }
+      setVH();
+      window.addEventListener('resize', setVH);
+      window.addEventListener('orientationchange', function () { setTimeout(setVH, 250); });
+      window.addEventListener('pageshow', setVH);
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', setVH);
+    })();
+  </script>
 
   <!-- 🦊 로미 스플래시: 로딩 중 빈 화면 대신 브랜드 화면 (세션당 1회) -->
   <div id="jdSplash" style="position:fixed;inset:0;z-index:2000000;background:linear-gradient(180deg,#ffffff,#fff7f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;transition:opacity 0.45s ease;">
@@ -1964,51 +1877,6 @@
     </section>
     <div class="snap-tail">
 
-    <!-- Search container (click to navigate to store view) -->
-    <div class="search-container" onclick="goToStoreSearch()">
-      <i data-lucide="search" class="search-icon"></i>
-      <input type="text" class="search-input" placeholder="어디로 여행을 떠나시나요?" readonly style="cursor: pointer;">
-    </div>
-
-    <!-- Popular Destinations Grid (Dokebi Style Circular Icons) -->
-    <h3 style="font-size: 0.95rem; font-weight: 800; margin: 28px 0 16px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
-      <i data-lucide="compass" style="color: #4f46e5; width: 18px; height: 18px;"></i> 빠른 여행지 찾기
-    </h3>
-    <div class="destinations-grid">
-      <div class="dest-item" onclick="quickSelectCountry('일본')">
-        <div class="dest-icon-circle">🇯🇵</div>
-        <span class="dest-label">일본</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('베트남')">
-        <div class="dest-icon-circle">🇻🇳</div>
-        <span class="dest-label">베트남</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('태국')">
-        <div class="dest-icon-circle">🇹🇭</div>
-        <span class="dest-label">태국</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('대만')">
-        <div class="dest-icon-circle">🇹🇼</div>
-        <span class="dest-label">대만</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('미국')">
-        <div class="dest-icon-circle">🇺🇸</div>
-        <span class="dest-label">미국/하와이</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('유럽')">
-        <div class="dest-icon-circle">🇪🇺</div>
-        <span class="dest-label">유럽</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('싱가포르')">
-        <div class="dest-icon-circle">🇸🇬</div>
-        <span class="dest-label">싱가포르</span>
-      </div>
-      <div class="dest-item" onclick="quickSelectCountry('필리핀')">
-        <div class="dest-icon-circle">🇵🇭</div>
-        <span class="dest-label">필리핀</span>
-      </div>
-    </div>
-
     <!-- Quick Utilities Dashboard Links -->
     <h3 style="font-size: 0.95rem; font-weight: 800; margin: 28px 0 16px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
       <i data-lucide="layout-grid" style="color: #4f46e5; width: 18px; height: 18px;"></i> 퀵 서비스 메뉴
@@ -2043,32 +1911,6 @@
           <div style="font-size: 0.72rem; color: #475569; line-height: 1.4;">해외 현지에서도 안심할 수 있는 실시간 전담 상담</div>
         </div>
       </a>
-    </div>
-
-    <!-- Smartphone Mockup with Rotating QR Scan Box -->
-    <div style="display: flex; flex-direction: column; align-items: center; margin: 32px 0 24px 0; background: rgba(255, 255, 255, 0.45); border: 1px solid rgba(15, 23, 42, 0.05); padding: 24px 16px; border-radius: 24px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-      <span style="font-size: 0.7rem; font-weight: 800; color: #4f46e5; letter-spacing: 1.5px; text-transform: uppercase;">EASY ACTIVATION</span>
-      <h3 style="font-size: 1.05rem; font-weight: 800; margin: 6px 0 20px 0; color: #0f172a; text-align: center;">카메라 스캔 한번으로 개통 완료</h3>
-      
-      <div class="phone-mockup-wrapper" style="transform: scale(0.85); margin: 0 auto; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08); background: #0f111c;">
-        <div class="phone-mockup-notch"></div>
-        <div class="phone-mockup-screen" style="background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);">
-          <div class="phone-qr-frame">
-            <img class="phone-qr-image" src="images/global.jpg" alt="QR Code Mockup" />
-          </div>
-          <h3 class="phone-mockup-title" style="color: #fff; font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">JDISIM eSIM 활성화</h3>
-          <p class="phone-mockup-desc" style="color: #94a3b8; font-size: 0.75rem; line-height: 1.5; margin: 0 0 16px 0;">
-            가입 완료 시 전송되는 QR코드를<br>카메라로 비추기만 하면 완료!
-          </p>
-          <div style="display: flex; gap: 4px; align-items: center; justify-content: center;">
-            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
-            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
-            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
-            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
-            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- 자체 수집: 발급 고객 인증 후기 (티켓 별점) — 0건이면 자동 숨김 -->
@@ -2122,15 +1964,24 @@
       <button class="m-cat-btn" data-cat="글로벌">✈️ 글로벌</button>
     </div>
 
-    <!-- 구매 보장 신뢰 스트립 -->
-    <div class="trust-strip">
-      <span>⚡ 평균 5~15분 QR 발송</span><i></i><span>🛡️ 미개통 100% 환불</span><i></i><a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24시간 카톡 상담</a>
-    </div>
-
-    <!-- ✈ 공항 출발 전광판 (탭하면 해당 국가로) -->
-    <div class="departure-board" id="mDepBoard">
-      <div class="db-head"><span class="db-live"></span>DEPARTURES<em>실시간 인기 여행지</em></div>
-      <div class="db-row" id="mDbRow"></div>
+    <!-- 🛡️ JDISIM 보장 보드 (공항 전광판 스타일 · 구매 보장 3종) -->
+    <div class="benefit-board">
+      <div class="bb-head"><span class="bb-live"></span>JDISIM 보장<em>GUARANTEE</em></div>
+      <div class="bb-row">
+        <span class="bb-ic">⚡</span>
+        <span class="bb-txt"><strong>QR 발송</strong><span>결제 후 평균 5~15분 카톡·문자 자동 전송</span></span>
+        <span class="bb-st">● ON TIME</span>
+      </div>
+      <div class="bb-row">
+        <span class="bb-ic">🛡️</span>
+        <span class="bb-txt"><strong>미개통 환불</strong><span>현지에서 안 터지면 전액 돌려드려요</span></span>
+        <span class="bb-st bb-st-amber">● 100%</span>
+      </div>
+      <a class="bb-row" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">
+        <span class="bb-ic">💬</span>
+        <span class="bb-txt"><strong>카톡 1:1 케어</strong><span>새벽에도 실시간 — 여행 내내 곁에</span></span>
+        <span class="bb-st">● LIVE →</span>
+      </a>
     </div>
 
     <!-- 📱 기종 자가진단 배너 -->
@@ -3090,33 +2941,6 @@
 
     // 대표 공항 코드 (보딩패스/전광판용)
     const AIRPORT_CODES = { '일본': 'NRT', '베트남': 'DAD', '태국': 'BKK', '대만': 'TPE', '필리핀': 'MNL', '싱가포르': 'SIN', '말레이시아': 'KUL', '인도네시아': 'DPS', '미국': 'LAX', '괌': 'GUM', '사이판': 'SPN', '중국': 'PEK', '홍콩': 'HKG', '마카오': 'MFM', '호주': 'SYD', '뉴질랜드': 'AKL', '튀르키예': 'IST', '캐나다': 'YYZ', '몽골': 'UBN', '인도': 'DEL', '몰디브': 'MLE', '라오스': 'VTE', '캄보디아': 'PNH', '스리랑카': 'CMB', '방글라데시': 'DAC', '파키스탄': 'ISB', '러시아': 'SVO', '멕시코': 'MEX', '브라질': 'GRU', '칠레': 'SCL', '모로코': 'CMN', '남아프리카공화국': 'CPT', '이집트': 'CAI', '케냐': 'NBO', '나이지리아': 'LOS', '튀니지': 'TUN', '알제리': 'ALG', '사우디아라비아': 'RUH', '아랍에미레이트 (UAE)': 'DXB', '카타르': 'DOH', '쿠웨이트': 'KWI', '바레인': 'BAH', '오만': 'MCT', '오렌지프랑스': 'CDG', '오렌지스페인': 'MAD', '보다폰스페인': 'BCN', '쓰리(THREE)': 'LHR', '한국': 'GMP' };
-    const DB_ROTATION = [['🇯🇵', '일본', 'NRT'], ['🇻🇳', '베트남', 'DAD'], ['🇹🇭', '태국', 'BKK'], ['🇹🇼', '대만', 'TPE'], ['🇺🇸', '미국', 'LAX'], ['🇵🇭', '필리핀', 'MNL'], ['🇸🇬', '싱가포르', 'SIN'], ['🇭🇰', '홍콩', 'HKG']];
-    let dbIdx = 0;
-    function renderDepartureBoard() {
-      const row = document.getElementById('mDbRow');
-      const board = document.getElementById('mDepBoard');
-      if (!row || !board) return;
-      const [flag, name] = DB_ROTATION[dbIdx % DB_ROTATION.length];
-      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      // 해당 국가 실시간 최저가
-      let minP = Infinity;
-      (window.PRODUCTS_DATA || []).forEach(g => {
-        if (g.country !== name) return;
-        const p = (g.plans && g.plans.length) ? Math.min(...g.plans.filter(x => typeof x.final_price === 'number').map(x => x.final_price)) : (g.min_price || Infinity);
-        if (p < minP) minP = p;
-      });
-      const priceStr = isFinite(minP) ? `최저 ${minP.toLocaleString()}원~` : '';
-      row.innerHTML = `<span class="db-flag">${flag}</span>` +
-        name.split('').map((ch, i) => `<span class="db-cell${reduced ? '' : ' flip'}" style="animation-delay:${i * 55}ms">${ch}</span>`).join('') +
-        `<span class="db-code">${priceStr}</span><span class="db-status">● 탑승 중</span>`;
-      board.onclick = () => openBottomSheet(name);
-      dbIdx++;
-    }
-    setInterval(function () {
-      const board = document.getElementById('mDepBoard');
-      if (board && board.offsetParent !== null) renderDepartureBoard();
-    }, 3200);
-
 
     // 🧳 국가별 여행 준비물 & 알아두면 좋은 이슈 (결제 완료 화면용)
     const TRAVEL_TIPS = {
@@ -4642,7 +4466,6 @@
         renderMiniReviews();
         renderHomeFeatured();
         renderStoreProducts();
-        renderDepartureBoard();
         renderCountryChips();
         initRomiFinder();
         initSnapExperience();
