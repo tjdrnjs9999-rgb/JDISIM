@@ -19,7 +19,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260713b';
+      sc.src = 'products.js?v=20260714b';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
@@ -2426,7 +2426,7 @@
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="speed-truth.js?v=20260714a" defer></script>
-  <script src="products-lite.js?v=20260714a" defer></script>
+  <script src="products-lite.js?v=20260714b" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -4291,6 +4291,7 @@
             <button onclick="document.getElementById('mobileConfirmLayer').remove()" style="flex:1;padding:15px;border-radius:14px;border:1px solid #e2e8f0;background:#f1f5f9;font-weight:800;color:#334155;">취소</button>
             <button id="mobileConfirmPayBtn" style="flex:1.6;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;opacity:0.5;" disabled>동의하고 결제하기</button>
           </div>
+          <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:11px;font-size:0.8rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
         </div>`;
       document.body.appendChild(layer);
       const check = layer.querySelector('#mobileAgreeCheck');
