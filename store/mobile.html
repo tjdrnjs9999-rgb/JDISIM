@@ -2104,9 +2104,6 @@
       <button class="m-cat-btn" data-cat="글로벌">✈️ 글로벌</button>
     </div>
 
-    <!-- 🧳 내 여행 동반자 카드 (구매 이력 있을 때만 JS가 렌더 — 케어링크·재구매 원탭) -->
-    <div id="myTripCard" style="display:none;"></div>
-
     <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 구매 보장 3종) -->
     <div class="rg-ticket">
       <div class="rg-edge"></div>
@@ -2163,10 +2160,16 @@
     <div data-jdisim-compare style="margin: 34px 0 10px;"></div>
   </main>
 
-  <!-- ================= VIEW 3: ORDER VIEW ================= -->
+  <!-- ================= VIEW 3: MY 페이지 (내 여행 + 주문·QR 조회 통합, 2026-07-15 재편) ================= -->
   <main id="view-orders" class="mobile-view">
-    <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 6px 0;">주문 및 eSIM QR코드 조회</h3>
-    <p style="font-size: 0.8rem; color: #475569; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다.</p>
+    <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #221510;">MY · 내 여행</h3>
+    <p style="font-size: 0.85rem; color: #8a7a6d; font-weight: 600; margin: 0 0 12px 0;">케어링크 · 주문 · QR을 한곳에서 — 로그인 없이 이 기기 기준이에요</p>
+
+    <!-- 🧳 내 여행 동반자 카드 (실주문 케어링크 기억 > 이 기기 주문 — 없으면 자동 숨김) -->
+    <div id="myTripCard" style="display:none;"></div>
+
+    <h4 style="font-size: 0.95rem; font-weight: 800; margin: 18px 0 6px 0; color: #221510;">주문 및 eSIM QR코드 조회</h4>
+    <p style="font-size: 0.8rem; color: #8a7a6d; margin: 0 0 16px 0;">구매하셨을 때 입력한 이름과 연락처로 신속하게 실시간 발급 번호를 확인하실 수 있습니다. 다른 기기에서 구매하셨어도 여기서 찾을 수 있어요.</p>
 
     <!-- 📡 로미 닥터: eSIM 장애 자가진단 -->
     <div class="device-check-banner" onclick="openRomiDoctor()" role="button" tabindex="0" style="margin: 0 0 14px;">
@@ -2268,13 +2271,14 @@
       <i data-lucide="compass"></i>
       <span>eSIM 스토어</span>
     </div>
-    <div class="nav-item" data-nav="orders" onclick="switchNav('orders')">
-      <i data-lucide="receipt"></i>
-      <span>주문 조회</span>
-    </div>
     <div class="nav-item" onclick="window.location.assign('guide.html')">
       <i data-lucide="book-open"></i>
       <span>이심 가이드</span>
+    </div>
+    <!-- MY = 내 여행(케어링크·재구매) + 주문·QR 조회 통합 마이페이지 — 맨 오른쪽 (2026-07-15) -->
+    <div class="nav-item" data-nav="orders" onclick="switchNav('orders')">
+      <i data-lucide="user-round"></i>
+      <span>MY</span>
     </div>
   </nav>
 
