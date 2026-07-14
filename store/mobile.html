@@ -4947,6 +4947,16 @@
     try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F2751F;font-weight:bold;font-size:14px'); } catch (e) {}
   })();
   </script>
+  <style id="mobile-page-anim">
+    /* 페이지 전환 연출 (모바일): 새 패널이 아래에서 떠오름 + 크림 그라데이션 베일 */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes mpgIn { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+      html.home-snap #view-home .snap-panel.pg-in { animation: mpgIn .5s cubic-bezier(.22, 1, .36, 1) both; will-change: transform, opacity; }
+      .pg-veil { position: fixed; inset: 0; pointer-events: none; z-index: 940; opacity: 0; background: linear-gradient(to top, rgba(251,246,239,.96) 0%, rgba(251,246,239,0) 55%); }
+      .pg-veil.on { animation: mpgVeil .5s cubic-bezier(.22, 1, .36, 1) both; }
+      @keyframes mpgVeil { 0% { opacity: 1; } 100% { opacity: 0; } }
+    }
+  </style>
   <script>
   /* 모바일 인스턴트 페이저 — 스와이프 시 스크롤 모션 없이 페이지가 즉시 전환 (홈 스냅 구역 한정)
      · 자유 구역(.snap-tail 이후)은 자연 스크롤, 경계에서 위로 스와이프하면 페이저 복귀
@@ -4961,11 +4971,19 @@
         && document.body.style.overflow !== 'hidden'; // 시트/모달 열림 시 전체 비활성
     }
     var lock = false, sy = null, sx = null, exempt = false, startFree = false;
+    var veil = document.createElement('div'); veil.className = 'pg-veil';
+    document.body.appendChild(veil);
+    function animateIn(el) {
+      panels.forEach(function (p) { p.classList.remove('pg-in'); });
+      if (el) { void el.offsetWidth; el.classList.add('pg-in'); }
+      veil.classList.remove('on'); void veil.offsetWidth; veil.classList.add('on');
+    }
     function jump(i) {
       i = Math.max(0, Math.min(panels.length, i));
       var y = i < panels.length ? panels[i].offsetTop : tail.offsetTop;
       lock = true;
       window.scrollTo({ top: y, behavior: 'auto' }); // 인스턴트 점프 — 모션 없음
+      animateIn(i < panels.length ? panels[i] : null); // 대신 페이지가 "떠오르는" 연출
       setTimeout(function () { lock = false; }, 500);
     }
     function idx() {

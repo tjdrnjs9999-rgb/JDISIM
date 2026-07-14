@@ -109,6 +109,16 @@
       html.pc-snap #view-home .fox-strip-title { margin-bottom: 8px !important; }
       html.pc-snap #view-home .fox-strip-sub { margin-bottom: 18px !important; }
       html.pc-snap #view-home .fox-card-stage img { max-height: 20svh; object-fit: contain; }
+      /* ===== 페이지 전환 연출: 새 페이지가 아래에서 부드럽게 떠오름 + 크림 그라데이션 베일 ===== */
+      @keyframes pgIn { 0% { opacity: 0; transform: translateY(36px); } 100% { opacity: 1; transform: translateY(0); } }
+      html.pc-snap #view-home .pc-panel.pg-in { animation: pgIn .58s cubic-bezier(.22, 1, .36, 1) both; will-change: transform, opacity; }
+      .pg-veil { position: fixed; inset: 0; pointer-events: none; z-index: 940; opacity: 0; background: linear-gradient(to top, rgba(251,246,239,.96) 0%, rgba(251,246,239,0) 55%); }
+      .pg-veil.on { animation: pgVeil .58s cubic-bezier(.22, 1, .36, 1) both; }
+      @keyframes pgVeil { 0% { opacity: 1; } 100% { opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) {
+        html.pc-snap #view-home .pc-panel.pg-in { animation: none; }
+        .pg-veil { display: none; }
+      }
       /* 우측 진행 점 (ROMI Journey Scroll — PC) */
       .pc-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 900; display: none; flex-direction: column; gap: 10px; }
       html.pc-snap .pc-dots { display: flex; }
@@ -1723,12 +1733,21 @@
     function tailTop() { return lastP.offsetTop + lastP.offsetHeight; } // 자유 구역 시작점
     var lock = false;
     var dotEls = [];
+    // 전환 연출: 크림 그라데이션 베일 + 새 패널 떠오름
+    var veil = document.createElement('div'); veil.className = 'pg-veil';
+    document.body.appendChild(veil);
+    function animateIn(el) {
+      panels.forEach(function (p) { p.classList.remove('pg-in'); });
+      if (el) { void el.offsetWidth; el.classList.add('pg-in'); }
+      veil.classList.remove('on'); void veil.offsetWidth; veil.classList.add('on');
+    }
     function setDots(i) { dotEls.forEach(function (d, k) { d.classList.toggle('active', k === i); }); }
     function jump(i) {
       i = Math.max(0, Math.min(panels.length, i));
       var y = i < panels.length ? panels[i].offsetTop : tailTop();
       lock = true;
       window.scrollTo({ top: y, behavior: 'auto' }); // 인스턴트 점프 — 스크롤 모션 없음
+      animateIn(i < panels.length ? panels[i] : null); // 대신 페이지가 "떠오르는" 연출
       setDots(Math.min(i, panels.length - 1));
       setTimeout(function () { lock = false; }, 550);
     }
@@ -1769,6 +1788,7 @@
     });
     document.body.appendChild(dots);
     setDots(0);
+    requestAnimationFrame(function () { animateIn(panels[0]); }); // 첫 진입도 같은 연출로
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (en) {
