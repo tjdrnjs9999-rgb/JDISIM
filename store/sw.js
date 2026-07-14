@@ -1,63 +1,41 @@
-// JDISIM 서비스워커 v2 — 앱 셸 프리캐시 + 전략별 캐싱
-// 배포 시 VERSION만 올리면 이전 캐시 자동 정리
-const VERSION = 'jdisim-v4';
-const PRECACHE = [
-  '/mobile.html', '/issue.html', '/index.html',
-  '/jdisim-app.js', '/romi-bot.js', '/products-lite.js',
-  '/manifest.webmanifest',
-  '/images/icon-192.png', '/images/icon-512.png',
-  '/images/fox-hello.png', '/images/fox-qr.png'
-];
+// JDISIM 서비스워커 v2 — HTML은 항상 최신(네트워크 강제 재검증), 정적 자산은 네트워크 우선 + 오프라인 캐시
+const CACHE = 'jdisim-v2';
+const CORE = ['/mobile.html', '/issue.html', '/romi-bot.js', '/images/fox-hello.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(PRECACHE)).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).catch(() => {}));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+    caches.keys()
+      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))) // 구버전 캐시(v1) 전부 삭제
+      .then(() => self.clients.claim()) // 열려 있는 탭도 즉시 새 SW가 제어
   );
 });
 
 self.addEventListener('fetch', e => {
-  const req = e.request;
-  const url = new URL(req.url);
-  if (req.method !== 'GET') return;
-  if (url.origin !== location.origin) return;              // 외부(API/CDN)는 통과
-  if (url.pathname.startsWith('/api/')) return;            // API는 항상 네트워크
+  if (e.request.method !== 'GET' || e.request.url.includes('/api/') || e.request.url.includes('open-meteo')) return;
 
-  // 1) 페이지 이동: 네트워크 우선 → 캐시 → mobile.html 폴백 (오프라인에서도 앱이 뜸)
-  if (req.mode === 'navigate') {
+  const isHTML = e.request.mode === 'navigate' ||
+    (e.request.headers.get('accept') || '').includes('text/html');
+
+  if (isHTML) {
+    // [핵심 수정] HTML은 브라우저 HTTP 캐시를 건너뛰고 서버에 항상 재검증 —
+    // 배포 직후에도 구버전 페이지가 보이던 문제의 원인 제거. 오프라인일 때만 캐시 폴백.
     e.respondWith(
-      fetch(req).then(r => { put(req, r.clone()); return r; })
-        .catch(() => caches.match(req).then(m => m || caches.match('/mobile.html')))
+      fetch(e.request, { cache: 'no-cache' })
+        .then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(e.request, cp)); return r; })
+        .catch(() => caches.match(e.request))
     );
     return;
   }
 
-  // 2) 대용량 카탈로그(products.js): 캐시 우선 + 백그라운드 갱신 → 재방문 즉시 로딩
-  if (url.pathname.endsWith('/products.js')) {
-    e.respondWith(
-      caches.match(req).then(cached => {
-        const refresh = fetch(req).then(r => { put(req, r.clone()); return r; }).catch(() => cached);
-        return cached || refresh;
-      })
-    );
-    return;
-  }
-
-  // 3) 나머지 정적 자산: stale-while-revalidate
+  // 정적 자산: 네트워크 우선, 실패 시(오프라인) 캐시 폴백 — 기존 동작 유지
   e.respondWith(
-    caches.match(req).then(cached => {
-      const refresh = fetch(req).then(r => { put(req, r.clone()); return r; }).catch(() => cached);
-      return cached || refresh;
-    })
+    fetch(e.request)
+      .then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(e.request, cp)); return r; })
+      .catch(() => caches.match(e.request))
   );
 });
-
-function put(req, res) {
-  if (!res || res.status !== 200) return;
-  caches.open(VERSION).then(c => c.put(req, res)).catch(() => {});
-}
