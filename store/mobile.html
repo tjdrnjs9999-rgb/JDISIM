@@ -3217,19 +3217,51 @@
         var d = String(x.usedDate || x.date || '');
         return /^\d{8}$/.test(d) ? d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8) : d;
       };
+      // ⚠️ 공급사 응답의 날짜 정렬이 상품마다 달라(최신/과거 우선 혼재) 최신순으로 정규화
+      L = L.slice().sort(function(a, b){ return rowDate(b) < rowDate(a) ? -1 : 1; });
       var totalUsed = 0; L.forEach(function(x){ totalUsed += rowMb(x); });
       var gb = function(v){ return (Math.round(v/1024*10)/10) + 'GB'; };
       var rows = L.slice(0,3).map(function(x){
         return '<div style="display:flex;justify-content:space-between;font-size:0.72rem;font-weight:700;color:#475569;padding:4px 0;"><span>' + rowDate(x) + '</span><span>' + gb(rowMb(x)) + '</span></div>';
       }).join('');
       var prod = (meta && (meta.prodName || meta.ProdName || meta.Option || meta.option)) || (u && u.planOption) || '';
+      // 🍩 도넛 그래프 (2026-07-15): 매일형은 '오늘 사용 vs 일일 용량', 무제한·미상은 누적 링
+      var capM = String(prod).match(/매일\s*([\d.]+)\s*(GB|MB)/i);
+      var capMb = capM ? parseFloat(capM[1]) * (capM[2].toUpperCase() === 'GB' ? 1024 : 1) : 0;
+      var isUnl = /무제한/.test(String(prod));
+      var todayMb = L.length ? rowMb(L[0]) : 0; // usageList는 최신일 우선
+      var pct = capMb ? Math.min(100, todayMb / capMb * 100) : 100;
+      var ringColor = !capMb ? 'url(#myDonutG)' : (pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : 'url(#myDonutG)');
+      var CIRC = 2 * Math.PI * 52;
+      var centerTop, centerMain, centerSub;
+      if (capMb) {
+        centerTop = '오늘 남은 데이터';
+        centerMain = gb(Math.max(0, capMb - todayMb));
+        centerSub = '매일 ' + gb(capMb) + ' 중 ' + gb(todayMb) + ' 사용';
+      } else {
+        centerTop = isUnl ? '무제한 · 누적 사용' : '누적 사용';
+        centerMain = gb(totalUsed);
+        centerSub = L.length ? '측정 ' + L.length + '일' : '';
+      }
+      var donut = '<div style="display:flex;align-items:center;gap:14px;margin-top:12px;">' +
+        '<svg width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0;">' +
+        '<defs><linearGradient id="myDonutG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
+        '<circle cx="60" cy="60" r="52" fill="none" stroke="#f1ece6" stroke-width="11"></circle>' +
+        '<circle cx="60" cy="60" r="52" fill="none" stroke="' + ringColor + '" stroke-width="11" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="' + CIRC + '" stroke-dashoffset="' + (CIRC * (1 - pct / 100)) + '" style="transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1);"></circle>' +
+        '<text x="60" y="50" text-anchor="middle" style="font-size:8.5px;font-weight:700;fill:#94a3b8;">' + centerTop + '</text>' +
+        '<text x="60" y="70" text-anchor="middle" style="font-size:17px;font-weight:900;fill:#221510;">' + centerMain + '</text>' +
+        (centerSub ? '<text x="60" y="84" text-anchor="middle" style="font-size:7.5px;font-weight:700;fill:#b7a99a;">' + centerSub + '</text>' : '') +
+        '</svg>' +
+        '<div style="min-width:0;flex:1;">' +
+        '<div style="font-size:0.84rem;font-weight:900;color:#F2751F;">누적 사용 ' + gb(totalUsed) + '</div>' +
+        (rows ? '<div style="margin-top:5px;border-top:1px dashed #f1e6d8;padding-top:5px;">' + rows + '</div>' : '') +
+        '</div></div>';
       box.style.display='block';
       box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">' +
         '<div style="display:flex;align-items:center;gap:8px;"><img src="images/fox-thumbsup.png" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
         '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' <span style="font-size:0.74rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span></div>' +
         (prod ? '<div style="font-size:0.74rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
-        '<div style="margin-top:10px;font-size:0.86rem;font-weight:900;color:#F2751F;">누적 사용 ' + gb(totalUsed) + '</div>' +
-        (rows ? '<div style="margin-top:6px;border-top:1px dashed #f1e6d8;padding-top:6px;">' + rows + '</div>' : '') +
+        donut +
         '<div style="margin-top:8px;font-size:0.74rem;color:#94a3b8;font-weight:600;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요 ↻</div></div>';
     }
 
