@@ -96,6 +96,32 @@
     .g-sec-title { font-size: clamp(1.35rem, 5vw, 1.65rem); font-weight: 800; letter-spacing: -0.03em; margin: 8px 0 20px; line-height: 1.3; }
     .g-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; }
 
+    /* 🗂️ 케어센터 허브 — 카테고리 버튼 */
+    .g-hub-sec { padding: 22px 0 4px; }
+    .g-hub { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    .g-hub-btn {
+      position: relative; text-align: left; cursor: pointer; font-family: inherit;
+      background: #fff; border: 1.5px solid var(--line); border-radius: 18px;
+      padding: 17px 15px 15px;
+      transition: all .17s ease;
+    }
+    .g-hub-btn .hi { display: block; font-size: 1.65rem; line-height: 1; margin-bottom: 9px; }
+    .g-hub-btn b { display: block; font-size: 0.95rem; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
+    .g-hub-btn small { display: block; font-size: 0.76rem; font-weight: 700; color: var(--dim); margin-top: 3px; }
+    .g-hub-btn:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(242, 117, 31, 0.1); }
+    .g-hub-btn.active {
+      border-color: var(--brand); background: var(--cream);
+      box-shadow: 0 10px 22px rgba(242, 117, 31, 0.12);
+    }
+    .g-hub-btn.active::after {
+      content: '▾ 아래에 열림'; position: absolute; top: 13px; right: 13px;
+      font-size: 0.62rem; font-weight: 800; color: var(--brand);
+    }
+    .g-hub-btn.hot { border-color: rgba(242, 117, 31, 0.45); }
+    .g-hub-btn.hot .hi::after { content: ' 🔥'; font-size: 0.9rem; }
+    .g-collapsible { display: none; }
+    .g-collapsible.open { display: block; animation: heroRise .4s ease both; }
+
     /* 🩺 로미 닥터 1분 진단 */
     .g-doctor-card {
       background: #fff; border: 1.5px solid rgba(242, 117, 31, 0.3);
@@ -323,23 +349,39 @@
     <div class="wrap">
       <span class="g-hero-eyebrow">Romi Care Center</span>
       <h1>이심이 안 되나요?<br><em>로미</em>가 1분 만에 해결해요</h1>
-      <p>긴급 진단부터 설치·회선 설정·자주 묻는 질문까지 — 케어센터 하나면 끝.</p>
-      <nav class="g-toc">
-        <a href="#doctor">🩺 1분 진단</a>
-        <a href="#check">✅ 구매 전 점검</a>
-        <a href="#install">📲 설치 방법</a>
-        <a href="#lines">⚙️ 회선 설정</a>
-        <a href="#todo">🧳 체크리스트</a>
-        <a href="#faq">💬 자주 묻는 질문</a>
-      </nav>
+      <p>필요한 것만 골라 보세요 — 누른 항목만 아래에 펼쳐져요.</p>
       <img src="images/fox-qr.png" alt="QR코드를 든 로미" class="g-hero-fox">
     </div>
   </section>
 
   <main class="wrap">
 
+    <!-- 🗂️ 케어센터 허브 — 카테고리 버튼 (누른 항목만 아래에 표시) -->
+    <section class="g-hub-sec">
+      <div class="g-hub" id="gHub">
+        <button type="button" class="g-hub-btn hot" data-target="doctor">
+          <span class="hi">🩺</span><b>이심이 안 되나요?</b><small>로미 닥터 1분 진단</small>
+        </button>
+        <button type="button" class="g-hub-btn" data-target="install">
+          <span class="hi">📲</span><b>설치 방법</b><small>아이폰·갤럭시 QR 설치</small>
+        </button>
+        <button type="button" class="g-hub-btn" data-target="lines">
+          <span class="hi">⚙️</span><b>회선 설정</b><small>요금 폭탄 막는 4줄</small>
+        </button>
+        <button type="button" class="g-hub-btn" data-target="check">
+          <span class="hi">✅</span><b>구매 전 점검</b><small>기종 확인 3가지</small>
+        </button>
+        <button type="button" class="g-hub-btn" data-target="todo">
+          <span class="hi">🧳</span><b>여행 체크리스트</b><small>출발부터 도착까지</small>
+        </button>
+        <button type="button" class="g-hub-btn" data-target="faq">
+          <span class="hi">💬</span><b>자주 묻는 질문</b><small>환불·핫스팟·한국번호</small>
+        </button>
+      </div>
+    </section>
+
     <!-- 0. 로미 닥터 1분 진단 -->
-    <section class="g-sec" id="doctor">
+    <section class="g-sec g-collapsible" id="doctor">
       <span class="g-sec-label">Emergency · 1 Min</span>
       <h2 class="g-sec-title">이심이 안 되나요? — 로미 닥터 1분 진단</h2>
       <div class="g-doctor-card" id="doctorCard">
@@ -355,7 +397,7 @@
     </section>
 
     <!-- 1. 출발 전 점검 -->
-    <section class="g-sec" id="check">
+    <section class="g-sec g-collapsible" id="check">
       <span class="g-sec-label">Step 01 · Before You Buy</span>
       <h2 class="g-sec-title">구매 전, 딱 3가지만 확인하세요</h2>
       <div class="g-check-grid">
@@ -384,7 +426,7 @@
     </section>
 
     <!-- 2. 기종별 설치 -->
-    <section class="g-sec" id="install">
+    <section class="g-sec g-collapsible" id="install">
       <span class="g-sec-label">Step 02 · Install</span>
       <h2 class="g-sec-title">기종별 설치, 그대로 따라만 하세요</h2>
       <div class="g-tabs" role="tablist">
@@ -472,7 +514,7 @@
     </section>
 
     <!-- 3. 회선 설정 -->
-    <section class="g-sec" id="lines">
+    <section class="g-sec g-collapsible" id="lines">
       <span class="g-sec-label">Step 03 · Line Setup</span>
       <h2 class="g-sec-title">요금 폭탄 막는 회선 설정 4줄 요약</h2>
       <div class="g-card">
@@ -499,7 +541,7 @@
     </section>
 
     <!-- 4. 여행 체크리스트 -->
-    <section class="g-sec" id="todo">
+    <section class="g-sec g-collapsible" id="todo">
       <span class="g-sec-label">Step 04 · Checklist</span>
       <h2 class="g-sec-title">출발부터 도착까지, 탭하며 체크하세요</h2>
       <div class="g-card">
@@ -524,7 +566,7 @@
     </section>
 
     <!-- 5. FAQ -->
-    <section class="g-sec" id="faq">
+    <section class="g-sec g-collapsible" id="faq">
       <span class="g-sec-label">FAQ</span>
       <h2 class="g-sec-title">자주 묻는 질문</h2>
       <div class="g-card" style="padding: 6px 20px;">
@@ -605,6 +647,38 @@
       }
       checks.forEach(function (c) { c.addEventListener('change', update); });
       update();
+    })();
+
+    // ===== 🗂️ 케어센터 허브: 누른 카테고리만 아래에 표시 =====
+    (function () {
+      var btns = document.querySelectorAll('.g-hub-btn');
+      var secs = document.querySelectorAll('.g-collapsible');
+      function openSection(id, scroll) {
+        secs.forEach(function (s) { s.classList.toggle('open', s.id === id); });
+        btns.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-target') === id); });
+        if (scroll) {
+          var sec = document.getElementById(id);
+          if (sec) setTimeout(function () { sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+        }
+      }
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = b.getAttribute('data-target');
+          if (b.classList.contains('active')) { // 다시 누르면 닫기
+            secs.forEach(function (s) { s.classList.remove('open'); });
+            b.classList.remove('active');
+            return;
+          }
+          openSection(id, true);
+        });
+      });
+      // 딥링크 (#install 등) 지원: 해시가 섹션이면 자동으로 열기
+      var hash = (location.hash || '').replace('#', '');
+      if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('g-collapsible')) {
+        openSection(hash, true);
+      } else {
+        openSection('doctor', false); // 기본: 1분 진단 열림 (케어센터 정체성)
+      }
     })();
 
     // ===== 🩺 로미 닥터 1분 진단 (케어센터) =====

@@ -1921,11 +1921,36 @@
       <div class="app-logo-badge">J</div>
       <span>JDISIM</span>
     </a>
-    <button class="cart-btn" onclick="switchNav('orders')">
-      <i data-lucide="shopping-bag"></i>
-      <span class="cart-badge" id="mobileCartCount">0</span>
-    </button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="cart-btn" onclick="switchNav('orders')">
+        <i data-lucide="shopping-bag"></i>
+        <span class="cart-badge" id="mobileCartCount">0</span>
+      </button>
+      <button class="cart-btn" onclick="toggleAppMenu()" aria-label="전체 메뉴" id="appMenuBtn">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
   </header>
+
+  <!-- 우상단 전체 메뉴 (2026-07-15) -->
+  <div id="appMenuBackdrop" onclick="toggleAppMenu(false)" style="display:none;position:fixed;inset:0;background:rgba(11,16,32,0.45);backdrop-filter:blur(3px);z-index:100002;"></div>
+  <div id="appMenuPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:min(300px,82vw);background:#FDFBF8;z-index:100003;box-shadow:-12px 0 40px rgba(15,23,42,0.18);padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <img src="images/fox-hello.png" alt="" style="width:34px;" onerror="this.style.display='none'">
+        <b style="font-size:1rem;color:#221510;">전체 메뉴</b>
+      </div>
+      <button onclick="toggleAppMenu(false)" style="width:34px;height:34px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;">✕</button>
+    </div>
+    <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:6px 2px 8px;">서비스</div>
+    <a href="biz.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">🏢 기업·단체 비즈니스<span style="margin-left:auto;color:#F2751F;">→</span></a>
+    <a href="guide.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">🩺 로미 케어센터<span style="margin-left:auto;color:#F2751F;">→</span></a>
+    <a href="guide/dualsim.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">📱 듀얼심 설정 가이드<span style="margin-left:auto;color:#F2751F;">→</span></a>
+    <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:16px 2px 8px;">내 정보</div>
+    <button onclick="toggleAppMenu(false);switchNav('orders')" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;font-family:inherit;font-size:0.92rem;font-weight:800;color:#221510;margin-bottom:9px;cursor:pointer;">👤 로그인 · 주문 조회<span style="margin-left:auto;color:#F2751F;">→</span></button>
+    <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:16px 2px 8px;">고객 지원</div>
+    <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:none;border-radius:14px;background:#FEE500;text-decoration:none;color:#191919;font-size:0.92rem;font-weight:800;">💬 카카오톡 24시간 상담</a>
+  </div>
 
   <!-- ================= VIEW 1: HOME VIEW ================= -->
     <main id="view-home" class="mobile-view active">
@@ -2426,16 +2451,37 @@
   <!-- Device compatibility check modal -->
   <div class="bottom-sheet-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
   <div class="mobile-modal" id="deviceModal">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
       <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700;">3초 기종 진단 가이드</h3>
       <button class="bottom-sheet-close" onclick="closeModal()">✕</button>
     </div>
-    <div style="font-size: 0.85rem; color: #334155; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
+    <div style="display:flex;gap:7px;margin-bottom:13px;" id="devTabs">
+      <button type="button" data-dev="phone" onclick="pickDevTab('phone')" style="flex:1;padding:10px 6px;border-radius:11px;border:none;background:#0f172a;color:#fff;font-family:inherit;font-weight:800;font-size:0.8rem;cursor:pointer;">📱 스마트폰</button>
+      <button type="button" data-dev="ipad" onclick="pickDevTab('ipad')" style="flex:1;padding:10px 6px;border-radius:11px;border:1px solid #e5eaf2;background:#fff;color:#0f172a;font-family:inherit;font-weight:800;font-size:0.8rem;cursor:pointer;">🍎 아이패드</button>
+      <button type="button" data-dev="tab" onclick="pickDevTab('tab')" style="flex:1;padding:10px 6px;border-radius:11px;border:1px solid #e5eaf2;background:#fff;color:#0f172a;font-family:inherit;font-weight:800;font-size:0.8rem;cursor:pointer;">🤖 갤럭시탭</button>
+    </div>
+    <div style="font-size: 0.85rem; color: #334155; line-height: 1.55; display: flex; flex-direction: column; gap: 11px;" id="devPanePhone">
       <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
       <p>2. 키패드에 <strong>*#06#</strong>을 차례로 입력합니다.</p>
       <p>3. 화면에 기기 고유식별 정보 창이 뜹니다. 목록 중에 <strong>EID</strong> 항목이 있다면 eSIM을 지원하는 단말기입니다.</p>
       <p style="color: #F2751F; font-weight: 700; background: rgba(242, 117, 31, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
         ※ EID 글자가 없거나 보이지 않는 구형 기종은 eSIM 로밍을 사용할 수 없으므로 구매 전 꼭 체크해 주세요!
+      </p>
+    </div>
+    <div style="font-size: 0.85rem; color: #334155; line-height: 1.55; display: none; flex-direction: column; gap: 11px;" id="devPaneIpad">
+      <p>아이패드는 <strong>Wi-Fi + Cellular 모델</strong>만 eSIM을 쓸 수 있어요 (Wi-Fi 전용 모델 불가).</p>
+      <p>확인법: <strong>설정 → 셀룰러 메뉴가 있으면</strong> Cellular 모델입니다. 셀룰러 메뉴 안에 <strong>eSIM 추가</strong>가 보이면 바로 사용 가능!</p>
+      <p><strong>지원 기종:</strong> iPad Pro 11 (전 세대) · iPad Pro 12.9 (3세대~) · iPad Air (3세대~) · iPad (7세대~) · iPad mini (5세대~)의 Cellular 모델</p>
+      <p style="color: #F2751F; font-weight: 700; background: rgba(242, 117, 31, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+        ※ 태블릿은 데이터 전용이에요 — 전화·문자 기능은 없고, 지도·검색·영상은 모두 가능합니다.
+      </p>
+    </div>
+    <div style="font-size: 0.85rem; color: #334155; line-height: 1.55; display: none; flex-direction: column; gap: 11px;" id="devPaneTab">
+      <p>갤럭시탭은 <strong>5G 모델 중에서도 일부만</strong> eSIM을 지원해요 (Wi-Fi 전용 모델 불가).</p>
+      <p>확인법: <strong>설정 → 연결 → SIM 관리자</strong>에 <strong>eSIM 추가</strong> 메뉴가 있으면 사용 가능합니다.</p>
+      <p><strong>지원 기종:</strong> 갤럭시탭 S9 시리즈 5G ~ 최신 S 시리즈 5G (국내 정식 발매 기준)</p>
+      <p style="color: #F2751F; font-weight: 700; background: rgba(242, 117, 31, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+        ※ 구형 탭·Wi-Fi 모델은 eSIM 불가 — 일행 폰의 핫스팟 공유로 함께 쓰는 걸 추천해요. 헷갈리면 기종명을 카톡으로 보내주세요, 바로 확인해 드립니다!
       </p>
     </div>
   </div>
@@ -3312,6 +3358,31 @@
           </div>` : '<div style="margin-top:8px;font-size:0.72rem;font-weight:700;color:#15803d;">♾️ 무제한 요금제 — 마음껏 쓰세요!</div>'}
           ${d.expires_at ? `<div style="margin-top:7px;font-size:0.74rem;font-weight:600;color:#94a3b8;">유효기간: ${d.expires_at} 까지</div>` : ''}
         </div>`;
+    }
+
+    // ===== 📟 기종 진단 탭 (스마트폰/아이패드/갤럭시탭, 2026-07-15) =====
+    function pickDevTab(which) {
+      const panes = { phone: 'devPanePhone', ipad: 'devPaneIpad', tab: 'devPaneTab' };
+      Object.keys(panes).forEach(k => {
+        const p = document.getElementById(panes[k]);
+        if (p) p.style.display = k === which ? 'flex' : 'none';
+      });
+      document.querySelectorAll('#devTabs [data-dev]').forEach(b => {
+        const on = b.getAttribute('data-dev') === which;
+        b.style.background = on ? '#0f172a' : '#fff';
+        b.style.color = on ? '#fff' : '#0f172a';
+        b.style.border = on ? 'none' : '1px solid #e5eaf2';
+      });
+    }
+
+    // ===== ☰ 우상단 전체 메뉴 (2026-07-15) =====
+    function toggleAppMenu(force) {
+      const bd = document.getElementById('appMenuBackdrop');
+      const panel = document.getElementById('appMenuPanel');
+      if (!bd || !panel) return;
+      const show = typeof force === 'boolean' ? force : panel.style.display === 'none';
+      bd.style.display = show ? 'block' : 'none';
+      panel.style.display = show ? 'block' : 'none';
     }
 
     // ===== 🩺 로미 닥터: eSIM 장애 자가진단 마법사 =====

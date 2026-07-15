@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기업·단체 eSIM 비즈니스 | JDISIM — 출장·단체여행·승무원 전용 견적</title>
+  <meta name="description" content="해외 출장, 단체·인센티브 여행, 승무원·상주 출장자용 eSIM을 명단 한 장으로 일괄 발급. 세금계산서 발행, 전담 케어까지 JDISIM 비즈니스.">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="JDISIM 이심">
+  <meta property="og:title" content="기업·단체 eSIM 비즈니스 | JDISIM">
+  <meta property="og:description" content="출장·단체여행 eSIM 일괄 발급 + 세금계산서 + 전담 케어. 명단만 주시면 각자 폰으로 QR이 갑니다.">
+  <meta property="og:image" content="https://jdisim.co.kr/images/fox-qr.png">
+  <meta property="og:url" content="https://jdisim.co.kr/biz.html">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="premium.css?v=20260715a">
+  <style>
+    :root {
+      --brand: #F2751F;
+      --brand-deep: #E8590C;
+      --teal: #2BB3A3;
+      --ink: #221510;
+      --muted: #64748b;
+      --dim: #94a3b8;
+      --line: #ece5dd;
+      --cream: #FFF8F2;
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Noto Sans KR', sans-serif; word-break: keep-all; }
+    body { background: #FDFBF8; color: var(--ink); line-height: 1.6; }
+    img { max-width: 100%; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+    .b-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253, 251, 248, 0.86);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(242, 117, 31, 0.12);
+    }
+    .b-header-in { max-width: 760px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .b-back {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--line); background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: var(--ink); font-weight: 800; font-size: 1rem;
+    }
+    .b-header-title { font-weight: 800; font-size: 1.02rem; flex: 1; }
+    .b-cta-mini {
+      background: linear-gradient(135deg, #F97316, #F59E0B);
+      color: #fff; text-decoration: none; font-weight: 800; font-size: 0.8rem;
+      padding: 9px 16px; border-radius: 999px;
+      box-shadow: 0 6px 14px rgba(242, 117, 31, 0.3);
+    }
+
+    .b-hero {
+      position: relative; overflow: hidden;
+      background:
+        radial-gradient(120% 90% at 85% 10%, rgba(43, 179, 163, 0.14) 0%, transparent 50%),
+        linear-gradient(160deg, #FFF6EC 0%, #FFE9D3 100%);
+      border-bottom: 1px solid rgba(242, 117, 31, 0.14);
+      padding: 44px 0 34px;
+    }
+    .b-hero .wrap { position: relative; }
+    .b-eyebrow {
+      display: inline-block; font-size: 0.66rem; font-weight: 800;
+      letter-spacing: 0.22em; text-indent: 0.22em; text-transform: uppercase;
+      color: var(--brand); background: rgba(242, 117, 31, 0.1);
+      border: 1px solid rgba(242, 117, 31, 0.28);
+      padding: 6px 13px; border-radius: 999px; margin-bottom: 14px;
+    }
+    .b-hero h1 { font-size: clamp(1.6rem, 6.2vw, 2.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.25; }
+    .b-hero h1 em { font-style: normal; color: var(--brand); }
+    .b-hero p { color: var(--muted); font-weight: 500; margin: 12px 0 18px; font-size: 0.94rem; max-width: 470px; }
+    .b-hero-fox {
+      position: absolute; right: -8px; bottom: -36px;
+      width: min(150px, 32vw);
+      filter: drop-shadow(0 14px 20px rgba(34, 21, 16, 0.2));
+      pointer-events: none;
+    }
+    .b-hero-cta {
+      display: inline-block; text-decoration: none;
+      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      font-weight: 800; font-size: 0.92rem; padding: 13px 22px; border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(242, 117, 31, 0.35);
+    }
+
+    .b-sec { padding: 40px 0 6px; }
+    .b-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.2em; text-indent: 0.2em; text-transform: uppercase; color: var(--teal); }
+    .b-title { font-size: clamp(1.3rem, 5vw, 1.6rem); font-weight: 800; letter-spacing: -0.03em; margin: 8px 0 18px; line-height: 1.3; }
+    .b-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; }
+
+    .b-who { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .b-who div {
+      background: #fff; border: 1px solid var(--line); border-radius: 16px;
+      padding: 15px 14px; font-size: 0.86rem; font-weight: 700; line-height: 1.5;
+    }
+    .b-who div small { display: block; font-weight: 600; color: var(--dim); font-size: 0.74rem; margin-top: 3px; }
+
+    .b-perk { display: flex; gap: 14px; align-items: flex-start; padding: 15px 0; border-bottom: 1px dashed var(--line); }
+    .b-perk:last-child { border-bottom: none; }
+    .b-perk .ic {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 13px;
+      background: var(--cream); border: 1px solid rgba(242, 117, 31, 0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+    }
+    .b-perk h3 { font-size: 0.96rem; font-weight: 800; margin-bottom: 3px; }
+    .b-perk p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    .b-step { display: flex; gap: 13px; padding: 13px 0; border-bottom: 1px dashed var(--line); }
+    .b-step:last-child { border-bottom: none; }
+    .b-step .n {
+      flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%;
+      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800;
+    }
+    .b-step h4 { font-size: 0.92rem; font-weight: 800; margin-bottom: 2px; }
+    .b-step p { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+    .b-quote-box {
+      background: #fff; border: 1.5px solid rgba(242, 117, 31, 0.3);
+      border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 10px 26px rgba(242, 117, 31, 0.08);
+    }
+    .b-quote-form { background: var(--cream); border: 1px dashed rgba(242, 117, 31, 0.35); border-radius: 14px; padding: 15px 16px; font-size: 0.86rem; line-height: 1.9; color: #334155; margin: 12px 0; }
+    .b-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+    .b-btn-kakao, .b-btn-copy, .b-btn-mail {
+      flex: 1; min-width: 140px; text-align: center; text-decoration: none; cursor: pointer;
+      font-family: inherit; font-weight: 800; font-size: 0.88rem;
+      padding: 14px; border-radius: 14px; border: none;
+    }
+    .b-btn-kakao { background: #FEE500; color: #191919; }
+    .b-btn-copy { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
+    .b-btn-mail { background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3); }
+
+    .b-faq { border-bottom: 1px solid var(--line); }
+    .b-faq:last-child { border-bottom: none; }
+    .b-faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      font-family: inherit; font-size: 0.9rem; font-weight: 800; color: var(--ink);
+      padding: 16px 4px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .b-faq-q .arr { color: var(--brand); font-weight: 800; transition: transform .25s ease; flex-shrink: 0; }
+    .b-faq.open .arr { transform: rotate(180deg); }
+    .b-faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+    .b-faq.open .b-faq-a { max-height: 260px; padding-bottom: 16px; }
+
+    .b-footer { text-align: center; font-size: 0.7rem; color: var(--dim); padding: 26px 0 40px; line-height: 1.8; }
+    .b-toast {
+      position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%);
+      background: rgba(34, 21, 16, 0.94); color: #fff; font-size: 0.82rem; font-weight: 800;
+      padding: 11px 20px; border-radius: 24px; z-index: 1000;
+      opacity: 0; pointer-events: none; transition: opacity .25s ease;
+    }
+    .b-toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header class="b-header">
+    <div class="b-header-in">
+      <a href="index.html" class="b-back" aria-label="홈으로">←</a>
+      <div class="b-header-title">🏢 기업·단체 비즈니스</div>
+      <a href="#quote" class="b-cta-mini">견적 문의 →</a>
+    </div>
+  </header>
+
+  <section class="b-hero">
+    <div class="wrap">
+      <span class="b-eyebrow">JDISIM Business</span>
+      <h1>출장도, 단체 여행도<br><em>명단 한 장</em>이면 끝나요</h1>
+      <p>인원별 eSIM을 저희가 일괄 발급해서 각자의 폰으로 QR을 보내드려요. 담당자는 명단만 주시면 됩니다.</p>
+      <a href="#quote" class="b-hero-cta">무료 견적 받기 →</a>
+      <img src="images/fox-hello.png" alt="로미" class="b-hero-fox">
+    </div>
+  </section>
+
+  <main class="wrap">
+
+    <section class="b-sec">
+      <span class="b-label">Who</span>
+      <h2 class="b-title">이런 팀을 위해 만들었어요</h2>
+      <div class="b-who">
+        <div>✈️ 해외 출장이 잦은 기업<small>부서·법인 단위 반복 주문</small></div>
+        <div>🧳 단체·인센티브 여행<small>모임, 워크숍, 성지순례, 학교</small></div>
+        <div>👩‍✈️ 승무원·상주 출장자<small>매달 나가는 분들의 정기 회선</small></div>
+        <div>🧭 여행사·인솔자<small>고객 상품에 eSIM 포함 구성</small></div>
+      </div>
+    </section>
+
+    <section class="b-sec">
+      <span class="b-label">Benefits</span>
+      <h2 class="b-title">담당자가 편해지는 4가지</h2>
+      <div class="b-card">
+        <div class="b-perk">
+          <div class="ic">📦</div>
+          <div>
+            <h3>명단 일괄 발급</h3>
+            <p>이름·연락처 명단(엑셀·표 아무 형식)만 주시면 각자의 폰으로 QR과 설치 안내가 알림톡으로 갑니다. 담당자가 QR을 나눠줄 필요가 없어요.</p>
+          </div>
+        </div>
+        <div class="b-perk">
+          <div class="ic">💰</div>
+          <div>
+            <h3>수량·기간별 견적</h3>
+            <p>인원, 국가, 기간에 맞춰 견적을 드려요. 반복 주문 기업은 상시 단가로 협의합니다.</p>
+          </div>
+        </div>
+        <div class="b-perk">
+          <div class="ic">🧾</div>
+          <div>
+            <h3>세금계산서·증빙</h3>
+            <p>세금계산서, 거래명세서 발행 가능. 법인카드 결제도 지원해요.</p>
+          </div>
+        </div>
+        <div class="b-perk">
+          <div class="ic">🧡</div>
+          <div>
+            <h3>여행 중 전담 케어</h3>
+            <p>인원 전체에 케어링크가 발급돼 각자 사용량 확인·문제 해결이 가능하고, 안 터지면 24시간 카톡으로 저희가 직접 해결합니다. 미해결 시 100% 환불.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="b-sec">
+      <span class="b-label">Process</span>
+      <h2 class="b-title">문의부터 발급까지, 이렇게 진행돼요</h2>
+      <div class="b-card">
+        <div class="b-step"><div class="n">1</div><div><h4>견적 문의</h4><p>아래 양식으로 카톡·메일 주시면 영업일 기준 당일 회신드려요.</p></div></div>
+        <div class="b-step"><div class="n">2</div><div><h4>견적·상품 확정</h4><p>국가·기간·데이터량에 맞는 최적 상품과 단가를 제안드립니다.</p></div></div>
+        <div class="b-step"><div class="n">3</div><div><h4>결제·증빙</h4><p>세금계산서 또는 법인카드로 결제하시면 됩니다.</p></div></div>
+        <div class="b-step"><div class="n">4</div><div><h4>일괄 발급</h4><p>명단의 각 인원에게 QR·설치 가이드·케어링크가 자동 발송됩니다.</p></div></div>
+      </div>
+    </section>
+
+    <section class="b-sec" id="quote">
+      <span class="b-label">Contact</span>
+      <h2 class="b-title">무료 견적 문의</h2>
+      <div class="b-quote-box">
+        <div style="font-size:0.88rem;font-weight:700;color:#334155;">아래 양식을 복사해서 채워 보내주세요 — <strong style="color:var(--brand);">영업일 당일 회신</strong>드립니다.</div>
+        <div class="b-quote-form" id="bizForm">[기업·단체 견적 요청]<br>· 회사/단체명:<br>· 국가(도시):<br>· 여행 기간:<br>· 인원 수:<br>· 개통 희망일:<br>· 필요 증빙: 세금계산서 / 법인카드 / 없음<br>· 담당자 연락처:</div>
+        <div class="b-actions">
+          <button type="button" class="b-btn-copy" onclick="copyForm()">📋 양식 복사</button>
+          <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" class="b-btn-kakao">💬 카톡으로 문의</a>
+          <a href="mailto:jdisim@naver.com?subject=%5B%EA%B8%B0%EC%97%85%C2%B7%EB%8B%A8%EC%B2%B4%20%EA%B2%AC%EC%A0%81%20%EC%9A%94%EC%B2%AD%5D" class="b-btn-mail">📧 메일로 문의</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="b-sec">
+      <span class="b-label">FAQ</span>
+      <h2 class="b-title">자주 묻는 질문</h2>
+      <div class="b-card" style="padding: 4px 20px;">
+        <div class="b-faq">
+          <button class="b-faq-q">몇 명부터 단체 견적이 되나요? <span class="arr">⌄</span></button>
+          <div class="b-faq-a">정해진 최소 인원은 없어요. 소규모 모임부터 수백 명 단위까지 인원·기간에 맞춰 견적을 드립니다.</div>
+        </div>
+        <div class="b-faq">
+          <button class="b-faq-q">직원들 폰 기종이 제각각인데 괜찮나요? <span class="arr">⌄</span></button>
+          <div class="b-faq-a">명단을 주시면 발급 전에 eSIM 지원 기종 확인 방법을 함께 안내드리고, 미지원 기기가 있으면 대안(핫스팟 공유 구성 등)까지 잡아드립니다.</div>
+        </div>
+        <div class="b-faq">
+          <button class="b-faq-q">발급까지 얼마나 걸리나요? <span class="arr">⌄</span></button>
+          <div class="b-faq-a">결제 완료 후 당일 일괄 발급이 원칙이에요. 개통 희망일 지정 상품은 출국 최소 2일 전(미주·유럽 3일 전) 주문을 권장합니다.</div>
+        </div>
+        <div class="b-faq">
+          <button class="b-faq-q">여행 중에 문제가 생기면 담당자가 다 받아야 하나요? <span class="arr">⌄</span></button>
+          <div class="b-faq-a">아니요. 각 인원에게 발송되는 케어링크로 본인이 직접 사용량 확인과 1분 진단을 할 수 있고, 24시간 카톡 상담이 개별 대응합니다. 담당자에게 전화가 몰리지 않아요.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="b-footer">
+      상호명: 버튼(Butt'on) | 대표자: 김성권 | 사업자등록번호: 760-15-01594<br>
+      대표전화: 010-9969-3248 | 이메일: jdisim@naver.com<br>
+      © 2026 JDISIM. All Rights Reserved.
+    </div>
+  </main>
+
+  <div class="b-toast" id="bToast">📋 양식이 복사됐어요 — 카톡·메일에 붙여넣으세요</div>
+
+  <script>
+    document.querySelectorAll('.b-faq-q').forEach(function (q) {
+      q.addEventListener('click', function () { q.parentElement.classList.toggle('open'); });
+    });
+    function copyForm() {
+      var text = document.getElementById('bizForm').innerText;
+      function done() {
+        var t = document.getElementById('bToast');
+        t.classList.add('show');
+        setTimeout(function () { t.classList.remove('show'); }, 2200);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(done);
+      } else { done(); }
+    }
+  </script>
+</body>
+</html>
