@@ -1809,83 +1809,93 @@
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
 <style id="jd-funnel-v2">
-  /* ===== 🛒 구매 퍼널 v2 (2026-07-15) ===== */
-  .pw-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: #f1ece6; border-radius: 15px; padding: 5px; margin: 4px 0 14px; }
+  /* ===== 🛒 구매 퍼널 v3 (2026-07-16): 풀페이지 뷰 + 각진 컴팩트 UI + 큰 글자 ===== */
+  /* 상품 선택 앱바 (스티키 상단바) */
+  #view-product { background: #FBF8F4; }
+  .pp-appbar {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 10px;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 10px;
+    background: rgba(251, 248, 244, 0.96); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #ece5dd;
+  }
+  .pp-back, .pp-cart {
+    flex-shrink: 0; width: 38px; height: 38px; border: none; background: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: #221510;
+  }
+  .pp-back svg, .pp-cart svg { width: 24px; height: 24px; }
+  .pp-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; margin: 0; color: #221510; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pp-body { padding: 14px 16px 24px; max-width: 640px; margin: 0 auto; }
+
+  /* 유형 탭 (무제한/데일리/총용량) — 로케비식 하단 밑줄, 큰 글자, 각진 */
+  .pw-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 2px solid #ece5dd; margin: 0 0 18px; }
   .pw-tabs.two { grid-template-columns: repeat(2, 1fr); }
   .pw-tabs.one { grid-template-columns: 1fr; }
-  .pw-tab { border: none; background: transparent; font-family: inherit; padding: 11px 4px; border-radius: 11px; cursor: pointer; transition: all .18s ease; text-align: center; }
-  .pw-tab b { display: block; font-size: 0.88rem; font-weight: 800; color: #64748b; }
-  .pw-tab small { display: block; font-size: 0.66rem; font-weight: 700; color: #94a3b8; margin-top: 1px; }
-  .pw-tab.active { background: #fff; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1); }
-  .pw-tab.active b { color: #F2751F; }
-  .pw-block { margin: 14px 0 0; }
-  .pw-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: #0f172a; margin-bottom: 9px; }
-  .pw-label em { font-style: normal; font-weight: 600; color: #94a3b8; font-size: 0.7rem; margin-left: auto; text-align: right; }
-  .pw-carriers { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pw-car { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid #e5eaf2; border-radius: 999px; background: #fff; padding: 10px 14px; font-family: inherit; font-size: 0.84rem; font-weight: 800; color: #0f172a; cursor: pointer; transition: all .15s ease; }
-  .pw-car .net { font-size: 0.64rem; font-weight: 900; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; }
-  .pw-car .net.local { background: rgba(43, 179, 163, 0.12); color: #1B8E82; border: 1px solid rgba(43, 179, 163, 0.35); }
-  .pw-car .net.roam { background: rgba(99, 102, 241, 0.09); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.3); }
-  .pw-car .net.multi { background: rgba(245, 158, 11, 0.12); color: #b45309; border: 1px solid rgba(245, 158, 11, 0.35); }
-  .pw-car.active { border-color: #F2751F; background: #FFF8F2; box-shadow: 0 4px 12px rgba(242, 117, 31, 0.15); }
-  .pw-prod { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; border: 1.5px solid #e5eaf2; border-radius: 15px; background: #fff; padding: 13px 14px; margin-bottom: 9px; font-family: inherit; cursor: pointer; transition: all .15s ease; }
-  .pw-prod:hover, .pw-prod.active { border-color: #F2751F; background: #FFF8F2; }
-  .pw-prod .cap { font-size: 0.88rem; font-weight: 800; color: #0f172a; line-height: 1.35; }
-  .pw-prod .sub { font-size: 0.7rem; font-weight: 700; color: #94a3b8; margin-top: 2px; }
-  .pw-prod .price { margin-left: auto; text-align: right; flex-shrink: 0; }
-  .pw-prod .price b { display: block; font-size: 0.98rem; font-weight: 900; color: #F2751F; }
-  .pw-prod .price small { font-size: 0.66rem; font-weight: 700; color: #94a3b8; }
-  .pw-prod .go { flex-shrink: 0; color: #F2751F; font-weight: 900; }
-  /* 상세/수량/카트 레이어 공통 */
-  .pv-layer { position: fixed; inset: 0; background: rgba(11, 16, 32, 0.55); backdrop-filter: blur(3px); z-index: 100005; display: flex; align-items: flex-end; }
-  .pv-sheet { background: #FDFBF8; width: 100%; border-radius: 24px 24px 0 0; padding: 20px 18px calc(24px + env(safe-area-inset-bottom, 0px)); max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
-  .pv-grab { width: 42px; height: 4.5px; border-radius: 4px; background: #e2e8f0; margin: -4px auto 14px; }
-  .pv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
-  .pv-tile { background: #fff; border: 1px solid #ece5dd; border-radius: 14px; padding: 11px 12px; }
-  .pv-tile .ic { font-size: 1.15rem; line-height: 1; }
-  .pv-tile .k { font-size: 0.66rem; font-weight: 800; color: #94a3b8; margin-top: 5px; letter-spacing: 0.02em; }
-  .pv-tile .v { font-size: 0.8rem; font-weight: 800; color: #221510; margin-top: 2px; line-height: 1.45; word-break: keep-all; }
-  .pv-cta { display: block; width: 100%; border: none; border-radius: 15px; padding: 16px; background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; font-family: inherit; font-size: 0.96rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35); }
-  .pv-app-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #221510, #46280f); color: #fff; border-radius: 14px; padding: 12px 14px; margin: 12px 0; font-size: 0.8rem; font-weight: 700; line-height: 1.5; }
-  .pv-app-banner b { color: #FFB56B; }
-  .pv-qty-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #ece5dd; border-radius: 15px; padding: 13px 15px; }
+  .pw-tab { border: none; background: transparent; font-family: inherit; padding: 12px 4px 13px; cursor: pointer; text-align: center; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .15s ease; }
+  .pw-tab b { display: block; font-size: 20px; font-weight: 800; color: #a8a095; letter-spacing: -0.02em; }
+  .pw-tab small { display: block; font-size: 11px; font-weight: 700; color: #bdb5aa; margin-top: 2px; }
+  .pw-tab.active { border-bottom: 3px solid #F2751F; }
+  .pw-tab.active b { color: #221510; }
+  .pw-tab.active small { color: #F2751F; }
 
-  /* ===== 퍼널 v2.1 (2026-07-15 지시): 풀스크린 시트 + 타이포 확대 + 단색 라인 아이콘 ===== */
-  /* 상품 선택 시트 = 화면 꽉 찬 팝업 */
-  .bottom-sheet {
-    top: 0 !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    border-radius: 0 !important;
-    border-top: none !important;
-    padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+  /* 섹션 라벨 — 큰 글자 */
+  .pw-block { margin: 20px 0 0; }
+  .pw-label { display: flex; align-items: baseline; gap: 8px; font-size: 17px; font-weight: 800; color: #221510; margin-bottom: 11px; letter-spacing: -0.02em; }
+  .pw-label em { font-style: normal; font-weight: 600; color: #a8a095; font-size: 12px; margin-left: auto; text-align: right; }
+
+  /* 통신사 — 각진 세로 리스트 (알약 제거, 딱딱한 느낌) */
+  .pw-carriers { display: flex; flex-direction: column; gap: 8px; }
+  .pw-car {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    border: 1.5px solid #e5ddd2; border-radius: 8px; background: #fff;
+    padding: 15px 16px; font-family: inherit; font-size: 18px; font-weight: 800; color: #221510;
+    cursor: pointer; transition: all .12s ease;
   }
-  /* 사용 일수 드롭다운: 18px */
+  .pw-car .net { font-size: 12px; font-weight: 900; padding: 3px 9px; border-radius: 5px; flex-shrink: 0; }
+  .pw-car .net.local { background: rgba(43, 179, 163, 0.12); color: #1B8E82; }
+  .pw-car .net.roam { background: rgba(99, 102, 241, 0.1); color: #4f46e5; }
+  .pw-car .net.multi { background: rgba(245, 158, 11, 0.13); color: #b45309; }
+  .pw-car.active { border-color: #F2751F; border-width: 2px; background: #FFF8F2; }
+  .pw-car.active::after { content: '✓'; margin-left: auto; color: #F2751F; font-weight: 900; font-size: 18px; }
+
+  /* 사용 기간 드롭다운 — 각진, 18px */
   .pw-days-select {
-    width: 100%; padding: 14px 16px;
-    font-family: inherit; font-size: 18px !important; font-weight: 700; color: #221510;
-    background: #fff; border: 1.5px solid #e5eaf2; border-radius: 14px;
+    width: 100%; padding: 15px 16px;
+    font-family: inherit; font-size: 18px !important; font-weight: 800; color: #221510;
+    background: #fff; border: 1.5px solid #e5ddd2; border-radius: 8px;
     appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F2751F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23F2751F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: right 15px center;
   }
-  /* 상품 선택 항목: 20px */
-  .pw-prod { padding: 16px 15px; }
-  .pw-prod .cap { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
-  .pw-prod .sub { font-size: 0.78rem; color: #64748b; margin-top: 3px; }
-  .pw-prod .price b { font-size: 19px; }
-  .pw-prod .price small { font-size: 0.7rem; color: #64748b; }
-  /* 통신사 글자 확대 */
-  .pw-car { font-size: 17px; font-weight: 800; padding: 12px 16px; }
-  .pw-car .net { font-size: 0.7rem; }
-  .pw-label { font-size: 15px; }
-  .pw-label em { font-size: 0.72rem; color: #8a8378; }
-  .pw-tab b { font-size: 0.95rem; }
-  /* 상세 팝업: 단색(브랜드 오렌지) 라인 아이콘 + 또렷한 텍스트 */
-  .pv-tile .ic { color: #F2751F; }
+
+  /* 상품 리스트 — 각진 카드, 큰 글자 */
+  .pw-prod {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    border: 1.5px solid #e5ddd2; border-radius: 8px; background: #fff;
+    padding: 16px 16px; margin-bottom: 9px; font-family: inherit; cursor: pointer; transition: all .12s ease;
+  }
+  .pw-prod:hover, .pw-prod.active { border-color: #F2751F; background: #FFF8F2; }
+  .pw-prod .cap { font-size: 20px; font-weight: 800; color: #221510; line-height: 1.3; letter-spacing: -0.02em; }
+  .pw-prod .sub { font-size: 13px; font-weight: 700; color: #a8a095; margin-top: 3px; }
+  .pw-prod .price { margin-left: auto; text-align: right; flex-shrink: 0; }
+  .pw-prod .price b { display: block; font-size: 20px; font-weight: 900; color: #F2751F; }
+  .pw-prod .price small { font-size: 12px; font-weight: 700; color: #a8a095; }
+  .pw-prod .go { flex-shrink: 0; color: #F2751F; font-weight: 900; font-size: 20px; }
+
+  /* 상세/수량/카트 레이어 (상세는 팝업 유지) */
+  .pv-layer { position: fixed; inset: 0; background: rgba(11, 16, 32, 0.55); backdrop-filter: blur(3px); z-index: 100005; display: flex; align-items: flex-end; }
+  .pv-sheet { background: #FDFBF8; width: 100%; border-radius: 20px 20px 0 0; padding: 20px 18px calc(24px + env(safe-area-inset-bottom, 0px)); max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
+  .pv-grab { width: 42px; height: 4.5px; border-radius: 4px; background: #e2e8f0; margin: -4px auto 14px; }
+  .pv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
+  .pv-tile { background: #fff; border: 1px solid #ece5dd; border-radius: 8px; padding: 12px 13px; }
+  .pv-tile .ic { font-size: 1.15rem; line-height: 1; color: #F2751F; }
   .pv-tile .ic svg { width: 21px; height: 21px; stroke-width: 2.2; }
-  .pv-tile .k { color: #8a8378; font-size: 0.7rem; }
-  .pv-tile .v { color: #221510; font-size: 0.84rem; }
+  .pv-tile .k { font-size: 12px; font-weight: 800; color: #8a8378; margin-top: 5px; letter-spacing: 0.02em; }
+  .pv-tile .v { font-size: 14px; font-weight: 800; color: #221510; margin-top: 2px; line-height: 1.45; word-break: keep-all; }
+  .pv-cta { display: block; width: 100%; border: none; border-radius: 10px; padding: 16px; background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35); }
+  .pv-app-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #221510, #46280f); color: #fff; border-radius: 10px; padding: 12px 14px; margin: 12px 0; font-size: 13px; font-weight: 700; line-height: 1.5; }
+  .pv-app-banner b { color: #FFB56B; }
+  .pv-qty-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #ece5dd; border-radius: 10px; padding: 13px 15px; }
   .pv-warn-ic { color: #F2751F; flex-shrink: 0; }
   .pv-warn-ic svg { width: 16px; height: 16px; stroke-width: 2.2; margin-top: 2px; }
 </style>
@@ -2333,44 +2343,41 @@
     </div>
   </nav>
 
-  <!-- Bottom Option Selector Sheet -->
-  <div class="bottom-sheet-backdrop" id="bottomSheetBackdrop" onclick="closeBottomSheet()"></div>
-  <div class="bottom-sheet" id="bottomSheet">
-    <div class="bottom-sheet-header">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <img id="sheetFlagImg" src="" alt="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;box-shadow:0 3px 10px rgba(15,23,42,0.15);display:none;">
-        <div style="min-width:0;">
-          <h3 class="bottom-sheet-title" id="sheetProductTitle" style="margin:0;">상품 옵션 선택</h3>
-          <div id="sheetLocalTime" style="display:none;font-size:0.7rem;font-weight:700;color:#94a3b8;margin-top:2px;"></div>
-        </div>
+  <!-- 상품 선택 페이지 (2026-07-16: 팝업→풀페이지 뷰 전환 + 각진 컴팩트 UI) -->
+  <style>.jd-ku>span{display:inline-block}
+  @keyframes jdTbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>
+  <main id="view-product" class="mobile-view" style="display:none;">
+    <div class="pp-appbar">
+      <button class="pp-back" onclick="closeBottomSheet()" aria-label="뒤로"><i data-lucide="chevron-left"></i></button>
+      <img id="sheetFlagImg" src="" alt="" style="width:30px;height:30px;border-radius:50%;object-fit:cover;display:none;">
+      <div style="min-width:0;flex:1;">
+        <h3 class="pp-title" id="sheetProductTitle">상품 선택</h3>
+        <div id="sheetLocalTime" style="display:none;font-size:0.72rem;font-weight:700;color:#94a3b8;margin-top:1px;"></div>
       </div>
-      <button class="bottom-sheet-close" onclick="closeBottomSheet()">
-        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-      </button>
+      <button class="pp-cart" onclick="openCartSheet()" aria-label="장바구니"><i data-lucide="shopping-bag"></i></button>
     </div>
 
-    <!-- 구매 퍼널 v2 (2026-07-15 사장님 스펙): 유형 3탭 → 통신사 알약(로컬/로밍) → 일수 → 상품 선택 → 상세 팝업 → 수량 → 결제 팝업 -->
-    <style>.jd-ku>span{display:inline-block}
-    @keyframes jdTbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>
-    <div class="pw-tabs" id="ptypeTabs"></div>
+    <div class="pp-body">
+      <div class="pw-tabs" id="ptypeTabs"></div>
 
-    <div class="pw-block" id="pwCarrierBlock" style="display:none;">
-      <div class="pw-label"><span class="step-num">1</span>통신사 선택 <em>🏠 로컬 = 현지 직통 · 📡 로밍 = 간편 개통</em></div>
-      <div id="carrierPills" class="pw-carriers"></div>
-      <div id="activationNotice" style="display:none;margin-top:10px;padding:10px 12px;border-radius:12px;font-size:0.74rem;font-weight:700;line-height:1.6;"></div>
-    </div>
+      <div class="pw-block" id="pwCarrierBlock" style="display:none;">
+        <div class="pw-label">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
+        <div id="carrierPills" class="pw-carriers"></div>
+        <div id="activationNotice" style="display:none;margin-top:12px;padding:11px 13px;border-radius:10px;font-size:0.8rem;font-weight:700;line-height:1.6;"></div>
+      </div>
 
-    <div class="pw-block" id="pwDaysBlock" style="display:none;">
-      <div class="pw-label"><span class="step-num">2</span>사용 기간</div>
-      <select id="daysSelect" class="pw-days-select" aria-label="사용 기간 선택"></select>
-      <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.78rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
-    </div>
+      <div class="pw-block" id="pwDaysBlock" style="display:none;">
+        <div class="pw-label">사용 기간</div>
+        <select id="daysSelect" class="pw-days-select" aria-label="사용 기간 선택"></select>
+        <div id="daysFeel" style="display:none;margin-top:8px;font-size:0.82rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
+      </div>
 
-    <div class="pw-block" id="pwProdBlock" style="display:none;margin-bottom:14px;">
-      <div class="pw-label"><span class="step-num">3</span>상품 선택 <em>눌러서 상세 정보 확인</em></div>
-      <div id="productList"></div>
+      <div class="pw-block" id="pwProdBlock" style="display:none;margin-bottom:20px;">
+        <div class="pw-label">상품 선택 <em>눌러서 상세 정보 확인</em></div>
+        <div id="productList"></div>
+      </div>
     </div>
-  </div>
+  </main>
 
   <!-- Device compatibility check modal -->
   <div class="bottom-sheet-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
@@ -3424,6 +3431,8 @@
       setTimeout(() => t.remove(), 2500);
     }
 
+    // openBottomSheet: 이름은 호환 유지, 동작은 '상품 선택 풀페이지 뷰' 전환 (2026-07-16)
+    let __prevProductView = 'home';
     function openBottomSheet(countryName, defaultCarrier = '') {
       if (!window.__fullReady) {
         showDataLoadingToast();
@@ -3432,35 +3441,42 @@
       }
       currentSelectedCountry = countryName;
       jdTrack('sheet_open', { country: countryName, deeplink: !!defaultCarrier });
-      document.body.style.overflow = 'hidden'; // 뒤 페이지 스크롤 잠금 (스크롤바 이탈 방지)
       saveRecentCountry(countryName);
-      
+
       allCarrierOptions = window.PRODUCTS_DATA.filter(g => g.country === countryName);
       if (allCarrierOptions.length === 0) return;
 
-      document.getElementById('sheetProductTitle').innerText = `${countryName} 데이터 요금제 선택`;
+      document.getElementById('sheetProductTitle').innerText = `${countryName} 데이터 요금제`;
       const flagEl = document.getElementById('sheetFlagImg');
       if (flagEl) {
         flagEl.src = countryImg(countryName);
         flagEl.style.display = 'block';
       }
       renderSheetLocalTime(countryName);
-      __lastTotal = 0; // 시트 열릴 때 가격이 0부터 촤르륵 올라오게
-      
-      // 퍼널 v2: 유형 탭 → 통신사 알약 → 일수 → 상품 (딥링크 통신사는 자동 선택)
+      __lastTotal = 0;
+
+      // 퍼널 v2: 유형 탭 → 통신사 → 일수 → 상품 (딥링크 통신사는 자동 선택)
       initProductWizard(defaultCarrier);
 
-      document.getElementById('bottomSheetBackdrop').classList.add('active');
-      document.getElementById('bottomSheet').classList.add('active');
-      document.body.style.overflow = 'hidden'; // 시트 열림 시 배경 스크롤 잠금
-      history.pushState({ sheet: true }, '', location.hash || '#home');
+      // 현재 활성 뷰 기억 후 상품 뷰로 전환
+      const cur = document.querySelector('.mobile-view.active');
+      __prevProductView = (cur && cur.id) ? cur.id.replace('view-', '') : 'home';
+      document.documentElement.classList.remove('home-snap');
+      document.querySelectorAll('.mobile-view').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
+      const pv = document.getElementById('view-product');
+      pv.classList.add('active'); pv.style.display = 'block';
+      document.body.style.overflow = '';
+      if (window.lucide) lucide.createIcons();
+      window.scrollTo({ top: 0 });
+      history.pushState({ sheet: true }, '', '#product');
     }
 
     function closeBottomSheet() {
       if (history.state && history.state.sheet) { history.back(); return; }
-      document.getElementById('bottomSheetBackdrop').classList.remove('active');
-      document.getElementById('bottomSheet').classList.remove('active');
-      document.body.style.overflow = ''; // 배경 스크롤 복원
+      const pv = document.getElementById('view-product');
+      if (pv) { pv.classList.remove('active'); pv.style.display = 'none'; }
+      document.body.style.overflow = '';
+      switchNav(__prevProductView || 'home');
     }
 
     let selectedPlanType = "";
@@ -3524,9 +3540,9 @@
     function carrierHasType(g, t) { return (g.plans || []).some(p => planTypeOf(p) === t); }
 
     const PW_TABS = {
-      '무제한': { b: '∞ 무제한', s: '속도제한 없음' },
-      '데일리': { b: '📅 데일리', s: '매일 새로 충전' },
-      '총용량': { b: '🎒 총용량', s: '기간 내 자유 분배' }
+      '무제한': { b: '무제한', s: '속도제한 없음' },
+      '데일리': { b: '데일리', s: '매일 충전' },
+      '총용량': { b: '총용량', s: '자유 분배' }
     };
 
     function initProductWizard(preferCarrier) {
@@ -4646,11 +4662,14 @@
     
     // 뒤로가기 대응: 시트가 열려 있으면 시트만 닫고, 아니면 해시 기준 뷰 복원
     window.addEventListener('popstate', () => {
-      const sheet = document.getElementById('bottomSheet');
-      if (sheet && sheet.classList.contains('active')) {
-        document.getElementById('bottomSheetBackdrop').classList.remove('active');
-        sheet.classList.remove('active');
-        document.body.style.overflow = ''; // 배경 스크롤 복원
+      // 상품 선택 뷰에서 뒤로가기 → 이전 뷰 복귀
+      const pv = document.getElementById('view-product');
+      if (pv && pv.classList.contains('active')) {
+        pv.classList.remove('active'); pv.style.display = 'none';
+        document.body.style.overflow = '';
+        suppressHistory = true;
+        switchNav(__prevProductView || 'home');
+        suppressHistory = false;
         return;
       }
       const v = (location.hash || '#home').replace('#', '');
