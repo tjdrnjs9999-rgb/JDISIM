@@ -435,7 +435,8 @@ var CONFIG = {
 var token = new URLSearchParams(location.search).get('t') || '';
 var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
-var CARE = new URLSearchParams(location.search).get('care') || '';
+var CX = new URLSearchParams(location.search).get('cx') || ''; // 케어 토큰 (2026-07-15: URL에 ICCID 비노출 신형 링크)
+var CARE = new URLSearchParams(location.search).get('care') || (CX ? '__cx__' : ''); // 구형 care= 링크 호환 유지
 var RV = new URLSearchParams(location.search).get('rv') === '1';
 var _q = new URLSearchParams(location.search);
 var PLAN = _q.get('plan') || '';   // 브리지가 동봉: 구매상품 SKU
@@ -1336,7 +1337,7 @@ function careGet(query){
 }
 
 function loadCare(){
-  careGet('iccid=' + encodeURIComponent(CARE))
+  careGet(CX ? ('t=' + encodeURIComponent(CX)) : ('iccid=' + encodeURIComponent(CARE)))
     .then(function(d){
       var e = (d && d.esim) || {};
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
@@ -1798,7 +1799,7 @@ function runDiagnose(){
 <script src="romi-mode.js?v=20260715a"></script>
 <script>
   // gateParams: aligo_bridge v6.3 실측 — care(항상) / o / n / bd / plan(조건부) + local(내 여행 카드 → 이 기기 주문). 하나라도 있으면 구매자 판정.
-  RomiMode.init({ gateParams: ['care', 'o', 'n', 'bd', 'plan', 'local'] });
+  RomiMode.init({ gateParams: ['care', 'cx', 'o', 'n', 'bd', 'plan', 'local'] });
   // 로미 챗봇 로드 (발급링크에서도 상담 가능)
   // ⚠️ 기존엔 이 코드가 </html> 뒤 생텍스트로 있어 화면에 노출 + 챗봇 미로드 — 2026-07-14 수정
   (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260714a'; sc.defer = true; document.body.appendChild(sc); })();
