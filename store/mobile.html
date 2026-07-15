@@ -198,7 +198,8 @@
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260713c">
   <link rel="stylesheet" href="premium.css?v=20260715a">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- 폰트 정본 (2026-07-15): Pretendard 하나로 통일 — 국문·숫자 모두 선명, 로케비와 동급 렌더링 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js" defer onload="lucide.createIcons()"></script>
   
@@ -210,7 +211,10 @@
     }
 
     body {
-      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-family: 'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       background: transparent;
       color: #0f172a; /* Slate 900 */
       margin: 0;
@@ -1845,6 +1849,45 @@
   .pv-app-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #221510, #46280f); color: #fff; border-radius: 14px; padding: 12px 14px; margin: 12px 0; font-size: 0.8rem; font-weight: 700; line-height: 1.5; }
   .pv-app-banner b { color: #FFB56B; }
   .pv-qty-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #ece5dd; border-radius: 15px; padding: 13px 15px; }
+
+  /* ===== 퍼널 v2.1 (2026-07-15 지시): 풀스크린 시트 + 타이포 확대 + 단색 라인 아이콘 ===== */
+  /* 상품 선택 시트 = 화면 꽉 찬 팝업 */
+  .bottom-sheet {
+    top: 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    border-top: none !important;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+  }
+  /* 사용 일수 드롭다운: 18px */
+  .pw-days-select {
+    width: 100%; padding: 14px 16px;
+    font-family: inherit; font-size: 18px !important; font-weight: 700; color: #221510;
+    background: #fff; border: 1.5px solid #e5eaf2; border-radius: 14px;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F2751F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 15px center;
+  }
+  /* 상품 선택 항목: 20px */
+  .pw-prod { padding: 16px 15px; }
+  .pw-prod .cap { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+  .pw-prod .sub { font-size: 0.78rem; color: #64748b; margin-top: 3px; }
+  .pw-prod .price b { font-size: 19px; }
+  .pw-prod .price small { font-size: 0.7rem; color: #64748b; }
+  /* 통신사 글자 확대 */
+  .pw-car { font-size: 17px; font-weight: 800; padding: 12px 16px; }
+  .pw-car .net { font-size: 0.7rem; }
+  .pw-label { font-size: 15px; }
+  .pw-label em { font-size: 0.72rem; color: #8a8378; }
+  .pw-tab b { font-size: 0.95rem; }
+  /* 상세 팝업: 단색(브랜드 오렌지) 라인 아이콘 + 또렷한 텍스트 */
+  .pv-tile .ic { color: #F2751F; }
+  .pv-tile .ic svg { width: 21px; height: 21px; stroke-width: 2.2; }
+  .pv-tile .k { color: #8a8378; font-size: 0.7rem; }
+  .pv-tile .v { color: #221510; font-size: 0.84rem; }
+  .pv-warn-ic { color: #F2751F; flex-shrink: 0; }
+  .pv-warn-ic svg { width: 16px; height: 16px; stroke-width: 2.2; margin-top: 2px; }
 </style>
 <style id="jd-readability">
   /* ===== 📖 가독성 플로어 (2026-07-15 개정) — 로케비 실측 기준 타입 스케일 =====
@@ -2358,7 +2401,7 @@
 
     <div class="pw-block" id="pwDaysBlock" style="display:none;">
       <div class="pw-label"><span class="step-num">2</span>사용 기간</div>
-      <div id="daysPills" class="option-pills jd-center-pills"></div>
+      <select id="daysSelect" class="pw-days-select" aria-label="사용 기간 선택"></select>
       <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.78rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
     </div>
 
@@ -3717,18 +3760,16 @@
     }
 
     function renderDaysRow() {
-      const box = document.getElementById('daysPills');
+      const box = document.getElementById('daysSelect');
       const block = document.getElementById('pwDaysBlock');
       if (!box || !block) return;
       const days = Array.from(new Set(pwPlansOfType().map(p => parseInt(p.duration, 10)))).filter(d => d).sort((a, b) => a - b);
-      box.innerHTML = days.map(d => `<button type="button" class="option-pill" data-days="${d}">${d}일</button>`).join('');
-      box.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => {
-        box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
-        pwSelectDays(parseInt(b.getAttribute('data-days'), 10));
-      }));
+      box.innerHTML = '<option value="" disabled selected>사용 일수를 선택하세요</option>'
+        + days.map(d => `<option value="${d}">${d}일${d > 1 ? ` (${d - 1}박 ${d}일)` : ' (당일)'}</option>`).join('');
+      box.onchange = () => { const v = parseInt(box.value, 10); if (v) pwSelectDays(v); };
       block.style.display = 'block';
       if (days.length === 1) {
-        box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
+        box.value = String(days[0]);
         pwSelectDays(days[0]);
       }
     }
@@ -3924,7 +3965,8 @@
       const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : cap;
       const dataTile = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : ((isDaily ? '매일 ' : '총 ') + cap);
       const resetTile = selectedProductType === '무제한' ? '제한 없음' : (isDaily ? '매일 리셋 (현지 자정)' : '리셋 없음 · 자유 분배');
-      const tile = (ic, k, v) => `<div class="pv-tile"><span class="ic">${ic}</span><div class="k">${k}</div><div class="v">${v || '-'}</div></div>`;
+      // 단색 라인 아이콘 (lucide, 색은 CSS .pv-tile .ic 한 곳에서 관리 — 2026-07-15 지시)
+      const tile = (ic, k, v) => `<div class="pv-tile"><span class="ic"><i data-lucide="${ic}"></i></span><div class="k">${k}</div><div class="v">${v || '-'}</div></div>`;
       const an = document.getElementById('activationNotice');
       const anHTML = (an && an.style.display !== 'none') ? `<div style="margin:10px 0;padding:11px 13px;border-radius:12px;font-size:0.75rem;font-weight:700;line-height:1.6;background:${an.style.background};border:${an.style.border};color:${an.style.color};">${an.innerHTML}</div>` : '';
       const flags = (typeof getCriticalFlags === 'function' ? getCriticalFlags() : []) || [];
@@ -3952,27 +3994,28 @@
           </div>
           ${feel ? `<div style="font-size:0.76rem;font-weight:700;color:#9a5b16;margin-top:4px;">${feel}</div>` : ''}
           <div class="pv-grid">
-            ${tile('💾', '데이터', dataTile)}
-            ${tile('🔄', '데이터 리셋', resetTile)}
-            ${tile('📅', '사용일', `${selectedDays}일 · 개통 시점부터`)}
-            ${tile('⚡', '개통 시점', activeCarrier.activation)}
-            ${tile('⏳', '유효기간', activeCarrier.validity)}
-            ${tile('📡', '핫스팟', activeCarrier.hotspot)}
-            ${tile('🔋', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)}
-            ${tile('📲', 'eSIM 등록', 'QR 수신 후 와이파이에서 설치')}
-            ${tile('📞', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)}
-            ${tile('📶', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
+            ${tile('database', '데이터', dataTile)}
+            ${tile('refresh-cw', '데이터 리셋', resetTile)}
+            ${tile('calendar', '사용일', `${selectedDays}일 · 개통 시점부터`)}
+            ${tile('zap', '개통 시점', activeCarrier.activation)}
+            ${tile('hourglass', '유효기간', activeCarrier.validity)}
+            ${tile('wifi', '핫스팟', activeCarrier.hotspot)}
+            ${tile('battery-charging', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)}
+            ${tile('qr-code', 'eSIM 등록', 'QR 수신 후 와이파이에서 설치')}
+            ${tile('phone', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)}
+            ${tile('signal', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
           </div>
           ${anHTML}
           ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(249,115,22,0.05));">
             <div style="font-size:0.8rem;font-weight:900;color:#b91c1c;margin-bottom:2px;">🔎 구매 전 꼭 알기</div>
-            ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span style="flex-shrink:0;">${x.i}</span><span class="jd-ku">${x.t}</span></div>`).join('')}
+            ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
           </div>` : ''}
           <div style="font-size:0.72rem;font-weight:700;color:#8a7a6d;margin:10px 2px;line-height:1.6;">🛡️ 미개통 시 100% 환불 · 설치(다운로드) 전 100% 취소 가능 · 24시간 카톡 케어</div>
           <button type="button" class="pv-cta" onclick="openQtySheet()">구매하기</button>
         </div>`;
       layer.onclick = e => { if (e.target === layer) layer.remove(); };
       document.body.appendChild(layer);
+      if (window.lucide) lucide.createIcons(); // 단색 라인 아이콘 렌더
     }
 
     // ===== [팝업 3] 수량 미니시트 — 앱 5% 배너 + 카트/바로구매 =====
@@ -4900,10 +4943,10 @@
         // 해당 상품의 유형 탭으로 전환 (통신사 재선택 자동)
         window.__preferCarrier = carrier;
         pwSelectType(planTypeOf(plan));
-        // 일수 선택
-        const dBox = document.getElementById('daysPills');
-        const dBtn = dBox && dBox.querySelector('[data-days="' + (parseInt(plan.duration, 10) || wantDays) + '"]');
-        if (dBtn && !dBtn.classList.contains('active')) dBtn.click();
+        // 일수 선택 (드롭다운)
+        const dSel = document.getElementById('daysSelect');
+        const dVal = String(parseInt(plan.duration, 10) || wantDays);
+        if (dSel && dSel.value !== dVal) { dSel.value = dVal; dSel.onchange && dSel.onchange(); }
         // 상품 상세까지 자동 오픈
         const idx = (window.__pwPlans || []).findIndex(p => p.product_code === plan.product_code);
         if (idx >= 0) openProductDetail(idx);
