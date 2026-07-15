@@ -1644,9 +1644,17 @@ function loadUsage(){
         box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 아직 사용량 기록이 없어요.<br>무제한 요금제이거나 현지에서 아직 개통 전일 수 있어요. 개통 후 다시 눌러보세요!<br><span style="color:#64748b;">정확한 사용량은 설정 → 셀룰러 → 해당 회선에서도 볼 수 있어요.</span></div>';
         return;
       }
-      // usageList가 채워지면 표준 포맷으로 변환해 도넛 렌더
+      // usageList 표준 변환 — 실측 필드 (2026-07-15 확정): usedDate "20260710" / usedAmount KB 단위
       var used=0,total=0,daily=[];
-      lst.forEach(function(r){ var mb=Number(r.used||r.usedMb||r.dataUsed||0); used+=mb; if(r.date||r.useDate)daily.push({date:r.date||r.useDate,mb:mb}); if(r.total||r.totalMb)total=Number(r.total||r.totalMb); });
+      lst.forEach(function(r){
+        var raw=Number(r.usedAmount!=null?r.usedAmount:(r.used||r.usedMb||r.dataUsed||0));
+        var mb=(r.usedAmount!=null)?raw/1024:raw; // usedAmount는 KB → MB
+        used+=mb;
+        var d8=String(r.usedDate||r.date||r.useDate||'');
+        var dt=/^\d{8}$/.test(d8)?d8.slice(0,4)+'-'+d8.slice(4,6)+'-'+d8.slice(6,8):d8;
+        if(dt)daily.push({date:dt,mb:mb});
+        if(r.total||r.totalMb)total=Number(r.total||r.totalMb);
+      });
       renderUsage({used_mb:used,total_mb:total,status:'active',daily:daily});
     }).catch(function(){ box.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;text-align:left;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
     return;
@@ -1692,7 +1700,7 @@ function renderUsage(d){
     '<defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
     '<circle class="donut-bg" cx="86" cy="86" r="72"></circle>' +
     '<circle class="donut-fg" id="dfg" cx="86" cy="86" r="72" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
-    '<div class="donut-center"><span class="muted">현재 남은 데이터</span><span class="big">'+(total? gb(remain)+' GB' : '무제한')+'</span>' +
+    '<div class="donut-center"><span class="muted">'+(total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(total? gb(remain)+' GB' : (used? gb(used)+' GB' : '0 GB'))+'</span>' +
     '<span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span></div></div>' +
     (total? '<div class="pillstat"><div><div class="l">사용한 데이터</div><div class="v">'+gb(used)+' GB</div></div><div><div class="l">남은 데이터</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div></div>' : '') +
     ((d.daily&&d.daily.length)? '<div style="font-weight:800;font-size:0.8rem;margin:14px 0 4px;">일별 사용 내역 <span class="muted">총 '+d.daily.length+'일</span></div>' +

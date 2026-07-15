@@ -1423,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 5. 국가별/통신사별 상세 맞춤 특이사항 (크롤링 및 매칭)
     if (normalizedCountry.includes('일본')) {
       if (normalizedCarrier.includes('소프트뱅크')) {
-        list.push("<strong>소프트뱅크 실시간 사용량 조회 불가:</strong> 소프트뱅크망 특성상 실시간 데이터 사용량 조회가 불가하며, 현지 통신사 집계 지연으로 인해 2일 전 누적 사용량 기준 지연 반영됩니다.");
+        list.push("<strong>소프트뱅크 사용량 집계 지연:</strong> 사용량 조회는 가능하지만 현지 통신사 집계 특성상 최대 1~2일 지연 반영될 수 있습니다.");
       } else if (normalizedCarrier.includes('도코모')) {
         list.push("<strong>도코모 APN 수동 설정:</strong> 자동 연결 실패 시 셀룰러 네트워크 설정에서 APN(spmode.ne.jp)을 수동 등록해야 개통됩니다.");
       }

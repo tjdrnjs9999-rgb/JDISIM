@@ -2453,7 +2453,8 @@
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="speed-truth.js?v=20260715b" defer></script>
-  <script src="jd-precautions.js?v=20260715a" defer></script>
+  <script src="jd-precautions.js?v=20260715b" defer></script>
+  <script src="jd-resets.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
   <script src="products-lite.js?v=20260715d" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
@@ -3964,7 +3965,10 @@
       const isDaily = planIsDailyGroup(p);
       const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : cap;
       const dataTile = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : ((isDaily ? '매일 ' : '총 ') + cap);
-      const resetTile = selectedProductType === '무제한' ? '제한 없음' : (isDaily ? '매일 리셋 (현지 자정)' : '리셋 없음 · 자유 분배');
+      // 리셋 정본 (원가표 사용일리셋·데이터리셋 열 — jd-resets.js)
+      const resets = (window.JD_RESETS && window.JD_RESETS.get(p.product_code)) || null;
+      const dayResetTile = (resets && resets.day) || '개통 시점부터 연속';
+      const resetTile = (resets && resets.data) || (selectedProductType === '무제한' ? '제한 없음' : (isDaily ? '매일 리셋 (현지 기준)' : '리셋 없음 · 자유 분배'));
       // 단색 라인 아이콘 (lucide, 색은 CSS .pv-tile .ic 한 곳에서 관리 — 2026-07-15 지시)
       const tile = (ic, k, v) => `<div class="pv-tile"><span class="ic"><i data-lucide="${ic}"></i></span><div class="k">${k}</div><div class="v">${v || '-'}</div></div>`;
       const an = document.getElementById('activationNotice');
@@ -4005,7 +4009,7 @@
           <div class="pv-grid">
             ${tile('database', '데이터', dataTile)}
             ${tile('refresh-cw', '데이터 리셋', resetTile)}
-            ${tile('calendar', '사용일', `${selectedDays}일 · 개통 시점부터`)}
+            ${tile('calendar', '사용일 리셋', dayResetTile)}
             ${tile('zap', '개통 시점', activeCarrier.activation)}
             ${tile('hourglass', '유효기간', activeCarrier.validity)}
             ${tile('wifi', '핫스팟', activeCarrier.hotspot)}
