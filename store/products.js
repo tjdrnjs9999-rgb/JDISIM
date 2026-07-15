@@ -32459,7 +32459,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "대만",
-    "carrier": "중화텔레콤 / 원전텔레콤",
+    "carrier": "청화텔레콤",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -48443,7 +48443,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "대만",
-    "carrier": "중화텔레콤 / 원전텔레콤",
+    "carrier": "청화텔레콤",
     "network_type": "로컬망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
