@@ -1,27 +1,15 @@
 {
   "version": 2,
-  "cleanUrls": true,
   "routes": [
-    {
-      "src": "/api/payment-complete",
-      "dest": "/api/payment-complete.js"
-    },
-    {
-      "src": "/api/emp-orders",
-      "dest": "/api/emp-orders.js"
-    },
-    {
-      "src": "/",
-      "dest": "/store/index.html"
-    },
-    {
-      "src": "/mobile",
-      "dest": "/store/mobile.html"
-    },
-    {
-      "src": "/admin",
-      "dest": "/admin/index.html"
-    },
+    { "src": "/api/payment-complete", "dest": "/api/payment-complete.js" },
+    { "src": "/api/emp-orders", "dest": "/api/emp-orders.js" },
+    { "src": "/", "dest": "/store/index.html" },
+    { "src": "/mobile", "dest": "/store/mobile.html" },
+    { "src": "/admin/sales", "dest": "/admin/sales.html" },
+    { "src": "/admin/sales.html", "dest": "/admin/sales.html" },
+    { "src": "/admin", "dest": "/admin/index.html" },
+    { "src": "/admin/", "dest": "/admin/index.html" },
+    { "src": "/admin/index.html", "dest": "/admin/index.html" },
     {
       "src": "/(.*)",
       "headers": {
