@@ -845,7 +845,7 @@ function planOf(o){
   }
   return p;
 }
-// 일일 용량 리셋 시각 (도매처 홍콩 00:00 기준 → 현지 환산, app.js convertResetTime 동일 매핑)
+// 일일 용량 리셋 시각 (기준 시각 홍콩 00:00 → 현지 환산, app.js convertResetTime 동일 매핑)
 var RESET = { '일본':{h:1,t:'새벽 1시'},'한국':{h:1,t:'새벽 1시'},'베트남':{h:23,t:'밤 11시'},'태국':{h:23,t:'밤 11시'},'라오스':{h:23,t:'밤 11시'},'캄보디아':{h:23,t:'밤 11시'},'중국':{h:0,t:'자정'},'대만':{h:0,t:'자정'},'필리핀':{h:0,t:'자정'},'싱가포르':{h:0,t:'자정'},'말레이시아':{h:0,t:'자정'},'홍콩':{h:0,t:'자정'},'마카오':{h:0,t:'자정'},'몰디브':{h:21,t:'밤 9시'},'괌':{h:2,t:'새벽 2시'},'사이판':{h:2,t:'새벽 2시'},'호주':{h:2,t:'새벽 2시'},'뉴질랜드':{h:4,t:'새벽 4시'},'오렌지프랑스':{h:17,t:'오후 5시'},'오렌지스페인':{h:17,t:'오후 5시'},'보다폰스페인':{h:17,t:'오후 5시'},'쓰리(THREE)':{h:17,t:'오후 5시'},'미국':{t:'서부 08:00 · 동부 11:00'} };
 function resetInfo(country){ return RESET[country] || null; }
 function secHd(icon, ey, title, sub){
@@ -1145,7 +1145,7 @@ function devSelPick(sel){
   else v.innerHTML = '<div class="notice">키패드에 <strong>*#06#</strong> 을 눌러 <strong>EID</strong>가 보이면 사용 가능한 기종이에요. 애매하면 카톡으로 기종명을 보내주세요.</div>';
 }
 
-// ===== 🛫 여행 카운터 (자가신고 기반 — 서버·도매처 API 불필요) =====
+// ===== 🛫 여행 카운터 (자가신고 기반 — 외부 API 불필요) =====
 function planDays(){
   return (planOf(order) || {}).days || 0;
 }
@@ -1328,7 +1328,7 @@ function loadLocal(){
   else renderPreIssue();
 }
 
-// 케어 모드: ICCID로 eSIM 정보 조회해 '내 여행 티켓' 표시 (도매처 발급링크와 동일 기능 + 우리 케어)
+// 케어 모드: ICCID로 eSIM 정보 조회해 '내 여행 티켓' 표시 (표준 발급링크와 동일 기능 + 우리 케어)
 function careGet(query){
   // 프록시 경유 (CORS 안전). window.CARE_API = 'https://.../api/esim'
   var base = window.CARE_API;
@@ -1485,7 +1485,7 @@ function doIssue(){
     }, 1400);
     return;
   }
-  if (DEMO){ setTimeout(function(){ order.status='ISSUED'; seqFinish(function(){ renderIssued('LPA:1$rsp.billionconnect.com$F8B7C1B0B68F4AB889460F568F1F13D7', false); }); },1400); return; }
+  if (DEMO){ setTimeout(function(){ order.status='ISSUED'; seqFinish(function(){ renderIssued('LPA:1$rsp.example.com$DEMO0000DEMO0000DEMO0000DEMO0000', false); }); },1400); return; }
   fetch(CONFIG.ISSUE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,agreedNoRefund:true,agreedDevice:true,agreedAt:new Date().toISOString()})})
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(d){ if(d.lpa) seqFinish(function(){ renderIssued(d.lpa,false); }); else if(d.status==='PENDING') pollIssue(0); else throw 0; })
@@ -1689,7 +1689,7 @@ function maybeAutoActivate(d){
     toast('현지 개통이 감지됐어요 — 남은 일수를 세어드릴게요 🛬');
   } catch(e){}
 }
-// P3c 로미 닥터 — Joytel 설치 이력(listHistory) 평문 판독. 가장 최근·심각 이벤트 1건을 골라 진단.
+// P3c 로미 닥터 — eSIM 설치 이력(listHistory) 평문 판독. 가장 최근·심각 이벤트 1건을 골라 진단.
 //   notification_Point_ID: 3 다운로드 / 4 설치 / 5 삭제 / 6 켜짐 / 7 꺼짐 / 101 EID차단 / 102 단말차단
 function diagHistory(hist){
   if(!hist||!hist.length) return null;
