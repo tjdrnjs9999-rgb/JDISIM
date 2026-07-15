@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>이심 사용 가이드 | JDISIM — 로미가 알려주는 가장 쉬운 eSIM</title>
-  <meta name="description" content="eSIM 기종 확인부터 QR 설치, 회선 설정, 현지 개통, 문제 해결까지. JDISIM 로미가 단계별로 알려드려요.">
+  <title>로미 케어센터 | JDISIM — 이심이 안 되나요? 1분 진단부터 설치까지</title>
+  <meta name="description" content="이심이 안 되나요? 로미 닥터 1분 진단으로 즉시 해결. eSIM 기종 확인, QR 설치, 회선 설정, 현지 개통까지 JDISIM 케어센터가 책임져요.">
   <link rel="icon" type="image/png" href="images/favicon.png">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="JDISIM 이심">
-  <meta property="og:title" content="이심 사용 가이드 | 로미가 알려주는 가장 쉬운 eSIM">
-  <meta property="og:description" content="기종 확인 → QR 설치 → 회선 설정 → 현지 개통까지, 5분이면 끝나는 JDISIM 이심 가이드.">
+  <meta property="og:title" content="로미 케어센터 | 이심이 안 되나요? 1분 진단">
+  <meta property="og:description" content="증상만 고르면 로미 닥터가 1분 만에 진단 — 설치·회선 설정·문제 해결까지 케어센터 하나면 끝.">
   <meta property="og:image" content="https://jdisim.co.kr/images/fox-qr.png">
   <meta property="og:url" content="https://jdisim.co.kr/guide.html">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -95,6 +95,80 @@
     .g-sec-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.2em; text-indent: 0.2em; text-transform: uppercase; color: var(--teal); }
     .g-sec-title { font-size: clamp(1.35rem, 5vw, 1.65rem); font-weight: 800; letter-spacing: -0.03em; margin: 8px 0 20px; line-height: 1.3; }
     .g-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; }
+
+    /* 🩺 로미 닥터 1분 진단 */
+    .g-doctor-card {
+      background: #fff; border: 1.5px solid rgba(242, 117, 31, 0.3);
+      border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 10px 26px rgba(242, 117, 31, 0.08);
+    }
+    .g-doc-smart {
+      display: block; width: 100%; text-align: left; cursor: pointer;
+      border: none; border-radius: 15px; padding: 15px 16px;
+      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      font-family: inherit; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+      transition: transform .16s ease;
+    }
+    .g-doc-smart:hover { transform: translateY(-2px); }
+    .g-doc-smart b { display: block; font-size: 0.95rem; font-weight: 800; }
+    .g-doc-smart small { display: block; font-size: 0.76rem; font-weight: 700; opacity: 0.92; margin-top: 3px; }
+    .g-doc-sub { font-size: 0.78rem; font-weight: 800; color: var(--dim); margin: 14px 2px 10px; }
+    .g-doc-chips { display: grid; gap: 9px; }
+    .g-doc-chip {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; cursor: pointer;
+      border: 1.5px solid var(--line); border-radius: 14px; padding: 14px 15px;
+      background: #fff; font-family: inherit; font-size: 0.89rem; font-weight: 800; color: var(--ink);
+      transition: all .16s ease;
+    }
+    .g-doc-chip:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-2px); }
+    .g-doc-chip .arr { margin-left: auto; color: var(--brand); flex-shrink: 0; }
+    .g-doc-back {
+      background: none; border: none; cursor: pointer; font-family: inherit;
+      color: var(--muted); font-weight: 800; font-size: 0.8rem; padding: 0 0 12px;
+    }
+    .g-doc-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 6px; }
+    .g-doc-step {
+      display: flex; gap: 11px; padding: 12px 0;
+      font-size: 0.88rem; line-height: 1.65; color: #334155;
+      border-top: 1px dashed var(--line);
+    }
+    .g-doc-step:first-of-type { border-top: none; }
+    .g-doc-step .n {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      font-size: 0.76rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; margin-top: 2px;
+    }
+    .g-doc-actions { display: flex; gap: 9px; margin-top: 16px; flex-wrap: wrap; }
+    .g-doc-ok, .g-doc-esc {
+      flex: 1; min-width: 150px; padding: 14px; border-radius: 14px; cursor: pointer;
+      font-family: inherit; font-weight: 800; font-size: 0.88rem;
+    }
+    .g-doc-ok { border: 1px solid #bbf7d0; background: #f0fdf4; color: #15803d; }
+    .g-doc-esc {
+      border: none; color: #fff;
+      background: linear-gradient(135deg, #F97316, #F59E0B);
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+    }
+    .g-doc-note {
+      margin-top: 14px; padding: 13px 15px; border-radius: 13px;
+      background: rgba(220, 38, 38, 0.05); border: 1px solid rgba(220, 38, 38, 0.2);
+      font-size: 0.8rem; font-weight: 700; color: #b91c1c; line-height: 1.6;
+    }
+    .g-doc-result { display: none; margin-top: 10px; }
+    .g-doc-result .box {
+      border-radius: 13px; padding: 13px 15px;
+      font-size: 0.82rem; font-weight: 700; line-height: 1.7;
+    }
+    .g-doc-result .box.ok { background: rgba(34, 197, 94, 0.07); border: 1px solid rgba(34, 197, 94, 0.3); color: #15803d; }
+    .g-doc-result .box.kr { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.25); color: #1d4ed8; }
+    .g-doc-result .box.bad { background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.25); color: #b91c1c; }
+    .g-doc-result .box span { color: #334155; }
+    .g-doc-result .more {
+      display: block; width: 100%; margin-top: 8px; padding: 12px; cursor: pointer;
+      border: 1.5px solid var(--line); border-radius: 12px; background: #fff;
+      font-family: inherit; font-size: 0.82rem; font-weight: 800; color: var(--ink);
+    }
 
     /* 빠른 점검 */
     .g-check-grid { display: grid; gap: 12px; }
@@ -192,11 +266,6 @@
     }
     .g-done-msg.show { display: block; animation: heroRise .5s ease both; }
 
-    /* 문제 해결 */
-    .g-fix { border-left: 3px solid var(--brand); padding: 4px 0 4px 16px; margin-bottom: 18px; }
-    .g-fix h4 { font-size: 0.94rem; font-weight: 800; margin-bottom: 4px; }
-    .g-fix p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
-
     /* FAQ */
     .g-faq { border-bottom: 1px solid var(--line); }
     .g-faq-q {
@@ -245,22 +314,22 @@
   <header class="g-header">
     <div class="g-header-in">
       <a href="index.html" class="g-back" aria-label="홈으로">←</a>
-      <div class="g-header-title">🦊 이심 사용 가이드</div>
+      <div class="g-header-title">🦊 로미 케어센터</div>
       <a href="index.html#store" class="g-store-btn">스토어 →</a>
     </div>
   </header>
 
   <section class="g-hero">
     <div class="wrap">
-      <span class="g-hero-eyebrow">Romi's Guide</span>
-      <h1>처음이라도 괜찮아요,<br><em>로미</em>가 5분 만에 알려드릴게요</h1>
-      <p>기종 확인부터 설치, 현지 개통, 문제 해결까지 — 이 페이지 하나면 끝.</p>
+      <span class="g-hero-eyebrow">Romi Care Center</span>
+      <h1>이심이 안 되나요?<br><em>로미</em>가 1분 만에 해결해요</h1>
+      <p>긴급 진단부터 설치·회선 설정·자주 묻는 질문까지 — 케어센터 하나면 끝.</p>
       <nav class="g-toc">
-        <a href="#check">✅ 출발 전 점검</a>
+        <a href="#doctor">🩺 1분 진단</a>
+        <a href="#check">✅ 구매 전 점검</a>
         <a href="#install">📲 설치 방법</a>
         <a href="#lines">⚙️ 회선 설정</a>
         <a href="#todo">🧳 체크리스트</a>
-        <a href="#fix">🔧 문제 해결</a>
         <a href="#faq">💬 자주 묻는 질문</a>
       </nav>
       <img src="images/fox-qr.png" alt="QR코드를 든 로미" class="g-hero-fox">
@@ -268,6 +337,22 @@
   </section>
 
   <main class="wrap">
+
+    <!-- 0. 로미 닥터 1분 진단 -->
+    <section class="g-sec" id="doctor">
+      <span class="g-sec-label">Emergency · 1 Min</span>
+      <h2 class="g-sec-title">이심이 안 되나요? — 로미 닥터 1분 진단</h2>
+      <div class="g-doctor-card" id="doctorCard">
+        <button type="button" class="g-doc-smart" onclick="gSmartCheck()">
+          <b>🔎 스마트 연결 점검 (자동)</b>
+          <small>지금 어떤 나라·어떤 망으로 접속 중인지 바로 판정해요 — 와이파이는 끄고 눌러주세요</small>
+        </button>
+        <div class="g-doc-result" id="gSmartResult"></div>
+        <div class="g-doc-sub">또는 증상을 직접 골라주세요</div>
+        <div class="g-doc-chips" id="gDocHome"></div>
+        <div id="gDocPanel" style="display:none;"></div>
+      </div>
+    </section>
 
     <!-- 1. 출발 전 점검 -->
     <section class="g-sec" id="check">
@@ -438,27 +523,7 @@
       </div>
     </section>
 
-    <!-- 5. 문제 해결 -->
-    <section class="g-sec" id="fix">
-      <span class="g-sec-label">Step 05 · Troubleshooting</span>
-      <h2 class="g-sec-title">데이터가 안 터질 때, 순서대로 해보세요</h2>
-      <div class="g-card">
-        <div class="g-fix">
-          <h4>1. 비행기 모드 껐다 켜기 (성공률 최고)</h4>
-          <p>현지 망을 처음 잡을 땐 시간이 걸릴 수 있어요. 비행기 모드를 켰다 끄기를 2~3번 반복하면 대부분 붙습니다.</p>
-        </div>
-        <div class="g-fix">
-          <h4>2. 데이터 회선과 로밍 스위치 재확인</h4>
-          <p>모바일 데이터가 JDISIM 회선으로 선택돼 있는지, 그 회선의 데이터 로밍이 켜져 있는지 다시 확인해 주세요. 가장 흔한 원인이에요.</p>
-        </div>
-        <div class="g-fix">
-          <h4>3. 통신사 자동 선택 확인 후 재부팅</h4>
-          <p>네트워크 선택이 "자동"인지 확인하고 휴대폰을 한 번 재부팅해 보세요. 여기까지 해도 안 되면 바로 카톡 주세요 — <strong>절대 eSIM 프로필을 삭제하지 마세요!</strong> 삭제하면 재발급이 필요합니다.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. FAQ -->
+    <!-- 5. FAQ -->
     <section class="g-sec" id="faq">
       <span class="g-sec-label">FAQ</span>
       <h2 class="g-sec-title">자주 묻는 질문</h2>
@@ -495,7 +560,7 @@
       <h3>여기까지 읽었는데도 막히셨나요?</h3>
       <p>로미의 24시간 카톡 상담팀이 화면을 보며 같이 해결해 드려요.</p>
       <div class="g-cta-row">
-        <a href="http://pf.kakao.com/_xxxxxx" target="_blank" rel="noopener" class="g-cta-kakao">💬 카톡 1:1 상담</a>
+        <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" class="g-cta-kakao">💬 카톡 1:1 상담</a>
         <a href="index.html#store" class="g-cta-store">🦊 eSIM 스토어 가기</a>
       </div>
     </div>
@@ -541,6 +606,139 @@
       checks.forEach(function (c) { c.addEventListener('change', update); });
       update();
     })();
+
+    // ===== 🩺 로미 닥터 1분 진단 (케어센터) =====
+    var G_DOCTOR = {
+      'no-signal': { icon: '📵', title: '현지인데 데이터가 안 터져요', steps: [
+        '<strong>① 데이터 로밍 켜기</strong> — 설정 → 셀룰러 → 여행 eSIM → <strong>데이터 로밍 ON</strong> (안 되는 원인 1위예요!)',
+        '<strong>② 셀룰러(모바일) 데이터 회선</strong>이 여행 eSIM으로 선택돼 있는지 확인하세요 (한국 유심이 아니라!)',
+        '<strong>③ 해당 eSIM 회선이 \'켬\'</strong> 상태인지 확인하세요',
+        '<strong>④ 비행기 모드를 5초 켰다 끄기</strong> — 현지 망을 다시 잡아요 (2~3번 반복)',
+        '<strong>⑤ 네트워크 선택을 \'자동\'</strong>으로 두세요 (설정 → 셀룰러 → 네트워크 선택)',
+        '<strong>⑥ 재부팅</strong> — 개통희망일을 지정한 상품이라면 그 날짜부터 열리는 것도 확인하세요'
+      ]},
+      'install-fail': { icon: '📲', title: '설치(QR 스캔)가 안 돼요', steps: [
+        'QR을 스캔하려면 <strong>다른 화면에 QR을 띄우고</strong> 폰 카메라로 찍어야 해요 — 폰 한 대뿐이면 QR 아래의 <strong>수동 입력 코드</strong>로 설치하세요 (설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력)',
+        '설치에는 <strong>Wi-Fi 등 인터넷 연결</strong>이 필요해요',
+        '키패드에 <strong>*#06#</strong>을 눌러 <strong>EID</strong>가 보이는지 확인하세요 — 안 보이면 eSIM 미지원 기종이에요',
+        '중국·홍콩·마카오 내수용 아이폰은 eSIM 기능 자체가 막혀 있어요 (컨트리락)',
+        '⚠️ 한 번 설치했다 <strong>삭제한 QR은 재설치가 안 돼요</strong> — 삭제하셨다면 바로 상담 주세요'
+      ]},
+      'no-qr': { icon: '📮', title: 'QR코드가 안 왔어요', steps: [
+        '결제 후 발급까지 <strong>평균 5~15분</strong> 걸려요 — 조금만 기다려 주세요',
+        '문자함과 <strong>카카오톡 차단 메시지함</strong>, 이메일 <strong>스팸함</strong>을 확인해 주세요',
+        '<a href="mobile.html#orders" style="color:#F2751F;font-weight:800;">주문 조회 페이지</a>에서 이름·연락처로 검색하면 발급 정보를 볼 수 있어요',
+        '주문이 조회되는데 QR만 안 왔다면 발송 오류일 수 있어요 — 바로 상담으로 도와드릴게요'
+      ]},
+      'slow': { icon: '🐢', title: '인터넷이 느리거나 자주 끊겨요', steps: [
+        '일일 고속 용량을 다 쓰면 <strong>저속 모드</strong>로 전환되는 상품이 있어요 — 매일 자정(현지 기준) 고속 용량이 다시 채워져요',
+        '설정에서 <strong>5G ↔ LTE를 전환</strong>해 보세요 — 지역에 따라 LTE가 더 안정적이에요',
+        '베트남 등 일부 국가는 <strong>네트워크 수동 선택</strong>으로 주력망(예: Viettel)을 고정하면 빨라져요',
+        '관광지 밀집 지역·지하는 순간 혼잡일 수 있어요 — 자리를 옮겨 재시도해 보세요'
+      ]},
+      'am-i-ok': { icon: '🤔', title: '제대로 쓰고 있는 건지 모르겠어요', steps: [
+        '화면 <strong>상단 통신사 이름</strong>이 현지 통신사(또는 로밍 파트너)로 떠 있으면 정상 연결이에요',
+        '설정 → 셀룰러에서 여행 eSIM 회선이 <strong>\'켬\' + 셀룰러 데이터로 선택</strong>되어 있으면 OK',
+        '한국 번호로 전화·문자를 받아야 하면 한국 유심 회선은 켜두되 <strong>셀룰러 데이터만 여행 eSIM</strong>으로 두세요 (한국 회선 데이터 로밍은 꺼두기 — 요금 폭탄 방지)',
+        '위의 <strong>🔎 스마트 연결 점검</strong>을 누르면 지금 어느 망으로 접속 중인지 바로 판정해 드려요'
+      ]}
+    };
+
+    (function () {
+      var home = document.getElementById('gDocHome');
+      var panel = document.getElementById('gDocPanel');
+      if (!home || !panel) return;
+
+      Object.keys(G_DOCTOR).forEach(function (key) {
+        var t = G_DOCTOR[key];
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'g-doc-chip';
+        btn.innerHTML = t.icon + ' ' + t.title + '<span class="arr">→</span>';
+        btn.addEventListener('click', function () { showSteps(key); });
+        home.appendChild(btn);
+      });
+
+      function showSteps(key) {
+        var t = G_DOCTOR[key];
+        panel.innerHTML =
+          '<button type="button" class="g-doc-back" id="gDocBack">← 다른 증상 보기</button>' +
+          '<div class="g-doc-title">🩺 ' + t.title + '</div>' +
+          t.steps.map(function (s, i) {
+            return '<div class="g-doc-step"><span class="n">' + (i + 1) + '</span><span>' + s + '</span></div>';
+          }).join('') +
+          '<div class="g-doc-actions">' +
+          '<button type="button" class="g-doc-ok" id="gDocOk">해결됐어요 🎉</button>' +
+          '<button type="button" class="g-doc-esc" id="gDocEsc">여전히 안 돼요 → 상담</button>' +
+          '</div>' +
+          '<div class="g-doc-note">⚠️ 어떤 경우에도 <strong>eSIM 프로필은 삭제하지 마세요</strong> — 삭제하면 재발급이 필요해요. 저희가 해결 못 한 문제는 100% 환불해 드립니다.</div>';
+        home.style.display = 'none';
+        panel.style.display = 'block';
+        document.getElementById('gDocBack').addEventListener('click', backHome);
+        document.getElementById('gDocOk').addEventListener('click', function () {
+          panel.innerHTML = '<div class="g-doc-title">🦊 해결 완료!</div>' +
+            '<div style="font-size:0.9rem;color:#334155;line-height:1.7;">다행이에요! 로미가 보장하는 순조로운 여행 되세요 🧡<br>여행 중 또 막히면 언제든 이 페이지로 돌아오세요.</div>' +
+            '<div class="g-doc-actions"><button type="button" class="g-doc-ok" id="gDocAgain">← 진단 처음으로</button></div>';
+          document.getElementById('gDocAgain').addEventListener('click', backHome);
+        });
+        document.getElementById('gDocEsc').addEventListener('click', function () { escalate(key); });
+        document.getElementById('doctorCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function backHome() {
+        panel.style.display = 'none';
+        panel.innerHTML = '';
+        home.style.display = 'grid';
+      }
+
+      function escalate(key) {
+        var t = G_DOCTOR[key];
+        var device = /iPhone|iPad|iPod/.test(navigator.userAgent) ? '아이폰' : (/Android/.test(navigator.userAgent) ? '안드로이드' : '기타');
+        var summary = '[로미 닥터 진단 요약]\n증상: ' + t.title + '\n케어센터의 안내 단계를 모두 시도했지만 해결되지 않았습니다.\n기종: ' + device + '\n주문번호: (여기에 입력해 주세요)';
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(summary);
+        } catch (e) {}
+        panel.querySelector('.g-doc-note').innerHTML = '📋 <strong>진단 요약이 복사됐어요</strong> — 열리는 카톡 채팅창에 붙여넣기만 하면 상담팀이 바로 이어받아요. (24시간 접수)';
+        window.open('https://pf.kakao.com/_GSixcn/chat', '_blank');
+      }
+    })();
+
+    // 🔎 스마트 연결 점검: IP 기반 접속 국가·통신망 자동 판정
+    var G_CC_KO = { KR: '한국', JP: '일본', VN: '베트남', TH: '태국', TW: '대만', PH: '필리핀', SG: '싱가포르', MY: '말레이시아', ID: '인도네시아', US: '미국', GU: '괌', MP: '사이판', CN: '중국', HK: '홍콩', MO: '마카오', AU: '호주', NZ: '뉴질랜드', TR: '튀르키예', CA: '캐나다', FR: '프랑스', ES: '스페인', GB: '영국', MN: '몽골', IN: '인도', MV: '몰디브' };
+
+    function gSmartCheck() {
+      var box = document.getElementById('gSmartResult');
+      if (!box) return;
+      box.style.display = 'block';
+      box.innerHTML = '<div class="box kr">⏳ 접속 망을 판정하는 중... <span>(정확한 판정을 위해 와이파이는 끄고 점검하세요)</span></div>';
+      var timeout = new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 6000); });
+      Promise.race([
+        fetch('https://ipwho.is/').then(function (r) { return r.json(); }).then(function (d) {
+          if (!d || d.success === false) throw new Error('fail');
+          return { cc: d.country_code, isp: (d.connection && (d.connection.isp || d.connection.org)) || '' };
+        }),
+        timeout
+      ]).catch(function () {
+        return fetch('https://ipapi.co/json/').then(function (r) { return r.json(); }).then(function (d) { return { cc: d.country_code, isp: d.org || '' }; });
+      }).then(function (res) {
+        var nation = G_CC_KO[res.cc] || res.cc || '알 수 없는 지역';
+        var isp = res.isp ? ' · <strong>' + res.isp + '</strong>' : '';
+        if (res.cc === 'KR') {
+          box.innerHTML = '<div class="box kr">📍 지금 <strong>한국</strong> 망으로 접속 중이에요' + isp + '<br>' +
+            '<span>· 아직 출국 전이라면 정상이에요! eSIM은 현지에서 켜져요<br>' +
+            '· <strong>⚠️ 해외에 계신데</strong> 한국으로 뜬다면: 데이터가 <strong>한국 유심 회선</strong>으로 나가는 중일 수 있어요 — 로밍 요금 폭탄 주의! 설정 → 셀룰러 → <strong>셀룰러 데이터를 여행 eSIM으로</strong> 바꾸고 한국 회선 데이터 로밍은 꺼주세요</span></div>' +
+            '<button type="button" class="more" onclick="document.querySelectorAll(\'.g-doc-chip\')[0].click()">신호가 안 잡힐 때 해결법 보기 →</button>';
+        } else if (res.cc === 'HK' || res.cc === 'CN' || res.cc === 'SG') {
+          box.innerHTML = '<div class="box ok">✅ <strong>인터넷이 정상 작동 중이에요!</strong><br>' +
+            '<span>접속 경로가 <strong>' + nation + '</strong>으로 표시되는데, 로밍형 eSIM은 통신사의 국제 관문을 거쳐 나가서 이렇게 보이는 거예요 — 고장이 아니라 <strong>정상 동작</strong>입니다. (' + nation + ' 여행 중이시라면 현지망 정상 연결!) 와이파이를 끄고도 이 화면이 뜨면 완벽 🎉</span></div>';
+        } else {
+          box.innerHTML = '<div class="box ok">✅ <strong>인터넷이 정상 작동 중이에요!</strong> — 현재 <strong>' + nation + '</strong> 망 연결' + isp + '<br>' +
+            '<span>이 판정이 보인다는 것 자체가 데이터가 작동 중이라는 뜻이에요. 와이파이를 끄고도 이 화면이 뜨면 eSIM 완벽 작동! 🎉</span></div>';
+        }
+      }).catch(function () {
+        box.innerHTML = '<div class="box bad">⚠️ 판정 서버에 연결하지 못했어요 — 인터넷 자체가 안 되는 상태일 수 있어요<br><span>아래 첫 번째 증상(데이터가 안 터져요)을 눌러 순서대로 확인해 보세요 ↓</span></div>';
+      });
+    }
   </script>
 </body>
 </html>
