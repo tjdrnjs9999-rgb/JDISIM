@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script>try{document.documentElement.style.fontSize=({"0":"18px","1":"20px","2":"22px"})[localStorage.getItem("jd_fz")||"0"]||"18px"}catch(e){}</script>
+  <script>try{document.documentElement.style.fontSize=({"0":"16px","1":"18px","2":"20px"})[localStorage.getItem("jd_fz")||"0"]||"16px"}catch(e){}</script>
   <script>
     window.onerror = function(msg, url, lineNo, columnNo, error) {
       // 운영 모드: 방문자 화면에 에러를 띄우지 않고 콘솔에만 기록
@@ -798,7 +798,7 @@
 
     /* 히어로 중앙 하단 스크롤 유도선(세로선) 제거 */
     /* ===== 가독성 리뉴얼: 루트 글자 크기 상향 (rem 기반 전체에 적용) ===== */
-    html { font-size: 18px; }
+    html { font-size: 16px; } /* 2026-07-15 로케비 실측 기준: 본문 0.9rem=14.4px (구 18px 기준은 과대) */
     body { -webkit-text-size-adjust: 100%; }
     /* ===== 전역: 스크롤바 전면 숨김 (모든 스크롤 영역) ===== */
     * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
@@ -1774,7 +1774,7 @@
     .m-hero-content *, .bottom-sheet *, #view-store * { min-width: 0; }
     /* nowrap 알약 줄(신뢰 스트립 등): 좁은 화면에선 줄바꿈 허용 */
     /* 초협소·글꼴확대 기기: 기본 배율 한 단계 다운 → 히어로 스탯 한 줄 유지 */
-    @media (max-width: 379px) { html { font-size: 16.5px; } }
+    @media (max-width: 379px) { html { font-size: 15px; } }
     /* 안드로이드 시스템 글꼴 확대가 레이아웃을 깨지 않게 텍스트 자동확대 고정 */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   </style>
@@ -1805,8 +1805,9 @@
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
 <style id="jd-readability">
-  /* ===== 📖 가독성 플로어 (2026-07-14) — "본문 최소 16px" 정책 =====
-     base 18px 기준 환산: 0.9rem=16.2px(본문 하한) / 0.8rem=14.4px(보조 하한) / 0.72rem=13px(마이크로 하한)
+  /* ===== 📖 가독성 플로어 (2026-07-15 개정) — 로케비 실측 기준 타입 스케일 =====
+     정본: 본문 최소 14px / 보조 최소 12px / 각주 최소 11px (로케비 10px는 접근성 미달로 미채택) / 입력요소 16px 고정
+     base 16px 기준 환산: 0.9rem=14.4px(본문 하한) / 0.8rem=12.8px(보조 하한) / 0.72rem=11.5px(마이크로 하한)
      ⚠️ 반드시 마지막 스타일 블록 유지 — 동순위 !important는 소스 뒤쪽이 이김 */
   /* 스토어 카드 */
   .store-card-title { font-size: 0.92rem !important; min-height: calc(0.92rem * 1.35 * 2) !important; }
