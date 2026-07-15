@@ -52,6 +52,20 @@ details.team .tb{padding:0 18px 14px}
 #lockOverlay{position:fixed;inset:0;background:rgba(255,253,251,.97);backdrop-filter:blur(6px);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;font-weight:800}
 .empty{text-align:center;color:var(--sub);font-weight:700;padding:32px 0;font-size:.86rem}
 @media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
+
+/* ═══ ROMI OPS 스킨 (2026-07-15 울트라) — 고객 페이지와 같은 시그니처, 콘솔 다크 유지 ═══ */
+body{background:radial-gradient(120% 90% at 50% -10%,#141B30 0%,#0D1220 45%,#0A0E19 100%);}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px);background-size:24px 24px;}
+body::after{content:'';position:fixed;top:0;left:0;right:0;height:5px;z-index:50;background:linear-gradient(90deg,#F97316,#F59E0B 40%,#2BB3A3 70%,#F97316);background-size:200% 100%;animation:opsEdge 8s linear infinite;}
+@keyframes opsEdge{to{background-position:200% 0}}
+::selection{background:rgba(249,115,22,.3)}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid rgba(249,115,22,.6);outline-offset:2px}
+.sec,.st,.tool,.card,.kpi{transition:border-color .2s,box-shadow .2s,transform .2s}
+.sec:hover,.card:hover{border-color:rgba(249,115,22,.28);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.st:hover,.kpi:hover{border-color:rgba(249,115,22,.35);transform:translateY(-2px)}
+.st .v,.kpi b{letter-spacing:-0.02em}
+h1,h2,.st .v,.kpi b{text-wrap:balance}
+@media(prefers-reduced-motion:reduce){body::after{animation:none}.sec,.st,.tool,.card,.kpi{transition:none}}
 </style>
 </head>
 <body>
@@ -71,7 +85,7 @@ details.team .tb{padding:0 18px 14px}
 
   <!-- 대시보드 -->
   <div id="dash" style="display:none">
-    <h1>매출 현황 <span style="font-size:.7rem;color:var(--sub);font-weight:800">(eSIM · 유심 제외)</span></h1>
+    <h1 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">매출 현황 <span style="font-size:.7rem;color:var(--sub);font-weight:800">(eSIM · 유심 제외)</span><a href="admin.html" style="margin-left:auto;font-size:.72rem;font-weight:800;color:#F59E0B;border:1px solid rgba(249,115,22,.4);background:rgba(249,115,22,.08);padding:7px 12px;border-radius:10px;text-decoration:none;">🖥️ 콘솔</a></h1>
     <div class="meta" id="syncAt">—</div>
 
     <div class="kpis">

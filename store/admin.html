@@ -58,6 +58,20 @@ th{text-align:left;color:#5B6B94;font-size:.62rem;font-weight:800;letter-spacing
 td{padding:10px 6px;border-bottom:1px solid #161D33;font-weight:600;font-variant-numeric:tabular-nums}
 td a{color:#F59E0B;font-weight:800;text-decoration:none}
 @media(max-width:640px){.tk{flex-wrap:wrap}.tk .acts{width:100%;justify-content:flex-end}}
+
+/* ═══ ROMI OPS 스킨 (2026-07-15 울트라) — 고객 페이지와 같은 시그니처, 콘솔 다크 유지 ═══ */
+body{background:radial-gradient(120% 90% at 50% -10%,#141B30 0%,#0D1220 45%,#0A0E19 100%);}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px);background-size:24px 24px;}
+body::after{content:'';position:fixed;top:0;left:0;right:0;height:5px;z-index:50;background:linear-gradient(90deg,#F97316,#F59E0B 40%,#2BB3A3 70%,#F97316);background-size:200% 100%;animation:opsEdge 8s linear infinite;}
+@keyframes opsEdge{to{background-position:200% 0}}
+::selection{background:rgba(249,115,22,.3)}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid rgba(249,115,22,.6);outline-offset:2px}
+.sec,.st,.tool,.card,.kpi{transition:border-color .2s,box-shadow .2s,transform .2s}
+.sec:hover,.card:hover{border-color:rgba(249,115,22,.28);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.st:hover,.kpi:hover{border-color:rgba(249,115,22,.35);transform:translateY(-2px)}
+.st .v,.kpi b{letter-spacing:-0.02em}
+h1,h2,.st .v,.kpi b{text-wrap:balance}
+@media(prefers-reduced-motion:reduce){body::after{animation:none}.sec,.st,.tool,.card,.kpi{transition:none}}
 </style>
 </head>
 <body>
