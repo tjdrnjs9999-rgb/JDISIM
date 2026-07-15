@@ -19,7 +19,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260715c';
+      sc.src = 'products.js?v=20260715d';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
@@ -2455,7 +2455,7 @@
   <script src="speed-truth.js?v=20260715a" defer></script>
   <script src="jd-precautions.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
-  <script src="products-lite.js?v=20260715c" defer></script>
+  <script src="products-lite.js?v=20260715d" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -3977,16 +3977,25 @@
       layer = document.createElement('div');
       layer.id = 'productDetailLayer';
       layer.className = 'pv-layer';
+      const typeBadge = selectedProductType === '무제한' ? '∞ 완전 무제한 · 속도제한 없음' : (selectedProductType === '데일리' ? '📅 데일리 · 매일 새로 충전' : '🎒 총용량 · 자유 분배');
+      const descLine = selectedProductType === '무제한'
+        ? '용량·속도 걱정 없이 마음껏 쓰고, 미개통 시 100% 환불로 보장해요.'
+        : (selectedProductType === '데일리' ? '오늘 다 써도 내일 다시 꽉 차요. 미개통 시 100% 환불 보장.' : '아껴 쓰는 날, 몰아 쓰는 날 자유롭게. 미개통 시 100% 환불 보장.');
+      const dualNet = activeCarrier.carrier.includes('+') ? ' <span style="font-size:0.66rem;font-weight:900;color:#1B8E82;background:rgba(43,179,163,0.1);border:1px solid rgba(43,179,163,0.3);padding:2px 7px;border-radius:999px;">듀얼망</span>' : '';
       layer.innerHTML = `
-        <div class="pv-sheet">
+        <div class="pv-sheet" style="padding-bottom:0;">
           <div class="pv-grab"></div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <img src="${countryImg(currentSelectedCountry)}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">
+          <div style="display:flex;align-items:flex-start;gap:10px;">
             <div style="min-width:0;flex:1;">
-              <div style="font-size:0.98rem;font-weight:800;color:#221510;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
-              <div style="font-size:0.74rem;font-weight:700;color:#94a3b8;">${capLbl} / ${selectedDays}일</div>
+              <span style="display:inline-block;font-size:0.68rem;font-weight:900;color:#F2751F;background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);padding:4px 10px;border-radius:999px;">${typeBadge}</span>
+              <div style="font-size:1.35rem;font-weight:900;color:#221510;letter-spacing:-0.02em;line-height:1.3;margin-top:9px;">${currentSelectedCountry} ${capLbl} ${selectedDays}일</div>
+              <div style="font-size:0.8rem;font-weight:600;color:#5D5049;margin-top:4px;line-height:1.55;">${descLine}</div>
             </div>
             <button type="button" onclick="document.getElementById('productDetailLayer').remove()" style="width:34px;height:34px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;flex-shrink:0;">✕</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #ece5dd;border-radius:14px;padding:12px 14px;margin-top:12px;">
+            <img src="${countryImg(currentSelectedCountry)}" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">
+            <div style="min-width:0;font-size:0.78rem;font-weight:700;color:#8a8378;line-height:1.6;">서비스 지역 <b style="color:#221510;">${currentSelectedCountry}</b><br>통신사 <b style="color:#221510;">${cleanCarrier(activeCarrier.carrier)}</b>${dualNet}</div>
           </div>
           <div style="display:flex;align-items:baseline;gap:8px;margin:12px 0 2px;">
             <b style="font-size:1.45rem;font-weight:900;color:#F2751F;">${p.final_price.toLocaleString()}원</b>
@@ -4011,7 +4020,9 @@
             ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
           </div>` : ''}
           <div style="font-size:0.72rem;font-weight:700;color:#8a7a6d;margin:10px 2px;line-height:1.6;">🛡️ 미개통 시 100% 환불 · 설치(다운로드) 전 100% 취소 가능 · 24시간 카톡 케어</div>
-          <button type="button" class="pv-cta" onclick="openQtySheet()">구매하기</button>
+          <div style="position:sticky;bottom:0;margin:12px -18px 0;padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(253,251,248,0),#FDFBF8 35%);">
+            <button type="button" class="pv-cta" onclick="openQtySheet()">구매하기 · ${p.final_price.toLocaleString()}원</button>
+          </div>
         </div>`;
       layer.onclick = e => { if (e.target === layer) layer.remove(); };
       document.body.appendChild(layer);
@@ -4327,10 +4338,14 @@
                 + '</div>';
             })()}
             ${krCallAddonOn ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:700;color:#0f172a;"><span>📞 ${KRCALL_ADDON.name} <span style="font-size:0.68rem;color:#94a3b8;font-weight:600;">카톡 1:1 · 완료 보장</span></span><span>+${KRCALL_ADDON.price.toLocaleString()}원</span></div>` : ''}
-            ${appDisc ? `<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span>-${appDisc.toLocaleString()}원</span></div>` : ''}
-            <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
-              <span style="font-size:0.85rem;">결제 금액</span><span id="mConfirmTotal" style="color:#F2751F;font-size:1.05rem;">${priceVal.toLocaleString()}원</span>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:700;color:#5D5049;">
+              <span>상품 금액</span><span>${baseVal.toLocaleString()}원</span>
             </div>
+            ${appDisc ? `<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.8rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span>-${appDisc.toLocaleString()}원</span></div>` : ''}
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
+              <span style="font-size:0.9rem;">최종 결제 금액</span><span id="mConfirmTotal" style="color:#F2751F;font-size:1.2rem;font-weight:900;">${priceVal.toLocaleString()}원</span>
+            </div>
+            ${!jdIsApp() ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px;"><span style="font-size:0.68rem;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.08);border-radius:8px;padding:4px 9px;">📱 앱 전용 5% 할인 혜택 금액</span><span style="font-size:0.86rem;font-weight:900;color:#7c3aed;">${(baseVal - Math.round(baseVal * 0.05)).toLocaleString()}원</span></div>` : ''}
             <div style="height:15px;margin-top:11px;border-radius:2px;opacity:0.8;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
           </div>
           <!-- ✉ 수령 정보 (퍼널 v2: 주문 팝업에서 입력) -->
@@ -4391,7 +4406,12 @@
             <button id="mobileConfirmPayBtn" style="flex:1.6;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;opacity:0.5;" disabled>동의하고 결제하기</button>
           </div>
           <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:11px;font-size:0.8rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
-          ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;margin-top:12px;padding:15px 16px;border-radius:16px;background:linear-gradient(135deg,#221510,#46280f);color:#fff;text-decoration:none;box-shadow:0 8px 20px rgba(34,21,16,0.25);"><span style="font-size:1.5rem;">🎁</span><span style="font-size:0.84rem;font-weight:800;line-height:1.5;min-width:0;">1분 가입하면 <b style="color:#FFB56B;">2,000원 쿠폰</b> 즉시 지급<br><span style="font-size:0.7rem;font-weight:600;opacity:0.8;">여행 끝나고 돌아오면 웰컴백 쿠폰까지 — 전화번호만 있으면 끝</span></span><span style="margin-left:auto;color:#FFB56B;font-weight:900;flex-shrink:0;">→</span></a>'; } catch(e){ return ''; } })()}
+          ${(function(){ try { if (localStorage.getItem('jd_member_token')) return '';
+            var appPrice = (baseVal - Math.round(baseVal * 0.05)).toLocaleString();
+            return '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;margin-top:12px;padding:19px 18px;border-radius:18px;background:linear-gradient(150deg,#221510,#46280f);color:#fff;text-decoration:none;text-align:center;box-shadow:0 10px 24px rgba(34,21,16,0.3);">'
+              + '<span style="display:block;font-size:0.98rem;font-weight:900;line-height:1.5;"><b style="color:#FFB56B;">앱에서 가입</b>하면<br>지금 이 상품을 <b style="color:#FFB56B;">' + appPrice + '원</b>에!</span>'
+              + '<span style="display:inline-flex;align-items:center;gap:7px;margin-top:11px;padding:11px 20px;border-radius:999px;background:linear-gradient(135deg,#F97316,#F59E0B);font-size:0.84rem;font-weight:800;box-shadow:0 6px 16px rgba(249,115,22,0.4);">🦊 1분 가입 + 2,000원 쿠폰 받기 →</span>'
+              + '<span style="display:block;margin-top:9px;font-size:0.68rem;font-weight:600;opacity:0.75;">홈 화면에 추가하면 전 상품 5% 상시 할인 · 여행 후 웰컴백 쿠폰까지</span></a>'; } catch(e){ return ''; } })()}
         </div>`;
       document.body.appendChild(layer);
       const check = layer.querySelector('#mobileAgreeCheck');

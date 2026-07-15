@@ -20422,8 +20422,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03174"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 1,
         "final_price": 4800,
         "original_price": 14.95,
@@ -20431,8 +20431,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 2,
         "final_price": 12500,
         "original_price": 39.099999999999994,
@@ -20440,8 +20440,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 3,
         "final_price": 14300,
         "original_price": 44.85,
@@ -20449,8 +20449,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 4,
         "final_price": 16500,
         "original_price": 51.74999999999999,
@@ -20458,8 +20458,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 5,
         "final_price": 20200,
         "original_price": 63.24999999999999,
@@ -20467,8 +20467,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 6,
         "final_price": 24300,
         "original_price": 75.89999999999999,
@@ -20476,8 +20476,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 7,
         "final_price": 27900,
         "original_price": 87.39999999999999,
@@ -20485,8 +20485,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 8,
         "final_price": 39300,
         "original_price": 123.05,
@@ -20494,8 +20494,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 9,
         "final_price": 46700,
         "original_price": 146.04999999999998,
@@ -20503,8 +20503,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 10,
         "final_price": 54000,
         "original_price": 169.04999999999998,
@@ -20512,8 +20512,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 15,
         "final_price": 58500,
         "original_price": 182.85,
@@ -20521,8 +20521,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 20,
         "final_price": 77600,
         "original_price": 242.64999999999998,
@@ -20530,8 +20530,8 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00307"
       },
       {
-        "service_type": "데일리",
-        "data_limit": "매일 10GB",
+        "service_type": "무제한",
+        "data_limit": "무제한",
         "duration": 30,
         "final_price": 115800,
         "original_price": 362.25,
@@ -22082,7 +22082,7 @@ window.PRODUCTS_DATA = [
   {
     "category": "아시아",
     "country": "일본",
-    "carrier": "소뱅+KDDI",
+    "carrier": "소프트뱅크+KDDI",
     "network_type": "로밍망",
     "network_speed": "5G/LTE",
     "calls": "불가능",
@@ -140654,7 +140654,7 @@ window.FULL_CARRIER_MAP = {
   "LS2026-eSIM-03229": "트리플망",
   "LS2026-eSIM-03230": "트리플망",
   "LS2023-eSIM-10003": "KDDI (로밍망)",
-  "LS2023-eSIM-10004": "소뱅+KDDI(로밍망)",
+  "LS2023-eSIM-10004": "소프트뱅크+KDDI(로밍망)",
   "LS2023-eSIM-00862": "중국",
   "LS2023-eSIM-00864": "중국",
   "LS2023-eSIM-00866": "중국",
