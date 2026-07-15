@@ -1481,7 +1481,7 @@
   <script src="https://cdn.portone.io/v2/payment.js"></script>
   <script src="speed-truth.js?v=20260715b"></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
-  <script src="products-lite.js?v=20260715d"></script>
+  <script src="products-lite.js?v=20260715e"></script>
   <script>
     // ===== 요금제 데이터 2단 로딩: 요약(64KB) 즉시 → 전체(2.4MB) 백그라운드 =====
     window.__fullReady = false;
@@ -1493,7 +1493,7 @@
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20260715d';
+      sc.src = 'products.js?v=20260715e';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
