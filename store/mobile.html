@@ -3272,8 +3272,16 @@
       var totalUsed = 0; L.forEach(function(x){ totalUsed += rowMb(x); });
       var gb = function(v){ return (Math.round(v/1024*10)/10) + 'GB'; };
       var rows = L.slice(0,3).map(function(x){
-        return '<div style="display:flex;justify-content:space-between;font-size:0.72rem;font-weight:700;color:#475569;padding:4px 0;"><span>' + rowDate(x) + '</span><span>' + gb(rowMb(x)) + '</span></div>';
+        var c = x.country ? ' · <span style="color:#1B8E82;font-weight:800;">' + x.country + '</span>' : '';
+        return '<div style="display:flex;justify-content:space-between;font-size:0.72rem;font-weight:700;color:#475569;padding:4px 0;"><span>' + rowDate(x) + c + '</span><span>' + gb(rowMb(x)) + '</span></div>';
       }).join('');
+      // 여행 인텔리전스 (P4 mcc): 최근 접속 국가 배지 + 만료 상태
+      var lastCountry = (L[0] && L[0].country) || '';
+      var expired = (u && String(u.status) === '2');
+      var statusBadge = expired
+        ? '<span style="font-size:0.74rem;color:#b91c1c;background:rgba(239,68,68,0.1);padding:2px 7px;border-radius:8px;">만료됨</span>'
+        : '<span style="font-size:0.74rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span>';
+      var localBadge = (lastCountry && !expired) ? '<span style="font-size:0.7rem;color:#1B8E82;background:rgba(43,179,163,0.1);padding:2px 7px;border-radius:8px;margin-left:4px;">📍 ' + lastCountry + ' 현지망 ✓</span>' : '';
       var prod = (meta && (meta.prodName || meta.ProdName || meta.Option || meta.option)) || (u && u.planOption) || '';
       // 🍩 도넛 그래프 (2026-07-15): 매일형은 '오늘 사용 vs 일일 용량', 무제한·미상은 누적 링
       var capM = String(prod).match(/매일\s*([\d.]+)\s*(GB|MB)/i);
@@ -3309,7 +3317,7 @@
       box.style.display='block';
       box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">' +
         '<div style="display:flex;align-items:center;gap:8px;"><img src="images/fox-thumbsup.png" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
-        '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' <span style="font-size:0.74rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span></div>' +
+        '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' ' + statusBadge + localBadge + '</div>' +
         (prod ? '<div style="font-size:0.74rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
         donut +
         '<div style="margin-top:8px;font-size:0.74rem;color:#94a3b8;font-weight:600;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요 ↻</div></div>';

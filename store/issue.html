@@ -1646,6 +1646,7 @@ function loadUsage(){
         return;
       }
       // usageList 표준 변환 — 실측 필드 (2026-07-15 확정): usedDate "20260710" / usedAmount KB 단위
+      //   + P4 mcc→country(현지망 인텔리전스), status('2'=만료), listHistory(P3c 로미 닥터 판독)
       var used=0,total=0,daily=[];
       lst.forEach(function(r){
         var raw=Number(r.usedAmount!=null?r.usedAmount:(r.used||r.usedMb||r.dataUsed||0));
@@ -1653,10 +1654,12 @@ function loadUsage(){
         used+=mb;
         var d8=String(r.usedDate||r.date||r.useDate||'');
         var dt=/^\d{8}$/.test(d8)?d8.slice(0,4)+'-'+d8.slice(4,6)+'-'+d8.slice(6,8):d8;
-        if(dt)daily.push({date:dt,mb:mb});
+        if(dt)daily.push({date:dt,mb:mb,country:r.country||''});
         if(r.total||r.totalMb)total=Number(r.total||r.totalMb);
       });
-      renderUsage({used_mb:used,total_mb:total,status:'active',daily:daily});
+      var expired = String(d.status||'')==='2';
+      var lastCountry = (daily.length && daily[daily.length-1].country) || (lst[0]&&lst[0].country) || '';
+      renderUsage({used_mb:used,total_mb:total,status:expired?'expired':'active',daily:daily,country:lastCountry,listHistory:d.listHistory||[]});
     }).catch(function(){ box.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;text-align:left;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
     return;
   }
@@ -1686,6 +1689,23 @@ function maybeAutoActivate(d){
     toast('현지 개통이 감지됐어요 — 남은 일수를 세어드릴게요 🛬');
   } catch(e){}
 }
+// P3c 로미 닥터 — Joytel 설치 이력(listHistory) 평문 판독. 가장 최근·심각 이벤트 1건을 골라 진단.
+//   notification_Point_ID: 3 다운로드 / 4 설치 / 5 삭제 / 6 켜짐 / 7 꺼짐 / 101 EID차단 / 102 단말차단
+function diagHistory(hist){
+  if(!hist||!hist.length) return null;
+  var last = hist[hist.length-1];
+  var id = String(last.notification_Point_ID||last.notificationPointID||'');
+  var M = {
+    '101': {t:'bad', title:'단말(EID) 차단 상태', msg:'이 기기 자체가 통신사에서 막혀 있어요. 다른 기기에 설치하거나 고객센터로 문의해 주세요.'},
+    '102': {t:'bad', title:'미지원 단말', msg:'이 기기 모델은 해당 eSIM을 지원하지 않아요. 지원 기종에서 다시 설치해 주세요.'},
+    '5':   {t:'bad', title:'eSIM 프로필이 삭제됨', msg:'설치했던 eSIM이 기기에서 지워졌어요. 재발급이 필요하니 상담을 눌러 주세요.'},
+    '7':   {t:'warn', title:'회선이 꺼져 있어요', msg:'설정 → 셀룰러에서 이 eSIM 회선을 켜고 데이터 로밍을 켜 주세요.'},
+    '3':   {t:'warn', title:'QR만 받고 설치 전', msg:'아직 기기에 설치가 안 됐어요. 발급 화면의 QR로 eSIM을 추가해 주세요.'},
+    '4':   {t:'ok', title:'설치 완료됨', msg:'eSIM이 정상 설치됐어요. 현지 도착 후 데이터 로밍만 켜면 바로 연결돼요.'},
+    '6':   {t:'ok', title:'회선 켜짐 · 정상', msg:'회선이 켜져 있어요. 신호가 약하면 시그널 리셋을 해 보세요.'}
+  };
+  return M[id] || null;
+}
 function renderUsage(d){
   maybeAutoActivate(d);
   try { var L0 = d && (d.usageList || d.daily) || []; var t0 = 0; L0.forEach(function(x){ t0 += Number(x.used || x.used_mb || 0); }); if (t0) window._lastUsedGB = (Math.round(t0 / 1024 * 10) / 10) + 'GB'; } catch(e){}
@@ -1703,9 +1723,11 @@ function renderUsage(d){
     '<circle class="donut-fg" id="dfg" cx="86" cy="86" r="72" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
     '<div class="donut-center"><span class="muted">'+(total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(total? gb(remain)+' GB' : (used? gb(used)+' GB' : '0 GB'))+'</span>' +
     '<span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span></div></div>' +
+    ((d.country && d.status!=='expired')? '<div style="text-align:center;margin-top:8px;"><span style="display:inline-block;font-size:0.78rem;font-weight:800;color:#1B8E82;background:rgba(43,179,163,0.1);padding:5px 12px;border-radius:999px;">📍 '+esc(d.country)+' 현지망 접속 확인 ✓</span></div>' : '') +
+    (function(){ var dg=diagHistory(d.listHistory); if(!dg) return ''; var col=dg.t==='bad'?['#b91c1c','rgba(239,68,68,0.08)','#fecaca']:dg.t==='warn'?['#9a5b16','rgba(249,115,22,0.08)','#fed7aa']:['#15803d','rgba(34,197,94,0.08)','#bbf7d0']; var ic=dg.t==='bad'?'⚠️':dg.t==='warn'?'🔧':'✅'; return '<div style="margin-top:10px;background:'+col[1]+';border:1px solid '+col[2]+';border-radius:12px;padding:11px 13px;text-align:left;"><div style="font-weight:900;font-size:0.82rem;color:'+col[0]+';">'+ic+' '+esc(dg.title)+'</div><div style="font-size:0.76rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">'+esc(dg.msg)+'</div></div>'; })() +
     (total? '<div class="pillstat"><div><div class="l">사용한 데이터</div><div class="v">'+gb(used)+' GB</div></div><div><div class="l">남은 데이터</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div></div>' : '') +
     ((d.daily&&d.daily.length)? '<div style="font-weight:800;font-size:0.8rem;margin:14px 0 4px;">일별 사용 내역 <span class="muted">총 '+d.daily.length+'일</span></div>' +
-      d.daily.map(function(x){ return '<div class="daybar"><span class="d">'+esc(x.date)+'</span><span class="bar"><i style="width:'+Math.max(4,Math.round((x.mb||0)/maxDay*100))+'%"></i></span><span class="mb">'+(x.mb>=1024? gb(x.mb)+'GB' : Math.round(x.mb)+'MB')+'</span></div>'; }).join('') : '') +
+      d.daily.map(function(x){ return '<div class="daybar"><span class="d">'+esc(x.date)+(x.country?' <span style="color:#1B8E82;font-weight:800;">'+esc(x.country)+'</span>':'')+'</span><span class="bar"><i style="width:'+Math.max(4,Math.round((x.mb||0)/maxDay*100))+'%"></i></span><span class="mb">'+(x.mb>=1024? gb(x.mb)+'GB' : Math.round(x.mb)+'MB')+'</span></div>'; }).join('') : '') +
     '<button class="btn btn-ghost" style="margin-top:12px;" onclick="loadUsage()">새로고침</button>';
   requestAnimationFrame(function(){ requestAnimationFrame(function(){ var el=$('dfg'); if(el) el.style.strokeDashoffset = String(C*(1-pct/100)); }); });
 }
