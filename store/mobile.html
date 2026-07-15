@@ -1830,7 +1830,19 @@
   #view-detail { padding-bottom: 0 !important; }
   #view-detail .pp-body { padding-bottom: 20px; }
   .pp-buybar { position: sticky; bottom: 0; left: 0; right: 0; padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(180deg, rgba(251,248,244,0), #FBF8F4 32%); max-width: 640px; margin: 0 auto; z-index: 30; }
-  body:has(#view-detail.active) .bottom-nav { display: none; }
+  .pp-cartbtn { flex-shrink: 0; width: 54px; border: 1.5px solid #e5ddd2; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #221510; }
+  .pp-cartbtn svg { width: 22px; height: 22px; }
+  body:has(#view-detail.active) .bottom-nav, body:has(#view-checkout.active) .bottom-nav { display: none; }
+  /* 구매 페이지 컴팩트 요소 */
+  .ck-card { background: #fff; border: 1px solid #ece5dd; border-radius: 10px; padding: 14px 15px; margin-bottom: 12px; }
+  .ck-label { font-size: 14px; font-weight: 800; color: #221510; margin-bottom: 10px; }
+  .ck-input { width: 100%; padding: 13px 14px; border: 1.5px solid #e5ddd2; border-radius: 8px; font-family: inherit; font-size: 16px; font-weight: 700; color: #221510; margin-bottom: 8px; }
+  .ck-input:focus { outline: none; border-color: #F2751F; }
+  .ck-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; margin-top: 8px; }
+  .ck-fold summary { cursor: pointer; font-size: 13px; font-weight: 700; color: #64748b; list-style: none; padding: 4px 0; }
+  .ck-fold summary::-webkit-details-marker { display: none; }
+  .ck-fold summary::after { content: ' ▾'; color: #94a3b8; }
+  .ck-fold[open] summary::after { content: ' ▴'; }
 
   /* 유형 탭 (무제한/데일리/총용량) — 로케비식 하단 밑줄, 큰 글자, 각진 */
   .pw-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 2px solid #ece5dd; margin: 0 0 18px; }
@@ -2392,7 +2404,22 @@
       <button class="pp-cart" onclick="openCartSheet()" aria-label="장바구니"><i data-lucide="shopping-bag"></i></button>
     </div>
     <div class="pp-body" id="detailBody"></div>
-    <div class="pp-buybar"><button type="button" class="pv-cta" id="detailBuyBtn" onclick="openQtySheet()">구매하기</button></div>
+    <div class="pp-buybar" style="display:flex;gap:9px;">
+      <button type="button" class="pp-cartbtn" onclick="addToCart()" aria-label="장바구니 담기"><i data-lucide="shopping-bag"></i></button>
+      <button type="button" class="pv-cta" id="detailBuyBtn" onclick="openCheckoutView()" style="flex:1;">구매하기</button>
+    </div>
+  </main>
+
+  <!-- 구매/결제 페이지 (2026-07-16: 수량+수령정보+쿠폰+동의+결제 통합 컴팩트 페이지) -->
+  <main id="view-checkout" class="mobile-view" style="display:none;">
+    <div class="pp-appbar">
+      <button class="pp-back" onclick="closeCheckoutView()" aria-label="뒤로"><i data-lucide="chevron-left"></i></button>
+      <div style="min-width:0;flex:1;"><h3 class="pp-title">주문 · 결제</h3></div>
+    </div>
+    <div class="pp-body" id="checkoutBody"></div>
+    <div class="pp-buybar" id="checkoutBuybar" style="display:none;">
+      <button type="button" class="pv-cta" id="checkoutPayBtn" style="opacity:0.5;" disabled>동의하고 결제하기</button>
+    </div>
   </main>
 
   <!-- Device compatibility check modal -->
@@ -4131,7 +4158,9 @@
 
     function changeQty(amt) {
       purchaseQty = Math.max(1, purchaseQty + amt);
-      renderQtyTotals();
+      const cv = document.getElementById('view-checkout');
+      if (cv && cv.classList.contains('active')) renderCheckoutTotals();
+      else renderQtyTotals();
     }
 
     // 기종 진단 — 결제 팝업(z 99999) 위에서도 보이도록 z-index 승격 후 오픈
@@ -4185,197 +4214,187 @@
       showMobileConfirmLayer();
     }
 
-    function showMobileConfirmLayer() {
+    // 호환 별칭 — 기존 호출부(processMockCheckout/jdCartOrder)는 구매 페이지로 진입
+    function showMobileConfirmLayer() { openCheckoutView(); }
+
+    // 컴팩트 구매/결제 페이지 (2026-07-16: 수량+수령정보+쿠폰+동의+결제 통합)
+    function openCheckoutView() {
       if (!activePlan || !activeCarrier) { alert("상품 옵션을 다시 선택해 주세요."); return; }
       jdTrack('checkout_click', {
-        country: currentSelectedCountry || '',
-        carrier: (activeCarrier && activeCarrier.carrier) || '',
-        addon_krcall: krCallAddonOn,
-        value: (activePlan ? activePlan.final_price * purchaseQty : 0) + (krCallAddonOn ? KRCALL_ADDON.price : 0), currency: 'KRW'
+        country: currentSelectedCountry || '', carrier: (activeCarrier && activeCarrier.carrier) || '',
+        addon_krcall: krCallAddonOn, value: activePlan.final_price * purchaseQty, currency: 'KRW'
       });
-      const baseVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
-      const appDisc = jdAppDiscount(baseVal);
-      const priceVal = baseVal - appDisc;
+      window._appliedCoupon = null;
       let savedBuyer = {};
       try { savedBuyer = JSON.parse(localStorage.getItem('jd_buyer') || '{}'); } catch (e) {}
-      let layer = document.getElementById('mobileConfirmLayer');
-      if (layer) layer.remove();
-      layer = document.createElement('div');
-      layer.id = 'mobileConfirmLayer';
-      layer.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:99999;display:flex;align-items:flex-end;';
-      layer.innerHTML = `
-        <div style="background:#fff;width:100%;border-radius:24px 24px 0 0;padding:24px 20px 28px;max-height:82vh;overflow-y:auto;">
-          <h3 style="margin:0 0 14px;font-size:1.05rem;font-weight:800;">🎫 발권 전 최종 확인</h3>
-          <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.3);border-radius:16px;padding:14px 14px 12px;margin-bottom:14px;box-shadow:0 8px 24px rgba(242,117,31,0.1);position:relative;">
-            <div style="font-size:0.78rem;font-weight:800;color:#F2751F;margin-bottom:6px;">여행 티켓 · 선택하신 상품</div>
-            <div style="font-size:0.9rem;font-weight:700;color:#0f172a;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
-            <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${(activePlan.data_limit === '무제한' && window.JD_UNL) ? window.JD_UNL.label(activePlan.product_code) : activePlan.data_limit} / ${activePlan.duration || selectedDays}일 × ${purchaseQty}개</div>
-            ${(() => {
-              const row = (icon, label, value) => `<div style="display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid rgba(15,23,42,0.05);font-size:0.78rem;"><span>${icon}</span><span style="color:#64748b;font-weight:600;flex-shrink:0;">${label}</span><strong style="margin-left:auto;text-align:right;color:#0f172a;">${value}</strong></div>`;
-              return '<div style="margin-top:10px;border-top:1px dashed rgba(242,117,31,0.3);padding-top:4px;">'
-                + row('📶', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)
-                + row('📞', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)
-                + row('📡', '핫스팟', activeCarrier.hotspot || '-')
-                + row('🔋', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)
-                + row('⏱️', '개통 방식', activeCarrier.activation || '-')
-                + row('📅', '유효기간', activeCarrier.validity || '-').replace('border-bottom:1px solid rgba(15,23,42,0.05);', '')
-                + '</div>';
-            })()}
-            ${krCallAddonOn ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:700;color:#0f172a;"><span>📞 ${KRCALL_ADDON.name} <span style="font-size:0.68rem;color:#94a3b8;font-weight:600;">카톡 1:1 · 완료 보장</span></span><span>+${KRCALL_ADDON.price.toLocaleString()}원</span></div>` : ''}
-            <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:700;color:#5D5049;">
-              <span>상품 금액</span><span>${baseVal.toLocaleString()}원</span>
-            </div>
-            ${appDisc ? `<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.8rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span>-${appDisc.toLocaleString()}원</span></div>` : ''}
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
-              <span style="font-size:0.9rem;">최종 결제 금액</span><span id="mConfirmTotal" style="color:#F2751F;font-size:1.2rem;font-weight:900;">${priceVal.toLocaleString()}원</span>
-            </div>
-            ${!jdIsApp() ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px;"><span style="font-size:0.68rem;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.08);border-radius:8px;padding:4px 9px;">📱 앱 전용 5% 할인 혜택 금액</span><span style="font-size:0.86rem;font-weight:900;color:#7c3aed;">${(baseVal - Math.round(baseVal * 0.05)).toLocaleString()}원</span></div>` : ''}
-            <div style="height:15px;margin-top:11px;border-radius:2px;opacity:0.8;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
-          </div>
-          <!-- ✉ 수령 정보 (퍼널 v2: 주문 팝업에서 입력) -->
-          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 15px;margin-bottom:14px;box-shadow:0 4px 14px rgba(15,23,42,0.04);">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-              <span style="font-size:0.86rem;font-weight:800;color:#0f172a;">✉️ 수령 정보 <span style="font-size:0.68rem;font-weight:600;color:#94a3b8;">QR코드가 발송될 곳이에요</span></span>
-              <button type="button" onclick="pwOpenDeviceCheck()" style="flex-shrink:0;background:rgba(43,179,163,0.1);border:1px solid rgba(43,179,163,0.35);color:#1B8E82;font-family:inherit;font-size:0.7rem;font-weight:800;padding:7px 11px;border-radius:999px;cursor:pointer;">📟 내 기종 eSIM 진단</button>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:9px;">
-              <input type="text" id="buyerName" class="tracker-input" placeholder="수령인 이름 (한글)" value="${(savedBuyer.name || '').replace(/"/g, '&quot;')}">
-              <input type="tel" id="buyerPhone" class="tracker-input" placeholder="수령인 연락처 (예: 01012345678)" value="${(savedBuyer.phone || '').replace(/"/g, '&quot;')}">
-              <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소" value="${(savedBuyer.email || '').replace(/"/g, '&quot;')}">
+      const capLbl = (activePlan.data_limit === '무제한' && window.JD_UNL) ? window.JD_UNL.label(activePlan.product_code) : activePlan.data_limit;
+      const q = s => String(s || '').replace(/"/g, '&quot;');
+      const precautions = getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).concat([
+        '<strong>기종 확인:</strong> 키패드 *#06# 입력 시 <strong>EID</strong>가 보여야 사용 가능 (중국/홍콩/마카오 구매 아이폰 불가)',
+        '<strong>취소/환불:</strong> 설치(다운로드) 전까지 <strong>100% 환불</strong>, 설치 후엔 디지털 상품 특성상 불가 (<a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a>)',
+        '<strong>현지 장애:</strong> 프로필을 지우지 말고 24시간 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#2563eb;font-weight:800;">카톡 상담</a>으로 접수 시 미해결 100% 환불'
+      ]);
+      const memberBanner = (function () {
+        try { if (localStorage.getItem('jd_member_token')) return ''; } catch (e) { return ''; }
+        return '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;margin-bottom:12px;padding:16px 16px;border-radius:12px;background:linear-gradient(150deg,#221510,#46280f);color:#fff;text-decoration:none;text-align:center;">'
+          + '<span style="display:block;font-size:15px;font-weight:900;line-height:1.5;"><b style="color:#FFB56B;">1분 가입</b>하면 <b style="color:#FFB56B;">2,000원 쿠폰</b> 즉시!</span>'
+          + '<span style="display:block;margin-top:5px;font-size:11px;font-weight:600;opacity:0.75;">앱으로 담으면 전 상품 5% 상시 할인 · 여행 후 웰컴백 쿠폰까지</span></a>';
+      })();
+
+      const body = document.getElementById('checkoutBody');
+      body.innerHTML = `
+        <div class="ck-card">
+          <div style="font-size:16px;font-weight:900;color:#221510;">${currentSelectedCountry} ${capLbl}</div>
+          <div style="font-size:13px;color:#8a8378;font-weight:700;margin-top:2px;">${cleanCarrier(activeCarrier.carrier)} · ${activePlan.duration || selectedDays}일</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px dashed #ece5dd;">
+            <span style="font-size:13px;font-weight:800;color:#5D5049;">수량</span>
+            <div class="qty-stepper">
+              <button class="qty-btn" type="button" onclick="changeQty(-1)" aria-label="수량 줄이기">−</button>
+              <span id="ckQty">${purchaseQty}</span>
+              <button class="qty-btn" type="button" onclick="changeQty(1)" aria-label="수량 늘리기">+</button>
             </div>
           </div>
-          <div style="font-size:0.79rem;color:#334155;line-height:1.6;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 15px;margin-bottom:14px;box-shadow:0 4px 14px rgba(15,23,42,0.04);">
-            <div style="font-weight:800;margin-bottom:8px;color:#0f172a;display:flex;align-items:center;gap:7px;"><span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:rgba(239,68,68,0.1);align-items:center;justify-content:center;font-size:0.7rem;">⚠️</span>꼭 확인해 주세요</div>
-            ${(() => {
-              const item = (t, first) => `<div style="display:flex;gap:9px;padding:8px 0;${first ? '' : 'border-top:1px solid rgba(15,23,42,0.05);'}"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${t}</span></div>`;
-              const list = getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).concat([
-                '<strong>기종 확인:</strong> 키패드에 *#06# 입력 시 <strong>EID 번호</strong>가 보여야 사용 가능해요 (중국/홍콩/마카오 구매 아이폰 불가)',
-                '<strong>취소/환불:</strong> eSIM <strong>설치(다운로드) 전까지 100% 환불</strong> 가능, 설치 후에는 디지털 상품 특성상 불가해요 (<a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a>)',
-                '<strong>현지 장애:</strong> eSIM 프로필을 지우지 마시고 24시간 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#2563eb;font-weight:800;">카톡 고객센터</a>로 접수 시 미해결 100% 환불 보장'
-              ]);
-              return list.map((t, i) => item(t, i === 0)).join('');
-            })()}
+        </div>
+        <div class="ck-card">
+          <div class="ck-row"><span style="color:#5D5049;font-weight:700;">상품 금액</span><span id="ckBase" style="font-weight:800;">-</span></div>
+          <div class="ck-row" id="ckDiscRow" style="display:none;color:#15803d;font-weight:800;"><span>📱 앱 할인 5%</span><span id="ckDisc"></span></div>
+          <div class="ck-row" id="ckCouponRow" style="display:none;"><span style="color:#F2751F;font-weight:800;">쿠폰 할인</span><span id="ckCoupon" style="color:#F2751F;font-weight:800;"></span></div>
+          <div class="ck-row" style="margin-top:11px;padding-top:11px;border-top:1px dashed #ece5dd;"><span style="font-size:15px;font-weight:900;">최종 결제 금액</span><b id="ckFinal" style="font-size:21px;color:#F2751F;">-</b></div>
+          ${!jdIsApp() ? '<div class="ck-row" style="margin-top:7px;"><span style="font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.08);border-radius:6px;padding:3px 8px;">📱 앱 전용 5% 할인가</span><span id="ckAppHint" style="font-size:13px;font-weight:900;color:#7c3aed;"></span></div>' : ''}
+        </div>
+        <div class="ck-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <span class="ck-label" style="margin:0;">✉️ 수령 정보 <span style="font-size:11px;font-weight:600;color:#94a3b8;">QR 발송처</span></span>
+            <button type="button" onclick="pwOpenDeviceCheck()" style="flex-shrink:0;background:rgba(43,179,163,0.1);border:1px solid rgba(43,179,163,0.35);color:#1B8E82;font-family:inherit;font-size:11px;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer;">📟 기종 진단</button>
           </div>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:0.78rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#334155;font-weight:600;">
-              <span>개인정보 수집 및 이용 <span style="color:#94a3b8;font-size:0.72rem;">(필수)</span></span>
-              <button type="button" onclick="var d=document.getElementById('mDetailPrivacy');d.style.display=d.style.display==='block'?'none':'block';this.textContent=d.style.display==='block'?'접기':'자세히 보기';" style="background:none;border:none;color:#2563eb;font-weight:700;font-size:0.75rem;text-decoration:underline;font-family:inherit;">자세히 보기</button>
-            </div>
-            <div id="mDetailPrivacy" style="display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin:4px 0 8px;line-height:1.65;color:#64748b;">
-              <a href="privacy.html" target="_blank" style="color:#2563eb;font-weight:800;">📄 개인정보처리방침 전문 보기</a><br>
-              · 수집 항목: 수령인 이름, 휴대폰 번호, 이메일<br>
-              · 목적: 주문 처리, eSIM QR코드 발송, 고객 상담<br>
-              · 보유: 전자상거래법에 따라 5년 보관 후 파기<br>
-              · 처리 위탁: QR코드 발송을 위해 공급사 '서래대박통신'에 이름·연락처·이메일이 제공됩니다<br>
-              · 동의 거부 시 주문 처리가 불가합니다
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#334155;font-weight:600;">
-              <span>결제대행 서비스 이용약관 <span style="color:#94a3b8;font-size:0.72rem;">(필수)</span></span>
-              <button type="button" onclick="var d=document.getElementById('mDetailPg');d.style.display=d.style.display==='block'?'none':'block';this.textContent=d.style.display==='block'?'접기':'자세히 보기';" style="background:none;border:none;color:#2563eb;font-weight:700;font-size:0.75rem;text-decoration:underline;font-family:inherit;">자세히 보기</button>
-            </div>
-            <div id="mDetailPg" style="display:none;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin:4px 0 4px;line-height:1.65;color:#64748b;">
-              · 결제는 결제대행사(포트원 및 제휴 PG사)를 통해 안전하게 처리됩니다<br>
-              · 카드번호 등 결제수단 정보는 당사에 저장되지 않습니다<br>
-              · 세부 사항은 각 결제대행사 표준 이용약관을 따릅니다
-            </div>
+          <input type="text" id="buyerName" class="ck-input" placeholder="수령인 이름 (한글)" value="${q(savedBuyer.name)}">
+          <input type="tel" id="buyerPhone" class="ck-input" placeholder="연락처 (예: 01012345678)" value="${q(savedBuyer.phone)}">
+          <input type="email" id="buyerEmail" class="ck-input" style="margin-bottom:0;" placeholder="eSIM 받을 이메일" value="${q(savedBuyer.email)}">
+        </div>
+        <div id="checkoutCouponBox" style="display:none;margin-bottom:12px;"></div>
+        ${memberBanner}
+        <details class="ck-card ck-fold" style="padding:12px 15px;">
+          <summary>⚠️ 구매 전 꼭 확인</summary>
+          <div style="margin-top:8px;font-size:12.5px;color:#5D5049;line-height:1.6;">
+            ${precautions.map(t => `<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid #f3ede5;"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F97316;margin-top:6px;"></span><span class="jd-ku">${t}</span></div>`).join('')}
           </div>
-          <!-- 💰 회원 쿠폰 적용 (로그인+사용 가능 쿠폰 있을 때만 JS가 채움) -->
-          <div id="mobileCouponBox" style="display:none;margin-bottom:14px;"></div>
-          <label id="mobileAgreeBox" style="display:flex;align-items:center;gap:11px;margin-bottom:16px;cursor:pointer;padding:13px 14px;background:rgba(242,117,31,0.06);border:1.5px solid rgba(242,117,31,0.35);border-radius:14px;transition:all 0.2s;">
-            <input type="checkbox" id="mobileAgreeCheck" style="width:21px;height:21px;accent-color:#F2751F;flex-shrink:0;">
-            <span style="font-size:0.84rem;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고, 이용약관 및 결제에 동의합니다 <span style="color:#F2751F;">(필수)</span></span>
-          </label>
-          <div style="display:flex;gap:10px;">
-            <button onclick="document.getElementById('mobileConfirmLayer').remove()" style="flex:1;padding:15px;border-radius:14px;border:1px solid #e2e8f0;background:#f1f5f9;font-weight:800;color:#334155;">취소</button>
-            <button id="mobileConfirmPayBtn" style="flex:1.6;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;opacity:0.5;" disabled>동의하고 결제하기</button>
+        </details>
+        <details class="ck-card ck-fold" style="padding:12px 15px;">
+          <summary>📄 개인정보 수집·이용 및 결제대행 약관 (필수 동의)</summary>
+          <div style="margin-top:8px;font-size:12px;color:#64748b;line-height:1.65;">
+            <b style="color:#334155;">개인정보 수집·이용</b> — 수집: 이름·연락처·이메일 / 목적: 주문·QR 발송·상담 / 보유: 전자상거래법 5년 / 위탁: QR 발송 위해 공급사 제공. <a href="privacy.html" target="_blank" style="color:#2563eb;font-weight:800;">전문 보기</a><br><br>
+            <b style="color:#334155;">결제대행 이용약관</b> — 결제는 포트원 및 제휴 PG사를 통해 처리, 카드 정보는 당사 미저장.
           </div>
-          <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:11px;font-size:0.8rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
-          ${(function(){ try { if (localStorage.getItem('jd_member_token')) return '';
-            var appPrice = (baseVal - Math.round(baseVal * 0.05)).toLocaleString();
-            return '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;margin-top:12px;padding:19px 18px;border-radius:18px;background:linear-gradient(150deg,#221510,#46280f);color:#fff;text-decoration:none;text-align:center;box-shadow:0 10px 24px rgba(34,21,16,0.3);">'
-              + '<span style="display:block;font-size:0.98rem;font-weight:900;line-height:1.5;"><b style="color:#FFB56B;">앱에서 가입</b>하면<br>지금 이 상품을 <b style="color:#FFB56B;">' + appPrice + '원</b>에!</span>'
-              + '<span style="display:inline-flex;align-items:center;gap:7px;margin-top:11px;padding:11px 20px;border-radius:999px;background:linear-gradient(135deg,#F97316,#F59E0B);font-size:0.84rem;font-weight:800;box-shadow:0 6px 16px rgba(249,115,22,0.4);">🦊 1분 가입 + 2,000원 쿠폰 받기 →</span>'
-              + '<span style="display:block;margin-top:9px;font-size:0.68rem;font-weight:600;opacity:0.75;">홈 화면에 추가하면 전 상품 5% 상시 할인 · 여행 후 웰컴백 쿠폰까지</span></a>'; } catch(e){ return ''; } })()}
-        </div>`;
-      document.body.appendChild(layer);
-      const check = layer.querySelector('#mobileAgreeCheck');
-      const payBtn = layer.querySelector('#mobileConfirmPayBtn');
-      const agreeBox = layer.querySelector('#mobileAgreeBox');
-      check.addEventListener('change', () => {
+        </details>
+        <label id="ckAgreeBox" style="display:flex;align-items:center;gap:11px;margin:4px 0 4px;cursor:pointer;padding:13px 14px;background:rgba(242,117,31,0.06);border:1.5px solid rgba(242,117,31,0.35);border-radius:10px;">
+          <input type="checkbox" id="ckAgreeCheck" style="width:21px;height:21px;accent-color:#F2751F;flex-shrink:0;">
+          <span style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고 이용약관·개인정보·결제에 동의합니다 <span style="color:#F2751F;">(필수)</span></span>
+        </label>`;
+
+      const dtitle = document.querySelector('#view-checkout .pp-title');
+      if (dtitle) dtitle.innerText = '주문 · 결제';
+
+      // 뷰 전환
+      document.querySelectorAll('.mobile-view').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
+      const cv = document.getElementById('view-checkout');
+      cv.classList.add('active'); cv.style.display = 'block';
+      document.getElementById('checkoutBuybar').style.display = 'block';
+      if (window.lucide) lucide.createIcons();
+      window.scrollTo({ top: 0 });
+      history.pushState({ checkout: true }, '', '#checkout');
+
+      // 동의 → 결제버튼 활성화
+      const check = document.getElementById('ckAgreeCheck');
+      const payBtn = document.getElementById('checkoutPayBtn');
+      const agreeBox = document.getElementById('ckAgreeBox');
+      check.onchange = () => {
         payBtn.disabled = !check.checked;
         payBtn.style.opacity = check.checked ? '1' : '0.5';
         agreeBox.style.borderColor = check.checked ? '#22c55e' : 'rgba(242,117,31,0.35)';
         agreeBox.style.background = check.checked ? 'rgba(34,197,94,0.07)' : 'rgba(242,117,31,0.06)';
-      });
-      // 미체크 상태에서 결제 버튼 영역을 눌러도 명확히 안내 (버튼이 disabled여도 부모에서 감지)
-      payBtn.parentElement.addEventListener('click', (e) => {
-        if (!payBtn.disabled) return;
-        if (e.target === payBtn || payBtn.contains(e.target)) {
-          agreeBox.style.animation = 'none';
-          void agreeBox.offsetWidth; // 리플로우로 애니메이션 재시작
-          agreeBox.style.animation = 'agreeShake 0.4s ease';
-          agreeBox.style.borderColor = '#ef4444';
-          showAgreeToast();
+        renderCheckoutTotals(); // 버튼 문구(동의하고 결제 ↔ 결제하기) 갱신
+      };
+      payBtn.onclick = () => {
+        if (payBtn.disabled) {
+          agreeBox.style.animation = 'none'; void agreeBox.offsetWidth; agreeBox.style.animation = 'agreeShake 0.4s ease';
+          agreeBox.style.borderColor = '#ef4444'; showAgreeToast();
+          agreeBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
         }
-      });
-      payBtn.addEventListener('click', () => {
-        if (payBtn.disabled) return;
-        // 수령 정보 검증 + 보존 (레이어 제거 후에도 참조 가능하게)
-        const bName = (layer.querySelector('#buyerName') || {}).value || '';
-        const bPhone = (layer.querySelector('#buyerPhone') || {}).value || '';
-        const bEmail = (layer.querySelector('#buyerEmail') || {}).value || '';
+        const bName = (document.getElementById('buyerName') || {}).value || '';
+        const bPhone = (document.getElementById('buyerPhone') || {}).value || '';
+        const bEmail = (document.getElementById('buyerEmail') || {}).value || '';
         if (!bName.trim() || !bPhone.trim() || !bEmail.trim()) {
           alert("개통 발송을 위해 수령인 이름, 연락처, 이메일을 모두 입력해 주세요.");
+          document.getElementById('buyerName').scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
         window.__buyer = { name: bName.trim(), phone: bPhone.trim(), email: bEmail.trim() };
         try { localStorage.setItem('jd_buyer', JSON.stringify(window.__buyer)); } catch (e) {}
-        layer.remove();
         proceedMockCheckout();
-      });
+      };
 
-      // 💰 회원 쿠폰: 서버 지갑에서 사용 가능(미사용·만료 전·최소주문 충족)만 표시 — 선택 시 결제액 차감
-      //    보안: 표시는 편의일 뿐, 실제 차감 확정은 결제 후 서버(use_coupon)가 본인 지갑에서 검증·소진 처리
-      window._appliedCoupon = null;
-      (function loadCoupons() {
-        var token = '';
-        try { token = localStorage.getItem('jd_member_token') || ''; } catch (e) {}
-        if (!token) return;
-        var orderBase = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
-        var orderTotal = orderBase - jdAppDiscount(orderBase); // 앱 5% 할인 반영 후 금액 기준
-        fetch('https://jdisim-proxy.vercel.app/api/member?action=me', { headers: { Authorization: 'Bearer ' + token } })
-          .then(function (r) { return r.json(); })
-          .then(function (j) {
-            if (!j || !j.ok) return;
-            var today = new Date().toISOString().slice(0, 10);
-            var usable = (j.coupons || []).filter(function (c) {
-              return !c.used && (!c.expires || c.expires >= today) && (!c.min_order || orderTotal >= c.min_order);
-            });
-            var box = layer.querySelector('#mobileCouponBox');
-            if (!box || !usable.length) return;
-            box.innerHTML = '<div style="border:1.5px dashed rgba(242,117,31,0.45);border-radius:14px;padding:12px 13px;background:rgba(249,115,22,0.04);">'
-              + '<div style="font-size:0.84rem;font-weight:800;color:#221510;margin-bottom:8px;">💰 쿠폰 적용</div>'
-              + usable.slice(0, 3).map(function (c, i) {
-                  return '<label style="display:flex;align-items:center;gap:9px;padding:7px 0;cursor:pointer;font-size:0.82rem;font-weight:700;color:#5D5049;">'
-                    + '<input type="radio" name="mCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F2751F;">'
-                    + '<span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F2751F;">-' + Number(c.amount).toLocaleString() + '원</b></span></label>';
-                }).join('')
-              + '<label style="display:flex;align-items:center;gap:9px;padding:7px 0;cursor:pointer;font-size:0.82rem;font-weight:700;color:#8a7a6d;">'
-              + '<input type="radio" name="mCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F2751F;"><span>적용 안 함</span></label>'
-              + '<div id="mCouponSum" style="border-top:1px dashed rgba(34,21,16,0.1);margin-top:6px;padding-top:9px;font-size:0.86rem;font-weight:800;color:#221510;text-align:right;">결제 금액 ' + orderTotal.toLocaleString() + '원</div></div>';
-            box.style.display = 'block';
-            box.querySelectorAll('input[name="mCoupon"]').forEach(function (r) {
-              r.addEventListener('change', function () {
-                var idx = parseInt(this.value, 10);
-                window._appliedCoupon = idx >= 0 ? usable[idx] : null;
-                var final_ = Math.max(0, orderTotal - (window._appliedCoupon ? window._appliedCoupon.amount : 0));
-                box.querySelector('#mCouponSum').innerHTML = window._appliedCoupon
-                  ? '쿠폰 -' + Number(window._appliedCoupon.amount).toLocaleString() + '원 → 결제 금액 <b style="color:#F2751F;">' + final_.toLocaleString() + '원</b>'
-                  : '결제 금액 ' + orderTotal.toLocaleString() + '원';
-              });
-            });
-          }).catch(function () {});
-      })();
+      renderCheckoutTotals();
+      loadCheckoutCoupons();
+    }
+
+    function closeCheckoutView() {
+      if (history.state && history.state.checkout) { history.back(); return; }
+      const cv = document.getElementById('view-checkout');
+      if (cv) { cv.classList.remove('active'); cv.style.display = 'none'; }
+      const bb = document.getElementById('checkoutBuybar');
+      if (bb) bb.style.display = 'none';
+      const dv = document.getElementById('view-detail');
+      if (dv) { dv.classList.add('active'); dv.style.display = 'block'; }
+      window.scrollTo({ top: 0 });
+    }
+
+    // 구매 페이지 금액 재계산 (수량·쿠폰 변경 시)
+    function renderCheckoutTotals() {
+      if (!activePlan) return;
+      const base = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+      const appDisc = jdAppDiscount(base);
+      const couponAmt = window._appliedCoupon ? Math.min(Number(window._appliedCoupon.amount) || 0, base - appDisc) : 0;
+      const final = Math.max(0, base - appDisc - couponAmt);
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      set('ckQty', purchaseQty);
+      set('ckBase', base.toLocaleString() + '원');
+      const dr = document.getElementById('ckDiscRow');
+      if (dr) { dr.style.display = appDisc ? 'flex' : 'none'; set('ckDisc', '-' + appDisc.toLocaleString() + '원'); }
+      const cr = document.getElementById('ckCouponRow');
+      if (cr) { cr.style.display = couponAmt ? 'flex' : 'none'; set('ckCoupon', '-' + couponAmt.toLocaleString() + '원'); }
+      set('ckFinal', final.toLocaleString() + '원');
+      set('ckAppHint', (base - Math.round(base * 0.05)).toLocaleString() + '원');
+      const payBtn = document.getElementById('checkoutPayBtn');
+      if (payBtn) payBtn.innerText = (payBtn.disabled ? '동의하고 결제 · ' : '결제하기 · ') + final.toLocaleString() + '원';
+    }
+
+    // 💰 회원 쿠폰 (구매 페이지) — 서버 지갑에서 사용 가능만 표시, 실차감은 결제 후 서버 검증
+    function loadCheckoutCoupons() {
+      let token = '';
+      try { token = localStorage.getItem('jd_member_token') || ''; } catch (e) {}
+      if (!token) return;
+      const orderBase = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+      const orderTotal = orderBase - jdAppDiscount(orderBase);
+      fetch('https://jdisim-proxy.vercel.app/api/member?action=me', { headers: { Authorization: 'Bearer ' + token } })
+        .then(r => r.json())
+        .then(j => {
+          if (!j || !j.ok) return;
+          const today = new Date().toISOString().slice(0, 10);
+          const usable = (j.coupons || []).filter(c => !c.used && (!c.expires || c.expires >= today) && (!c.min_order || orderTotal >= c.min_order));
+          const box = document.getElementById('checkoutCouponBox');
+          if (!box || !usable.length) return;
+          box.innerHTML = '<div class="ck-card" style="margin:0;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.04);">'
+            + '<div class="ck-label">💰 쿠폰 적용</div>'
+            + usable.slice(0, 3).map((c, i) => '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#5D5049;"><input type="radio" name="ckCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F2751F;"><span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F2751F;">-' + Number(c.amount).toLocaleString() + '원</b></span></label>').join('')
+            + '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#8a7a6d;"><input type="radio" name="ckCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F2751F;"><span>적용 안 함</span></label></div>';
+          box.style.display = 'block';
+          box.querySelectorAll('input[name="ckCoupon"]').forEach(r => r.addEventListener('change', function () {
+            const idx = parseInt(this.value, 10);
+            window._appliedCoupon = idx >= 0 ? usable[idx] : null;
+            renderCheckoutTotals();
+          }));
+        }).catch(() => {});
     }
 
     // [2단계] 실제 결제 실행
@@ -4681,6 +4700,16 @@
     
     // 뒤로가기 대응: 시트가 열려 있으면 시트만 닫고, 아니면 해시 기준 뷰 복원
     window.addEventListener('popstate', () => {
+      // 구매/결제 뷰에서 뒤로가기 → 상세 뷰 복귀
+      const cv = document.getElementById('view-checkout');
+      if (cv && cv.classList.contains('active')) {
+        cv.classList.remove('active'); cv.style.display = 'none';
+        const bb = document.getElementById('checkoutBuybar'); if (bb) bb.style.display = 'none';
+        const dv0 = document.getElementById('view-detail');
+        if (dv0) { dv0.classList.add('active'); dv0.style.display = 'block'; }
+        window.scrollTo({ top: 0 });
+        return;
+      }
       // 상세 뷰에서 뒤로가기 → 상품 선택 뷰 복귀
       const dv = document.getElementById('view-detail');
       if (dv && dv.classList.contains('active')) {
