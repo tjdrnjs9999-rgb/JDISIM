@@ -1804,6 +1804,48 @@
     .bottom-sheet .option-group-title { margin: 12px 0 8px !important; font-size: 0.85rem !important; }
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
+<style id="jd-funnel-v2">
+  /* ===== 🛒 구매 퍼널 v2 (2026-07-15) ===== */
+  .pw-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: #f1ece6; border-radius: 15px; padding: 5px; margin: 4px 0 14px; }
+  .pw-tabs.two { grid-template-columns: repeat(2, 1fr); }
+  .pw-tabs.one { grid-template-columns: 1fr; }
+  .pw-tab { border: none; background: transparent; font-family: inherit; padding: 11px 4px; border-radius: 11px; cursor: pointer; transition: all .18s ease; text-align: center; }
+  .pw-tab b { display: block; font-size: 0.88rem; font-weight: 800; color: #64748b; }
+  .pw-tab small { display: block; font-size: 0.66rem; font-weight: 700; color: #94a3b8; margin-top: 1px; }
+  .pw-tab.active { background: #fff; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1); }
+  .pw-tab.active b { color: #F2751F; }
+  .pw-block { margin: 14px 0 0; }
+  .pw-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: #0f172a; margin-bottom: 9px; }
+  .pw-label em { font-style: normal; font-weight: 600; color: #94a3b8; font-size: 0.7rem; margin-left: auto; text-align: right; }
+  .pw-carriers { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pw-car { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid #e5eaf2; border-radius: 999px; background: #fff; padding: 10px 14px; font-family: inherit; font-size: 0.84rem; font-weight: 800; color: #0f172a; cursor: pointer; transition: all .15s ease; }
+  .pw-car .net { font-size: 0.64rem; font-weight: 900; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; }
+  .pw-car .net.local { background: rgba(43, 179, 163, 0.12); color: #1B8E82; border: 1px solid rgba(43, 179, 163, 0.35); }
+  .pw-car .net.roam { background: rgba(99, 102, 241, 0.09); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.3); }
+  .pw-car .net.multi { background: rgba(245, 158, 11, 0.12); color: #b45309; border: 1px solid rgba(245, 158, 11, 0.35); }
+  .pw-car.active { border-color: #F2751F; background: #FFF8F2; box-shadow: 0 4px 12px rgba(242, 117, 31, 0.15); }
+  .pw-prod { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; border: 1.5px solid #e5eaf2; border-radius: 15px; background: #fff; padding: 13px 14px; margin-bottom: 9px; font-family: inherit; cursor: pointer; transition: all .15s ease; }
+  .pw-prod:hover, .pw-prod.active { border-color: #F2751F; background: #FFF8F2; }
+  .pw-prod .cap { font-size: 0.88rem; font-weight: 800; color: #0f172a; line-height: 1.35; }
+  .pw-prod .sub { font-size: 0.7rem; font-weight: 700; color: #94a3b8; margin-top: 2px; }
+  .pw-prod .price { margin-left: auto; text-align: right; flex-shrink: 0; }
+  .pw-prod .price b { display: block; font-size: 0.98rem; font-weight: 900; color: #F2751F; }
+  .pw-prod .price small { font-size: 0.66rem; font-weight: 700; color: #94a3b8; }
+  .pw-prod .go { flex-shrink: 0; color: #F2751F; font-weight: 900; }
+  /* 상세/수량/카트 레이어 공통 */
+  .pv-layer { position: fixed; inset: 0; background: rgba(11, 16, 32, 0.55); backdrop-filter: blur(3px); z-index: 100005; display: flex; align-items: flex-end; }
+  .pv-sheet { background: #FDFBF8; width: 100%; border-radius: 24px 24px 0 0; padding: 20px 18px calc(24px + env(safe-area-inset-bottom, 0px)); max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
+  .pv-grab { width: 42px; height: 4.5px; border-radius: 4px; background: #e2e8f0; margin: -4px auto 14px; }
+  .pv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
+  .pv-tile { background: #fff; border: 1px solid #ece5dd; border-radius: 14px; padding: 11px 12px; }
+  .pv-tile .ic { font-size: 1.15rem; line-height: 1; }
+  .pv-tile .k { font-size: 0.66rem; font-weight: 800; color: #94a3b8; margin-top: 5px; letter-spacing: 0.02em; }
+  .pv-tile .v { font-size: 0.8rem; font-weight: 800; color: #221510; margin-top: 2px; line-height: 1.45; word-break: keep-all; }
+  .pv-cta { display: block; width: 100%; border: none; border-radius: 15px; padding: 16px; background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; font-family: inherit; font-size: 0.96rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35); }
+  .pv-app-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #221510, #46280f); color: #fff; border-radius: 14px; padding: 12px 14px; margin: 12px 0; font-size: 0.8rem; font-weight: 700; line-height: 1.5; }
+  .pv-app-banner b { color: #FFB56B; }
+  .pv-qty-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #ece5dd; border-radius: 15px; padding: 13px 15px; }
+</style>
 <style id="jd-readability">
   /* ===== 📖 가독성 플로어 (2026-07-15 개정) — 로케비 실측 기준 타입 스케일 =====
      정본: 본문 최소 14px / 보조 최소 12px / 각주 최소 11px (로케비 10px는 접근성 미달로 미채택) / 입력요소 16px 고정
@@ -1922,7 +1964,7 @@
       <span>JDISIM</span>
     </a>
     <div style="display:flex;align-items:center;gap:8px;">
-      <button class="cart-btn" onclick="switchNav('orders')">
+      <button class="cart-btn" onclick="openCartSheet()">
         <i data-lucide="shopping-bag"></i>
         <span class="cart-badge" id="mobileCartCount">0</span>
       </button>
@@ -2321,131 +2363,27 @@
       </button>
     </div>
 
-    <!-- ROMI Step Sheet: 단계 잠금 위저드 (하나씩 눌러야 다음 단계 오픈) -->
-    <div class="jd-step locked" id="step-scope">
-      <div class="jd-step-head option-group-title" onclick="reopenStep('scope')">
-        <span class="jd-step-label"><span class="step-num">1</span>연결 방식 선택</span>
-        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
-      </div>
-      <div class="jd-step-body">
-        <div id="netTypePills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
-      </div>
+    <!-- 구매 퍼널 v2 (2026-07-15 사장님 스펙): 유형 3탭 → 통신사 알약(로컬/로밍) → 일수 → 상품 선택 → 상세 팝업 → 수량 → 결제 팝업 -->
+    <style>.jd-ku>span{display:inline-block}
+    @keyframes jdTbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>
+    <div class="pw-tabs" id="ptypeTabs"></div>
+
+    <div class="pw-block" id="pwCarrierBlock" style="display:none;">
+      <div class="pw-label"><span class="step-num">1</span>통신사 선택 <em>🏠 로컬 = 현지 직통 · 📡 로밍 = 간편 개통</em></div>
+      <div id="carrierPills" class="pw-carriers"></div>
+      <div id="activationNotice" style="display:none;margin-top:10px;padding:10px 12px;border-radius:12px;font-size:0.74rem;font-weight:700;line-height:1.6;"></div>
     </div>
 
-    <div class="jd-step locked" id="step-carrier">
-      <div class="jd-step-head option-group-title" onclick="reopenStep('carrier')">
-        <span class="jd-step-label"><span class="step-num">2</span>통신사 선택</span>
-        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
-      </div>
-      <div class="jd-step-body">
-        <button type="button" id="carrierDropBtn" class="jd-drop-btn" onclick="toggleCarrierDrop()">
-          <span id="carrierDropLabel">눌러서 통신사 선택</span>
-          <i data-lucide="chevron-down" style="width:17px;height:17px;flex-shrink:0;"></i>
-        </button>
-        <div id="carrierDropList" class="jd-drop-list" style="display:none;"></div>
-      </div>
-      <div id="activationNotice" style="display:none;margin-top:8px;padding:10px 12px;border-radius:12px;font-size:0.74rem;font-weight:700;line-height:1.6;"></div>
-    </div>
-
-    <div class="jd-step locked" id="step-plan">
-      <div class="jd-step-head option-group-title" onclick="reopenStep('plan')">
-        <span class="jd-step-label"><span class="step-num">3</span>제공 방식 선택</span>
-        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
-      </div>
-      <div class="jd-step-body">
-        <div id="planTypePills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
-      </div>
-    </div>
-
-    <div class="jd-step locked" id="step-cap">
-      <div class="jd-step-head option-group-title" onclick="reopenStep('cap')">
-        <span class="jd-step-label"><span class="step-num">4</span>데이터 용량 선택</span>
-        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
-      </div>
-      <div class="jd-step-body">
-        <div id="capacityPills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
-      </div>
-      <div id="capacityFeel" style="display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(249,115,22,0.06),rgba(245,158,11,0.06));border:1px solid rgba(249,115,22,0.15);border-radius:12px;font-size:0.78rem;font-weight:700;color:#9a5b16;line-height:1.7;"></div>
-    </div>
-
-    <div class="jd-step locked" id="step-days">
-      <div class="jd-step-head option-group-title" onclick="reopenStep('days')">
-        <span class="jd-step-label"><span class="step-num">5</span>사용 기간 선택</span>
-        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
-      </div>
-      <div class="jd-step-body">
-        <div id="daysPills" class="option-pills jd-center-pills" style="margin-top: 6px;"></div>
-      </div>
+    <div class="pw-block" id="pwDaysBlock" style="display:none;">
+      <div class="pw-label"><span class="step-num">2</span>사용 기간</div>
+      <div id="daysPills" class="option-pills jd-center-pills"></div>
       <div id="daysFeel" style="display:none;margin-top:7px;font-size:0.78rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
     </div>
 
-    <!-- ⑥ 전화 걸고 받기 — 필수 선택 단계 (선택함/선택 안 함 중 하나를 눌러야 결제 영역 공개) -->
-    <style>.jd-ku>span{display:inline-block}
-    @keyframes jdTbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>
-    <div class="jd-step locked" id="step-krcall" style="margin-bottom: 16px;">
-      <div class="jd-step-head option-group-title" onclick="reopenStep('krcall')">
-        <span class="jd-step-label"><span class="step-num">6</span>전화 걸고 받기</span>
-        <span class="jd-step-value"></span><span class="jd-step-state">🔒</span>
-      </div>
-      <div class="jd-step-body">
-        <div class="jd-ku" style="margin-top:6px;font-size:0.84rem;font-weight:800;color:#0f172a;line-height:1.55;">
-          <span>📞 해외에서도</span> <span style="color:#F2751F;">내&nbsp;한국번호로</span> <span>전화 받고 걸기</span>
-        </div>
-        <div class="jd-ku" style="margin-top:4px;font-size:0.76rem;font-weight:600;color:#475569;line-height:1.65;">
-          <span>은행·병원·회사 전화,</span> <span>010 내 번호 그대로 —</span> <span>로밍 수신료 걱정 없이.</span>
-          <span>출국 전 카톡 1:1로</span> <span>세팅을 끝까지 봐드려요</span>
-          <strong style="color:#b45309;display:inline-block;">(완료 못 하면 이 요금 100% 환불)</strong>
-        </div>
-        <div id="krCallPills" class="option-pills jd-center-pills" style="margin-top: 10px;"></div>
-        <div class="jd-ku" style="margin-top:8px;font-size:0.66rem;font-weight:600;color:#94a3b8;line-height:1.6;">
-          <span>세팅 케어 서비스 요금입니다.</span> <span>통화 기능 자체는</span> <span>통신사(SKT/KT/LGU+)&nbsp;제공이며</span>
-          <span>지원 기종·명칭이 다를 수 있어요.</span> <span>발신은 국내 기준 요금</span> <span>(통신사별 상이) —</span>
-          <span>자세한 기준은</span> <span>통신사 앱에서 확인.</span>
-        </div>
-      </div>
+    <div class="pw-block" id="pwProdBlock" style="display:none;margin-bottom:14px;">
+      <div class="pw-label"><span class="step-num">3</span>상품 선택 <em>눌러서 상세 정보 확인</em></div>
+      <div id="productList"></div>
     </div>
-
-    <div id="sheetCheckoutArea" class="jd-checkout-area" style="display:none;">
-    <!-- 결제 전 꼭 알기: 스텝 자동통과로 2단계 고지를 놓쳐도 여기서 반드시 봄 -->
-    <div id="criticalCard" class="jd-ku" style="display:none;margin:4px 0 14px;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(249,115,22,0.05));"></div>
-    <div id="krCallStoreNote" class="jd-ku" style="display:none;margin:4px 0 14px;padding:9px 12px;border-radius:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);font-size:0.72rem;font-weight:700;color:#166534;line-height:1.6;">🟢 <span>스마트스토어로 구매하실 땐</span> <span>추가상품 <strong>‘한국번호 통화 세팅’</strong>을</span> <span>함께 담아주세요</span> <span style="color:#4b8a5f;">(미등록 시 카톡으로 요청 가능)</span></div>
-    <!-- Quantity & Price Calculator -->
-    <div class="checkout-footer">
-      <div>
-        <div class="checkout-total-label">총 상품 금액</div>
-        <div class="checkout-total-price" id="checkoutTotalPrice">0원</div>
-        <div id="perDayPrice" style="font-size:0.72rem;color:#94a3b8;font-weight:700;margin-top:2px;"></div>
-      </div>
-      <div class="qty-stepper">
-        <button class="qty-btn" type="button" onclick="changeQty(-1)" aria-label="수량 줄이기">−</button>
-        <span id="checkoutQty">1</span>
-        <button class="qty-btn" type="button" onclick="changeQty(1)" aria-label="수량 늘리기">+</button>
-      </div>
-    </div>
-
-    <!-- Contact & Email Inputs for checkout -->
-    <div class="option-group-title" style="margin-top:20px;"><span class="step-num">✉</span>수령 정보 <em style="font-style:normal;font-weight:600;color:#94a3b8;font-size:0.72rem;">QR코드가 발송될 곳이에요</em></div>
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <input type="text" id="buyerName" class="tracker-input" placeholder="수령인 이름 (한글)">
-      <input type="tel" id="buyerPhone" class="tracker-input" placeholder="수령인 연락처 (예: 01012345678)">
-      <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소">
-    </div>
-
-    <!-- 구매 여정 3단계 & 보장 -->
-    <div style="margin-top:18px;padding:12px 14px;background:linear-gradient(135deg,rgba(242,117,31,0.05),rgba(245,158,11,0.05));border:1px solid rgba(242,117,31,0.15);border-radius:14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.74rem;font-weight:800;color:#0f172a;text-align:center;">
-        <span style="flex:1;">💳<br>결제 완료</span>
-        <span style="color:#F2751F;font-weight:900;">→</span>
-        <span style="flex:1.2;">⚡<br>평균 5~15분 내<br>QR 발송</span>
-        <span style="color:#F2751F;font-weight:900;">→</span>
-        <span style="flex:1;">📶<br>현지 도착 시<br>자동 개통</span>
-      </div>
-      <div style="margin-top:9px;padding-top:9px;border-top:1px dashed rgba(242,117,31,0.25);font-size:0.74rem;font-weight:700;color:#b45309;text-align:center;">🛡️ 미개통 시 100% 환불 · <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24시간 카카오톡 상담</a></div>
-    </div>
-
-    <button class="order-action-btn" onclick="processMockCheckout()">🛒 안전하게 결제하고 QR 받기</button>
-    <a id="smartstoreAltBtn" href="#" target="_blank" rel="noopener" class="smartstore-alt-btn" style="display:none;">🟢 네이버 스마트스토어에서 구매하기</a>
-    </div><!-- /sheetCheckoutArea -->
   </div>
 
   <!-- Device compatibility check modal -->
@@ -2538,11 +2476,9 @@
       krCallChosen = true;
       const note = document.getElementById('krCallStoreNote');
       if (note) note.style.display = on ? 'block' : 'none';
-      jdCompleteStep('krcall', on ? `선택함 +${KRCALL_ADDON.price.toLocaleString()}원` : '선택 안 함');
       jdTrack('addon_toggle', { addon: KRCALL_ADDON.key, on: on, country: currentSelectedCountry || '' });
       if (navigator.vibrate) navigator.vibrate(6);
-      updatePricing();
-      jdCheckoutOpen(); // 6단계까지 모두 완료 → 결제 영역 공개
+      if (typeof renderQtyTotals === 'function') renderQtyTotals(); // 퍼널 v2: 수량 시트 합계 갱신
     }
     function resetKrCallStep() {
       krCallAddonOn = false;
@@ -3640,9 +3576,8 @@
       renderSheetLocalTime(countryName);
       __lastTotal = 0; // 시트 열릴 때 가격이 0부터 촤르륵 올라오게
       
-      // 딥링크로 특정 통신사가 지정됐으면 그 통신사가 속한 스코프를 기본 선택
-      const wanted = allCarrierOptions.find(co => co.carrier === defaultCarrier);
-      initNetScope(wanted ? netScope(wanted) : '', defaultCarrier);
+      // 퍼널 v2: 유형 탭 → 통신사 알약 → 일수 → 상품 (딥링크 통신사는 자동 선택)
+      initProductWizard(defaultCarrier);
 
       document.getElementById('bottomSheetBackdrop').classList.add('active');
       document.getElementById('bottomSheet').classList.add('active');
@@ -3694,83 +3629,11 @@
       } catch (e) {}
     }
 
-    // ===== ROMI Step Sheet: 단계 잠금 위저드 =====
-    // 흐름: ①연결방식 → ②통신사(드롭다운) → ③제공방식 → ④용량 → ⑤기간 → 결제영역 오픈
-    // 이전 단계를 누르기 전까지 다음 단계는 잠금. 옵션이 1개뿐인 단계는 자동 통과.
+    // ===== 🛒 구매 퍼널 v2 (2026-07-15 사장님 스펙) =====
+    // 흐름: 유형 3탭(무제한/데일리/총용량) → 통신사 알약(로컬/로밍 표기) → 일수 → 상품 선택
+    //       → 상세 팝업(정보 그리드+유의사항) → 수량 미니시트(앱 5%·카트/바로구매) → 주문 팝업(수령·쿠폰·동의·결제)
     let allCarrierOptions = [];
-    let selectedNetScope = '';
-    const JD_STEPS = ['scope', 'carrier', 'plan', 'cap', 'days', 'krcall'];
-
-    function jdStepEl(step) { return document.getElementById('step-' + step); }
-    function jdSetStep(step, state) {
-      const el = jdStepEl(step);
-      if (!el) return;
-      el.classList.remove('locked', 'active', 'done');
-      el.classList.add(state);
-      const stateEl = el.querySelector('.jd-step-state');
-      if (stateEl) stateEl.textContent = state === 'locked' ? '🔒' : '';
-      if (state !== 'done') {
-        const v = el.querySelector('.jd-step-value');
-        if (v) v.textContent = '';
-      }
-    }
-    function jdActivateStep(step) {
-      jdSetStep(step, 'active');
-      const el = jdStepEl(step);
-      if (el && el.scrollIntoView) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
-      if (navigator.vibrate) navigator.vibrate(6);
-    }
-    function jdCompleteStep(step, valueText) {
-      jdSetStep(step, 'done');
-      const el = jdStepEl(step);
-      const v = el && el.querySelector('.jd-step-value');
-      if (v) v.textContent = valueText || '';
-      jdTrack('wizard_step', { step: step, value: valueText || '', country: currentSelectedCountry || '' });
-    }
-    // 해당 단계 이후를 전부 잠금으로 리셋 (+결제영역 숨김)
-    function jdResetAfter(step) {
-      const from = JD_STEPS.indexOf(step);
-      for (let i = from + 1; i < JD_STEPS.length; i++) jdSetStep(JD_STEPS[i], 'locked');
-      const co = document.getElementById('sheetCheckoutArea');
-      if (co) co.style.display = 'none';
-      if (from < JD_STEPS.indexOf('krcall')) resetKrCallStep(); // ⑥단계보다 앞이 바뀌면 통화 선택도 초기화
-      if (step !== 'days') {
-        const an = document.getElementById('activationNotice');
-        if (an && from < 1) an.style.display = 'none';
-        const cf = document.getElementById('capacityFeel');
-        if (cf && from < 3) cf.style.display = 'none';
-        const df = document.getElementById('daysFeel');
-        if (df && from < 4) df.style.display = 'none';
-      }
-      const dl = document.getElementById('carrierDropList');
-      const db = document.getElementById('carrierDropBtn');
-      if (from < 1 && dl) { dl.style.display = 'none'; if (db) db.classList.remove('open'); }
-    }
-    // 완료된 단계 헤더 탭 → 다시 열기 (이후 단계는 다시 잠금)
-    function reopenStep(step) {
-      const el = jdStepEl(step);
-      if (!el || !el.classList.contains('done')) return;
-      jdResetAfter(step);
-      jdActivateStep(step);
-      if (step === 'carrier') {
-        const lbl = document.getElementById('carrierDropLabel');
-        if (lbl) lbl.textContent = '눌러서 통신사 선택';
-      }
-    }
-    function jdCheckoutOpen() {
-      const co = document.getElementById('sheetCheckoutArea');
-      if (!co) return;
-      jdTrack('checkout_reveal', {
-        country: currentSelectedCountry || '',
-        carrier: (activeCarrier && activeCarrier.carrier) || '',
-        plan_type: selectedPlanType || '', capacity: selectedCapacity || '', days: selectedDays || 0,
-        addon_krcall: krCallAddonOn
-      });
-      renderCriticalCard(); // 결제 전 꼭 알기 — 스텝을 건너뛰어도 여기서 반드시 노출
-      co.style.display = 'block';
-      if (co.scrollIntoView) setTimeout(() => co.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
-      if (navigator.vibrate) navigator.vibrate([8, 30, 12]);
-    }
+    let selectedProductType = ''; // 무제한 | 데일리 | 총용량
 
     const __SCOPE_CO = ['중국','홍콩','마카오','대만','미국','캐나다','멕시코','일본','태국','싱가포르','말레이시아','베트남'];
     function netScope(g) {
@@ -3780,104 +3643,141 @@
       return g.network_type === '로컬망' ? '로컬망' : '로밍망';
     }
 
-    function initNetScope(prefer, preferCarrier) {
-      // 시트 오픈 시 전체 위저드 리셋
-      JD_STEPS.forEach(s => jdSetStep(s, 'locked'));
-      const co = document.getElementById('sheetCheckoutArea');
-      if (co) co.style.display = 'none';
-      resetKrCallStep(); renderKrCallPills(); // ⑥단계도 초기화
-      const kc = document.getElementById('step-krcall');
-      if (kc) kc.style.display = KRCALL_STEP_ENABLED ? '' : 'none'; // 판매 잠금 시 단계 자체를 숨김
-      ['activationNotice', 'capacityFeel', 'daysFeel'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
-      const lbl = document.getElementById('carrierDropLabel');
-      if (lbl) lbl.textContent = '눌러서 통신사 선택';
-      const dl = document.getElementById('carrierDropList');
-      if (dl) dl.style.display = 'none';
-      const db = document.getElementById('carrierDropBtn');
-      if (db) db.classList.remove('open');
+    function planCap(p) { return String(p.data_limit || '').replace('매일 ', '').replace('총 ', '').trim(); }
+    function planIsDailyGroup(p) { return p.service_type === '데일리' || p.service_type === '무제한'; }
+    // 유형 분류 정본: 무제한 탭 = 진짜 무제한만 (JD_UNL 실측) — 저속전환형은 데일리로 (정직 표기 정책)
+    function planTypeOf(p) {
+      if (planCap(p) === '무제한' && window.JD_UNL && window.JD_UNL.isTrue(p.product_code)) return '무제한';
+      return planIsDailyGroup(p) ? '데일리' : '총용량';
+    }
+    function carrierHasType(g, t) { return (g.plans || []).some(p => planTypeOf(p) === t); }
 
-      const order = ['로컬망', '로밍망', '멀티'];
-      const avail = order.filter(sc => allCarrierOptions.some(g => netScope(g) === sc));
+    const PW_TABS = {
+      '무제한': { b: '∞ 무제한', s: '속도제한 없음' },
+      '데일리': { b: '📅 데일리', s: '매일 새로 충전' },
+      '총용량': { b: '🎒 총용량', s: '기간 내 자유 분배' }
+    };
+
+    function initProductWizard(preferCarrier) {
       window.__preferCarrier = preferCarrier || '';
-      selectedNetScope = '';
+      selectedProductType = ''; activeCarrier = null; activePlan = null; selectedDays = 0;
+      purchaseQty = 1;
+      ['pwCarrierBlock', 'pwDaysBlock', 'pwProdBlock'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      ['activationNotice', 'daysFeel'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
 
-      const box = document.getElementById('netTypePills');
-      const LBL = {
-        '로컬망': '🏠 로컬망<span class="jd-pill-sub">현지 통신사 직통 · 최고 속도</span>',
-        '로밍망': '📡 로밍망<span class="jd-pill-sub">설정 간편 · 가성비 좋음</span>',
-        '멀티': '🌏 멀티국가<span class="jd-pill-sub">여러 나라를 한 장으로</span>'
-      };
-      if (box) {
-        box.innerHTML = avail.map(sc =>
-          `<button type="button" class="option-pill" data-scope="${sc}">${LBL[sc]}</button>`
-        ).join('');
-        box.querySelectorAll('[data-scope]').forEach(b => b.addEventListener('click', () => {
-          selectedNetScope = b.getAttribute('data-scope');
-          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
-          jdCompleteStep('scope', selectedNetScope === '멀티' ? '🌏 멀티국가' : (selectedNetScope === '로컬망' ? '🏠 로컬망' : '📡 로밍망'));
-          jdResetAfter('scope');
-          applyNetScope();
-        }));
-      }
+      const avail = ['무제한', '데일리', '총용량'].filter(t => allCarrierOptions.some(g => carrierHasType(g, t)));
+      const tabs = document.getElementById('ptypeTabs');
+      if (!tabs || !avail.length) return;
+      tabs.className = 'pw-tabs' + (avail.length === 2 ? ' two' : avail.length === 1 ? ' one' : '');
+      tabs.innerHTML = avail.map(t =>
+        `<button type="button" class="pw-tab" data-ptype="${t}"><b>${PW_TABS[t].b}</b><small>${PW_TABS[t].s}</small></button>`
+      ).join('');
+      tabs.querySelectorAll('[data-ptype]').forEach(b => b.addEventListener('click', () => pwSelectType(b.getAttribute('data-ptype'))));
 
-      // 딥링크(특정 통신사 카드에서 진입) → 1·2단계 자동 통과, 옵션 1개면 자동 통과
+      // 딥링크 통신사가 있으면 그 통신사가 파는 유형을 기본 탭으로
       const wanted = allCarrierOptions.find(cx => cx.carrier === preferCarrier);
+      let def = avail[0];
       if (wanted) {
-        selectedNetScope = netScope(wanted);
-        jdCompleteStep('scope', selectedNetScope === '멀티' ? '🌏 멀티국가' : (selectedNetScope === '로컬망' ? '🏠 로컬망' : '📡 로밍망'));
-        if (box) box.querySelectorAll('[data-scope]').forEach(x => x.classList.toggle('active', x.getAttribute('data-scope') === selectedNetScope));
-        applyNetScope();
-        return;
+        const wTypes = avail.filter(t => carrierHasType(wanted, t));
+        if (wTypes.length) def = wTypes[0];
       }
-      if (avail.length === 1) {
-        selectedNetScope = avail[0];
-        jdCompleteStep('scope', selectedNetScope === '멀티' ? '🌏 멀티국가' : (selectedNetScope === '로컬망' ? '🏠 로컬망' : '📡 로밍망'));
-        if (box) box.querySelectorAll('[data-scope]').forEach(x => x.classList.add('active'));
-        applyNetScope();
-        return;
-      }
-      jdActivateStep('scope');
+      pwSelectType(def);
     }
 
-    function applyNetScope() {
-      carrierOptions = allCarrierOptions.filter(g => netScope(g) === selectedNetScope);
-      if (!carrierOptions.length) carrierOptions = allCarrierOptions.slice();
-      renderCarrierDropdown();
+    function pwSelectType(t) {
+      selectedProductType = t;
+      selectedPlanType = (t === '총용량') ? '총용량' : '데일리'; // 하위 호환 (주문명 등)
+      const tabs = document.getElementById('ptypeTabs');
+      if (tabs) tabs.querySelectorAll('.pw-tab').forEach(x => x.classList.toggle('active', x.getAttribute('data-ptype') === t));
+      jdTrack('wizard_step', { step: 'ptype', value: t, country: currentSelectedCountry || '' });
+      // 이후 단계 리셋
+      selectedDays = 0; activePlan = null;
+      ['pwDaysBlock', 'pwProdBlock'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      renderCarrierPills();
     }
 
-    function toggleCarrierDrop() {
-      const list = document.getElementById('carrierDropList');
-      const btn = document.getElementById('carrierDropBtn');
-      if (!list || !btn) return;
-      const opening = list.style.display === 'none';
-      list.style.display = opening ? 'block' : 'none';
-      btn.classList.toggle('open', opening);
-      if (window.lucide) lucide.createIcons();
-    }
+    function renderCarrierPills() {
+      const box = document.getElementById('carrierPills');
+      const block = document.getElementById('pwCarrierBlock');
+      if (!box || !block) return;
+      carrierOptions = allCarrierOptions.filter(g => carrierHasType(g, selectedProductType));
+      const NET = { '로컬망': '<span class="net local">로컬</span>', '로밍망': '<span class="net roam">로밍</span>', '멀티': '<span class="net multi">멀티</span>' };
+      box.innerHTML = carrierOptions.map((cx, i) =>
+        `<button type="button" class="pw-car" data-caridx="${i}">${NET[netScope(cx)] || ''}${cleanCarrier(cx.carrier)}</button>`
+      ).join('');
+      box.querySelectorAll('[data-caridx]').forEach(b => b.addEventListener('click', () => pwSelectCarrier(parseInt(b.getAttribute('data-caridx'), 10))));
+      block.style.display = 'block';
 
-    function renderCarrierDropdown() {
-      const list = document.getElementById('carrierDropList');
-      const lbl = document.getElementById('carrierDropLabel');
-      if (!list) return;
-      list.innerHTML = carrierOptions.map((cx, i) => {
-        const net = cx.network_type === '로컬망' ? '<span class="jd-net-badge local">로컬망</span>' : '<span class="jd-net-badge roam">로밍망</span>';
-        const call = cx.calls === '가능' ? ' <span style="font-size:0.7rem;color:#15803d;font-weight:800;">📞전화</span>' : '';
-        return `<button type="button" class="jd-drop-item" onclick="onCarrierChange('${i}')">${net}<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;">${cleanCarrier(cx.carrier)}</span>${call}</button>`;
-      }).join('');
-      list.style.display = 'none';
-      const btn = document.getElementById('carrierDropBtn');
-      if (btn) btn.classList.remove('open');
-      if (lbl) lbl.textContent = '눌러서 통신사 선택';
-
-      // 딥링크 통신사 → 자동 선택 / 통신사 1개 → 자동 통과
       const preferIdx = carrierOptions.findIndex(cx => cx.carrier === window.__preferCarrier);
-      window.__preferCarrier = '';
-      if (preferIdx >= 0) { onCarrierChange(String(preferIdx)); return; }
-      if (carrierOptions.length === 1) { onCarrierChange('0'); return; }
-      jdActivateStep('carrier');
+      if (preferIdx >= 0) { window.__preferCarrier = ''; pwSelectCarrier(preferIdx); return; }
+      if (carrierOptions.length === 1) { pwSelectCarrier(0); return; }
+      const an = document.getElementById('activationNotice');
+      if (an) an.style.display = 'none';
+    }
+
+    function pwSelectCarrier(idx) {
+      activeCarrier = carrierOptions[idx];
+      if (!activeCarrier) return;
+      selectedCarrier = activeCarrier.carrier;
+      const box = document.getElementById('carrierPills');
+      if (box) box.querySelectorAll('.pw-car').forEach(x => x.classList.toggle('active', x.getAttribute('data-caridx') === String(idx)));
+      renderActivationNotice();
+      jdTrack('wizard_step', { step: 'carrier', value: activeCarrier.carrier, country: currentSelectedCountry || '' });
+      selectedDays = 0; activePlan = null;
+      const pb = document.getElementById('pwProdBlock');
+      if (pb) pb.style.display = 'none';
+      renderDaysRow();
+    }
+
+    function pwPlansOfType() {
+      if (!activeCarrier) return [];
+      return (activeCarrier.plans || []).filter(p => planTypeOf(p) === selectedProductType);
+    }
+
+    function renderDaysRow() {
+      const box = document.getElementById('daysPills');
+      const block = document.getElementById('pwDaysBlock');
+      if (!box || !block) return;
+      const days = Array.from(new Set(pwPlansOfType().map(p => parseInt(p.duration, 10)))).filter(d => d).sort((a, b) => a - b);
+      box.innerHTML = days.map(d => `<button type="button" class="option-pill" data-days="${d}">${d}일</button>`).join('');
+      box.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => {
+        box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
+        pwSelectDays(parseInt(b.getAttribute('data-days'), 10));
+      }));
+      block.style.display = 'block';
+      if (days.length === 1) {
+        box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
+        pwSelectDays(days[0]);
+      }
+    }
+
+    function pwSelectDays(d) {
+      selectedDays = d;
+      renderDaysFeel(d);
+      jdTrack('wizard_step', { step: 'days', value: String(d), country: currentSelectedCountry || '' });
+      renderProductList();
+    }
+
+    function renderProductList() {
+      const box = document.getElementById('productList');
+      const block = document.getElementById('pwProdBlock');
+      if (!box || !block) return;
+      const plans = pwPlansOfType().filter(p => parseInt(p.duration, 10) === selectedDays)
+        .sort((a, b) => a.final_price - b.final_price);
+      window.__pwPlans = plans;
+      box.innerHTML = plans.map((p, i) => {
+        const cap = planCap(p);
+        const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : ((planIsDailyGroup(p) ? '매일 ' : '총 ') + cap);
+        const perday = selectedDays > 1 ? `하루 약 ${Math.round(p.final_price / selectedDays).toLocaleString()}원` : '';
+        return `<button type="button" class="pw-prod" data-prodidx="${i}">
+          <span style="min-width:0;"><span class="cap">${capLbl}</span><span class="sub" style="display:block;">${selectedDays}일 · ${activeCarrier.network_speed || ''}</span></span>
+          <span class="price"><b>${p.final_price.toLocaleString()}원</b>${perday ? `<small>${perday}</small>` : ''}</span>
+          <span class="go">→</span>
+        </button>`;
+      }).join('') || '<div style="font-size:0.82rem;color:#94a3b8;font-weight:700;padding:8px 2px;">이 조합의 상품이 없어요 — 다른 기간을 선택해 보세요</div>';
+      box.querySelectorAll('[data-prodidx]').forEach(b => b.addEventListener('click', () => openProductDetail(parseInt(b.getAttribute('data-prodidx'), 10))));
+      block.style.display = 'block';
+      if (block.scrollIntoView) setTimeout(() => block.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     }
 
     // 개통 방식에 따라 언제 사야 하는지 자동 안내
@@ -4003,130 +3903,250 @@
       el.style.display = 'block';
     }
 
+    // 하위 호환 별칭 (스텁 목록·외부 참조 대비)
     function onCarrierChange(val) {
-      // val = carrierOptions 인덱스 (호환 위해 통신사명 문자열도 허용)
       const idx = Number(val);
-      activeCarrier = (Number.isInteger(idx) && carrierOptions[idx])
-        ? carrierOptions[idx]
-        : (carrierOptions.find(cx => cx.carrier === val) || carrierOptions[0]);
-      selectedCarrier = activeCarrier.carrier;
-      const lbl = document.getElementById('carrierDropLabel');
-      if (lbl) lbl.textContent = cleanCarrier(activeCarrier.carrier);
-      const ddl = document.getElementById('carrierDropList');
-      if (ddl) ddl.style.display = 'none';
-      const ddb = document.getElementById('carrierDropBtn');
-      if (ddb) ddb.classList.remove('open');
-      renderActivationNotice();
-      jdCompleteStep('carrier', cleanCarrier(activeCarrier.carrier));
-      jdResetAfter('carrier');
-
-      // ③ 제공 방식 옵션 구성
-      const types = new Set();
-      activeCarrier.plans.forEach(p => {
-        if (p.service_type === '데일리' || p.service_type === '무제한') types.add('데일리');
-        else types.add('총용량');
-      });
-      const typeList = Array.from(types);
-      const box = document.getElementById('planTypePills');
-      if (box) {
-        box.innerHTML = typeList.map(t =>
-          `<button type="button" class="option-pill" data-plan="${t}">${t === '데일리' ? '📅 데일리<span class="jd-pill-sub">매일 새 용량 충전</span>' : '🎒 총용량<span class="jd-pill-sub">기간 내 자유 분배</span>'}</button>`
-        ).join('');
-        // 데일리 vs 총용량 — 뭐가 다른지 확실히 설명
-        const GUIDE = {
-          '데일리': '<div><strong>📅 데일리</strong> — <em>매일 용량이 새로 충전</em>돼요. 오늘 다 써도 다음날 다시 꽉 차니까, 매일 지도·유튜브·인스타 많이 쓰는 일반 여행에 가장 무난해요. (대부분 소진 시 그날만 저속 전환 → 다음날 고속 자동 복구)</div>',
-          '총용량': '<div><strong>🎒 총용량</strong> — 여행 기간 전체에서 <em>총 용량을 자유롭게 나눠</em> 써요. 많이 쓰는 날·안 쓰는 날 차이가 큰 일정이나 짧은 출장에 유리해요. (대부분 소진 후에도 저속으로 카톡·지도 정도는 계속 사용 가능, 일부 상품은 중단)</div>'
-        };
-        box.parentElement.querySelectorAll('[data-jd-guide]').forEach(el => el.remove()); // 재진입 시 이전 가이드 제거
-        box.insertAdjacentHTML('afterend',
-          `<div class="jd-plan-guide" data-jd-guide>${typeList.map(t => GUIDE[t]).join('')}</div>`);
-        box.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', () => {
-          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
-          onPlanTypeChange(b.getAttribute('data-plan'));
-        }));
-      }
-      if (typeList.length === 1) {
-        if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
-        onPlanTypeChange(typeList[0]);
-        return;
-      }
-      jdActivateStep('plan');
+      const i = Number.isInteger(idx) && carrierOptions[idx] ? idx : Math.max(0, carrierOptions.findIndex(cx => cx.carrier === val));
+      pwSelectCarrier(i);
     }
 
-    function onPlanTypeChange(val) {
-      selectedPlanType = val;
-      jdCompleteStep('plan', val === '데일리' ? '📅 데일리' : '🎒 총용량');
-      jdResetAfter('plan');
-      const isDaily = (val === '데일리');
-      const filteredPlans = activeCarrier.plans.filter(p => (p.service_type === '데일리' || p.service_type === '무제한') === isDaily);
+    // ===== 📱 앱(PWA) 5% 할인 =====
+    function jdIsApp() {
+      try { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; } catch (e) { return false; }
+    }
+    function jdAppDiscount(base) { return jdIsApp() ? Math.round(base * 0.05) : 0; }
 
-      const caps = new Set();
-      filteredPlans.forEach(p => {
-        const c = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
-        caps.add(c);
-      });
-      const capList = Array.from(caps).sort((a, b) => {
-        const parseSize = s => parseFloat(s.replace(/[^\d.]/g, '')) * (s.includes('MB') ? 1 : 1024);
-        return parseSize(a) - parseSize(b);
-      });
-
-      const box = document.getElementById('capacityPills');
-      // 무제한 정직 라벨 (speed-truth.js 실측): 진짜 무제한만 ∞, 저속전환형은 전환 속도 명시
-      const unlRep = filteredPlans.find(p => p.data_limit.replace('매일 ', '').replace('총 ', '').trim() === '무제한');
-      const unlPillLabel = (unlRep && window.JD_UNL) ? window.JD_UNL.label(unlRep.product_code) : '무제한';
-      if (box) {
-        box.innerHTML = capList.map(c => `<button type="button" class="option-pill" data-cap="${c}">${c === '무제한' ? unlPillLabel : c}</button>`).join('');
-        box.querySelectorAll('[data-cap]').forEach(b => b.addEventListener('click', () => {
-          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
-          onCapacityChange(b.getAttribute('data-cap'));
-        }));
-      }
-      if (capList.length === 1) {
-        if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
-        onCapacityChange(capList[0]);
-        return;
-      }
-      jdActivateStep('cap');
+    // ===== [팝업 2] 상품 상세 — 필수 정보 그리드 + 유의사항 + 구매하기 =====
+    function capacityFeelHTML(val, isDaily) {
+      const prefix = isDaily ? '매일' : '기간 내 총';
+      if (/무제한/.test(val)) return `♾️ <strong>${prefix} 데이터 무제한</strong> — 영상·지도·핫스팟 마음껏`;
+      let gb = 0;
+      const g = String(val).match(/([\d.]+)\s*GB/i);
+      const mb = String(val).match(/([\d.]+)\s*MB/i);
+      if (g) gb = parseFloat(g[1]); else if (mb) gb = parseFloat(mb[1]) / 1000;
+      if (!gb) return '';
+      const fmt = h => h >= 10 ? Math.round(h) + '시간' : (Math.round(h * 10) / 10) + '시간';
+      return `💡 <strong>${prefix} ${val}</strong> ≈ 📺 유튜브 ${fmt(gb)} · 📸 인스타 ${fmt(gb * 1.4)}`;
     }
 
-    function onCapacityChange(val) {
-      selectedCapacity = val;
-      const isDaily = (selectedPlanType === '데일리');
-      const matchingPlans = activeCarrier.plans.filter(p => {
-        const pLimit = p.data_limit.replace('매일 ', '').replace('총 ', '').trim();
-        return (p.service_type === '데일리' || p.service_type === '무제한') === isDaily && pLimit === val.trim();
-      });
-      // 무제한 정직 라벨: 위저드 스텝 요약에도 전환 속도 명시
-      const stepLabel = (val === '무제한' && matchingPlans[0] && window.JD_UNL) ? window.JD_UNL.short(matchingPlans[0].product_code) : val;
-      jdCompleteStep('cap', stepLabel);
-      jdResetAfter('cap');
-      renderCapacityFeel(val, isDaily);
+    function openProductDetail(prodIdx) {
+      const p = (window.__pwPlans || [])[prodIdx];
+      if (!p || !activeCarrier) return;
+      activePlan = p;
+      selectedCapacity = planCap(p);
+      purchaseQty = 1;
+      jdTrack('wizard_step', { step: 'product', value: p.product_code, country: currentSelectedCountry || '' });
 
-      const days = Array.from(new Set(matchingPlans.map(p => p.duration))).sort((a, b) => a - b);
-      const box = document.getElementById('daysPills');
-      if (box) {
-        box.innerHTML = days.map(d => `<button type="button" class="option-pill" data-days="${d}">${d}일</button>`).join('');
-        box.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => {
-          box.querySelectorAll('.option-pill').forEach(x => x.classList.toggle('active', x === b));
-          onDaysChange(b.getAttribute('data-days'));
-        }));
-      }
-      if (days.length === 1) {
-        if (box) box.querySelectorAll('.option-pill').forEach(x => x.classList.add('active'));
-        onDaysChange(days[0]);
-        return;
-      }
-      jdActivateStep('days');
+      const cap = planCap(p);
+      const isDaily = planIsDailyGroup(p);
+      const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : cap;
+      const dataTile = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : ((isDaily ? '매일 ' : '총 ') + cap);
+      const resetTile = selectedProductType === '무제한' ? '제한 없음' : (isDaily ? '매일 리셋 (현지 자정)' : '리셋 없음 · 자유 분배');
+      const tile = (ic, k, v) => `<div class="pv-tile"><span class="ic">${ic}</span><div class="k">${k}</div><div class="v">${v || '-'}</div></div>`;
+      const an = document.getElementById('activationNotice');
+      const anHTML = (an && an.style.display !== 'none') ? `<div style="margin:10px 0;padding:11px 13px;border-radius:12px;font-size:0.75rem;font-weight:700;line-height:1.6;background:${an.style.background};border:${an.style.border};color:${an.style.color};">${an.innerHTML}</div>` : '';
+      const flags = (typeof getCriticalFlags === 'function' ? getCriticalFlags() : []) || [];
+      const feel = capacityFeelHTML(cap, isDaily);
+
+      let layer = document.getElementById('productDetailLayer');
+      if (layer) layer.remove();
+      layer = document.createElement('div');
+      layer.id = 'productDetailLayer';
+      layer.className = 'pv-layer';
+      layer.innerHTML = `
+        <div class="pv-sheet">
+          <div class="pv-grab"></div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img src="${countryImg(currentSelectedCountry)}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">
+            <div style="min-width:0;flex:1;">
+              <div style="font-size:0.98rem;font-weight:800;color:#221510;">${currentSelectedCountry} · ${cleanCarrier(activeCarrier.carrier)}</div>
+              <div style="font-size:0.74rem;font-weight:700;color:#94a3b8;">${capLbl} / ${selectedDays}일</div>
+            </div>
+            <button type="button" onclick="document.getElementById('productDetailLayer').remove()" style="width:34px;height:34px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;flex-shrink:0;">✕</button>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin:12px 0 2px;">
+            <b style="font-size:1.45rem;font-weight:900;color:#F2751F;">${p.final_price.toLocaleString()}원</b>
+            ${selectedDays > 1 ? `<span style="font-size:0.72rem;font-weight:700;color:#94a3b8;">하루 약 ${Math.round(p.final_price / selectedDays).toLocaleString()}원 꼴</span>` : ''}
+          </div>
+          ${feel ? `<div style="font-size:0.76rem;font-weight:700;color:#9a5b16;margin-top:4px;">${feel}</div>` : ''}
+          <div class="pv-grid">
+            ${tile('💾', '데이터', dataTile)}
+            ${tile('🔄', '데이터 리셋', resetTile)}
+            ${tile('📅', '사용일', `${selectedDays}일 · 개통 시점부터`)}
+            ${tile('⚡', '개통 시점', activeCarrier.activation)}
+            ${tile('⏳', '유효기간', activeCarrier.validity)}
+            ${tile('📡', '핫스팟', activeCarrier.hotspot)}
+            ${tile('🔋', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)}
+            ${tile('📲', 'eSIM 등록', 'QR 수신 후 와이파이에서 설치')}
+            ${tile('📞', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)}
+            ${tile('📶', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
+          </div>
+          ${anHTML}
+          ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:14px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(249,115,22,0.05));">
+            <div style="font-size:0.8rem;font-weight:900;color:#b91c1c;margin-bottom:2px;">🔎 구매 전 꼭 알기</div>
+            ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span style="flex-shrink:0;">${x.i}</span><span class="jd-ku">${x.t}</span></div>`).join('')}
+          </div>` : ''}
+          <div style="font-size:0.72rem;font-weight:700;color:#8a7a6d;margin:10px 2px;line-height:1.6;">🛡️ 미개통 시 100% 환불 · 설치(다운로드) 전 100% 취소 가능 · 24시간 카톡 케어</div>
+          <button type="button" class="pv-cta" onclick="openQtySheet()">구매하기</button>
+        </div>`;
+      layer.onclick = e => { if (e.target === layer) layer.remove(); };
+      document.body.appendChild(layer);
     }
 
-    function onDaysChange(val) {
-      selectedDays = parseInt(val);
-      jdCompleteStep('days', selectedDays + '일');
-      jdResetAfter('days'); // ⑥단계 재잠금 (기간 재선택 시 통화 선택도 다시)
-      renderDaysFeel(selectedDays);
-      updatePricing();
-      if (KRCALL_STEP_ENABLED) jdActivateStep('krcall'); // ⑥ 전화 걸고 받기 — 선택함/안 함을 눌러야 결제 영역 공개
-      else jdCheckoutOpen(); // 잠금 상태: 5단계 완료 즉시 결제 영역 공개
+    // ===== [팝업 3] 수량 미니시트 — 앱 5% 배너 + 카트/바로구매 =====
+    function openQtySheet() {
+      if (!activePlan) return;
+      let layer = document.getElementById('qtySheetLayer');
+      if (layer) layer.remove();
+      layer = document.createElement('div');
+      layer.id = 'qtySheetLayer';
+      layer.className = 'pv-layer';
+      layer.style.zIndex = '100006';
+      layer.innerHTML = `
+        <div class="pv-sheet" style="max-height:70vh;">
+          <div class="pv-grab"></div>
+          <div style="font-size:0.95rem;font-weight:800;color:#221510;margin-bottom:10px;">수량 선택</div>
+          <div class="pv-qty-row">
+            <div style="min-width:0;">
+              <div style="font-size:0.8rem;font-weight:800;color:#221510;">${currentSelectedCountry} eSIM × <span id="checkoutQty">1</span>개</div>
+              <div id="perDayPrice" style="font-size:0.68rem;color:#94a3b8;font-weight:700;margin-top:1px;"></div>
+            </div>
+            <div class="qty-stepper">
+              <button class="qty-btn" type="button" onclick="changeQty(-1)" aria-label="수량 줄이기">−</button>
+              <button class="qty-btn" type="button" onclick="changeQty(1)" aria-label="수량 늘리기" style="order:2;">+</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin:12px 2px 0;">
+            <span style="font-size:0.82rem;font-weight:800;color:#5D5049;">총 상품 금액</span>
+            <b id="checkoutTotalPrice" class="checkout-total-price" style="font-size:1.2rem;color:#F2751F;">0원</b>
+          </div>
+          <div id="qtyAppDisc" style="display:none;justify-content:space-between;margin:4px 2px 0;font-size:0.76rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span id="qtyAppDiscVal"></span></div>
+          <div class="pv-app-banner">📱 <span><b>앱으로 구매하면 전 상품 5% 할인!</b><br><span style="opacity:0.85;">홈 화면에 추가만 하면 돼요 — 공유 → '홈 화면에 추가'</span></span></div>
+          <div style="display:flex;gap:9px;margin-top:6px;">
+            <button type="button" onclick="addToCart()" style="flex:1;padding:15px;border-radius:14px;border:1.5px solid #ece5dd;background:#fff;font-family:inherit;font-size:0.88rem;font-weight:800;color:#221510;cursor:pointer;">🛒 카트에 담기</button>
+            <button type="button" class="pv-cta" style="flex:1.4;" onclick="pwBuyNow()">⚡ 바로 구매하기</button>
+          </div>
+        </div>`;
+      layer.onclick = e => { if (e.target === layer) layer.remove(); };
+      document.body.appendChild(layer);
+      renderQtyTotals();
+    }
+
+    function renderQtyTotals() {
+      const base = activePlan ? activePlan.final_price * purchaseQty : 0;
+      const disc = jdAppDiscount(base);
+      setTotalPriceAnimated(base - disc);
+      const q = document.getElementById('checkoutQty');
+      if (q) q.innerText = purchaseQty;
+      const pd = document.getElementById('perDayPrice');
+      if (pd && activePlan) {
+        const days = parseInt(activePlan.duration) || selectedDays || 1;
+        pd.innerText = days > 1 ? `☕ 1개당 하루 약 ${Math.round(activePlan.final_price / days).toLocaleString()}원 꼴` : '';
+      }
+      const dRow = document.getElementById('qtyAppDisc');
+      if (dRow) {
+        dRow.style.display = disc ? 'flex' : 'none';
+        const dv = document.getElementById('qtyAppDiscVal');
+        if (dv) dv.innerText = '-' + disc.toLocaleString() + '원';
+      }
+    }
+
+    function pwBuyNow() {
+      const qs = document.getElementById('qtySheetLayer');
+      if (qs) qs.remove();
+      const dl = document.getElementById('productDetailLayer');
+      if (dl) dl.remove();
+      showMobileConfirmLayer();
+    }
+
+    // ===== 🛒 카트 (localStorage jd_cart) =====
+    function jdCartGet() { try { return JSON.parse(localStorage.getItem('jd_cart') || '[]'); } catch (e) { return []; } }
+    function jdCartSave(items) {
+      try { localStorage.setItem('jd_cart', JSON.stringify(items)); } catch (e) {}
+      jdCartBadge();
+    }
+    function jdCartBadge() {
+      const b = document.getElementById('mobileCartCount');
+      if (!b) return;
+      const n = jdCartGet().reduce((s, x) => s + (x.qty || 1), 0);
+      b.textContent = n;
+      b.style.display = n ? '' : 'none';
+    }
+    function addToCart() {
+      if (!activePlan || !activeCarrier) return;
+      const items = jdCartGet();
+      const cap = planCap(activePlan);
+      const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.short(activePlan.product_code) : cap;
+      const key = activePlan.product_code + '_' + selectedDays;
+      const dup = items.find(x => x.key === key);
+      if (dup) dup.qty += purchaseQty;
+      else items.push({
+        key, country: currentSelectedCountry, carrier: activeCarrier.carrier,
+        product_code: activePlan.product_code, cap: cap, capLbl: capLbl,
+        days: selectedDays, qty: purchaseQty, price: activePlan.final_price, ptype: selectedProductType
+      });
+      jdCartSave(items);
+      const qs = document.getElementById('qtySheetLayer');
+      if (qs) qs.remove();
+      showDataLoadingToast();
+      const t = document.getElementById('dataToast');
+      if (t) t.textContent = '🛒 카트에 담았어요 — 상단 가방 아이콘에서 확인';
+      jdTrack('add_to_cart', { country: currentSelectedCountry, value: activePlan.final_price * purchaseQty, currency: 'KRW' });
+    }
+    function openCartSheet() {
+      const items = jdCartGet();
+      let layer = document.getElementById('cartSheetLayer');
+      if (layer) layer.remove();
+      if (!items.length) { switchNav('orders'); return; }
+      layer = document.createElement('div');
+      layer.id = 'cartSheetLayer';
+      layer.className = 'pv-layer';
+      layer.innerHTML = `
+        <div class="pv-sheet" style="max-height:78vh;">
+          <div class="pv-grab"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <b style="font-size:0.98rem;color:#221510;">🛒 카트 (${items.length})</b>
+            <button type="button" onclick="document.getElementById('cartSheetLayer').remove()" style="width:32px;height:32px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;">✕</button>
+          </div>
+          ${items.map((x, i) => `
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ece5dd;border-radius:14px;padding:12px 13px;margin-bottom:8px;">
+              <div style="min-width:0;flex:1;">
+                <div style="font-size:0.84rem;font-weight:800;color:#221510;">${x.country} · ${cleanCarrier(x.carrier)}</div>
+                <div style="font-size:0.72rem;font-weight:700;color:#94a3b8;margin-top:1px;">${x.capLbl} / ${x.days}일 × ${x.qty}개</div>
+              </div>
+              <b style="font-size:0.88rem;font-weight:900;color:#F2751F;flex-shrink:0;">${(x.price * x.qty).toLocaleString()}원</b>
+              <button type="button" onclick="jdCartOrder(${i})" style="flex-shrink:0;padding:9px 12px;border-radius:11px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-size:0.74rem;font-weight:800;cursor:pointer;">주문</button>
+              <button type="button" onclick="jdCartRemove(${i})" aria-label="삭제" style="flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid #ece5dd;background:#fff;color:#94a3b8;font-weight:800;cursor:pointer;">✕</button>
+            </div>`).join('')}
+          <div style="font-size:0.7rem;font-weight:700;color:#94a3b8;margin:6px 2px 0;">국가별 개통 정책이 달라 상품별로 결제해 주세요 — 각 [주문] 버튼이 바로 결제로 이어져요</div>
+        </div>`;
+      layer.onclick = e => { if (e.target === layer) layer.remove(); };
+      document.body.appendChild(layer);
+    }
+    function jdCartRemove(i) {
+      const items = jdCartGet();
+      items.splice(i, 1);
+      jdCartSave(items);
+      openCartSheet();
+    }
+    function jdCartOrder(i) {
+      const x = jdCartGet()[i];
+      if (!x) return;
+      const cs = document.getElementById('cartSheetLayer');
+      if (cs) cs.remove();
+      // 카트 항목 → 현재 선택 상태로 복원 후 주문 팝업
+      currentSelectedCountry = x.country;
+      allCarrierOptions = (window.PRODUCTS_DATA || []).filter(g => g.country === x.country);
+      activeCarrier = allCarrierOptions.find(g => g.carrier === x.carrier);
+      if (!activeCarrier) { alert('상품 정보를 찾지 못했어요 — 스토어에서 다시 선택해 주세요.'); return; }
+      activePlan = (activeCarrier.plans || []).find(p => p.product_code === x.product_code && parseInt(p.duration, 10) === x.days)
+        || (activeCarrier.plans || []).find(p => p.product_code === x.product_code);
+      if (!activePlan) { alert('상품 정보를 찾지 못했어요 — 스토어에서 다시 선택해 주세요.'); return; }
+      selectedDays = x.days; selectedCapacity = x.cap; purchaseQty = x.qty || 1;
+      selectedProductType = x.ptype || planTypeOf(activePlan);
+      selectedPlanType = (selectedProductType === '총용량') ? '총용량' : '데일리';
+      window.__cartOrderIndex = i; // 결제 성공 시 카트에서 제거용
+      showMobileConfirmLayer();
     }
 
     // 일수 계산 도우미: "4일권 = 3박 4일" — 잘못 산 일수를 미리 방지
@@ -4191,8 +4211,16 @@
 
     function changeQty(amt) {
       purchaseQty = Math.max(1, purchaseQty + amt);
-      document.getElementById('checkoutQty').innerText = purchaseQty;
-      updatePricing();
+      renderQtyTotals();
+    }
+
+    // 기종 진단 — 결제 팝업(z 99999) 위에서도 보이도록 z-index 승격 후 오픈
+    function pwOpenDeviceCheck() {
+      const bd = document.getElementById('modalBackdrop');
+      const dm = document.getElementById('deviceModal');
+      if (bd) bd.style.zIndex = '100010';
+      if (dm) dm.style.zIndex = '100011';
+      openDeviceCheck();
     }
 
     // Hybrid PortOne V1/V2 Checkout handler
@@ -4291,21 +4319,8 @@
       return list;
     }
 
-    // [1단계] 결제 버튼 → 스펙 & 주의사항 최종 확인 레이어
+    // [1단계] 결제 버튼 → 주문 팝업 (수령 정보는 팝업 안에서 입력 — 퍼널 v2)
     function processMockCheckout() {
-      jdTrack('checkout_click', {
-        country: currentSelectedCountry || '',
-        carrier: (activeCarrier && activeCarrier.carrier) || '',
-        addon_krcall: krCallAddonOn,
-        value: (activePlan ? activePlan.final_price * purchaseQty : 0) + (krCallAddonOn ? KRCALL_ADDON.price : 0), currency: 'KRW'
-      });
-      const name = document.getElementById('buyerName').value.trim();
-      const phone = document.getElementById('buyerPhone').value.trim();
-      const email = document.getElementById('buyerEmail').value.trim();
-      if (!name || !phone || !email) {
-        alert("개통 발송을 위해 수령인 이름, 연락처, 이메일을 모두 입력해 주세요.");
-        return;
-      }
       if (!activePlan || !activeCarrier) {
         alert("상품 옵션을 다시 선택해 주세요.");
         return;
@@ -4314,7 +4329,18 @@
     }
 
     function showMobileConfirmLayer() {
-      const priceVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+      if (!activePlan || !activeCarrier) { alert("상품 옵션을 다시 선택해 주세요."); return; }
+      jdTrack('checkout_click', {
+        country: currentSelectedCountry || '',
+        carrier: (activeCarrier && activeCarrier.carrier) || '',
+        addon_krcall: krCallAddonOn,
+        value: (activePlan ? activePlan.final_price * purchaseQty : 0) + (krCallAddonOn ? KRCALL_ADDON.price : 0), currency: 'KRW'
+      });
+      const baseVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+      const appDisc = jdAppDiscount(baseVal);
+      const priceVal = baseVal - appDisc;
+      let savedBuyer = {};
+      try { savedBuyer = JSON.parse(localStorage.getItem('jd_buyer') || '{}'); } catch (e) {}
       let layer = document.getElementById('mobileConfirmLayer');
       if (layer) layer.remove();
       layer = document.createElement('div');
@@ -4339,10 +4365,23 @@
                 + '</div>';
             })()}
             ${krCallAddonOn ? `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:700;color:#0f172a;"><span>📞 ${KRCALL_ADDON.name} <span style="font-size:0.68rem;color:#94a3b8;font-weight:600;">카톡 1:1 · 완료 보장</span></span><span>+${KRCALL_ADDON.price.toLocaleString()}원</span></div>` : ''}
+            ${appDisc ? `<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-size:0.8rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span>-${appDisc.toLocaleString()}원</span></div>` : ''}
             <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(242,117,31,0.3);font-weight:800;">
-              <span style="font-size:0.85rem;">결제 금액</span><span style="color:#F2751F;font-size:1.05rem;">${priceVal.toLocaleString()}원</span>
+              <span style="font-size:0.85rem;">결제 금액</span><span id="mConfirmTotal" style="color:#F2751F;font-size:1.05rem;">${priceVal.toLocaleString()}원</span>
             </div>
             <div style="height:15px;margin-top:11px;border-radius:2px;opacity:0.8;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
+          </div>
+          <!-- ✉ 수령 정보 (퍼널 v2: 주문 팝업에서 입력) -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 15px;margin-bottom:14px;box-shadow:0 4px 14px rgba(15,23,42,0.04);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span style="font-size:0.86rem;font-weight:800;color:#0f172a;">✉️ 수령 정보 <span style="font-size:0.68rem;font-weight:600;color:#94a3b8;">QR코드가 발송될 곳이에요</span></span>
+              <button type="button" onclick="pwOpenDeviceCheck()" style="flex-shrink:0;background:rgba(43,179,163,0.1);border:1px solid rgba(43,179,163,0.35);color:#1B8E82;font-family:inherit;font-size:0.7rem;font-weight:800;padding:7px 11px;border-radius:999px;cursor:pointer;">📟 내 기종 eSIM 진단</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <input type="text" id="buyerName" class="tracker-input" placeholder="수령인 이름 (한글)" value="${(savedBuyer.name || '').replace(/"/g, '&quot;')}">
+              <input type="tel" id="buyerPhone" class="tracker-input" placeholder="수령인 연락처 (예: 01012345678)" value="${(savedBuyer.phone || '').replace(/"/g, '&quot;')}">
+              <input type="email" id="buyerEmail" class="tracker-input" placeholder="eSIM 수신할 이메일 주소" value="${(savedBuyer.email || '').replace(/"/g, '&quot;')}">
+            </div>
           </div>
           <div style="font-size:0.79rem;color:#334155;line-height:1.6;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 15px;margin-bottom:14px;box-shadow:0 4px 14px rgba(15,23,42,0.04);">
             <div style="font-weight:800;margin-bottom:8px;color:#0f172a;display:flex;align-items:center;gap:7px;"><span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:rgba(239,68,68,0.1);align-items:center;justify-content:center;font-size:0.7rem;">⚠️</span>꼭 확인해 주세요</div>
@@ -4390,7 +4429,7 @@
             <button id="mobileConfirmPayBtn" style="flex:1.6;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;opacity:0.5;" disabled>동의하고 결제하기</button>
           </div>
           <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:11px;font-size:0.8rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
-          ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:8px;font-size:0.78rem;font-weight:700;color:#8a7a6d;text-decoration:none;">💰 회원이면 <b style="color:#F2751F;">2,000원 쿠폰</b> — 1분 가입하고 다음 결제부터 할인받기</a>'; } catch(e){ return ''; } })()}
+          ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;margin-top:12px;padding:15px 16px;border-radius:16px;background:linear-gradient(135deg,#221510,#46280f);color:#fff;text-decoration:none;box-shadow:0 8px 20px rgba(34,21,16,0.25);"><span style="font-size:1.5rem;">🎁</span><span style="font-size:0.84rem;font-weight:800;line-height:1.5;min-width:0;">1분 가입하면 <b style="color:#FFB56B;">2,000원 쿠폰</b> 즉시 지급<br><span style="font-size:0.7rem;font-weight:600;opacity:0.8;">여행 끝나고 돌아오면 웰컴백 쿠폰까지 — 전화번호만 있으면 끝</span></span><span style="margin-left:auto;color:#FFB56B;font-weight:900;flex-shrink:0;">→</span></a>'; } catch(e){ return ''; } })()}
         </div>`;
       document.body.appendChild(layer);
       const check = layer.querySelector('#mobileAgreeCheck');
@@ -4415,6 +4454,16 @@
       });
       payBtn.addEventListener('click', () => {
         if (payBtn.disabled) return;
+        // 수령 정보 검증 + 보존 (레이어 제거 후에도 참조 가능하게)
+        const bName = (layer.querySelector('#buyerName') || {}).value || '';
+        const bPhone = (layer.querySelector('#buyerPhone') || {}).value || '';
+        const bEmail = (layer.querySelector('#buyerEmail') || {}).value || '';
+        if (!bName.trim() || !bPhone.trim() || !bEmail.trim()) {
+          alert("개통 발송을 위해 수령인 이름, 연락처, 이메일을 모두 입력해 주세요.");
+          return;
+        }
+        window.__buyer = { name: bName.trim(), phone: bPhone.trim(), email: bEmail.trim() };
+        try { localStorage.setItem('jd_buyer', JSON.stringify(window.__buyer)); } catch (e) {}
         layer.remove();
         proceedMockCheckout();
       });
@@ -4426,7 +4475,8 @@
         var token = '';
         try { token = localStorage.getItem('jd_member_token') || ''; } catch (e) {}
         if (!token) return;
-        var orderTotal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+        var orderBase = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+        var orderTotal = orderBase - jdAppDiscount(orderBase); // 앱 5% 할인 반영 후 금액 기준
         fetch('https://jdisim-proxy.vercel.app/api/member?action=me', { headers: { Authorization: 'Bearer ' + token } })
           .then(function (r) { return r.json(); })
           .then(function (j) {
@@ -4464,9 +4514,10 @@
 
     // [2단계] 실제 결제 실행
     async function proceedMockCheckout() {
-      const name = document.getElementById('buyerName').value.trim();
-      const phone = document.getElementById('buyerPhone').value.trim();
-      const email = document.getElementById('buyerEmail').value.trim();
+      const buyer = window.__buyer || {};
+      const name = (buyer.name || (document.getElementById('buyerName') || {}).value || '').trim();
+      const phone = (buyer.phone || (document.getElementById('buyerPhone') || {}).value || '').trim();
+      const email = (buyer.email || (document.getElementById('buyerEmail') || {}).value || '').trim();
 
       if (!name || !phone || !email) {
         alert("개통 발송을 위해 수령인 이름, 연락처, 이메일을 모두 입력해 주세요.");
@@ -4480,9 +4531,17 @@
 
       await loadEnvForPayment();
 
-      // 쿠폰 차감 (표시용 — 실차감 확정은 아래 use_coupon 서버 검증. PG 재개 시 결제 검증과 함께 재확인)
+      // 카트에서 온 주문이면 결제 진입 시 카트에서 제거
+      if (typeof window.__cartOrderIndex === 'number') {
+        try { const ci = jdCartGet(); ci.splice(window.__cartOrderIndex, 1); jdCartSave(ci); } catch (e) {}
+        window.__cartOrderIndex = undefined;
+      }
+
+      // 할인: 앱 5% + 쿠폰 (표시용 — 실차감 확정은 아래 use_coupon 서버 검증. PG 재개 시 결제 검증과 함께 재확인)
+      const baseVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
+      const appDiscount = jdAppDiscount(baseVal);
       const couponDiscount = window._appliedCoupon ? Math.min(Number(window._appliedCoupon.amount) || 0, activePlan.final_price * purchaseQty) : 0;
-      const priceVal = Math.max(0, activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0) - couponDiscount);
+      const priceVal = Math.max(0, baseVal - appDiscount - couponDiscount);
       const orderCode = 'JD' + Date.now().toString().slice(-8);
       // 서버 쿠폰 소진 처리 (본인 지갑 검증 — 이중 사용·타인 코드 차단)
       if (window._appliedCoupon) {
@@ -4514,7 +4573,7 @@
         items: [
           {
             productCode: activePlan.product_code,
-            productName: `${currentSelectedCountry} ${activeCarrier.carrier} 매일 ${selectedCapacity} / ${selectedDays}일`,
+            productName: `${currentSelectedCountry} ${activeCarrier.carrier} ${activePlan.data_limit} / ${selectedDays}일`,
             optionName: targetOptionText,
             quantity: purchaseQty,
             price: activePlan.final_price,
@@ -4779,6 +4838,7 @@
         renderCountryChips();
         initRomiFinder();
         initSnapExperience();
+        jdCartBadge(); // 🛒 카트 수량 배지 복원
         if (SMARTSTORE_URL) {
           const sb = document.getElementById('smartstoreAltBtn');
           if (sb) { sb.href = SMARTSTORE_URL; sb.style.display = 'flex'; }
@@ -4905,26 +4965,30 @@
     }
     function romiOpenPlan(country, carrier, dataLimit, days) {
       switchNav('home');
-      openBottomSheet(country, carrier); // 위저드 1·2단계는 딥링크로 자동 통과
+      openBottomSheet(country, carrier); // 통신사는 딥링크로 자동 선택
+      // 퍼널 v2: 데이터 로드 완료를 기다렸다가 추천 상품까지 자동 진입
       const capVal = String(dataLimit).replace('매일 ', '').replace('총 ', '').trim();
-      const clickPill = (boxId, attr, val) => {
-        const box = document.getElementById(boxId);
-        if (!box) return false;
-        const btns = [...box.querySelectorAll('[' + attr + ']')];
-        const hit = btns.find(b => b.getAttribute(attr) === val)
-          || btns.find(b => val.includes(b.getAttribute(attr)) || b.getAttribute(attr).includes(val));
-        if (hit) { hit.click(); return true; }
-        return false;
-      };
-      let delay = 260;
-      [
-        ['planTypePills', 'data-plan', /매일/.test(dataLimit) ? '데일리' : '총용량'],
-        ['capacityPills', 'data-cap', capVal],
-        ['daysPills', 'data-days', String(days)]
-      ].forEach(([boxId, attr, val]) => {
-        setTimeout(() => clickPill(boxId, attr, val), delay);
-        delay += 180;
-      });
+      const wantDays = parseInt(days, 10);
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries++;
+        if (tries > 20) { clearInterval(timer); return; }
+        if (!activeCarrier || activeCarrier.carrier !== carrier) return; // 아직 로드/선택 중
+        clearInterval(timer);
+        const plan = (activeCarrier.plans || []).find(p => planCap(p) === capVal && parseInt(p.duration, 10) === wantDays)
+          || (activeCarrier.plans || []).find(p => planCap(p) === capVal);
+        if (!plan) return;
+        // 해당 상품의 유형 탭으로 전환 (통신사 재선택 자동)
+        window.__preferCarrier = carrier;
+        pwSelectType(planTypeOf(plan));
+        // 일수 선택
+        const dBox = document.getElementById('daysPills');
+        const dBtn = dBox && dBox.querySelector('[data-days="' + (parseInt(plan.duration, 10) || wantDays) + '"]');
+        if (dBtn && !dBtn.classList.contains('active')) dBtn.click();
+        // 상품 상세까지 자동 오픈
+        const idx = (window.__pwPlans || []).findIndex(p => p.product_code === plan.product_code);
+        if (idx >= 0) openProductDetail(idx);
+      }, 180);
     }
     // ===== 스냅 스크롤 경험: 진행 인디케이터 + 등장 연출 + 카운트업 =====
     function initSnapExperience() {
