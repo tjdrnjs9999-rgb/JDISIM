@@ -2217,25 +2217,7 @@
       </div>
     </div>
 
-    <!-- 📱 기종 자가진단 배너 -->
-    <div class="device-check-banner" onclick="openDeviceCheck()" role="button" tabindex="0">
-      <div class="dcb-icon">📱</div>
-      <div class="dcb-text">
-        <strong>내 폰에서 이심이 될까요?</strong>
-        <span>구매 전 10초 자가진단으로 확인하세요</span>
-      </div>
-      <div class="dcb-arrow">진단하기 →</div>
-    </div>
-
-    <!-- 최근 본 국가 -->
-    <div class="recent-row" id="recentRow" style="display:none;">
-      <span class="recent-label">최근 본</span>
-      <div class="recent-chips" id="recentChips"></div>
-    </div>
-
-    <!-- 데이터 용량 계산기 (접힌 상태) -->
-    <div data-jdisim-datacalc="fold" style="margin: 4px 0 16px;"></div>
-
+    <!-- 스토어 상단 정리 (2026-07-15 지시): 기종진단 배너·최근 본·데이터 계산기 제거 — 기종진단은 홈 퀵메뉴+주문 팝업에서 제공 -->
     <!-- Products list -->
     <div class="product-list" id="storeProductList"></div>
 
@@ -2428,12 +2410,12 @@
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="speed-truth.js?v=20260715a" defer></script>
+  <script src="jd-precautions.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
   <script src="products-lite.js?v=20260715c" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
-  <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="globe.js?v=20260720" defer></script>
   
   <script>
@@ -4251,72 +4233,9 @@
       }
     }
 
-    // 국가/통신사별 맞춤 주의사항 (PC 버전과 동일한 규칙)
+    // 국가/통신사별 맞춤 주의사항 — 정본은 jd-precautions.js 하나 (2026-07-15 중복 제거)
     function getCustomPrecautions(country, carrier) {
-      const list = [];
-      const nc = String(country).toLowerCase();
-      const nk = String(carrier).toLowerCase();
-
-      if (nc.includes('일본')) {
-        if (nk.includes('소프트뱅크')) list.push("<strong>소프트뱅크 실시간 사용량 조회 불가:</strong> 소프트뱅크망 특성상 실시간 데이터 사용량 조회가 불가하며, 현지 통신사 집계 지연으로 2일 전 누적 사용량 기준으로 지연 반영됩니다.");
-        else if (nk.includes('도코모')) list.push("<strong>도코모 APN 수동 설정:</strong> 자동 연결 실패 시 셀룰러 네트워크 설정에서 APN(spmode.ne.jp)을 수동 등록해야 개통됩니다.");
-      }
-      if (nc.includes('베트남')) {
-        list.push("<strong>베트남 시간 기준 일일 리셋:</strong> 매일 23:00(베트남 시간)에 일일 사용 용량이 자동 리셋됩니다.");
-        list.push("<strong>비엣텔망 수동 고정:</strong> 속도가 느린 Vietnamobile로 자동 연결되는 경우 셀룰러 설정에서 'Viettel'망을 수동 고정해 주세요.");
-        list.push("<strong>ChatGPT 접속 제한 안내:</strong> 본 상품은 홍콩 IP를 경유하므로 ChatGPT 등 일부 해외 서비스 접속이 원활하지 않을 수 있습니다.");
-        list.push("<strong>15일 유효기간 준수:</strong> 발급일로부터 15일 이내에 현지 신호 연결로 최초 활성화해야 정상 작동합니다.");
-      }
-      if (nc.includes('대만')) {
-        list.push("<strong>실명 인증(KYC) 등록 필수:</strong> 대만 통신법에 따라 eSIM 스캔 직후 수신되는 문자 링크로 여권 실명 등록을 완료해야 데이터 차단이 해제됩니다.");
-      }
-      if (nc.includes('괌') || nc.includes('사이판')) {
-        list.push("<strong>현지 도착 후 개통 문자로 시작:</strong> 도착해서 개통 문자가 발송되는 시점부터 사용일이 카운트돼요 — 미리 구매해 두셔도 기간이 줄지 않습니다.");
-      }
-      if (nc.includes('미국') || nc.includes('캐나다') || nc.includes('괌') || nc.includes('사이판')) {
-        list.push("<strong>단말기 컨트리락 해제 확인:</strong> 컨트리락이 해제된 기기에서만 사용 가능하므로 출국 전 통신사에 락 해제 여부를 확인하세요.");
-      }
-      if (nc.includes('몰디브')) {
-        list.push("<strong>eSIM 프로필 삭제 절대 금지:</strong> 몰디브 디라구(Dhiraagu) 이심은 삭제 시 재등록이 기술적으로 차단됩니다.");
-        list.push("<strong>통화/문자 한도:</strong> 20GB 요금제(통화 150분/문자 150건), 30GB 요금제(통화 300분/문자 300건) 무료 제공");
-        list.push("<strong>번호/사용량 조회:</strong> 다이얼러에서 *2# 입력 후 통화 시 번호 확인, 727 번호로 'myusage' 문자 발송 시 잔량 확인이 가능합니다.");
-      }
-      if (nc.includes('몽골')) {
-        list.push("<strong>통화 및 수신 전용 SMS:</strong> 요금제별 현지 무료 통화(10분~150분) 발신이 제공되며, SMS는 수신만 가능합니다.");
-        list.push("<strong>잔여 데이터 조회:</strong> 다이얼러에서 *1411# 입력 후 통화 버튼을 누르면 문자로 실시간 사용량이 회신됩니다.");
-      }
-      if (nc.includes('유럽')) {
-        list.push("<strong>국경 통과 이동 시 재부팅:</strong> 유럽 다국가 횡단 중 국경에서 신호가 끊기면 기기를 재부팅하면 로컬 로밍 파트너망으로 자동 갱신됩니다.");
-      }
-      if (nc.includes('한국') || nc.includes('대한민국')) {
-        list.push("<strong>QR 스캔 즉시 일수 카운트:</strong> 등록/QR 스캔 즉시 사용 기한이 차감되므로 출국 시나 사용 개시일에 등록해 주세요.");
-      }
-      if (nc.includes('인도')) {
-        list.push("<strong>주(State) 이동 시 재부팅:</strong> 주 경계를 넘으며 망이 불안정해지면 기기 재부팅 또는 비행기 모드를 껐다 켜 주세요.");
-      }
-      if (nc.includes('글로벌') || nc.includes('복수국가') || nc.includes('남미') || nc.includes('중동') || nc.includes('아프리카')) {
-        list.push("<strong>다국가 환승 시 대처법:</strong> 국가 경유 시 5~10초간 비행기 모드를 켰다 끄거나 재부팅하여 파트너 로밍망을 다시 잡아 주세요.");
-      }
-      if (nc.includes('중국') || nc.includes('홍콩') || nc.includes('마카오')) {
-        list.push("<strong>중국 현지 구매 아이폰 사용 불가:</strong> 중국/홍콩/마카오에서 구매한 아이폰은 eSIM 기능이 비활성화되어 사용이 불가합니다.");
-      }
-      if (nk.includes('보다폰') || nk.includes('vodafone')) {
-        list.push("<strong>QR 발송 즉시 사용일 시작 (Vodafone):</strong> QR이 이메일로 <strong>발송되는 순간 개통이 시작</strong>되므로 일정 확인 후 구매해 주세요.");
-        list.push("<strong>eSIM 프로필 삭제 금지:</strong> 삭제 시 재등록이 불가하니 설치 후 절대 지우지 마세요.");
-      }
-      if (nk.includes('오렌지스페인')) {
-        list.push("<strong>개통 예약 신청 필수 (Orange):</strong> 결제란에 <strong>실제 도착 예정일 하루 전날</strong>을 개통일로 기입해 주세요.");
-      }
-      if (nk.includes('오렌지프랑스')) {
-        list.push("<strong>한국 무료 발신 혜택:</strong> 요금제에 따라 한국 발신 통화(30분~120분)와 국제문자(200건~1000건)가 무료 탑재되어 있습니다.");
-        list.push("<strong>번호 및 잔량 조회:</strong> 현지에서 225 다이얼 후 통화 버튼을 누르면 번호와 잔량이 문자로 전송됩니다.");
-        list.push("<strong>500GB 장기 요금제 실명인증:</strong> 90일 상품은 30일 이내 수신 링크로 여권 인증을 완료해야 회선이 유지됩니다.");
-      }
-      if (nk.includes('쓰리') || nk.includes('three')) {
-        list.push("<strong>QR 스캔 즉시 개통 시작 (Three):</strong> QR 등록 순간 개통되므로 출국 직전 또는 현지 공항에서 설치를 권장합니다.");
-        list.push("<strong>eSIM 프로필 삭제 금지:</strong> 임의 삭제 시 복구되지 않습니다.");
-      }
-      return list;
+      return (typeof window.JD_PRECAUTIONS === 'function') ? window.JD_PRECAUTIONS(country, carrier) : [];
     }
 
     // [1단계] 결제 버튼 → 주문 팝업 (수령 정보는 팝업 안에서 입력 — 퍼널 v2)
