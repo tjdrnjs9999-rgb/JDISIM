@@ -1481,7 +1481,7 @@
   <script src="https://cdn.portone.io/v2/payment.js"></script>
   <script src="speed-truth.js?v=20260715b"></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
-  <script src="products-lite.js?v=20260715f"></script>
+  <script src="products-lite.js?v=20260716a"></script>
   <script>
     // ===== 요금제 데이터 2단 로딩: 요약(64KB) 즉시 → 전체(2.4MB) 백그라운드 =====
     window.__fullReady = false;
@@ -1499,8 +1499,9 @@
         if (lite && lite !== full && lite.length) {
           var key = function (g) { return g.country + '|' + g.carrier + '|' + g.network_type; };
           var map = {};
-          full.forEach(function (g) { map[key(g)] = g; });
-          lite.forEach(function (g) { var f = map[key(g)]; if (f) g.plans = f.plans; });
+          // 동일 키의 full 그룹이 여러 개면 plans를 모두 이어붙임 (중복키 9그룹 대응)
+          full.forEach(function (g) { var kk = key(g); if (!map[kk]) map[kk] = []; if (g.plans && g.plans.length) map[kk] = map[kk].concat(g.plans); });
+          lite.forEach(function (g) { var f = map[key(g)]; if (f && f.length) g.plans = f; });
         }
         window.__fullReady = true;
         window.__fullCallbacks.splice(0).forEach(function (fn) { try { fn(); } catch (e) { console.error(e); } });
