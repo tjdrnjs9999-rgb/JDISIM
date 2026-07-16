@@ -2006,24 +2006,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       items: checkoutItems.map(item => {
         const randIccid = '89823' + Math.floor(100000000000000 + Math.random() * 900000000000000);
         
+        // 데이터 용량 추정(내 여행 사용량 표시용) — 정규식으로 GB/MB 일반 파싱 (T-011)
         const planLimitStr = item.plan.data_limit;
-        let totalBytes = 10 * 1024 * 1024 * 1024; // default 10GB
-        if (planLimitStr.includes('1GB')) {
-          totalBytes = 1 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('2GB')) {
-          totalBytes = 2 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('3GB')) {
-          totalBytes = 3 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('5GB')) {
-          totalBytes = 5 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('20GB')) {
-          totalBytes = 20 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('30GB')) {
-          totalBytes = 30 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('50GB')) {
-          totalBytes = 50 * 1024 * 1024 * 1024;
-        } else if (planLimitStr.includes('무제한')) {
-          totalBytes = 100 * 1024 * 1024 * 1024; // treat unlimited as 100GB
+        let totalBytes;
+        if (String(planLimitStr).includes('무제한')) {
+          totalBytes = 100 * 1024 * 1024 * 1024; // 무제한은 100GB로 취급
+        } else {
+          const mm = String(planLimitStr).match(/(\d+(?:\.\d+)?)\s*(GB|MB)/i);
+          if (mm) {
+            const mul = /mb/i.test(mm[2]) ? 1024 * 1024 : 1024 * 1024 * 1024;
+            totalBytes = Math.round(parseFloat(mm[1]) * mul);
+          } else {
+            totalBytes = 10 * 1024 * 1024 * 1024; // 파싱 불가 시 기본 10GB
+          }
         }
         
         const prodCode = item.plan.product_code || 'LS2026-eSIM-00000';
