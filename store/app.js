@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cart Checkout button listener
     document.getElementById('cartCheckoutBtn').addEventListener('click', () => {
       if (cart.length > 0) {
-        showPrecautionModalForItems(cart);
+        openCheckoutFlow(cart); // Buy Flow v3: 확인+입력 단일 화면 직행 (중복 게이트 제거)
       }
     });
 
@@ -1097,43 +1097,43 @@ document.addEventListener('DOMContentLoaded', async () => {
           </h2>
         </div>
         
-        <!-- 1. 통신사 및 네트워크망 선택-->
+        <!-- Buy Flow v3 (2026-07-16): 드롭다운 4개 → 칩 UI. 질문 순서 = 고객 사고 순서(타입→용량→일수).
+             통신망은 자동 선택 + "바꾸기" 접힘으로 강등 — 대부분 고객은 통신사를 고르지 않는다. -->
         <div class="config-group">
-          <div class="config-section-title">1. 통신사 및 네트워크망 선택</div>
-          <select id="carrierSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
+          <div class="config-section-title">1. 플랜 타입</div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            ${typeList.map(t => `<button type="button" class="jd-chip jd-type-chip" data-val="${t}" style="flex:1;padding:13px 10px;border-radius:12px;border:1.5px solid ${t === window.activePlanType ? 'var(--accent)' : 'var(--border-color)'};background:${t === window.activePlanType ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${t === window.activePlanType ? '#fff' : 'var(--text-main)'};font:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;">${t === '데일리' ? '📅 매일 리셋' : '🎒 전체 기간'}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="config-group">
+          <div class="config-section-title">2. 하루 데이터</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;">
+            ${capList.map(c => `<button type="button" class="jd-chip jd-cap-chip" data-val="${c}" style="padding:11px 15px;border-radius:11px;border:1.5px solid ${c === cleanActiveData ? 'var(--accent)' : 'var(--border-color)'};background:${c === cleanActiveData ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${c === cleanActiveData ? '#fff' : 'var(--text-main)'};font:inherit;font-size:0.88rem;font-weight:800;cursor:pointer;">${c === '무제한' ? unlOptLabel : c}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="config-group">
+          <div class="config-section-title">3. 며칠 쓰세요?</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;">
+            ${availableDurations.map(dur => {
+              const pl = durFilteredPlans.find(x => x.duration === dur);
+              const on = dur === activeDuration;
+              return `<button type="button" class="jd-chip jd-dur-chip" data-val="${dur}" style="min-width:74px;padding:9px 12px;border-radius:11px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border-color)'};background:${on ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${on ? '#fff' : 'var(--text-main)'};font:inherit;cursor:pointer;text-align:center;"><span style="display:block;font-size:0.88rem;font-weight:900;">${dur}일</span><span style="display:block;font-size:0.7rem;font-weight:700;opacity:${on ? '0.9' : '0.65'};margin-top:2px;">${pl ? pl.final_price.toLocaleString() + '원' : ''}</span></button>`;
+            }).join('')}
+          </div>
+        </div>
+
+        <details class="config-group" style="margin-top:4px;">
+          <summary style="cursor:pointer;font-size:0.8rem;font-weight:700;color:var(--text-muted);padding:6px 0;list-style:none;">📶 통신망: <strong style="color:var(--text-main);">${window.cleanCarrierName(p.carrier)}</strong> (${p.network_type} · ${p.network_speed}) <span style="color:var(--accent);text-decoration:underline;text-underline-offset:2px;">바꾸기</span></summary>
+          <select id="carrierSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 8px;">
             ${carrierOptions.map((co, i) => `
               <option value="${i}" data-name="${co.carrier}" data-net="${co.network_type}" data-speed="${co.network_speed}" ${co === p ? 'selected' : ''}>
                 ${window.cleanCarrierName(co.carrier)} (${co.network_type} · ${co.network_speed})
               </option>
             `).join('')}
           </select>
-        </div>
-
-        <!-- 2. 플랜 타입 선택 -->
-        <div class="config-group">
-          <div class="config-section-title">2. 플랜 타입 (데일리 vs 총용량)</div>
-          <select id="planTypeSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
-            ${typeList.map(t => `<option value="${t}" ${t === window.activePlanType ? 'selected' : ''}>${t === '데일리' ? '📅 데일리 (매일 리셋)' : '🎒 총용량 (전체 기간)'}</option>`).join('')}
-          </select>
-        </div>
-
-        <!-- 3. 데이터 용량 선택 -->
-        <div class="config-group">
-          <div class="config-section-title">3. 데이터 용량 선택</div>
-          <select id="capacitySelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
-            ${capList.map(c => `<option value="${c}" ${c === cleanActiveData ? 'selected' : ''}>${c === '무제한' ? unlOptLabel : c}</option>`).join('')}
-          </select>
-        </div>
-
-        <!-- 4. 이용 일수 선택 -->
-        <div class="config-group">
-          <div class="config-section-title">4. 이용 일수 (기간) 선택</div>
-          <select id="durationSelect" class="checkout-input" style="width: 100%; height: 48px; border-radius: var(--radius-sm); padding: 0 16px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; border: 1px solid var(--border-color); margin-top: 6px;">
-            ${availableDurations.map(dur => `
-              <option value="${dur}" ${dur === activeDuration ? 'selected' : ''}>${dur}일</option>
-            `).join('')}
-          </select>
-        </div>
+        </details>
       </div>
       </div>
 
@@ -1226,42 +1226,31 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
 
-    const ptSelect = document.getElementById('planTypeSelect');
-    if (ptSelect) {
-      ptSelect.addEventListener('change', (e) => {
-        window.activePlanType = e.target.value;
+    // Buy Flow v3: 칩 클릭 리스너 (기존 select change와 동일한 상태 전이 — 캐스케이드 로직 보존)
+    modalContent.querySelectorAll('.jd-type-chip').forEach(ch => {
+      ch.addEventListener('click', () => {
+        window.activePlanType = ch.dataset.val;
         activeDataLimit = null;
         activeDuration = null;
         renderModalContent(carrierOptions);
       });
-    }
-
-    const capSelect = document.getElementById('capacitySelect');
-    if (capSelect) {
-      capSelect.addEventListener('change', (e) => {
+    });
+    modalContent.querySelectorAll('.jd-cap-chip').forEach(ch => {
+      ch.addEventListener('click', () => {
+        const v = ch.dataset.val;
         const isDaily = (window.activePlanType === '데일리');
-        activeDataLimit = (isDaily ? (typeFilteredPlans.find(tp => tp.data_limit.replace('매일 ', '').trim() === e.target.value).data_limit.includes('매일') ? '매일 ' : '') : '') + e.target.value;
+        const rep = typeFilteredPlans.find(tp => tp.data_limit.replace('매일 ', '').replace('총 ', '').trim() === v);
+        activeDataLimit = (isDaily && rep && rep.data_limit.includes('매일') ? '매일 ' : (rep && rep.data_limit.includes('총') ? '총 ' : '')) + v;
         activeDuration = null;
         renderModalContent(carrierOptions);
       });
-    }
-
-    const durSelect = document.getElementById('durationSelect');
-    if (durSelect) {
-      durSelect.addEventListener('change', (e) => {
-        activeDuration = parseInt(e.target.value);
+    });
+    modalContent.querySelectorAll('.jd-dur-chip').forEach(ch => {
+      ch.addEventListener('click', () => {
+        activeDuration = parseInt(ch.dataset.val);
         renderModalContent(carrierOptions);
       });
-    }
-
-    // 기간 변경 리스너
-    const durationSelect = document.getElementById('durationSelect');
-    if (durationSelect) {
-      durationSelect.addEventListener('change', (e) => {
-        activeDuration = parseInt(e.target.value);
-        renderModalContent(carrierOptions);
-      });
-    }
+    });
 
     // 드롭다운 → 모던 선택 UI 변환
     enhanceOptionSelects(modalContent);
@@ -1337,7 +1326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         quantity: activeQuantity,
         addon: false
       };
-      showPrecautionModalForItems([instantItem]);
+      openCheckoutFlow([instantItem]); // Buy Flow v3: 직행
     });
 
     const detailDeviceCheckLink = document.getElementById('detailDeviceCheckLink');
@@ -1785,6 +1774,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     paySubmitBtn.setAttribute('data-price', totalCartPrice);
     paySubmitBtn.textContent = `${totalCartPrice.toLocaleString()}원 결제 완료하기`;
+
+    // Buy Flow v3: 핵심 스트립 2줄 + 세부(EID·환불) 접힘 — 아이템 리스트 바로 아래 (멱등 주입)
+    let ess = document.getElementById('ckEssentials');
+    if (!ess) {
+      ess = document.createElement('div');
+      ess.id = 'ckEssentials';
+      checkoutItemsList.parentNode.insertBefore(ess, checkoutItemsList.nextSibling);
+    }
+    ess.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:7px;margin:12px 0 2px;">
+        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">⚡ 결제하면 QR이 카톡·문자로 자동 발송돼요</div>
+        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">🛡️ 설치 전엔 100% 환불 · 설치 후엔 환불 불가</div>
+      </div>
+      <details style="margin-top:8px;text-align:left;"><summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--text-muted);padding:4px 0;">📱 내 폰 eSIM 지원 확인 · 🔄 환불 규정 자세히</summary>
+        <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.7;padding:8px 2px 2px;">
+          • <strong>기종 확인:</strong> 키패드에 <code>*#06#</code> 입력 시 32자리 EID가 보여야 사용 가능 (중국/홍콩/마카오 구매 아이폰 불가)<br>
+          • <strong>단순 변심:</strong> QR 발송 후 취소·환불 불가 · <strong>프로필 삭제 시 재설치 불가</strong><br>
+          • <strong>현지 장애:</strong> 프로필을 지우지 말고 24시간 카톡 상담 접수 — 미해결 시 100% 환불 (<a href="refund.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800;">환불 규정 전문</a>)
+        </div>
+      </details>`;
 
     // 결제창 국가별 맞춤형 스펙/주의사항 카드 동적 렌더링
     const checkoutPrecautionCard = document.getElementById('checkoutPrecautionCard');
