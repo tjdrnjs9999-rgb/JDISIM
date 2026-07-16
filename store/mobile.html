@@ -2116,7 +2116,7 @@
       <h2 class="wp-title wp-el wp-d2">로밍 중계 없이<br><em>현지 로컬망</em> 다이렉트</h2>
       <p class="wp-copy wp-el wp-d3">한국 서버를 한 바퀴 돌아오는 반쪽짜리 로밍과 달라요.<br>현지 통신사 망에 바로 붙어서 지도도, 유튜브도, 영상통화도 끊김 없이.</p>
       <div class="wp-stat wp-el wp-d4"><strong><span data-count="150">0</span>+</strong><span>개국 로컬망 커버리지 · 5G/LTE</span></div>
-      <img src="images/fox-phone.png" class="wp-fox wp-el wp-d4" alt="양손에 폰을 든 로미">
+      <img loading="lazy" src="images/fox-phone.png" class="wp-fox wp-el wp-d4" alt="양손에 폰을 든 로미">
     </section>
 
     <!-- WHY 02: 개통 -->
@@ -2125,7 +2125,7 @@
       <h2 class="wp-title wp-el wp-d2">유심 교체 없이<br>QR 스캔 <em>10초 개통</em></h2>
       <p class="wp-copy wp-el wp-d3">공항 유심 부스 줄서기, 뾰족한 핀으로 유심 갈아끼우기 — 이제 안 해도 돼요.<br>카톡·메일로 받은 QR을 카메라로 비추면 끝.</p>
       <div class="wp-stat wp-el wp-d4"><strong><span data-count="10">0</span>초</strong><span>평균 개통 소요 시간</span></div>
-      <img src="images/fox-qr.png" class="wp-fox wp-el wp-d4" alt="QR코드를 든 로미">
+      <img loading="lazy" src="images/fox-qr.png" class="wp-fox wp-el wp-d4" alt="QR코드를 든 로미">
     </section>
 
     <!-- WHY 03: 케어 -->
@@ -2134,7 +2134,7 @@
       <h2 class="wp-title wp-el wp-d2">여행 내내 곁에,<br><em>24시간 로미 케어</em></h2>
       <p class="wp-copy wp-el wp-d3">현지에서 데이터가 안 잡히면 카톡 한 줄만 보내세요.<br>새벽에도 1:1로 잡아드리고, 그래도 안 되면 전액 돌려드립니다.</p>
       <div class="wp-stat wp-el wp-d4"><strong><span data-count="100">0</span>%</strong><span>미개통 시 환불 보장</span></div>
-      <img src="images/fox-thumbsup.png" class="wp-fox wp-el wp-d4" alt="엄지척 로미">
+      <img loading="lazy" src="images/fox-thumbsup.png" class="wp-fox wp-el wp-d4" alt="엄지척 로미">
     </section>
 
     <!-- 로미 매칭 (풀스크린 스냅 패널) -->
@@ -2148,7 +2148,7 @@
       <!-- 로미의 3초 요금제 매칭 (차별화 핵심 기능) -->
       <div class="romi-finder">
       <div class="rf-head">
-        <img src="images/fox-thinking.png" alt="고민하는 로미" class="rf-fox">
+        <img loading="lazy" src="images/fox-thinking.png" alt="고민하는 로미" class="rf-fox">
         <div>
           <div class="rf-title">로미의 3초 요금제 매칭</div>
           <div class="rf-sub">어디로, 며칠 가세요? 132개 요금제에서 딱 맞는 걸 골라드려요</div>
@@ -2265,7 +2265,7 @@
           <span class="rg-eyebrow">ROMI GUARANTEE</span>
           <strong class="rg-title">구매하는 순간,<br>로미가 끝까지 책임져요</strong>
         </div>
-        <img src="images/fox-thumbsup.png" alt="엄지척 로미" class="rg-fox" onerror="this.style.display='none'">
+        <img loading="lazy" src="images/fox-thumbsup.png" alt="엄지척 로미" class="rg-fox" onerror="this.style.display='none'">
       </div>
       <div class="rg-perf"></div>
       <div class="rg-rows">
@@ -2830,7 +2830,7 @@
         card.className = 'mobile-product-card';
         card.onclick = () => openBottomSheet(countryName, carrierName);
         card.innerHTML = `
-          <img src="${flagSrc}" class="product-flag-img" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
+          <img loading="lazy" src="${flagSrc}" class="product-flag-img" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
           <div class="product-info">
             <div style="display: flex; gap: 6px; align-items: center;">
               <span class="product-country-tag">HOT 추천</span>
@@ -2995,7 +2995,7 @@
       if (!listContainer.children.length) {
         listContainer.innerHTML = `
           <div style="grid-column:1/-1;text-align:center;padding:44px 20px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(242,117,31,0.24);border-radius:20px;">
-            <img src="images/fox-hello.png" alt="" style="width:82px;opacity:0.9;" onerror="this.style.display='none'">
+            <img loading="lazy" src="images/fox-hello.png" alt="" style="width:82px;opacity:0.9;" onerror="this.style.display='none'">
             <div style="font-weight:800;color:#221510;margin-top:10px;">앗, 찾으시는 여행지가 없어요 🦊</div>
             <div style="font-size:0.78rem;color:#8a7a6d;font-weight:600;margin-top:4px;line-height:1.6;">국가 이름을 다시 확인해 보시거나<br>전체보기에서 둘러보세요</div>
             <button type="button" onclick="document.getElementById('storeSearchInput').value='';renderStoreProducts('all','');" style="margin-top:14px;padding:10px 22px;border:none;border-radius:22px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 5px 14px rgba(249,115,22,0.3);">전체 상품 보기</button>
@@ -3316,7 +3316,7 @@
         '</div></div>';
       box.style.display='block';
       box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">' +
-        '<div style="display:flex;align-items:center;gap:8px;"><img src="images/fox-thumbsup.png" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
+        '<div style="display:flex;align-items:center;gap:8px;"><img loading="lazy" src="images/fox-thumbsup.png" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
         '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' ' + statusBadge + localBadge + '</div>' +
         (prod ? '<div style="font-size:0.74rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
         donut +
@@ -5287,7 +5287,7 @@
         +     '<div style="font-size:0.98rem;font-weight:800;color:#221510;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + testBadge + '</div>'
         +     '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">' + subLine + '</div>'
         +   '</div>'
-        +   '<img src="images/fox-thumbsup.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
+        +   '<img loading="lazy" src="images/fox-thumbsup.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
         + '</div>'
         + '<div style="display:flex;gap:8px;padding:10px 14px 0;">'
         +   '<a href="' + careHref.replace(/"/g, '&quot;') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(249,115,22,0.28);">' + careLabel + '</a>'
@@ -5313,7 +5313,7 @@
       if (!slot) return;
       slot.innerHTML =
         '<div style="position:relative;display:flex;align-items:center;gap:12px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(242,117,31,0.35);border-radius:16px;padding:13px 14px;margin:6px 0 20px;">'
-        + '<img src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;box-shadow:0 4px 10px rgba(242,117,31,0.2);" onerror="this.remove()">'
+        + '<img loading="lazy" src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;box-shadow:0 4px 10px rgba(242,117,31,0.2);" onerror="this.remove()">'
         + '<div style="flex:1;min-width:0;">'
         +   '<div style="font-size:0.88rem;font-weight:800;color:#221510;">앱스토어 없이, 1초만에 앱으로</div>'
         +   '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">홈 화면에 추가하면 주문·QR·케어를 앱처럼 써요</div>'
@@ -5393,7 +5393,7 @@
       zone.innerHTML =
         '<div style="background:linear-gradient(135deg,#101623,#25314F);border-radius:18px;padding:16px;margin:0 0 4px;box-shadow:0 12px 30px rgba(16,22,35,0.25);">'
         + '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" style="display:flex;align-items:center;gap:13px;text-decoration:none;">'
-        +   '<img src="images/fox-hello.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
+        +   '<img loading="lazy" src="images/fox-hello.png" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
         +   '<span style="flex:1;min-width:0;color:#fff;">'
         +     '<span style="display:block;font-size:0.95rem;font-weight:800;">가입만 해도 <b style="color:#FDBA74;">2,000원 쿠폰</b> ✈️</span>'
         +     '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
