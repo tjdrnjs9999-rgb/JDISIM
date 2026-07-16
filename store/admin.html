@@ -123,6 +123,7 @@ function render(d){
     '<div class="stats">' +
       st('오늘 주문', s.ordersToday, '건') + st('누적 주문', s.ordersTotal, '건') +
       st('미처리 상담', s.supportOpen, '건', s.supportOpen > 0) + st('오늘 상담', s.supportToday, '건') +
+      st('오늘 케어오픈', s.careOpensToday, '회') + st('가입 오늘/누적', (s.signupsToday || 0) + '/' + (s.signupsTotal || 0), '명') +
     '</div>' +
     '<div class="sec"><h2>🗨️ 라이브 상담 <span class="n" id="lvN">-</span><button class="re" onclick="loadChats()">새로고침 ↻</button></h2>' +
       '<div id="chatList" class="empty">불러오는 중…</div>' +

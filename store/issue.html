@@ -1825,6 +1825,17 @@ function runDiagnose(){
   // 로미 챗봇 로드 (발급링크에서도 상담 가능)
   // ⚠️ 기존엔 이 코드가 </html> 뒤 생텍스트로 있어 화면에 노출 + 챗봇 미로드 — 2026-07-14 수정
   (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260714a'; sc.defer = true; document.body.appendChild(sc); })();
+
+  // 퍼널 KPI (Phase 2): 케어링크 오픈 1회 기록 — 베스트에포트, 개인정보 비전송 (구형 care= raw ICCID는 'legacy'로 익명화)
+  (function(){ try {
+    var q = new URLSearchParams(location.search);
+    var tok = q.get('cx') || q.get('t') || q.get('o');
+    var id = tok ? String(tok).slice(0, 12) : (q.get('care') ? 'legacy' : (q.get('local') ? 'local' : ''));
+    if (!id || sessionStorage.getItem('jd_clo')) return;
+    sessionStorage.setItem('jd_clo', '1');
+    fetch('https://jdisim-proxy.vercel.app/api/jdios/event', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order_id: id, event_type: 'CARE_LINK_OPENED' }) }).catch(function(){});
+  } catch (e) {} })();
 </script>
 </body>
 </html>
