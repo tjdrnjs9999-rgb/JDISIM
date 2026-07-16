@@ -977,6 +977,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   window.enhanceOptionSelects = enhanceOptionSelects;
 
+  // lite/full 통신사명 불일치로 병합이 빠진 상품 구제: 국가(+통신망)로 full에서 plans 복구
+  function ensurePlans(carrier) {
+    if (!carrier) return [];
+    if (carrier.plans && carrier.plans.length) return carrier.plans;
+    const full = window.PRODUCTS_DATA || [];
+    const cand = full.filter(f => f.country === carrier.country && f.plans && f.plans.length);
+    const byNet = cand.filter(f => f.network_type === carrier.network_type);
+    const pool = byNet.length ? byNet : cand;
+    const seen = {}, merged = [];
+    pool.forEach(f => f.plans.forEach(pl => {
+      const k = pl.product_code || (pl.data_limit + '|' + pl.duration);
+      if (!seen[k]) { seen[k] = 1; merged.push(pl); }
+    }));
+    carrier.plans = merged;
+    return merged;
+  }
+
   function openModal(prod) {
     if (!window.__fullReady && (!prod.plans || !prod.plans.length)) {
       document.body.style.cursor = 'progress';
@@ -991,9 +1008,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 동일 국가의 다른 캐리어(통신사)가 있는지 확인
     const sameCountryProducts = productsData.filter(p => p.country === prod.country);
     activeCarrier = prod;
-    
+    ensurePlans(activeCarrier);   // 병합 누락분 plans 복구
+
     // 데이터 및 기간 초기화
-    const firstPlan = activeCarrier.plans[0];
+    const firstPlan = activeCarrier.plans && activeCarrier.plans[0];
+    if (!firstPlan) { alert('이 상품의 요금제를 불러오지 못했어요. 새로고침 후 다시 시도해 주세요.'); return; }
     activeDataLimit = firstPlan.data_limit;
     activeDuration = firstPlan.duration;
     activeQuantity = 1; // 수량 초기화
@@ -1197,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const targetProd = carrierOptions[Number(e.target.value)] || carrierOptions.find(co => co.carrier === e.target.value);
         if (targetProd) {
           activeCarrier = targetProd;
+          ensurePlans(activeCarrier);   // 병합 누락분 plans 복구
           // Reset child states
           window.activePlanType = null;
           activeDataLimit = null;
