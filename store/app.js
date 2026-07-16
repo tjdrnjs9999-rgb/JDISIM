@@ -1533,18 +1533,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (it.addon) ip += 1900;
       return s + ip;
     }, 0);
+    // 간결화(2026-07-16): 고객이 실제로 읽는 건 "뭘 얼마에 사는가"뿐 — 핵심만 크게, 세부는 전부 접힌 아코디언으로
     const specRows = items.map(it => `
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem;">
-        <span style="font-weight: 700; color: var(--text-main);">${it.product.country} · ${it.product.carrier}</span>
-        <span style="color: var(--text-muted);">${it.plan.data_limit} / ${it.plan.duration}일 × ${it.quantity || 1}개</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color); gap: 12px;">
+        <span style="font-weight: 800; color: var(--text-main); font-size: 1rem;">${it.product.country} <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">${window.cleanCarrierName ? window.cleanCarrierName(it.product.carrier) : it.product.carrier}</span></span>
+        <span style="color: var(--text-main); font-weight: 800; font-size: 0.98rem; white-space: nowrap;">${it.plan.data_limit} · ${it.plan.duration}일${(it.quantity || 1) > 1 ? ' × ' + it.quantity : ''}</span>
       </div>`).join('');
     html += `
-      <div style="background: var(--accent-light); border: 1px solid rgba(242,117,31,0.25); border-radius: 12px; padding: 14px 16px; margin-bottom: 4px;">
-        <div style="font-size: 0.8rem; font-weight: 800; color: var(--accent); margin-bottom: 6px;">🧾 선택하신 상품 스펙</div>
+      <div style="background: var(--accent-light); border: 1px solid rgba(242,117,31,0.25); border-radius: 14px; padding: 18px 20px; margin-bottom: 8px;">
         ${specRows}
-        <div style="display: flex; justify-content: space-between; padding-top: 10px; font-weight: 800; font-size: 0.92rem;">
-          <span>총 ${totalQty}개</span><span style="color: var(--accent);">${totalPrice.toLocaleString()}원</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px;">
+          <span style="font-weight: 800; font-size: 0.9rem; color: var(--text-muted);">총 ${totalQty}개 결제 금액</span>
+          <span style="color: var(--accent); font-weight: 900; font-size: 1.45rem;">${totalPrice.toLocaleString()}원</span>
         </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">⚡ 결제하면 QR이 카톡·문자로 자동 발송돼요</div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">🛡️ 설치 전엔 100% 환불 · 설치 후엔 환불 불가</div>
       </div>
     `;
 
@@ -1564,7 +1569,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return `<div style="margin-bottom:10px;"><div style="font-weight:800; font-size:0.85rem; color:var(--text-main); margin-bottom:4px;">${pr.country} · ${pr.carrier}</div>${rows}</div>`;
     }).join('');
     html += `
-      <div class="prec-accordion-item active">
+      <div class="prec-accordion-item">
         <div class="prec-accordion-header">
           <span>📶 상품 스펙 한눈에 보기</span>
           <span class="arrow">▼</span>
@@ -1573,9 +1578,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `;
 
-    // EID 아코디언 (기본 열림: active 클래스)
+    // EID 아코디언 (간결화: 기본 접힘 — 제목만 보이고 탭하면 펼침)
     html += `
-      <div class="prec-accordion-item active">
+      <div class="prec-accordion-item">
         <div class="prec-accordion-header">
           <span>📱 내 핸드폰 eSIM 지원 여부 확인 (3초 확인)</span>
           <span class="arrow">▼</span>
@@ -1589,9 +1594,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `;
 
-    // 교환/환불 아코디언 (기본 열림: active 클래스)
+    // 교환/환불 아코디언 (간결화: 기본 접힘 — 핵심 한 줄은 위 스트립에 이미 노출)
     html += `
-      <div class="prec-accordion-item active">
+      <div class="prec-accordion-item">
         <div class="prec-accordion-header">
           <span>🔄 교환/환불 및 긴급 기술지원 규정</span>
           <span class="arrow">▼</span>
