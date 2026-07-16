@@ -2377,15 +2377,17 @@
     <div class="pp-body">
       <div class="pw-tabs" id="ptypeTabs"></div>
 
-      <div class="pw-block" id="pwCarrierBlock" style="display:none;">
-        <div class="pw-label">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
+      <!-- Buy Flow v3 (2026-07-17): 통신망 = 자동 추천 + '바꾸기' 접힘 (질문 단계에서 제거). 개통안내는 치명 정보라 접힘 밖 유지 -->
+      <details class="pw-block" id="pwCarrierBlock" style="display:none;">
+        <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.82rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">자동 추천</b> <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;font-weight:800;">바꾸기</span></summary>
+        <div class="pw-label" style="margin-top:10px;">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
         <div id="carrierPills" class="pw-carriers"></div>
-        <div id="activationNotice" style="display:none;margin-top:12px;padding:11px 13px;border-radius:10px;font-size:0.8rem;font-weight:700;line-height:1.6;"></div>
-      </div>
+      </details>
+      <div id="activationNotice" style="display:none;margin-top:12px;padding:11px 13px;border-radius:10px;font-size:0.8rem;font-weight:700;line-height:1.6;"></div>
 
       <div class="pw-block" id="pwDaysBlock" style="display:none;">
-        <div class="pw-label">사용 기간</div>
-        <select id="daysSelect" class="pw-days-select" aria-label="사용 기간 선택"></select>
+        <div class="pw-label">며칠 쓰세요?</div>
+        <div id="daysChips" style="display:flex;flex-wrap:wrap;gap:7px;"></div>
         <div id="daysFeel" style="display:none;margin-top:8px;font-size:0.82rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
       </div>
 
@@ -3649,8 +3651,14 @@
       const preferIdx = carrierOptions.findIndex(cx => cx.carrier === window.__preferCarrier);
       if (preferIdx >= 0) { window.__preferCarrier = ''; pwSelectCarrier(preferIdx); return; }
       if (carrierOptions.length === 1) { pwSelectCarrier(0); return; }
-      const an = document.getElementById('activationNotice');
-      if (an) an.style.display = 'none';
+      // Buy Flow v3: 통신사를 묻지 않는다 — 해당 타입 최저가 통신사를 자동 추천 (바꾸기는 접힘)
+      let best = 0, bestP = Infinity;
+      carrierOptions.forEach((g, i) => {
+        const prices = (g.plans || []).filter(p => planTypeOf(p) === selectedProductType).map(p => p.final_price);
+        const mn = prices.length ? Math.min.apply(null, prices) : Infinity;
+        if (mn < bestP) { bestP = mn; best = i; }
+      });
+      pwSelectCarrier(best);
     }
 
     function pwSelectCarrier(idx) {
@@ -3659,6 +3667,11 @@
       selectedCarrier = activeCarrier.carrier;
       const box = document.getElementById('carrierPills');
       if (box) box.querySelectorAll('.pw-car').forEach(x => x.classList.toggle('active', x.getAttribute('data-caridx') === String(idx)));
+      // Buy Flow v3: 접힘 요약에 선택된 통신망 표시 + 선택 후 자동 접기
+      const cn = document.getElementById('pwCarrierName');
+      if (cn) cn.textContent = cleanCarrier(activeCarrier.carrier) + (activeCarrier.network_type ? ' (' + activeCarrier.network_type + ')' : '');
+      const cb = document.getElementById('pwCarrierBlock');
+      if (cb && cb.tagName === 'DETAILS') cb.open = false;
       renderActivationNotice();
       jdTrack('wizard_step', { step: 'carrier', value: activeCarrier.carrier, country: currentSelectedCountry || '' });
       selectedDays = 0; activePlan = null;
@@ -3673,18 +3686,31 @@
     }
 
     function renderDaysRow() {
-      const box = document.getElementById('daysSelect');
+      // Buy Flow v3: 드롭다운 → 가격 칩 (PC와 동일 원칙 — 스크롤 없이 가격 비교하며 선택)
+      const box = document.getElementById('daysChips');
       const block = document.getElementById('pwDaysBlock');
       if (!box || !block) return;
-      const days = Array.from(new Set(pwPlansOfType().map(p => parseInt(p.duration, 10)))).filter(d => d).sort((a, b) => a - b);
-      box.innerHTML = '<option value="" disabled selected>사용 일수를 선택하세요</option>'
-        + days.map(d => `<option value="${d}">${d}일${d > 1 ? ` (${d - 1}박 ${d}일)` : ' (당일)'}</option>`).join('');
-      box.onchange = () => { const v = parseInt(box.value, 10); if (v) pwSelectDays(v); };
+      const plans = pwPlansOfType();
+      const days = Array.from(new Set(plans.map(p => parseInt(p.duration, 10)))).filter(d => d).sort((a, b) => a - b);
+      const paint = (b, on) => {
+        b.style.background = on ? '#F2751F' : '#fff';
+        b.style.borderColor = on ? '#F2751F' : '#ece5dd';
+        b.style.color = on ? '#fff' : '#221510';
+        const sub = b.querySelectorAll('span')[1];
+        if (sub) sub.style.color = on ? 'rgba(255,255,255,0.85)' : '#8a7a6d';
+      };
+      box.innerHTML = days.map(d => {
+        const prices = plans.filter(p => parseInt(p.duration, 10) === d).map(p => p.final_price);
+        const mn = prices.length ? Math.min.apply(null, prices) : 0;
+        return `<button type="button" class="pw-day-chip" data-day="${d}" style="min-width:72px;padding:9px 11px;border-radius:11px;border:1.5px solid #ece5dd;background:#fff;color:#221510;font:inherit;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;"><span style="display:block;font-size:0.88rem;font-weight:900;">${d}일</span><span style="display:block;font-size:0.68rem;font-weight:700;color:#8a7a6d;margin-top:2px;">${mn ? mn.toLocaleString() + '원~' : ''}</span></button>`;
+      }).join('');
+      box.querySelectorAll('.pw-day-chip').forEach(b => b.addEventListener('click', () => {
+        box.querySelectorAll('.pw-day-chip').forEach(x => paint(x, false));
+        paint(b, true);
+        pwSelectDays(parseInt(b.dataset.day, 10));
+      }));
       block.style.display = 'block';
-      if (days.length === 1) {
-        box.value = String(days[0]);
-        pwSelectDays(days[0]);
-      }
+      if (days.length === 1) box.querySelector('.pw-day-chip').click();
     }
 
     function pwSelectDays(d) {
@@ -4907,10 +4933,10 @@
         // 해당 상품의 유형 탭으로 전환 (통신사 재선택 자동)
         window.__preferCarrier = carrier;
         pwSelectType(planTypeOf(plan));
-        // 일수 선택 (드롭다운)
-        const dSel = document.getElementById('daysSelect');
+        // 일수 선택 (Buy Flow v3: 가격 칩 클릭)
         const dVal = String(parseInt(plan.duration, 10) || wantDays);
-        if (dSel && dSel.value !== dVal) { dSel.value = dVal; dSel.onchange && dSel.onchange(); }
+        const dChip = document.querySelector('#daysChips .pw-day-chip[data-day="' + dVal + '"]');
+        if (dChip) dChip.click();
         // 상품 상세까지 자동 오픈
         const idx = (window.__pwPlans || []).findIndex(p => p.product_code === plan.product_code);
         if (idx >= 0) openProductDetail(idx);
