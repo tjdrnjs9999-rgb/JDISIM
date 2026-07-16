@@ -562,7 +562,7 @@ function openReview(){
   d.id = 'rvSheet';
   d.innerHTML = '<div class="hs-bg" onclick="this.parentNode.remove()"></div>' +
     '<div class="hs-panel"><div class="hs-grab"></div>' +
-    '<div style="text-align:center;padding:4px 0 2px;"><img src="images/fox-thumbsup.png" style="width:56px;" onerror="this.remove()">' +
+    '<div style="text-align:center;padding:4px 0 2px;"><img src="images/fox-thumbsup.webp" style="width:56px;" onerror="this.remove()">' +
     '<div style="font-size:1.02rem;font-weight:900;margin-top:6px;">' + esc(order && order.country || '') + ' 여행은 어떠셨나요?</div>' +
     '<div style="font-size:0.76rem;color:#8B94A7;font-weight:700;margin-top:3px;">별점을 눌러주세요 — 후기를 남기면 여행 리포트를 만들어드려요 🎁</div></div>' +
     '<div id="rvStars" style="display:flex;justify-content:center;gap:10px;padding:14px 0;font-size:2rem;">' +
@@ -753,7 +753,7 @@ function openHelp(pre){
   sh.innerHTML = '<div class="sheet-in">' +
     '<div class="grab"></div>' +
     '<button type="button" class="sx" onclick="closeHelp()" aria-label="닫기">✕</button>' +
-    '<div style="display:flex;align-items:center;gap:13px;"><img src="images/fox-phone.png" alt="" style="width:54px;height:54px;object-fit:contain;flex-shrink:0;" onerror="this.remove()"><div style="min-width:0;"><div class="ey">SUPPORT</div><div class="ct">무엇을 도와드릴까요?</div></div></div>' +
+    '<div style="display:flex;align-items:center;gap:13px;"><img src="images/fox-phone.webp" alt="" style="width:54px;height:54px;object-fit:contain;flex-shrink:0;" onerror="this.remove()"><div style="min-width:0;"><div class="ey">SUPPORT</div><div class="ct">무엇을 도와드릴까요?</div></div></div>' +
     '<div class="muted" style="margin-top:6px;">증상을 고르면 <strong>주문 정보가 자동으로 작성</strong>돼요 — 카톡에서 붙여넣기만 하면 끝!</div>' +
     '<div class="symps">' + SYMPTOMS.map(function(t, i){
       return '<button type="button" class="symp' + (t === _symp ? ' on' : '') + '" id="sy' + i + '" onclick="pickSymp(' + i + ')">' + t + '</button>';
@@ -929,7 +929,7 @@ function goUsage(){ var u = $('usageBody'); if (u) { loadUsage(); u.scrollIntoVi
 // ===== 브랜드 푸터 (JDISIM 스토리) =====
 function brandFootHTML(){
   return '<div class="foot rv">' +
-    '<img src="images/fox-thumbsup.png" alt="" onerror="this.style.display=\'none\'">' +
+    '<img src="images/fox-thumbsup.webp" alt="" onerror="this.style.display=\'none\'">' +
     '<b>JDIS<i>I</i>M</b>' +
     '<p>여행자의 데이터를 가장 쉽게.<br>150개국+ 여행 eSIM, 결제 즉시 카톡으로.</p>' +
     '<div class="fl"><a class="go" href="https://jdisim.co.kr" target="_blank" rel="noopener">JDISIM 둘러보기</a><a class="ch" href="https://pf.kakao.com/_GSixcn" target="_blank" rel="noopener">카톡 채널 추가</a></div>' +
@@ -1285,7 +1285,7 @@ function bpassHTML(o, opts){
     '<div class="tkt-perf"></div>' +
     (opts.issued ? '<div class="tz" id="instZone"></div>' : '') + acts +
     '<div class="tkt-bar"><div class="barcode"></div></div>' + detail +
-    '<img class="tkt-wm" src="images/fox-hello.png" alt="" onerror="this.remove()">' +
+    '<img class="tkt-wm" src="images/fox-hello.webp" alt="" onerror="this.remove()">' +
     '</div>';
 }
 function tktMore(btn){
@@ -1363,7 +1363,7 @@ function loadCare(){
       renderIssued(order.lpa, true);
       var tk = document.querySelector('#app .tkt');
       if (tk) tk.insertAdjacentHTML('beforebegin',
-        '<div class="care-hero"><img src="images/fox-phone.png" alt="로미" onerror="this.style.display=\'none\'">' +
+        '<div class="care-hero"><img src="images/fox-phone.webp" alt="로미" onerror="this.style.display=\'none\'">' +
         '<div class="ch-t"><div class="ey">CARE DESK</div><b>' + (order.buyerName ? esc(order.buyerName) + ' 님의 여행 케어 데스크 🦊' : '로미의 여행 케어 데스크 🦊') + '</b>' +
         '<p>설치 · 사용량 · 문제 해결까지, 여행 내내 이 티켓 하나면 돼요.</p>' +
         '<div class="care-chips"><button type="button" onclick="goUsage()">📊 사용량 새로고침</button>' +
@@ -1441,7 +1441,7 @@ function attemptIssue(){
 // ---------------- 발권 시퀀스 ----------------
 var seqTimers = [];
 function seqUI(){
-  h('<div class="card"><div class="seq-romi"><img src="images/fox-thinking.png" alt="" onerror="this.parentElement.remove()"></div><div class="seq-t">발권하고 있어요</div>' +
+  h('<div class="card"><div class="seq-romi"><img src="images/fox-thinking.webp" alt="" onerror="this.parentElement.remove()"></div><div class="seq-t">발권하고 있어요</div>' +
     '<div class="sq run" id="sq0"><i></i>주문 확인</div>' +
     '<div class="sq" id="sq1"><i></i>통신사에 eSIM 프로필 요청</div>' +
     '<div class="sq" id="sq2"><i></i>QR 코드 생성</div>' +
@@ -1733,7 +1733,7 @@ function renderUsage(d){
 }
 
 function renderError(title,msg){
-  h('<div class="card center" style="padding:28px 20px;"><img src="images/fox-thinking.png" alt="" style="width:64px;" onerror="this.style.display=\'none\'"><div style="font-weight:900;font-size:1.05rem;margin-top:10px;">'+esc(title)+'</div><div class="muted" style="margin-top:7px;">'+esc(msg)+'</div></div>');
+  h('<div class="card center" style="padding:28px 20px;"><img src="images/fox-thinking.webp" alt="" style="width:64px;" onerror="this.style.display=\'none\'"><div style="font-weight:900;font-size:1.05rem;margin-top:10px;">'+esc(title)+'</div><div class="muted" style="margin-top:7px;">'+esc(msg)+'</div></div>');
   renderBottomBar('error');
 }
 

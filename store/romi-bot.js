@@ -50,11 +50,11 @@
   // ---------- 마크업 ----------
   var fab = document.createElement('button');
   fab.id = 'rbFab'; fab.setAttribute('aria-label', '로미에게 물어보기');
-  fab.innerHTML = '<img src="images/fox-hello.png" alt="" onerror="this.outerHTML=\'🦊\'"><span class="rb-label">챗봇</span>';
+  fab.innerHTML = '<img src="images/fox-hello.webp" alt="" onerror="this.outerHTML=\'🦊\'"><span class="rb-label">챗봇</span>';
   var panel = document.createElement('div');
   panel.id = 'rbPanel';
   panel.innerHTML =
-    '<div class="rb-hd"><img src="images/fox-hello.png" alt="" onerror="this.remove()"><div><b>로미</b><span>JDISIM 여행 도우미 · 바로 답해드려요</span></div><button class="rb-x" aria-label="닫기">✕</button></div>' +
+    '<div class="rb-hd"><img src="images/fox-hello.webp" alt="" onerror="this.remove()"><div><b>로미</b><span>JDISIM 여행 도우미 · 바로 답해드려요</span></div><button class="rb-x" aria-label="닫기">✕</button></div>' +
     '<div class="rb-body" id="rbBody"></div>' +
     '<div class="rb-ft"><input id="rbInput" placeholder="궁금한 걸 물어보세요 (예: 일본 요금)"><button id="rbSend">↑</button></div>';
   document.body.appendChild(fab);

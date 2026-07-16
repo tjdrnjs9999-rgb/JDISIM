@@ -1,6 +1,6 @@
 // JDISIM 서비스워커 v2 — HTML은 항상 최신(네트워크 강제 재검증), 정적 자산은 네트워크 우선 + 오프라인 캐시
 const CACHE = 'jdisim-v2';
-const CORE = ['/mobile.html', '/issue.html', '/romi-bot.js', '/images/fox-hello.png'];
+const CORE = ['/mobile.html', '/issue.html', '/romi-bot.js', '/images/fox-hello.webp'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).catch(() => {}));

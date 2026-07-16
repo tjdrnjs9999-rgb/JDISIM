@@ -89,7 +89,7 @@ function fx(path, opts){
 var $ = function(id){ return document.getElementById(id); };
 
 function loginView(){
-  $('app').innerHTML = '<div class="login"><img src="images/fox-hello.png" onerror="this.outerHTML=\'🦊\'">' +
+  $('app').innerHTML = '<div class="login"><img src="images/fox-hello.webp" onerror="this.outerHTML=\'🦊\'">' +
     '<h1>JDISIM 콘솔</h1><p>관리자 전용 — 토큰을 입력하세요</p>' +
     '<input id="tok" type="password" placeholder="ADMIN TOKEN" onkeydown="if(event.key===\'Enter\')doLogin()">' +
     '<button onclick="doLogin()">들어가기</button></div>';

@@ -138,6 +138,11 @@
     border:1px solid var(--line); background:#fff; border-radius:999px; padding:10px 20px; }
   .hide { display:none !important; }
   @media (prefers-reduced-motion:reduce) { .pass,.edge,.hero img,.stamp { animation:none !important; } .btn,.otp input { transition:none !important; } }
+
+/* 의미단위 줄바꿈 보증 (2026-07-15): keep-all 전역 + 문단은 pretty, 제목은 balance — iOS·안드로이드 공통 */
+body { word-break: keep-all; overflow-wrap: break-word; }
+p, li, dd, span, td, th { text-wrap: pretty; }
+h1, h2, h3, h4, strong { text-wrap: balance; }
 </style>
 </head>
 <body>
@@ -147,7 +152,7 @@
   <div class="edge"></div>
 
   <div class="hero">
-    <img src="images/fox-hello.png" alt="로미" onerror="this.remove()">
+    <img src="images/fox-hello.webp" alt="로미" onerror="this.remove()">
     <div>
       <span class="ey">BOARDING CHECK-IN</span>
       <h1>휴대폰 번호로<br>1분 만에 탑승 수속</h1>
