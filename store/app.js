@@ -1526,7 +1526,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // [0] 선택 상품 스펙 요약 (구매 직전 최종 확인)
     const totalQty = items.reduce((s, it) => s + (it.quantity || 1), 0);
-    const totalPrice = items.reduce((s, it) => s + (it.plan.final_price * (it.quantity || 1)), 0);
+    // 결제창 data-price(L1775)와 동일 공식: 1개 정가 + 2개째부터 10% 동반인 할인 (+애드온). 최종확인 총액이 실제 결제액과 일치하도록.
+    const totalPrice = items.reduce((s, it) => {
+      const bp = it.plan.final_price;
+      let ip = Math.round(bp + ((it.quantity || 1) - 1) * bp * 0.9);
+      if (it.addon) ip += 1900;
+      return s + ip;
+    }, 0);
     const specRows = items.map(it => `
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem;">
         <span style="font-weight: 700; color: var(--text-main);">${it.product.country} · ${it.product.carrier}</span>
