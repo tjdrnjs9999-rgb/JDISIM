@@ -4591,8 +4591,8 @@
     }
 
     // Search Order Logic
-    // 주문 조회: 서버 API가 있으면 서버에서, 없으면 이 기기의 구매 기록(localStorage)에서
-    window.ORDERS_API = ''; // Flask 연동 시 예: '/api/orders' (GET ?name=&phone= → {orders:[...]})
+    // 주문 조회 (T-018): 서버(프록시 orders:index, 크로스기기) + 이 기기 구매 기록(localStorage) 병합
+    window.ORDERS_API = 'https://jdisim-proxy.vercel.app/api/order'; // GET ?name=&phone= → {orders:[...]}
 
     function searchOrders() {
       const name = document.getElementById('orderSearchName').value.trim();
@@ -4600,16 +4600,25 @@
       const resultsContainer = document.getElementById('orderSearchResults');
       if (!name || !phone) { alert("이름과 연락처를 입력해 주세요."); return; }
 
+      const np = phone.replace(/[^0-9]/g, '');
+      // 저장 키는 esim_orders (기존 jdisim_orders 조회는 저장 키와 달라 항상 빈 결과였던 버그 — 수정)
+      const saved = JSON.parse(localStorage.getItem('esim_orders') || '[]');
+      const localMatched = saved.filter(o => (o.buyerName || '') === name && String(o.phone || '').replace(/[^0-9]/g, '') === np);
       if (window.ORDERS_API) {
         resultsContainer.innerHTML = '<div style="text-align:center;padding:26px;color:#64748b;font-size:0.85rem;">⏳ 조회 중...</div>';
-        fetch(window.ORDERS_API + '?name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(phone.replace(/[^0-9]/g, '')))
+        fetch(window.ORDERS_API + '?name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(np))
           .then(r => { if (!r.ok) throw 0; return r.json(); })
-          .then(d => renderOrderCards((d && d.orders) || []))
-          .catch(() => { resultsContainer.innerHTML = '<div style="text-align:center;padding:26px;color:#b91c1c;font-size:0.85rem;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
+          .then(d => {
+            // 로컬(발급링크 등 풍부) 우선 + 서버(크로스기기)로 보충 — orderCode 중복 제거
+            const seen = {};
+            localMatched.forEach(o => { if (o.orderCode) seen[o.orderCode] = true; });
+            const serverOnly = ((d && d.orders) || []).filter(o => o.orderCode && !seen[o.orderCode]);
+            renderOrderCards(localMatched.concat(serverOnly));
+          })
+          .catch(() => renderOrderCards(localMatched)); // 서버 실패 시 로컬 폴백
         return;
       }
-      const orders = JSON.parse(localStorage.getItem('jdisim_orders') || '[]');
-      renderOrderCards(orders.filter(o => o.buyerName === name && o.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '')));
+      renderOrderCards(localMatched);
     }
 
     function renderOrderCards(filtered) {
