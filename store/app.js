@@ -2385,7 +2385,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 19. eSIM 주문 내역 조회 및 마이 QR코드 렌더링 로직
   // 주문 조회: 서버 API가 있으면 서버에서, 없으면 이 기기의 구매 기록에서
-  window.ORDERS_API = ''; // Flask 연동 시 예: '/api/orders' (GET ?email=&phone= → {orders:[...]})
+  // 서버 주문조회 (T-016): 프록시 orders:index에서 email+phone 정확일치 조회 → 크로스기기에서도 내역 확인
+  window.ORDERS_API = 'https://jdisim-proxy.vercel.app/api/order'; // GET ?email=&phone= → {orders:[...]}
 
   function handleOrderLookup() {
     const emailInput = document.getElementById('lookupEmail').value.trim();
@@ -2401,19 +2402,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    const ne = emailInput.toLowerCase();
+    const np = phoneInput.replace(/[^0-9]/g, '');
+    const savedOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
+    const localMatched = savedOrders.filter(o => (o.email || '').toLowerCase() === ne && (o.phone || '').replace(/[^0-9]/g, '') === np);
     if (window.ORDERS_API) {
       resultsContainer.style.display = 'block';
       resultsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">⏳ 조회 중...</div>';
-      fetch(window.ORDERS_API + '?email=' + encodeURIComponent(emailInput.toLowerCase()) + '&phone=' + encodeURIComponent(phoneInput.replace(/[^0-9]/g, '')))
+      fetch(window.ORDERS_API + '?email=' + encodeURIComponent(ne) + '&phone=' + encodeURIComponent(np))
         .then(r => { if (!r.ok) throw 0; return r.json(); })
-        .then(d => renderPcOrderCards((d && d.orders) || []))
-        .catch(() => { resultsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;font-weight:700;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
+        .then(d => {
+          // 로컬(발급링크 등 풍부) 우선 + 서버(크로스기기)로 보충 — orderCode 중복 제거
+          const seen = {};
+          localMatched.forEach(o => { if (o.orderCode) seen[o.orderCode] = true; });
+          const serverOnly = ((d && d.orders) || []).filter(o => o.orderCode && !seen[o.orderCode]);
+          renderPcOrderCards(localMatched.concat(serverOnly));
+        })
+        .catch(() => renderPcOrderCards(localMatched)); // 서버 실패 시 로컬 폴백 (기존 동작 보존)
       return;
     }
-    const savedOrders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
-    const ne = emailInput.toLowerCase();
-    const np = phoneInput.replace(/[^0-9]/g, '');
-    renderPcOrderCards(savedOrders.filter(o => (o.email || '').toLowerCase() === ne && (o.phone || '').replace(/[^0-9]/g, '') === np));
+    renderPcOrderCards(localMatched);
   }
 
   function renderPcOrderCards(matchedOrders) {
