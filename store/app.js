@@ -1982,7 +1982,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           customer: {
             email: email,
             phoneNumber: phone
-          }
+          },
+          // G1 (2026-07-17): 웹훅 자동발주용 주문 내용 탑재 — 서버(order.js)가 sku·수량·기대금액을 교차검증
+          customData: JSON.stringify({
+            sku: checkoutItems[0].plan.product_code,
+            qty: checkoutItems[0].qty || 1,
+            items: checkoutItems.map(it => ({ sku: it.plan.product_code, qty: it.qty || 1 })).slice(0, 10),
+            name: buyerName, phone: phone, amount: priceVal
+          })
         }).then(function (rsp) {
           if (rsp.code != null) {
             alert(`결제에 실패하였습니다.\n사유: ${rsp.message}`);

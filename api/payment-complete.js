@@ -68,6 +68,15 @@ module.exports = async (req, res) => {
       }
     } catch (e) { /* Vercel 읽기전용 FS — KV로 대체됨 */ }
 
+    // persisted:false 어드민 가시화 (2026-07-17): 주문 KV 저장 실패는 조용히 넘어가면 유실 — support 큐로 신고(텔레그램 notify 연동)
+    if (!persisted) {
+      try {
+        await fetch('https://jdisim-proxy.vercel.app/api/support', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: 'SYSTEM', msg: '[주문저장실패] ' + merchant_uid + ' — KV 영속 실패(env/프록시 확인), 주문 유실 위험 · 수동 대장 기록 필요', from: 'payment-complete' }),
+        });
+      } catch (e) { /* 신고 실패는 결제 흐름에 영향 주지 않음 */ }
+    }
     return res.status(200).json({ success: true, persisted, message: persisted ? '주문 접수·저장 완료' : '주문 접수(KV 미연동 — env 확인)' });
   } catch (error) {
     // 수집 실패가 결제/영수증을 막지 않도록 200 유지
