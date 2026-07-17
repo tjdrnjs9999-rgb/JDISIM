@@ -27238,8 +27238,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 1,
-        "final_price": 6400,
-        "original_price": 20,
+        "final_price": 2900,
+        "original_price": 9,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27256,8 +27256,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 2,
-        "final_price": 10700,
-        "original_price": 33.4,
+        "final_price": 5200,
+        "original_price": 16,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27274,8 +27274,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 3,
-        "final_price": 15000,
-        "original_price": 46.9,
+        "final_price": 7400,
+        "original_price": 23,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27292,8 +27292,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 4,
-        "final_price": 19300,
-        "original_price": 60.3,
+        "final_price": 10600,
+        "original_price": 33,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27310,8 +27310,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 5,
-        "final_price": 23600,
-        "original_price": 73.8,
+        "final_price": 11900,
+        "original_price": 37,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27328,8 +27328,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 6,
-        "final_price": 27900,
-        "original_price": 87.2,
+        "final_price": 14100,
+        "original_price": 44,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27346,8 +27346,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 7,
-        "final_price": 32200,
-        "original_price": 100.7,
+        "final_price": 16400,
+        "original_price": 51,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27364,8 +27364,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 8,
-        "final_price": 36500,
-        "original_price": 114.2,
+        "final_price": 18600,
+        "original_price": 58,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27382,8 +27382,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 9,
-        "final_price": 40800,
-        "original_price": 127.6,
+        "final_price": 20800,
+        "original_price": 65,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27400,8 +27400,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 10,
-        "final_price": 45100,
-        "original_price": 141.1,
+        "final_price": 23100,
+        "original_price": 72,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27418,8 +27418,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 11,
-        "final_price": 49400,
-        "original_price": 154.5,
+        "final_price": 25300,
+        "original_price": 79,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27436,8 +27436,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 12,
-        "final_price": 53700,
-        "original_price": 168,
+        "final_price": 27500,
+        "original_price": 86,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27454,8 +27454,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 13,
-        "final_price": 58000,
-        "original_price": 181.4,
+        "final_price": 29800,
+        "original_price": 93,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27472,8 +27472,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 14,
-        "final_price": 62300,
-        "original_price": 194.9,
+        "final_price": 32000,
+        "original_price": 100,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27490,8 +27490,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 15,
-        "final_price": 66600,
-        "original_price": 208.3,
+        "final_price": 34300,
+        "original_price": 107,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27508,8 +27508,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 16,
-        "final_price": 70900,
-        "original_price": 221.8,
+        "final_price": 36500,
+        "original_price": 114,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27526,8 +27526,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 17,
-        "final_price": 75200,
-        "original_price": 235.3,
+        "final_price": 38700,
+        "original_price": 121,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27544,8 +27544,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 18,
-        "final_price": 79500,
-        "original_price": 248.7,
+        "final_price": 41000,
+        "original_price": 128,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27562,8 +27562,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 19,
-        "final_price": 83800,
-        "original_price": 262.2,
+        "final_price": 43200,
+        "original_price": 135,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27580,8 +27580,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 20,
-        "final_price": 88100,
-        "original_price": 275.6,
+        "final_price": 45400,
+        "original_price": 142,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27598,8 +27598,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 21,
-        "final_price": 92400,
-        "original_price": 289.1,
+        "final_price": 47700,
+        "original_price": 149,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27616,8 +27616,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 22,
-        "final_price": 96700,
-        "original_price": 302.5,
+        "final_price": 49900,
+        "original_price": 156,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27634,8 +27634,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 23,
-        "final_price": 101000,
-        "original_price": 316,
+        "final_price": 52200,
+        "original_price": 163,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27652,8 +27652,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 24,
-        "final_price": 105300,
-        "original_price": 329.4,
+        "final_price": 54400,
+        "original_price": 170,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27670,8 +27670,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 25,
-        "final_price": 109600,
-        "original_price": 342.9,
+        "final_price": 56600,
+        "original_price": 177,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27688,8 +27688,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 26,
-        "final_price": 113900,
-        "original_price": 356.3,
+        "final_price": 58900,
+        "original_price": 184,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27706,8 +27706,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 27,
-        "final_price": 118200,
-        "original_price": 369.8,
+        "final_price": 61100,
+        "original_price": 191,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27724,8 +27724,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 28,
-        "final_price": 122500,
-        "original_price": 383.3,
+        "final_price": 63300,
+        "original_price": 198,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27742,8 +27742,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 29,
-        "final_price": 126800,
-        "original_price": 396.7,
+        "final_price": 65600,
+        "original_price": 205,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -27760,8 +27760,8 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 30,
-        "final_price": 131100,
-        "original_price": 410.2,
+        "final_price": 67800,
+        "original_price": 212,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
       },
@@ -28840,7 +28840,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 2,
-        "final_price": 5100,
+        "final_price": 5200,
         "original_price": 16,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -28885,7 +28885,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 4,
-        "final_price": 10500,
+        "final_price": 10600,
         "original_price": 33,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -28912,7 +28912,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 5,
-        "final_price": 11800,
+        "final_price": 11900,
         "original_price": 37,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -28957,7 +28957,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 7,
-        "final_price": 16300,
+        "final_price": 16400,
         "original_price": 51,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -28984,7 +28984,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 8,
-        "final_price": 18500,
+        "final_price": 18600,
         "original_price": 58,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29020,7 +29020,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 10,
-        "final_price": 23000,
+        "final_price": 23100,
         "original_price": 72,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29083,7 +29083,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 13,
-        "final_price": 29700,
+        "final_price": 29800,
         "original_price": 93,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29119,7 +29119,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 15,
-        "final_price": 34200,
+        "final_price": 34300,
         "original_price": 107,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29146,7 +29146,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 16,
-        "final_price": 36400,
+        "final_price": 36500,
         "original_price": 114,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29182,7 +29182,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 18,
-        "final_price": 40900,
+        "final_price": 41000,
         "original_price": 128,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29245,7 +29245,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 21,
-        "final_price": 47600,
+        "final_price": 47700,
         "original_price": 149,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29281,7 +29281,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 23,
-        "final_price": 52100,
+        "final_price": 52200,
         "original_price": 163,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29299,7 +29299,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 24,
-        "final_price": 54300,
+        "final_price": 54400,
         "original_price": 170,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29335,7 +29335,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 26,
-        "final_price": 58800,
+        "final_price": 58900,
         "original_price": 184,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -29389,7 +29389,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 29,
-        "final_price": 65500,
+        "final_price": 65600,
         "original_price": 205,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30712,7 +30712,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 2,
-        "final_price": 5100,
+        "final_price": 5200,
         "original_price": 16,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30757,7 +30757,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 4,
-        "final_price": 10500,
+        "final_price": 10600,
         "original_price": 33,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30784,7 +30784,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 5,
-        "final_price": 11800,
+        "final_price": 11900,
         "original_price": 37,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30829,7 +30829,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 7,
-        "final_price": 16300,
+        "final_price": 16400,
         "original_price": 51,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30856,7 +30856,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 8,
-        "final_price": 18500,
+        "final_price": 18600,
         "original_price": 58,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30892,7 +30892,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 10,
-        "final_price": 23000,
+        "final_price": 23100,
         "original_price": 72,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30955,7 +30955,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 13,
-        "final_price": 29700,
+        "final_price": 29800,
         "original_price": 93,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -30991,7 +30991,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 15,
-        "final_price": 34200,
+        "final_price": 34300,
         "original_price": 107,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31018,7 +31018,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 16,
-        "final_price": 36400,
+        "final_price": 36500,
         "original_price": 114,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31054,7 +31054,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 18,
-        "final_price": 40900,
+        "final_price": 41000,
         "original_price": 128,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31117,7 +31117,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 21,
-        "final_price": 47600,
+        "final_price": 47700,
         "original_price": 149,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31153,7 +31153,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 23,
-        "final_price": 52100,
+        "final_price": 52200,
         "original_price": 163,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31171,7 +31171,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 24,
-        "final_price": 54300,
+        "final_price": 54400,
         "original_price": 170,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31207,7 +31207,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 26,
-        "final_price": 58800,
+        "final_price": 58900,
         "original_price": 184,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
@@ -31261,7 +31261,7 @@ window.PRODUCTS_DATA = [
         "service_type": "무제한",
         "data_limit": "1GB+5Mbps",
         "duration": 29,
-        "final_price": 65500,
+        "final_price": 65600,
         "original_price": 205,
         "unit": "CNY",
         "product_code": "LS2023-eSIM-00364"
