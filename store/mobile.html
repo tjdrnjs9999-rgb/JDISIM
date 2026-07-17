@@ -2466,6 +2466,7 @@
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
   <script src="speed-truth.js?v=20260717c" defer></script>
+  <script src="jd-devices.js?v=20260717a" defer></script>
   <script src="jd-precautions.js?v=20260715b" defer></script>
   <script src="jd-resets.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
@@ -4308,6 +4309,7 @@
         </div>
         <div id="checkoutCouponBox" style="display:none;margin-bottom:12px;"></div>
         ${memberBanner}
+        <div id="mwDeviceCheck"></div>
         <details class="ck-card ck-fold" style="padding:12px 15px;">
           <summary>⚠️ 구매 전 꼭 확인</summary>
           <div style="margin-top:8px;font-size:12.5px;color:#5D5049;line-height:1.6;">
@@ -4328,6 +4330,9 @@
 
       const dtitle = document.querySelector('#view-checkout .pp-title');
       if (dtitle) dtitle.innerText = '주문 · 결제';
+
+      // 📲 기종 진단 (2026-07-17): 결제 전 자기 폰 클릭 확인 — jd-devices.js 공용 위젯
+      try { if (window.jdRenderDeviceCheck) window.jdRenderDeviceCheck(document.getElementById('mwDeviceCheck')); } catch (e) {}
 
       // 뷰 전환
       document.querySelectorAll('.mobile-view').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
@@ -5447,7 +5452,9 @@
     function renderMemberHome(zone, me) {
       var gl = document.getElementById('guestLookup'); if (gl) gl.style.display = 'none'; // 로그인 = 계정 페이지가 MY의 전부
       var coupons = me.coupons || [], orders = me.orders || [];
-      var fresh = coupons.filter(function (c) { return !c.used; });
+      function cExpired(c) { try { return c.expires && new Date(String(c.expires) + 'T23:59:59') < new Date(); } catch (e) { return false; } }
+      var fresh = coupons.filter(function (c) { return !c.used && !cExpired(c); });
+      var deadCoupons = coupons.filter(function (c) { return c.used || cExpired(c); });
       var html =
         '<div style="background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(242,117,31,0.22);border-radius:18px;overflow:hidden;margin:0 0 14px;box-shadow:0 10px 26px rgba(242,117,31,0.09);">'
         + '<div style="height:4px;background:linear-gradient(90deg,#F97316,#F59E0B 55%,#2BB3A3);"></div>'
@@ -5457,12 +5464,27 @@
         +   '<span style="display:block;font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:1px;">주문 ' + orders.length + '건 · 쿠폰 ' + fresh.length + '장</span></span>'
         +   '<button type="button" data-m-logout style="border:none;background:none;font-family:inherit;font-size:0.76rem;font-weight:700;color:#B0A28C;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px;">로그아웃</button>'
         + '</div>';
-      // 🧡 웰컴백 쿠폰 하이라이트 (JDISIM 단독 — 도착 인텔리전스가 귀국을 감지해 자동 지급)
-      fresh.filter(function (c) { return c.reason === 'welcomeback' || c.reason === 'welcome'; }).slice(0, 2).forEach(function (c) {
-        html += '<div style="margin:0 12px 10px;padding:12px 14px;border:1.5px dashed rgba(242,117,31,0.5);border-radius:14px;background:rgba(249,115,22,0.05);">'
-          + '<div style="font-size:0.88rem;font-weight:800;color:#221510;">🧡 ' + esc(c.name) + ' <b style="color:#F2751F;">' + Number(c.amount).toLocaleString() + '원</b></div>'
-          + '<div style="font-size:0.76rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + esc(c.note || '') + ' · ' + esc(c.expires) + '까지' + (c.min_order ? ' · ' + Number(c.min_order).toLocaleString() + '원 이상' : '') + ' · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div></div>';
-      });
+      // 🎟️ 쿠폰 지갑 (2026-07-17): 발급된 모든 쿠폰 표시 — 원가 구매권(type:'cost')은 금액 대신 라벨, 지난 쿠폰은 접힘
+      if (fresh.length || deadCoupons.length) {
+        html += '<div style="margin:0 12px 7px;font-size:0.82rem;font-weight:800;color:#221510;">🎟️ 내 쿠폰 <b style="color:#F2751F;">' + fresh.length + '장</b></div>';
+        fresh.forEach(function (c) {
+          var isCost = c.type === 'cost';
+          var icon = isCost ? '💎' : (c.reason === 'welcomeback' ? '🧡' : '🎟️');
+          var amt = isCost ? '<b style="color:#7c3aed;">어떤 상품이든 원가로</b>' : '<b style="color:#F2751F;">' + Number(c.amount || 0).toLocaleString() + '원</b>';
+          html += '<div style="margin:0 12px 8px;padding:12px 14px;border:1.5px dashed ' + (isCost ? 'rgba(124,58,237,0.45)' : 'rgba(242,117,31,0.5)') + ';border-radius:14px;background:' + (isCost ? 'rgba(124,58,237,0.05)' : 'rgba(249,115,22,0.05)') + ';">'
+            + '<div style="font-size:0.88rem;font-weight:800;color:#221510;">' + icon + ' ' + esc(c.name) + ' ' + amt + '</div>'
+            + '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + (c.note ? esc(c.note) + ' · ' : '') + (c.expires ? esc(c.expires) + '까지' : '기한 없음') + (c.min_order ? ' · ' + Number(c.min_order).toLocaleString() + '원 이상 주문 시' : '') + ' · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div>'
+            + '<div style="font-size:0.72rem;font-weight:700;color:#1B8E82;margin-top:4px;">💡 결제 직전 화면에 자동으로 떠요 — 누르면 바로 적용</div></div>';
+        });
+        if (!fresh.length) html += '<div style="margin:0 12px 8px;padding:12px;text-align:center;font-size:0.78rem;font-weight:600;color:#8a7a6d;background:#FFFDFB;border:1px dashed #EDE4D8;border-radius:12px;">사용 가능한 쿠폰이 없어요 — 여행 다녀오시면 웰컴백 쿠폰이 도착해요 🧡</div>';
+        if (deadCoupons.length) {
+          html += '<details style="margin:0 12px 10px;"><summary style="font-size:0.72rem;font-weight:700;color:#B0A28C;cursor:pointer;list-style:none;">▸ 지난 쿠폰 ' + deadCoupons.length + '장 보기</summary>';
+          deadCoupons.forEach(function (c) {
+            html += '<div style="margin-top:6px;padding:9px 12px;border:1px solid #EDE4D8;border-radius:11px;background:#FAF7F2;opacity:0.62;font-size:0.76rem;font-weight:700;color:#8a7a6d;">' + esc(c.name) + ' · ' + (c.type === 'cost' ? '원가 구매권' : Number(c.amount || 0).toLocaleString() + '원') + ' · ' + (c.used ? '사용 완료' : '기간 만료') + '</div>';
+          });
+          html += '</details>';
+        }
+      }
       // 주문 목록 (케어링크 = 기기 무관 서버 URL!)
       orders.slice(0, 5).forEach(function (o) {
         html += '<div style="display:flex;align-items:center;gap:10px;margin:0 12px 9px;padding:11px 13px;background:#fff;border:1px solid #F0E7DB;border-radius:14px;">'
