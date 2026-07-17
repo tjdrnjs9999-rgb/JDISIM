@@ -42,7 +42,7 @@ window.JD_SPEED_TRUTH = {
 "LS2023-eSIM-01042": "5Mbps",
 "LS2023-eSIM-01043": "5Mbps",
 "LS2023-eSIM-10010": "",
-"LS2023-eSIM-00662": "",
+"LS2023-eSIM-00662": "무제한",
 "LS2023-eSIM-01011": "5Mbps",
 "LS2023-eSIM-00708": "128Kbps",
 "LS2023-eSIM-10005": "무제한",

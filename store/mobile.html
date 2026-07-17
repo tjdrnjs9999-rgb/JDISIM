@@ -2379,7 +2379,7 @@
 
       <!-- Buy Flow v3 (2026-07-17): 통신망 = 자동 추천 + '바꾸기' 접힘 (질문 단계에서 제거). 개통안내는 치명 정보라 접힘 밖 유지 -->
       <details class="pw-block" id="pwCarrierBlock" style="display:none;">
-        <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.82rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">자동 추천</b> <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;font-weight:800;">바꾸기</span></summary>
+        <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.82rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">선택해 주세요</b> <span id="pwCarrierCta" style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;font-weight:800;">👇 아래에서 선택</span></summary>
         <div class="pw-label" style="margin-top:10px;">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
         <div id="carrierPills" class="pw-carriers"></div>
       </details>
@@ -2465,11 +2465,11 @@
   <!-- JavaScript imports -->
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/payment.js" defer></script>
-  <script src="speed-truth.js?v=20260715b" defer></script>
+  <script src="speed-truth.js?v=20260717c" defer></script>
   <script src="jd-precautions.js?v=20260715b" defer></script>
   <script src="jd-resets.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260715a" defer></script>
-  <script src="products-lite.js?v=20260717b" defer></script>
+  <script src="products-lite.js?v=20260717c" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260713" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -3651,14 +3651,13 @@
       const preferIdx = carrierOptions.findIndex(cx => cx.carrier === window.__preferCarrier);
       if (preferIdx >= 0) { window.__preferCarrier = ''; pwSelectCarrier(preferIdx); return; }
       if (carrierOptions.length === 1) { pwSelectCarrier(0); return; }
-      // Buy Flow v3: 통신사를 묻지 않는다 — 해당 타입 최저가 통신사를 자동 추천 (바꾸기는 접힘)
-      let best = 0, bestP = Infinity;
-      carrierOptions.forEach((g, i) => {
-        const prices = (g.plans || []).filter(p => planTypeOf(p) === selectedProductType).map(p => p.final_price);
-        const mn = prices.length ? Math.min.apply(null, prices) : Infinity;
-        if (mn < bestP) { bestP = mn; best = i; }
-      });
-      pwSelectCarrier(best);
+      // v3.1 (사장님 지시 2026-07-17): 통신망이 여러 개면 자동 선택하지 않는다 — 펼쳐서 먼저 고르게
+      const cb0 = document.getElementById('pwCarrierBlock');
+      if (cb0 && cb0.tagName === 'DETAILS') cb0.open = true;
+      const cn0 = document.getElementById('pwCarrierName');
+      if (cn0) cn0.textContent = '선택해 주세요';
+      const cta0 = document.getElementById('pwCarrierCta');
+      if (cta0) cta0.textContent = '👇 아래에서 선택';
     }
 
     function pwSelectCarrier(idx) {
@@ -3670,6 +3669,8 @@
       // Buy Flow v3: 접힘 요약에 선택된 통신망 표시 + 선택 후 자동 접기
       const cn = document.getElementById('pwCarrierName');
       if (cn) cn.textContent = cleanCarrier(activeCarrier.carrier) + (activeCarrier.network_type ? ' (' + activeCarrier.network_type + ')' : '');
+      const cta = document.getElementById('pwCarrierCta');
+      if (cta) cta.textContent = '바꾸기';
       const cb = document.getElementById('pwCarrierBlock');
       if (cb && cb.tagName === 'DETAILS') cb.open = false;
       renderActivationNotice();
