@@ -55,3 +55,22 @@
     else apply(j.stats);
   }).catch(function () { /* 조용한 폴백 — 기존 문구 유지 */ });
 })();
+
+/* ── 방문 집계 v0 (2026-07-17) — 익명 카운터만 전송(개인정보·식별자 0)
+   · PV: 페이지 로드마다 1회 / UV: 브라우저당 하루 1회(localStorage 날짜 가드, KST)
+   · 실패해도 조용히 무시 — 사용자 경험에 영향 없음 ── */
+(function () {
+  'use strict';
+  try {
+    var VAPI = 'https://jdisim-proxy.vercel.app/api/jdios?fn=visit';
+    var surf = /mobile/.test(location.pathname) ? 'mo' : 'pc';
+    var today = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+    function send(t) {
+      try {
+        fetch(VAPI, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t: t, s: surf }), keepalive: true }).catch(function () {});
+      } catch (e) {}
+    }
+    send('pv');
+    if (localStorage.getItem('jd_v_day') !== today) { localStorage.setItem('jd_v_day', today); send('uv'); }
+  } catch (e) {}
+})();
