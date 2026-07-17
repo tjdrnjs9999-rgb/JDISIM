@@ -4385,11 +4385,26 @@
     }
 
     // 구매 페이지 금액 재계산 (수량·쿠폰 변경 시)
+    // 💎 원가 구매권 (type:'cost'): 어떤 상품이든 결제 시점에 "원가+카드3.3%+메시지30원"만 내도록 동적 할인 계산
+    //    지인결제 = ceil((원가원화×수량+30)/0.967, 10원) — 결제액에서 수수료가 빠져도 정확히 본전 회수
+    var COST_FX = { CNY: 231, HKD: 200, KRW: 1 }; // 도도매 환율 정본 (×1.06은 아래 적용) — USD 등 미확정은 적용 불가
+    function couponValue(c) {
+      if (!c) return 0;
+      if (c.type !== 'cost') return Number(c.amount) || 0;
+      if (!activePlan) return 0;
+      var fx = COST_FX[activePlan.unit];
+      if (!fx) return 0; // 환율 미확정 상품 — 원가권 적용 불가
+      var esimTotal = activePlan.final_price * purchaseQty;
+      var cost = activePlan.original_price * fx * 1.06 * purchaseQty;
+      var friendPay = Math.ceil((cost + 30) / 0.967 / 10) * 10;
+      return Math.max(0, esimTotal - friendPay);
+    }
+
     function renderCheckoutTotals() {
       if (!activePlan) return;
       const base = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
       const appDisc = jdAppDiscount(base);
-      const couponAmt = window._appliedCoupon ? Math.min(Number(window._appliedCoupon.amount) || 0, base - appDisc) : 0;
+      const couponAmt = window._appliedCoupon ? Math.min(couponValue(window._appliedCoupon), base - appDisc) : 0;
       const final = Math.max(0, base - appDisc - couponAmt);
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
       set('ckQty', purchaseQty);
@@ -4421,7 +4436,7 @@
           if (!box || !usable.length) return;
           box.innerHTML = '<div class="ck-card" style="margin:0;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.04);">'
             + '<div class="ck-label">💰 쿠폰 적용</div>'
-            + usable.slice(0, 3).map((c, i) => '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#5D5049;"><input type="radio" name="ckCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F2751F;"><span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F2751F;">-' + Number(c.amount).toLocaleString() + '원</b></span></label>').join('')
+            + usable.slice(0, 3).map((c, i) => '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#5D5049;"><input type="radio" name="ckCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F2751F;"><span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F2751F;">' + (c.type === 'cost' ? (couponValue(c) > 0 ? '-' + couponValue(c).toLocaleString() + '원 (원가 적용)' : '이 상품 적용불가') : '-' + Number(c.amount).toLocaleString() + '원') + '</b></span></label>').join('')
             + '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#8a7a6d;"><input type="radio" name="ckCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F2751F;"><span>적용 안 함</span></label></div>';
           box.style.display = 'block';
           box.querySelectorAll('input[name="ckCoupon"]').forEach(r => r.addEventListener('change', function () {
@@ -4460,7 +4475,7 @@
       // 할인: 앱 5% + 쿠폰 (표시용 — 실차감 확정은 아래 use_coupon 서버 검증. PG 재개 시 결제 검증과 함께 재확인)
       const baseVal = activePlan.final_price * purchaseQty + (krCallAddonOn ? KRCALL_ADDON.price : 0);
       const appDiscount = jdAppDiscount(baseVal);
-      const couponDiscount = window._appliedCoupon ? Math.min(Number(window._appliedCoupon.amount) || 0, activePlan.final_price * purchaseQty) : 0;
+      const couponDiscount = window._appliedCoupon ? Math.min(couponValue(window._appliedCoupon), activePlan.final_price * purchaseQty) : 0;
       const priceVal = Math.max(0, baseVal - appDiscount - couponDiscount);
       const orderCode = 'JD' + Date.now().toString().slice(-8);
       // 서버 쿠폰 소진 처리 (본인 지갑 검증 — 이중 사용·타인 코드 차단)
