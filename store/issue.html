@@ -567,10 +567,23 @@ function openReview(){
     '<div style="font-size:0.76rem;color:#8B94A7;font-weight:700;margin-top:3px;">별점을 눌러주세요 — 후기를 남기면 여행 리포트를 만들어드려요 🎁</div></div>' +
     '<div id="rvStars" style="display:flex;justify-content:center;gap:10px;padding:14px 0;font-size:2rem;">' +
       [1,2,3,4,5].map(function(i){ return '<span data-s="' + i + '" style="cursor:pointer;filter:grayscale(1);opacity:.45;">⭐</span>'; }).join('') + '</div>' +
+    '<div style="text-align:center;font-size:0.74rem;font-weight:800;color:#5D6B85;margin:0 0 7px;">📶 데이터 체감 속도는 어땠나요? <span style="font-weight:600;color:#98A3B8;">(선택)</span></div>' +
+    '<div id="rvSpeed" style="display:flex;justify-content:center;gap:7px;margin-bottom:11px;">' +
+      [['fast','⚡ 빠릿해요'],['ok','🙂 무난해요'],['slow','🐢 아쉬워요']].map(function(o){ return '<button type="button" data-v="' + o[0] + '" style="border:1.5px solid #E4E8EF;background:#fff;border-radius:20px;padding:8px 13px;font-family:inherit;font-size:0.78rem;font-weight:800;color:#5D6B85;cursor:pointer;">' + o[1] + '</button>'; }).join('') + '</div>' +
     '<textarea id="rvText" placeholder="한 줄 후기 (선택)" style="width:100%;box-sizing:border-box;min-height:74px;border:1.5px solid #E4E8EF;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:0.86rem;font-weight:600;outline:none;resize:none;"></textarea>' +
+    (function(){ try { return localStorage.getItem('jd_member_token') ? '<div style="margin-top:8px;padding:9px 12px;background:rgba(249,115,22,0.07);border:1px dashed rgba(249,115,22,0.4);border-radius:11px;font-size:0.75rem;font-weight:700;color:#B45309;text-align:center;">🧡 회원 후기 감사 — <b>1,000원 쿠폰</b>이 바로 지급돼요</div>' : ''; } catch(e){ return ''; } })() +
     '<button type="button" class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="submitReview()">후기 남기고 리포트 받기</button>' +
     '<div id="rvOut" style="margin-top:8px;"></div></div>';
   document.body.appendChild(d);
+  window._rvSpeed = '';
+  d.querySelectorAll('#rvSpeed button').forEach(function(bt){
+    bt.onclick = function(){
+      window._rvSpeed = bt.getAttribute('data-v');
+      d.querySelectorAll('#rvSpeed button').forEach(function(x){ x.style.borderColor = '#E4E8EF'; x.style.background = '#fff'; x.style.color = '#5D6B85'; });
+      bt.style.borderColor = '#F97316'; bt.style.background = 'rgba(249,115,22,0.08)'; bt.style.color = '#C2410C';
+      buzz(8);
+    };
+  });
   var picked = 0;
   d.querySelectorAll('#rvStars span').forEach(function(sp){
     sp.onclick = function(){
@@ -590,10 +603,13 @@ function submitReview(){
   if (!stars) { out.innerHTML = '<div class="notice">별점을 먼저 골라주세요!</div>'; return; }
   var txt = ($('rvText') || {}).value || '';
   out.innerHTML = '<div class="center"><span class="muted">저장 중…</span></div>';
+  var mtok = ''; try { mtok = localStorage.getItem('jd_member_token') || ''; } catch(e) {}
   fetch(CARE_API.replace('/api/esim', '/api/review'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ stars: stars, text: txt, iccid: (order && order.iccid) || CARE, country: order && order.country || '', name: order && order.buyerName || '', days: (planOf(order) || {}).days || '' }) })
+    body: JSON.stringify({ stars: stars, text: txt, iccid: (order && order.iccid) || CARE, country: order && order.country || '', name: order && order.buyerName || '',
+      carrier: (order && (order.carrier || ((order.items || [])[0] || {}).carrier)) || '', speed: window._rvSpeed || '', token: mtok,
+      days: (planOf(order) || {}).days || '' }) })
     .then(function(r){ return r.json(); })
-    .then(function(){ makeReport(stars); })
+    .then(function(j){ if (j && j.couponGiven) { try { alert('🧡 후기 감사 쿠폰 1,000원이 지급됐어요! MY 페이지에서 확인하세요.'); } catch(e) {} } makeReport(stars); })
     .catch(function(){ makeReport(stars); }); // 저장 실패해도 리포트는 선물
 }
 function makeReport(stars){

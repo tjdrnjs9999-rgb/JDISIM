@@ -95,6 +95,9 @@
         stars: parseInt(r.stars || r.rating, 10) || 0,
         text: r.text || r.review || '',
         country: r.country || '',
+        carrier: r.carrier || '',
+        speed: r.speed || '',
+        rewarded: !!r.rewarded,
         name: r.name || r.buyerName || '',
         days: r.days || '',
         ts: r.at || r.ts || r.createdAt || r.date || r.time || null
@@ -113,13 +116,19 @@
   }
 
   /* ---------- 렌더: 카드 1장 ---------- */
+  var SPEED_LABEL = { fast: '⚡ 빠릿', ok: '🙂 무난', slow: '🐢 아쉬움' };
   function cardHTML(r) {
     return '<div class="jrv-card">' +
       '<div class="jrv-card-hd"><span class="jrv-who">' + esc(maskName(r.name)) + '</span><span class="jrv-meta">' + esc(relTime(r.ts)) + '</span></div>' +
       stars(r.stars) +
       (r.text ? '<div class="jrv-txt" style="margin-top:6px;">' + esc(r.text) + '</div>' : '') +
-      (r.country ? '<span class="jrv-country">' + esc(r.country) + (r.days ? ' · ' + esc(r.days) + '일' : '') + '</span>' : '') +
+      (r.country ? '<span class="jrv-country">' + esc(r.country) + (r.carrier ? ' · ' + esc(r.carrier) : '') + (r.days ? ' · ' + esc(r.days) + '일' : '') + (r.speed && SPEED_LABEL[r.speed] ? ' · ' + SPEED_LABEL[r.speed] : '') + '</span>' : '') +
       '</div>';
+  }
+  // 표시광고법 대가성 고지 — 리워드 후기가 하나라도 있으면 위젯 하단에 표기
+  function noticeHTML(list) {
+    return list.some(function (r) { return r.rewarded; })
+      ? '<div style="font-size:.66rem;font-weight:600;color:#98A3B8;margin-top:8px;">ⓘ 일부 후기는 작성 리워드(쿠폰)가 제공되었습니다</div>' : '';
   }
 
   /* ---------- 렌더: strip ---------- */
@@ -131,7 +140,7 @@
         '<span class="jrv-badge">JDISIM 발급 고객 인증 후기</span>' +
         '<span style="font-size:.72rem;color:#94a3b8;font-weight:700;">eSIM을 실제 발급받은 고객만 남길 수 있어요</span>' +
       '</div>' +
-      '<div class="jrv-strip"><div class="jrv-strip-track">' + cards + cards + '</div></div>';
+      '<div class="jrv-strip"><div class="jrv-strip-track">' + cards + cards + '</div></div>' + noticeHTML(list);
     // 무한 스크롤 애니메이션 (JS 구동 — 카드 수에 맞춰 속도 일정)
     var track = el.querySelector('.jrv-strip-track');
     var half = 0, x = 0, last = null, paused = false;
@@ -172,7 +181,7 @@
       return list.slice(0, n).map(function (r) {
         return '<div class="jrv-item">' +
           '<div class="jrv-card-hd"><span class="jrv-who">' + esc(maskName(r.name)) +
-          (r.country ? ' <span style="color:#94a3b8;font-weight:600;">· ' + esc(r.country) + (r.days ? ' ' + esc(r.days) + '일' : '') + '</span>' : '') +
+          (r.country ? ' <span style="color:#94a3b8;font-weight:600;">· ' + esc(r.country) + (r.carrier ? ' ' + esc(r.carrier) : '') + (r.days ? ' ' + esc(r.days) + '일' : '') + (r.speed && SPEED_LABEL[r.speed] ? ' · ' + SPEED_LABEL[r.speed] : '') + '</span>' : '') +
           '</span><span class="jrv-meta">' + esc(relTime(r.ts)) + '</span></div>' +
           stars(r.stars) +
           (r.text ? '<div class="jrv-txt" style="margin-top:5px;-webkit-line-clamp:6;">' + esc(r.text) + '</div>' : '') +
@@ -190,6 +199,7 @@
         '</div>' +
         '<div class="jrv-list">' + itemsHTML(SHOW) + '</div>' +
         (total > SHOW ? '<button type="button" class="jrv-more">후기 더 보기</button>' : '') +
+        noticeHTML(list) +
       '</div>';
 
     var btn = el.querySelector('.jrv-more');
