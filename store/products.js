@@ -682,7 +682,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03178"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3000,
@@ -700,7 +700,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03178"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -718,7 +718,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03178"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3400,
@@ -745,7 +745,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03178"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3500,
@@ -790,7 +790,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03178"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3700,
@@ -925,7 +925,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03178"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 3900,
@@ -3274,7 +3274,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03165"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3000,
@@ -3292,7 +3292,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03165"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -3310,7 +3310,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03165"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3400,
@@ -3337,7 +3337,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03165"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3500,
@@ -3382,7 +3382,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03165"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3700,
@@ -3517,7 +3517,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03165"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 3900,
@@ -5902,7 +5902,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00540"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -5947,7 +5947,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00540"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3800,
@@ -5992,7 +5992,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00540"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4100,
@@ -6127,7 +6127,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00540"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4300,
@@ -8003,7 +8003,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03121"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3000,
@@ -8021,7 +8021,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03121"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -8039,7 +8039,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03121"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3500,
@@ -8066,7 +8066,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03121"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3700,
@@ -8111,7 +8111,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03121"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3900,
@@ -8246,7 +8246,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03121"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4100,
@@ -10711,7 +10711,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01264"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3400,
@@ -10720,7 +10720,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01269"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3500,
@@ -10729,7 +10729,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01269"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3700,
@@ -10738,7 +10738,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01269"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3800,
@@ -10747,7 +10747,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01269"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3900,
@@ -10882,7 +10882,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01264"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4300,
@@ -11170,7 +11170,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01265"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 5,
         "final_price": 4800,
@@ -11179,7 +11179,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01270"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 7,
         "final_price": 5000,
@@ -11188,7 +11188,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01270"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 10,
         "final_price": 5300,
@@ -11197,7 +11197,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01270"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 15,
         "final_price": 5400,
@@ -11206,7 +11206,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01270"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 30,
         "final_price": 6200,
@@ -14869,7 +14869,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00999"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4600,
@@ -14878,7 +14878,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01001"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4800,
@@ -14887,7 +14887,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01001"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 5100,
@@ -14896,7 +14896,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01001"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 5400,
@@ -14905,7 +14905,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01001"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5800,
@@ -14923,7 +14923,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00999"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 6100,
@@ -15517,7 +15517,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01010"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 5800,
@@ -15526,7 +15526,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01012"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 6100,
@@ -15535,7 +15535,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01012"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 6400,
@@ -15544,7 +15544,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01012"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 6700,
@@ -15553,7 +15553,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01012"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 7400,
@@ -15571,7 +15571,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01010"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 8000,
@@ -17947,7 +17947,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00384"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4300,
@@ -17956,7 +17956,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00480"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4600,
@@ -17965,7 +17965,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00480"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4800,
@@ -17974,7 +17974,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00480"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 5100,
@@ -17983,7 +17983,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00480"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5400,
@@ -18001,7 +18001,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00384"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5800,
@@ -18127,7 +18127,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00385"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "10GB",
         "duration": 3,
         "final_price": 9600,
@@ -18136,7 +18136,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00483"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "10GB",
         "duration": 5,
         "final_price": 10200,
@@ -18145,7 +18145,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00483"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "10GB",
         "duration": 7,
         "final_price": 10900,
@@ -18154,7 +18154,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00483"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "10GB",
         "duration": 10,
         "final_price": 11500,
@@ -18163,7 +18163,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00483"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "10GB",
         "duration": 15,
         "final_price": 12500,
@@ -18181,7 +18181,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00385"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "10GB",
         "duration": 30,
         "final_price": 13400,
@@ -21475,7 +21475,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03226"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3300,
@@ -21493,7 +21493,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03226"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3500,
@@ -21511,7 +21511,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03226"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3800,
@@ -21538,7 +21538,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03226"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4100,
@@ -21583,7 +21583,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03226"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4300,
@@ -21718,7 +21718,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03226"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4600,
@@ -23761,7 +23761,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00868"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 3500,
@@ -23779,7 +23779,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00875"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 3900,
@@ -23797,7 +23797,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00875"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 3900,
@@ -23815,7 +23815,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00875"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 4000,
@@ -23824,7 +23824,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00874"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 4000,
@@ -23833,7 +23833,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00874"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4100,
@@ -23851,7 +23851,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00868"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 4100,
@@ -23878,7 +23878,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00868"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4200,
@@ -23923,7 +23923,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00868"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 4200,
@@ -23968,7 +23968,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00868"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 4300,
@@ -24013,7 +24013,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00868"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4300,
@@ -24355,7 +24355,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03223"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 2,
         "final_price": 5300,
@@ -24373,7 +24373,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00877"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 4,
         "final_price": 5400,
@@ -24391,7 +24391,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00877"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 6,
         "final_price": 5600,
@@ -24409,7 +24409,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00877"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 8,
         "final_price": 5700,
@@ -24418,7 +24418,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00876"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 9,
         "final_price": 5700,
@@ -24427,7 +24427,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00876"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 10,
         "final_price": 5800,
@@ -24445,7 +24445,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03223"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 12,
         "final_price": 5900,
@@ -24472,7 +24472,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03223"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 15,
         "final_price": 5900,
@@ -24517,7 +24517,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03223"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 20,
         "final_price": 5900,
@@ -24562,7 +24562,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03223"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 25,
         "final_price": 6000,
@@ -24607,7 +24607,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03223"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "5GB",
         "duration": 30,
         "final_price": 6100,
@@ -26686,7 +26686,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03243"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3500,
@@ -26704,7 +26704,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03243"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3500,
@@ -26722,7 +26722,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03243"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3700,
@@ -26749,7 +26749,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03243"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3800,
@@ -26794,7 +26794,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03243"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3900,
@@ -26929,7 +26929,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03243"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4100,
@@ -28045,7 +28045,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00048"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 5600,
@@ -28054,7 +28054,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 5600,
@@ -28063,7 +28063,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 5800,
@@ -28072,7 +28072,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 5800,
@@ -28081,7 +28081,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 5900,
@@ -28090,7 +28090,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 5900,
@@ -28099,7 +28099,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 6100,
@@ -28108,7 +28108,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 6100,
@@ -28117,7 +28117,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00584"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 6200,
@@ -28135,7 +28135,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00048"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 6400,
@@ -28162,7 +28162,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00048"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 6700,
@@ -28207,7 +28207,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00048"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 7000,
@@ -28252,7 +28252,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00048"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 7400,
@@ -28297,7 +28297,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00048"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 7700,
@@ -29710,7 +29710,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 2500,
@@ -29719,7 +29719,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00358"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 5300,
@@ -29728,7 +29728,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 2800,
@@ -29737,7 +29737,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00358"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 5400,
@@ -29746,7 +29746,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3000,
@@ -29755,7 +29755,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00358"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 5600,
@@ -29764,7 +29764,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 5600,
@@ -29773,7 +29773,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3300,
@@ -29791,7 +29791,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 5900,
@@ -29818,7 +29818,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3500,
@@ -29863,7 +29863,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 6400,
@@ -29908,7 +29908,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 6700,
@@ -29953,7 +29953,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 3800,
@@ -31582,7 +31582,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 2500,
@@ -31591,7 +31591,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00358"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 5300,
@@ -31600,7 +31600,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 2800,
@@ -31609,7 +31609,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00358"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 5400,
@@ -31618,7 +31618,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3000,
@@ -31627,7 +31627,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00358"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 5600,
@@ -31636,7 +31636,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 5600,
@@ -31645,7 +31645,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00459"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3300,
@@ -31663,7 +31663,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 5900,
@@ -31690,7 +31690,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3500,
@@ -31735,7 +31735,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 6400,
@@ -31780,7 +31780,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 6700,
@@ -31825,7 +31825,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00304"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 3800,
@@ -33040,7 +33040,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00465"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 2800,
@@ -33058,7 +33058,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00465"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3000,
@@ -33076,7 +33076,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00465"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3300,
@@ -33103,7 +33103,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00465"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3500,
@@ -33148,7 +33148,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00465"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3800,
@@ -33175,7 +33175,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00465"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4100,
@@ -33614,116 +33614,8 @@ window.PRODUCTS_DATA = [
         "original_price": 128,
         "unit": "CNY",
         "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 19,
-        "final_price": 3300,
-        "original_price": 9,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 20,
-        "final_price": 5100,
-        "original_price": 16,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 21,
-        "final_price": 7400,
-        "original_price": 23,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 22,
-        "final_price": 9600,
-        "original_price": 30,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 23,
-        "final_price": 11800,
-        "original_price": 37,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 24,
-        "final_price": 14100,
-        "original_price": 44,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 25,
-        "final_price": 16300,
-        "original_price": 51,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 26,
-        "final_price": 18500,
-        "original_price": 58,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 27,
-        "final_price": 20800,
-        "original_price": 65,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 28,
-        "final_price": 23000,
-        "original_price": 72,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 29,
-        "final_price": 25300,
-        "original_price": 79,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
-      },
-      {
-        "service_type": "무제한",
-        "data_limit": "무제한",
-        "duration": 30,
-        "final_price": 27500,
-        "original_price": 86,
-        "unit": "CNY",
-        "product_code": "LS2026-eSIM-03130"
       }
-    ]
+      ]
   },
   {
     "category": "아시아",
@@ -35353,7 +35245,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4100,
@@ -35371,7 +35263,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00891"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4300,
@@ -35389,7 +35281,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4600,
@@ -35416,7 +35308,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4800,
@@ -35461,7 +35353,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5100,
@@ -35596,7 +35488,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5400,
@@ -37504,7 +37396,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4100,
@@ -37522,7 +37414,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00891"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4300,
@@ -37540,7 +37432,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4600,
@@ -37567,7 +37459,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4800,
@@ -37612,7 +37504,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5100,
@@ -37747,7 +37639,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5400,
@@ -39655,7 +39547,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4100,
@@ -39673,7 +39565,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00891"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4300,
@@ -39691,7 +39583,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4600,
@@ -39718,7 +39610,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4800,
@@ -39763,7 +39655,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5100,
@@ -39898,7 +39790,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00575"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5400,
@@ -41626,7 +41518,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 2600,
@@ -41635,7 +41527,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3000,
@@ -41644,7 +41536,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 3300,
@@ -41653,7 +41545,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -41662,7 +41554,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 3500,
@@ -41671,7 +41563,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3500,
@@ -41680,7 +41572,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 3700,
@@ -41689,7 +41581,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 3700,
@@ -41698,7 +41590,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3800,
@@ -41716,7 +41608,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 3900,
@@ -41743,7 +41635,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4100,
@@ -41788,7 +41680,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 4100,
@@ -41833,7 +41725,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 4200,
@@ -41878,7 +41770,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4300,
@@ -44335,7 +44227,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 2600,
@@ -44344,7 +44236,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3000,
@@ -44353,7 +44245,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 3300,
@@ -44362,7 +44254,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -44371,7 +44263,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 3500,
@@ -44380,7 +44272,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3500,
@@ -44389,7 +44281,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 3700,
@@ -44398,7 +44290,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 3700,
@@ -44407,7 +44299,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3800,
@@ -44425,7 +44317,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 3900,
@@ -44452,7 +44344,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4100,
@@ -44497,7 +44389,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 4100,
@@ -44542,7 +44434,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 4200,
@@ -44587,7 +44479,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4300,
@@ -47044,7 +46936,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 2600,
@@ -47053,7 +46945,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3000,
@@ -47062,7 +46954,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 3300,
@@ -47071,7 +46963,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3300,
@@ -47080,7 +46972,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 3500,
@@ -47089,7 +46981,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3500,
@@ -47098,7 +46990,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 3700,
@@ -47107,7 +46999,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 3700,
@@ -47116,7 +47008,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00667"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3800,
@@ -47134,7 +47026,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 3900,
@@ -47161,7 +47053,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4100,
@@ -47206,7 +47098,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 4100,
@@ -47251,7 +47143,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 4200,
@@ -47296,7 +47188,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00812"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4300,
@@ -52075,7 +51967,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00507"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 4500,
@@ -52084,7 +51976,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4600,
@@ -52093,7 +51985,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 4700,
@@ -52102,7 +51994,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4700,
@@ -52111,7 +52003,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 5000,
@@ -52120,7 +52012,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 5000,
@@ -52129,7 +52021,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 5300,
@@ -52138,7 +52030,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 5300,
@@ -52147,7 +52039,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00500"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 5400,
@@ -52165,7 +52057,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00507"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 5600,
@@ -52192,7 +52084,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00507"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5800,
@@ -52237,7 +52129,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00507"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 5900,
@@ -52282,7 +52174,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00507"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 6200,
@@ -53659,7 +53551,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00300"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3800,
@@ -53677,7 +53569,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00300"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4100,
@@ -53695,7 +53587,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00300"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4300,
@@ -53722,7 +53614,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00300"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4600,
@@ -53767,7 +53659,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00300"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4800,
@@ -53902,7 +53794,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00300"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5100,
@@ -54973,7 +54865,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00582"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 2500,
@@ -54991,7 +54883,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00582"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 2800,
@@ -55009,7 +54901,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00582"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3000,
@@ -55036,7 +54928,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00582"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 3300,
@@ -55081,7 +54973,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00582"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 3500,
@@ -55216,7 +55108,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00582"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 3800,
@@ -57583,7 +57475,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00603"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 5100,
@@ -57601,7 +57493,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00603"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 5400,
@@ -57619,7 +57511,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00603"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 5800,
@@ -57646,7 +57538,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00603"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 6100,
@@ -57691,7 +57583,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00603"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 6400,
@@ -57826,7 +57718,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00603"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 6700,
@@ -60067,7 +59959,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00965"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3300,
@@ -60076,7 +59968,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00967"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3500,
@@ -60085,7 +59977,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00967"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3800,
@@ -60094,7 +59986,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00967"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4100,
@@ -60103,7 +59995,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00967"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4300,
@@ -60121,7 +60013,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00965"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4600,
@@ -63154,7 +63046,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00558"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 8000,
@@ -63181,7 +63073,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00558"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 8300,
@@ -63199,7 +63091,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00558"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 8600,
@@ -63244,7 +63136,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00558"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 9000,
@@ -63289,7 +63181,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00558"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 9300,
@@ -63379,7 +63271,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00558"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 9900,
@@ -64045,7 +63937,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00034"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 7,
         "final_price": 5600,
@@ -64054,7 +63946,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00067"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 8,
         "final_price": 5800,
@@ -64063,7 +63955,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00067"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 9,
         "final_price": 5800,
@@ -64072,7 +63964,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00067"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 10,
         "final_price": 5900,
@@ -64090,7 +63982,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00034"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 12,
         "final_price": 5900,
@@ -64117,7 +64009,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00034"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 15,
         "final_price": 6100,
@@ -64162,7 +64054,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00034"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 20,
         "final_price": 6100,
@@ -64207,7 +64099,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00034"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 25,
         "final_price": 6200,
@@ -64252,7 +64144,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00034"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 30,
         "final_price": 6200,
@@ -64540,7 +64432,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00544"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 3800,
@@ -64549,7 +64441,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4100,
@@ -64558,7 +64450,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 4300,
@@ -64567,7 +64459,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4300,
@@ -64576,7 +64468,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 4600,
@@ -64585,7 +64477,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4600,
@@ -64594,7 +64486,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 4700,
@@ -64603,7 +64495,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 4700,
@@ -64612,7 +64504,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00037"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4800,
@@ -64630,7 +64522,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00544"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 5000,
@@ -64657,7 +64549,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00544"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5100,
@@ -64702,7 +64594,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00544"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 5300,
@@ -64747,7 +64639,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00544"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 5400,
@@ -64792,7 +64684,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00544"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5600,
@@ -66187,7 +66079,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03198"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 3,
         "final_price": 4200,
@@ -66196,7 +66088,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 4,
         "final_price": 4200,
@@ -66205,7 +66097,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 5,
         "final_price": 4200,
@@ -66214,7 +66106,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 6,
         "final_price": 4400,
@@ -66223,7 +66115,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 7,
         "final_price": 4400,
@@ -66232,7 +66124,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 8,
         "final_price": 4400,
@@ -66241,7 +66133,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 9,
         "final_price": 4400,
@@ -66250,7 +66142,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03201"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 10,
         "final_price": 4700,
@@ -66268,7 +66160,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03198"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 12,
         "final_price": 4700,
@@ -66295,7 +66187,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03198"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 15,
         "final_price": 4700,
@@ -66340,7 +66232,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03198"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 20,
         "final_price": 4800,
@@ -66385,7 +66277,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03198"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 25,
         "final_price": 4800,
@@ -66430,7 +66322,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03198"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 30,
         "final_price": 4800,
@@ -66718,7 +66610,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03200"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 4800,
@@ -66727,7 +66619,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4800,
@@ -66736,7 +66628,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 5000,
@@ -66745,7 +66637,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 5000,
@@ -66754,7 +66646,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 5100,
@@ -66763,7 +66655,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 5100,
@@ -66772,7 +66664,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 5400,
@@ -66781,7 +66673,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 5400,
@@ -66790,7 +66682,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03202"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 5800,
@@ -66808,7 +66700,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03200"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 5900,
@@ -66835,7 +66727,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03200"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 6100,
@@ -66880,7 +66772,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03200"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 6400,
@@ -66925,7 +66817,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03200"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 6700,
@@ -66970,7 +66862,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03200"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 7000,
@@ -69256,7 +69148,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 6100,
@@ -69274,7 +69166,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 6400,
@@ -69292,7 +69184,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 6700,
@@ -69319,7 +69211,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 7400,
@@ -69364,7 +69256,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 8000,
@@ -69499,7 +69391,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 8600,
@@ -70867,7 +70759,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 6100,
@@ -70885,7 +70777,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 6400,
@@ -70903,7 +70795,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 6700,
@@ -70930,7 +70822,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-02004"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 7400,
@@ -70975,7 +70867,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 8000,
@@ -71110,7 +71002,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 8600,
@@ -74593,7 +74485,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00515"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3300,
@@ -74611,7 +74503,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00515"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 3500,
@@ -74629,7 +74521,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00515"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 3800,
@@ -74656,7 +74548,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00515"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4100,
@@ -74701,7 +74593,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00515"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4300,
@@ -74836,7 +74728,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00515"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 4600,
@@ -82036,7 +81928,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01021"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 8000,
@@ -82045,7 +81937,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 8000,
@@ -82054,7 +81946,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 8600,
@@ -82063,7 +81955,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 8600,
@@ -82072,7 +81964,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 9300,
@@ -82081,7 +81973,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 9300,
@@ -82090,7 +81982,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 9600,
@@ -82099,7 +81991,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 9600,
@@ -82108,7 +82000,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 9900,
@@ -82126,7 +82018,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 10200,
@@ -82153,7 +82045,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 10500,
@@ -82198,7 +82090,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 10700,
@@ -82243,7 +82135,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 10900,
@@ -82288,7 +82180,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 11200,
@@ -84250,7 +84142,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01021"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 8000,
@@ -84259,7 +84151,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 8000,
@@ -84268,7 +84160,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 8600,
@@ -84277,7 +84169,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 8600,
@@ -84286,7 +84178,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 9300,
@@ -84295,7 +84187,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 9300,
@@ -84304,7 +84196,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 9600,
@@ -84313,7 +84205,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 9600,
@@ -84322,7 +84214,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 9900,
@@ -84340,7 +84232,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 10200,
@@ -84367,7 +84259,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 10500,
@@ -84412,7 +84304,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 10700,
@@ -84457,7 +84349,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 10900,
@@ -84502,7 +84394,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 11200,
@@ -86464,7 +86356,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01021"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 8000,
@@ -86473,7 +86365,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 8000,
@@ -86482,7 +86374,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 8600,
@@ -86491,7 +86383,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 8600,
@@ -86500,7 +86392,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 9300,
@@ -86509,7 +86401,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 9300,
@@ -86518,7 +86410,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 9600,
@@ -86527,7 +86419,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 9600,
@@ -86536,7 +86428,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00525"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 9900,
@@ -86554,7 +86446,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 10200,
@@ -86581,7 +86473,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 10500,
@@ -86626,7 +86518,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 10700,
@@ -86671,7 +86563,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 10900,
@@ -86716,7 +86608,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00837"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 11200,
@@ -89119,7 +89011,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00771"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 14100,
@@ -89128,7 +89020,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 15000,
@@ -89137,7 +89029,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 16000,
@@ -89146,7 +89038,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 16900,
@@ -89155,7 +89047,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 17900,
@@ -89173,7 +89065,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00771"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 18900,
@@ -89767,7 +89659,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00771"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 14100,
@@ -89776,7 +89668,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 15000,
@@ -89785,7 +89677,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 16000,
@@ -89794,7 +89686,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 16900,
@@ -89803,7 +89695,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 17900,
@@ -89821,7 +89713,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00771"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 18900,
@@ -90415,7 +90307,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00771"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 14100,
@@ -90424,7 +90316,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 15000,
@@ -90433,7 +90325,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 16000,
@@ -90442,7 +90334,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 16900,
@@ -90451,7 +90343,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00773"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 17900,
@@ -90469,7 +90361,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00771"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 18900,
@@ -91108,7 +91000,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00988"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 4100,
@@ -91117,7 +91009,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00990"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4300,
@@ -91126,7 +91018,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00990"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4600,
@@ -91135,7 +91027,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00990"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4800,
@@ -91144,7 +91036,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00990"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 5100,
@@ -91162,7 +91054,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00988"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5400,
@@ -93952,7 +93844,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 4,
         "final_price": 3700,
@@ -93970,7 +93862,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 5,
         "final_price": 3700,
@@ -93988,7 +93880,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 6,
         "final_price": 3800,
@@ -94006,7 +93898,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 7,
         "final_price": 3800,
@@ -94024,7 +93916,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 8,
         "final_price": 3900,
@@ -94042,7 +93934,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 9,
         "final_price": 3900,
@@ -94060,7 +93952,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 10,
         "final_price": 4100,
@@ -94096,7 +93988,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 12,
         "final_price": 4200,
@@ -94150,7 +94042,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 15,
         "final_price": 4300,
@@ -94240,7 +94132,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 20,
         "final_price": 4600,
@@ -94330,7 +94222,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 25,
         "final_price": 4800,
@@ -94420,7 +94312,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 30,
         "final_price": 5100,
@@ -94825,7 +94717,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 3500,
@@ -94834,7 +94726,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3800,
@@ -94843,7 +94735,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 4100,
@@ -94852,7 +94744,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4100,
@@ -94861,7 +94753,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 4300,
@@ -94870,7 +94762,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4300,
@@ -94879,7 +94771,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 4400,
@@ -94888,7 +94780,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 4400,
@@ -94897,7 +94789,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4600,
@@ -94915,7 +94807,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 4700,
@@ -94942,7 +94834,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4800,
@@ -94987,7 +94879,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 5000,
@@ -95032,7 +94924,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 5100,
@@ -96301,7 +96193,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 4,
         "final_price": 3700,
@@ -96319,7 +96211,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 5,
         "final_price": 3700,
@@ -96337,7 +96229,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 6,
         "final_price": 3800,
@@ -96355,7 +96247,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 7,
         "final_price": 3800,
@@ -96373,7 +96265,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 8,
         "final_price": 3900,
@@ -96391,7 +96283,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 9,
         "final_price": 3900,
@@ -96409,7 +96301,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 10,
         "final_price": 4100,
@@ -96445,7 +96337,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 12,
         "final_price": 4200,
@@ -96499,7 +96391,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 15,
         "final_price": 4300,
@@ -96589,7 +96481,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 20,
         "final_price": 4600,
@@ -96679,7 +96571,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 25,
         "final_price": 4800,
@@ -96769,7 +96661,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03161"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "1GB",
         "duration": 30,
         "final_price": 5100,
@@ -97174,7 +97066,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 3500,
@@ -97183,7 +97075,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3800,
@@ -97192,7 +97084,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 4100,
@@ -97201,7 +97093,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4100,
@@ -97210,7 +97102,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 4300,
@@ -97219,7 +97111,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4300,
@@ -97228,7 +97120,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 4400,
@@ -97237,7 +97129,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 4400,
@@ -97246,7 +97138,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4600,
@@ -97264,7 +97156,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 4700,
@@ -97291,7 +97183,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4800,
@@ -97336,7 +97228,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 5000,
@@ -97381,7 +97273,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01070"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 5100,
@@ -99028,7 +98920,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00478"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 12600,
@@ -99037,7 +98929,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00063"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 6400,
@@ -99046,7 +98938,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00449"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 13300,
@@ -99055,7 +98947,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00063"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 7000,
@@ -99064,7 +98956,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00449"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 14200,
@@ -99073,7 +98965,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00063"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 7700,
@@ -99082,7 +98974,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00449"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 14200,
@@ -99091,7 +98983,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00063"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 15000,
@@ -99100,7 +98992,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00063"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 8300,
@@ -99118,7 +99010,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00758"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 15000,
@@ -99145,7 +99037,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00758"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 9000,
@@ -99190,7 +99082,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00758"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 15800,
@@ -99235,7 +99127,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00758"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 16100,
@@ -99280,7 +99172,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00758"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 9600,
@@ -101026,7 +100918,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 9300,
@@ -101044,7 +100936,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 9400,
@@ -101062,7 +100954,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 9600,
@@ -101089,7 +100981,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 9900,
@@ -101134,7 +101026,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 10500,
@@ -101269,7 +101161,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01076"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 11500,
@@ -102664,7 +102556,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01087"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 12900,
@@ -102682,7 +102574,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01087"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 13100,
@@ -102700,7 +102592,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01087"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 13300,
@@ -102727,7 +102619,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01087"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 13900,
@@ -102772,7 +102664,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01087"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 14500,
@@ -102907,7 +102799,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01087"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 15500,
@@ -104374,7 +104266,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 8000,
@@ -104392,7 +104284,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 8600,
@@ -104410,7 +104302,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 9300,
@@ -104437,7 +104329,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 9900,
@@ -104482,7 +104374,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 10500,
@@ -104617,7 +104509,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01098"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 11200,
@@ -106012,7 +105904,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01109"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 9600,
@@ -106030,7 +105922,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01109"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 9800,
@@ -106048,7 +105940,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01109"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 9900,
@@ -106075,7 +105967,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01109"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 10700,
@@ -106120,7 +106012,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01109"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 12000,
@@ -106255,7 +106147,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01109"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 13700,
@@ -107650,7 +107542,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01120"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 31600,
@@ -107668,7 +107560,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01120"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 32300,
@@ -107686,7 +107578,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01120"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 32900,
@@ -107713,7 +107605,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01120"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 34200,
@@ -107758,7 +107650,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01120"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 35500,
@@ -107893,7 +107785,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01120"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 38400,
@@ -116065,7 +115957,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00782"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 13400,
@@ -116074,7 +115966,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00784"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 14400,
@@ -116083,7 +115975,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00784"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 15300,
@@ -116092,7 +115984,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00784"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 16300,
@@ -116101,7 +115993,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00784"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 17300,
@@ -116119,7 +116011,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-00782"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 18200,
@@ -117514,7 +117406,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01195"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 14100,
@@ -117532,7 +117424,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01195"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 14700,
@@ -117550,7 +117442,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01195"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 15300,
@@ -117577,7 +117469,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01195"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 16600,
@@ -117622,7 +117514,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01195"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 17300,
@@ -117757,7 +117649,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01195"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 19200,
@@ -120250,7 +120142,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01142"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 12100,
@@ -120268,7 +120160,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01142"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 12500,
@@ -120286,7 +120178,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01142"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 12800,
@@ -120313,7 +120205,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01142"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 13400,
@@ -120358,7 +120250,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01142"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 14100,
@@ -120493,7 +120385,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01142"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 15000,
@@ -121888,7 +121780,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01153"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 7000,
@@ -121906,7 +121798,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01153"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 7200,
@@ -121924,7 +121816,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01153"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 7400,
@@ -121951,7 +121843,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01153"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 7700,
@@ -121996,7 +121888,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01153"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 8600,
@@ -122131,7 +122023,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01153"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 9900,
@@ -123526,7 +123418,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01164"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 27200,
@@ -123544,7 +123436,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01164"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 27500,
@@ -123562,7 +123454,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01164"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 27800,
@@ -123589,7 +123481,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01164"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 28500,
@@ -123634,7 +123526,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01164"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 29400,
@@ -123769,7 +123661,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01164"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 31300,
@@ -125164,7 +125056,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01175"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 22400,
@@ -125182,7 +125074,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01175"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 22700,
@@ -125200,7 +125092,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01175"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 23000,
@@ -125227,7 +125119,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01175"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 23700,
@@ -125272,7 +125164,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01175"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 24600,
@@ -125407,7 +125299,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01175"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 26100,
@@ -126802,7 +126694,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 7000,
@@ -126820,7 +126712,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 7400,
@@ -126838,7 +126730,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 8000,
@@ -126865,7 +126757,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 8600,
@@ -126910,7 +126802,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 9300,
@@ -127045,7 +126937,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 10200,
@@ -128440,7 +128332,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 7000,
@@ -128458,7 +128350,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 7400,
@@ -128476,7 +128368,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 8000,
@@ -128503,7 +128395,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 8600,
@@ -128548,7 +128440,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 9300,
@@ -128683,7 +128575,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 10200,
@@ -130078,7 +129970,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 7000,
@@ -130096,7 +129988,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 7400,
@@ -130114,7 +130006,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 8000,
@@ -130141,7 +130033,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 8600,
@@ -130186,7 +130078,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 9300,
@@ -130321,7 +130213,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01131"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 10200,
@@ -131518,7 +131410,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03150"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 7000,
@@ -131536,7 +131428,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03150"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 7700,
@@ -131554,7 +131446,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03150"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 8300,
@@ -131581,7 +131473,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03150"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 9000,
@@ -131626,7 +131518,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03150"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 9600,
@@ -131761,7 +131653,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03150"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 10200,
@@ -133156,7 +133048,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01229"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 10900,
@@ -133165,7 +133057,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 11000,
@@ -133174,7 +133066,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 11000,
@@ -133183,7 +133075,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 11200,
@@ -133192,7 +133084,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 11200,
@@ -133201,7 +133093,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 11300,
@@ -133210,7 +133102,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 11300,
@@ -133219,7 +133111,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01231"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 11500,
@@ -133237,7 +133129,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01229"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 11700,
@@ -133264,7 +133156,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01229"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 11800,
@@ -133309,7 +133201,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01229"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 12100,
@@ -133354,7 +133246,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01229"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 12500,
@@ -133399,7 +133291,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01229"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 12800,
@@ -134650,7 +134542,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03233"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 5300,
@@ -134659,7 +134551,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 5300,
@@ -134668,7 +134560,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 5400,
@@ -134677,7 +134569,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 5400,
@@ -134686,7 +134578,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 5600,
@@ -134695,7 +134587,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 5600,
@@ -134704,7 +134596,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 5800,
@@ -134713,7 +134605,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 5800,
@@ -134722,7 +134614,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03234"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 6100,
@@ -134740,7 +134632,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03233"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 6200,
@@ -134767,7 +134659,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03233"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 6400,
@@ -134812,7 +134704,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03233"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 6600,
@@ -134857,7 +134749,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03233"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 6700,
@@ -134902,7 +134794,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2026-eSIM-03233"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 7000,
@@ -136558,7 +136450,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01206"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 2,
         "final_price": 3500,
@@ -136567,7 +136459,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 3,
         "final_price": 3800,
@@ -136576,7 +136468,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 4,
         "final_price": 4100,
@@ -136585,7 +136477,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 5,
         "final_price": 4100,
@@ -136594,7 +136486,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 6,
         "final_price": 4300,
@@ -136603,7 +136495,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 7,
         "final_price": 4300,
@@ -136612,7 +136504,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 8,
         "final_price": 4400,
@@ -136621,7 +136513,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 9,
         "final_price": 4400,
@@ -136630,7 +136522,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01208"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 10,
         "final_price": 4600,
@@ -136648,7 +136540,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01206"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 12,
         "final_price": 4700,
@@ -136675,7 +136567,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01206"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 15,
         "final_price": 4700,
@@ -136720,7 +136612,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01206"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 20,
         "final_price": 4800,
@@ -136765,7 +136657,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01206"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 25,
         "final_price": 5000,
@@ -136810,7 +136702,7 @@ window.PRODUCTS_DATA = [
         "product_code": "LS2023-eSIM-01206"
       },
       {
-        "service_type": "데일리",
+        "service_type": "총용량",
         "data_limit": "3GB",
         "duration": 30,
         "final_price": 5100,
