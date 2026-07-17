@@ -1505,6 +1505,69 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 12.5 주의사항 팝업 모달 제어 함수
+  // ── 💰 PC 결제 쿠폰 (2026-07-17) — 회원 쿠폰 조회·적용. 원가권(type:'cost')은 단일 상품 결제에서만 동적 계산 ──
+  var PC_COST_FX = { CNY: 231, HKD: 200, KRW: 1 };
+  function pcCouponValue(c, base) {
+    if (!c) return 0;
+    if (c.type !== 'cost') return Math.min(Number(c.amount) || 0, base);
+    if (!checkoutItems || checkoutItems.length !== 1) return 0;      // 원가권은 단일 상품만
+    var it = checkoutItems[0];
+    var fx = PC_COST_FX[it.plan.unit];
+    if (!fx) return 0;                                                // 환율 미확정 통화 차단
+    var qty = it.quantity || 1;
+    var esimTotal = Math.round(it.plan.final_price + (qty - 1) * it.plan.final_price * 0.9);
+    var cost = it.plan.original_price * fx * 1.06 * qty;
+    var friendPay = Math.ceil((cost + 30) / 0.967 / 10) * 10;
+    return Math.max(0, Math.min(esimTotal - friendPay, base));
+  }
+  function applyPcCoupon(idx) {
+    var usable = window._pcUsableCoupons || [];
+    window._pcCoupon = idx >= 0 ? usable[idx] : null;
+    var base = window._pcBasePrice || 0;
+    var disc = pcCouponValue(window._pcCoupon, base);
+    var finalP = Math.max(0, base - disc);
+    paySubmitBtn.setAttribute('data-price', finalP);
+    paySubmitBtn.textContent = finalP.toLocaleString() + '원 결제 완료하기' + (disc ? ' (쿠폰 -' + disc.toLocaleString() + ')' : '');
+  }
+  function loadPcCoupons(orderTotal) {
+    var box = document.getElementById('pcCouponBox');
+    if (!box) {
+      var ess = document.getElementById('ckEssentials');
+      if (!ess) return;
+      box = document.createElement('div');
+      box.id = 'pcCouponBox';
+      ess.parentNode.insertBefore(box, ess);
+    }
+    box.innerHTML = '';
+    var token = '';
+    try { token = localStorage.getItem('jd_member_token') || ''; } catch (e) {}
+    if (!token) {
+      box.innerHTML = '<a href="login.html?return=' + encodeURIComponent('index.html') + '" target="_blank" rel="noopener" style="display:block;margin:10px 0 2px;padding:11px 13px;border-radius:11px;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.05);font-size:0.82rem;font-weight:800;color:var(--accent);text-decoration:none;text-align:left;">💰 쿠폰이 있으신가요? 로그인하면 자동으로 적용돼요</a>';
+      return;
+    }
+    fetch('https://jdisim-proxy.vercel.app/api/member', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action: 'me' }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (!j) return;
+        var today = new Date().toISOString().slice(0, 10);
+        var usable = (j.coupons || []).filter(function (c) { return !c.used && (!c.expires || c.expires >= today) && (!c.min_order || orderTotal >= c.min_order); });
+        if (!usable.length) return;
+        window._pcUsableCoupons = usable;
+        var html = '<div style="margin:10px 0 2px;padding:12px 14px;border-radius:12px;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.05);text-align:left;">'
+          + '<div style="font-size:0.8rem;font-weight:800;color:var(--accent);margin-bottom:6px;">💰 쿠폰 적용</div>'
+          + usable.slice(0, 3).map(function (c, i) {
+              var v = pcCouponValue(c, orderTotal);
+              var lab = c.type === 'cost' ? (v > 0 ? '-' + v.toLocaleString() + '원 (원가 적용)' : (checkoutItems.length !== 1 ? '단일 상품 결제에서만' : '이 상품 적용불가')) : '-' + Number(c.amount).toLocaleString() + '원';
+              return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:0.84rem;font-weight:700;color:var(--text-main);"><input type="radio" name="pcCoupon" value="' + i + '" style="width:17px;height:17px;accent-color:#F2751F;"><span style="flex:1;">' + String(c.name).replace(/</g, '&lt;') + ' <b style="color:var(--accent);">' + lab + '</b></span></label>';
+            }).join('')
+          + '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:0.84rem;font-weight:700;color:var(--text-muted);"><input type="radio" name="pcCoupon" value="-1" checked style="width:17px;height:17px;accent-color:#F2751F;"><span>적용 안 함</span></label></div>';
+        box.innerHTML = html;
+        box.querySelectorAll('input[name="pcCoupon"]').forEach(function (r) {
+          r.addEventListener('change', function () { applyPcCoupon(parseInt(this.value, 10)); });
+        });
+      }).catch(function () {});
+  }
+
   function showPrecautionModalForItems(items) {
     checkoutItems = items;
     
@@ -1795,6 +1858,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </details>`;
 
+    // 💰 쿠폰 (2026-07-17): ckEssentials 생성 이후에 호출해야 박스가 그 위에 삽입됨
+    window._pcBasePrice = totalCartPrice;
+    window._pcCoupon = null;
+    loadPcCoupons(totalCartPrice);
+
     // 결제창 국가별 맞춤형 스펙/주의사항 카드 동적 렌더링
     const checkoutPrecautionCard = document.getElementById('checkoutPrecautionCard');
     const checkoutPrecautionList = document.getElementById('checkoutPrecautionList');
@@ -2008,6 +2076,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function submitPayment(orderCode, finalPriceVal, isTest) {
+    // 쿠폰 사용 확정 마킹 (서버 지갑 검증 — 이중 사용 차단). 실차감은 data-price에 이미 반영됨
+    if (window._pcCoupon) {
+      try {
+        fetch('https://jdisim-proxy.vercel.app/api/member', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + (localStorage.getItem('jd_member_token') || '') },
+          body: JSON.stringify({ action: 'use_coupon', code: window._pcCoupon.code, order_total: window._pcBasePrice || finalPriceVal, mid: orderCode }) }).catch(function(){});
+      } catch (e) {}
+      window._pcCoupon = null;
+    }
     const buyerName = checkoutNameInput ? checkoutNameInput.value.trim() : '';
     const email = checkoutEmailInput.value.trim();
     const phone = checkoutPhoneInput.value.trim();
