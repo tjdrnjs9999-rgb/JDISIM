@@ -4298,6 +4298,7 @@
           <div class="ck-row" style="margin-top:11px;padding-top:11px;border-top:1px dashed #ece5dd;"><span style="font-size:15px;font-weight:900;">최종 결제 금액</span><b id="ckFinal" style="font-size:21px;color:#F2751F;">-</b></div>
           ${!jdIsApp() ? '<div class="ck-row" style="margin-top:7px;"><span style="font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.08);border-radius:6px;padding:3px 8px;">📱 앱 전용 5% 할인가</span><span id="ckAppHint" style="font-size:13px;font-weight:900;color:#7c3aed;"></span></div>' : ''}
         </div>
+        <div id="mwDeviceCheck"></div>
         <div class="ck-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <span class="ck-label" style="margin:0;">✉️ 수령 정보 <span style="font-size:11px;font-weight:600;color:#94a3b8;">QR 발송처</span></span>
@@ -4309,7 +4310,6 @@
         </div>
         <div id="checkoutCouponBox" style="display:none;margin-bottom:12px;"></div>
         ${memberBanner}
-        <div id="mwDeviceCheck"></div>
         <details class="ck-card ck-fold" style="padding:12px 15px;">
           <summary>⚠️ 구매 전 꼭 확인</summary>
           <div style="margin-top:8px;font-size:12.5px;color:#5D5049;line-height:1.6;">
