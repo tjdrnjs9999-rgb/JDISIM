@@ -103,13 +103,22 @@
     if (!container || !window.JD_DEVICES) return;
     var uid = 'jdc' + Math.random().toString(36).slice(2, 7);
     var brands = Object.keys(window.JD_DEVICES);
+    // 강조 배너 (2026-07-18 사장님 지시: 눈에 띄게) — 브랜드 주황 그라디언트 + 아이콘 타일 + [확인하기] 필 버튼 + 부드러운 펄스
+    if (!document.getElementById('jdcStyle')) {
+      var st = document.createElement('style');
+      st.id = 'jdcStyle';
+      st.textContent = '@keyframes jdcPulse{0%,100%{box-shadow:0 4px 14px rgba(249,115,22,.28)}50%{box-shadow:0 4px 22px rgba(249,115,22,.5)}}'
+        + '@keyframes jdcWiggle{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(-8deg)}94%{transform:rotate(8deg)}}'
+        + '@media(prefers-reduced-motion:reduce){[data-jdc-cta],[data-jdc-icon]{animation:none!important}}';
+      document.head.appendChild(st);
+    }
     container.innerHTML =
-      '<details id="' + uid + '" style="margin:12px 0;border:1.5px solid rgba(43,179,163,0.35);border-radius:14px;background:linear-gradient(135deg,rgba(43,179,163,0.05),rgba(43,179,163,0.02));overflow:hidden;">'
-      + '<summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 15px;-webkit-tap-highlight-color:transparent;">'
-      +   '<span style="font-size:1.25rem;flex-shrink:0;">📲</span>'
-      +   '<span style="flex:1;min-width:0;"><b style="display:block;font-size:0.9rem;color:#0f766e;">내 폰, 이심 될까요? — 기종 눌러서 3초 확인</b>'
-      +   '<span style="display:block;font-size:0.73rem;font-weight:600;color:#6b7f7c;margin-top:2px;">결제 전에 꼭! 내 휴대폰을 직접 클릭해서 확인하세요</span></span>'
-      +   '<span data-jdc-arrow style="flex-shrink:0;font-size:0.8rem;color:#2BB3A3;transition:transform 0.2s;">▼</span>'
+      '<details id="' + uid + '" style="margin:12px 0;border:2px solid rgba(249,115,22,0.55);border-radius:16px;background:linear-gradient(135deg,rgba(249,115,22,0.10),rgba(245,158,11,0.04));overflow:hidden;box-shadow:0 6px 20px rgba(249,115,22,0.10);">'
+      + '<summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 15px;-webkit-tap-highlight-color:transparent;">'
+      +   '<span data-jdc-icon style="flex-shrink:0;width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#F97316,#F59E0B);display:flex;align-items:center;justify-content:center;font-size:1.35rem;box-shadow:0 5px 14px rgba(249,115,22,0.35);animation:jdcWiggle 3.5s ease-in-out infinite;">📱</span>'
+      +   '<span style="flex:1;min-width:0;"><b style="display:block;font-size:0.98rem;color:#C2410C;letter-spacing:-0.01em;">내 폰, 이심 될까요?</b>'
+      +   '<span style="display:block;font-size:0.75rem;font-weight:700;color:#9A6A45;margin-top:2px;">결제 전 필수! 내 기종 눌러서 3초 만에 확인</span></span>'
+      +   '<span data-jdc-cta style="flex-shrink:0;display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.78rem;font-weight:900;padding:9px 14px;border-radius:22px;animation:jdcPulse 2.4s ease-in-out infinite;">확인하기 <span data-jdc-arrow style="font-size:0.7rem;transition:transform 0.2s;">▼</span></span>'
       + '</summary>'
       + '<div style="padding:4px 12px 12px;">'
       +   '<div data-jdc-tabs style="display:flex;gap:6px;overflow-x:auto;padding:4px 0 9px;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>'
@@ -123,7 +132,11 @@
     var listEl = root.querySelector('[data-jdc-list]');
     var verdictEl = root.querySelector('[data-jdc-verdict]');
     var arrowEl = root.querySelector('[data-jdc-arrow]');
-    root.addEventListener('toggle', function () { if (arrowEl) arrowEl.style.transform = root.open ? 'rotate(180deg)' : ''; });
+    root.addEventListener('toggle', function () {
+      if (arrowEl) arrowEl.style.transform = root.open ? 'rotate(180deg)' : '';
+      var cta = root.querySelector('[data-jdc-cta]');
+      if (cta) { cta.style.animation = root.open ? 'none' : ''; if (cta.firstChild && cta.firstChild.nodeType === 3) cta.firstChild.textContent = root.open ? '접기 ' : '확인하기 '; }
+    });
 
     var curBrand = brands[0];
     function renderTabs() {
