@@ -1859,6 +1859,7 @@
 
   /* 섹션 라벨 — 큰 글자 */
   .pw-block { margin: 20px 0 0; }
+  #daysFeel { display: none !important; } /* 보조 감성 문구 — 상세페이지 feel로 이관 (2026-07-18) */
   .pw-label { display: flex; align-items: baseline; gap: 8px; font-size: 19px; font-weight: 800; color: #221510; margin-bottom: 11px; letter-spacing: -0.02em; }
   .pw-label em { font-style: normal; font-weight: 600; color: #a8a095; font-size: 12px; margin-left: auto; text-align: right; }
 
@@ -2393,7 +2394,7 @@
       <div class="pw-block" id="pwDaysBlock" style="display:none;">
         <div class="pw-label">며칠 쓰세요?</div>
         <div id="daysChips" style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;"></div>
-        <div id="daysFeel" style="display:none;margin-top:8px;font-size:0.84375rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
+        <div id="daysFeel" data-moved-to-detail style="display:none !important;margin-top:8px;font-size:0.84375rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
       </div>
 
       <div class="pw-block" id="pwProdBlock" style="display:none;margin-bottom:20px;">
@@ -3734,12 +3735,14 @@
       const plans = pwPlansOfType().filter(p => parseInt(p.duration, 10) === selectedDays)
         .sort((a, b) => a.final_price - b.final_price);
       window.__pwPlans = plans;
+      // 후보 1개면 고를 게 없음 — 선택 단계 생략, 상세 직행 (2026-07-18)
+      if (plans.length === 1) { block.style.display = 'none'; openProductDetail(0); return; }
       box.innerHTML = plans.map((p, i) => {
         const cap = planCap(p);
         const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : ((planIsDailyGroup(p) ? '매일 ' : '총 ') + cap);
         const perday = selectedDays > 1 ? `하루 약 ${Math.round(p.final_price / selectedDays).toLocaleString()}원` : '';
         return `<button type="button" class="pw-prod" data-prodidx="${i}">
-          <span style="min-width:0;"><span class="cap">${capLbl}</span><span class="sub" style="display:block;">${selectedDays}일 · ${activeCarrier.network_speed || ''}</span></span>
+          <span style="min-width:0;"><span class="cap">${capLbl}${i === 0 ? ' <span style="font-size:0.6875rem;font-weight:900;color:#fff;background:#F1690D;border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : ''}</span><span class="sub" style="display:block;">${selectedDays}일 · ${activeCarrier.network_speed || ''}</span></span>
           <span class="price"><b>${p.final_price.toLocaleString()}원</b>${perday ? `<small>${perday}</small>` : ''}</span>
           <span class="go">→</span>
         </button>`;
@@ -3872,9 +3875,13 @@
       el.style.border = '1px solid ' + border;
       el.style.color = color;
       el.style.display = 'block';
-      // 접이식 동기화 — 즉시개통(위험)만 자동 펼침 (2026-07-18)
+      // 보조 설명 상세 이관 (2026-07-18): 퍼널엔 '즉시 개통' 위험 경고만 노출(펼침), 일반 안내는 상세페이지 접이식으로
       var fold = document.getElementById('pwInfoFold');
-      if (fold) { fold.style.display = 'block'; fold.open = act.includes('즉시 개통'); }
+      if (fold) {
+        var danger = act.includes('즉시 개통');
+        fold.style.display = danger ? 'block' : 'none';
+        fold.open = danger;
+      }
     }
 
     // 하위 호환 별칭 (스텁 목록·외부 참조 대비)
