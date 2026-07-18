@@ -92,8 +92,8 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260719a">
-  <link rel="stylesheet" href="premium.css?v=20260719a">
+  <link rel="stylesheet" href="styles.css?v=20260719b">
+  <link rel="stylesheet" href="premium.css?v=20260719b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
   <script src="jd-trip-cal.js?v=20260719a" defer></script>
@@ -168,7 +168,7 @@
       /* 패널 내부 콘텐츠 살짝 늦게 따라오는 이중 레이어 시차 */
       html.pc-snap #view-home .pc-panel.pg-in > * { animation: pgInChild .92s cubic-bezier(.19, 1, .22, 1) both; animation-delay: .07s; }
       @keyframes pgInChild { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: none; } }
-      .pg-veil { position: fixed; inset: 0; pointer-events: none; z-index: 940; opacity: 0; background: linear-gradient(to top, rgba(251,246,239,.98) 0%, rgba(251,246,239,.55) 34%, rgba(251,246,239,0) 62%); }
+      .pg-veil { position: fixed; inset: 0; pointer-events: none; z-index: 520; opacity: 0; background: linear-gradient(to top, rgba(251,246,239,.98) 0%, rgba(251,246,239,.55) 34%, rgba(251,246,239,0) 62%); }
       .pg-veil.on { animation: pgVeil .92s cubic-bezier(.19, 1, .22, 1) both; }
       @keyframes pgVeil { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-26%); } }
       @media (prefers-reduced-motion: reduce) {
@@ -176,7 +176,7 @@
         .pg-veil { display: none; }
       }
       /* 우측 진행 점 (ROMI Journey Scroll — PC) */
-      .pc-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 900; display: none; flex-direction: column; gap: 10px; }
+      .pc-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 510; display: none; flex-direction: column; gap: 10px; }
       html.pc-snap .pc-dots { display: flex; }
       .pc-dot { width: 7px; height: 7px; border-radius: 999px; border: none; padding: 0; cursor: pointer; background: rgba(120,100,85,0.3); transition: height .3s cubic-bezier(.22,1,.36,1), background .3s; position: relative; }
       .pc-dot.active { height: 24px; background: var(--accent); box-shadow: 0 2px 8px rgba(241,105,13,0.4); }
@@ -188,7 +188,7 @@
 <body>
 
   <!-- 🦊 로미 스플래시: 로딩 중 빈 화면 대신 브랜드 화면 (세션당 1회) -->
-  <div id="jdSplash" style="position:fixed;inset:0;z-index:2000000;background:linear-gradient(180deg,#ffffff,#fff7f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;transition:opacity 0.45s ease;">
+  <div id="jdSplash" style="position:fixed;inset:0;z-index:840;background:linear-gradient(180deg,#ffffff,#fff7f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;transition:opacity 0.45s ease;">
     <img src="images/fox-hello.webp" alt="" style="width:96px;animation:jdSpBounce 1.15s ease-in-out infinite;" onerror="this.style.display='none'">
     <div style="font-weight:900;font-size:1.1875rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
     <div style="font-size:0.75rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
@@ -1591,7 +1591,7 @@
             im.src = 'images/' + f + '?d=' + Date.now();
           });
           var box = document.createElement('div');
-          box.style.cssText = 'position:fixed;left:10px;bottom:80px;z-index:999999;background:rgba(15,23,42,0.95);color:#4ade80;font-size:12px;font-weight:700;padding:14px 16px;border-radius:12px;line-height:1.8;max-width:320px;font-family:monospace;';
+          box.style.cssText = 'position:fixed;left:10px;bottom:80px;z-index:790;background:rgba(15,23,42,0.95);color:#4ade80;font-size:12px;font-weight:700;padding:14px 16px;border-radius:12px;line-height:1.8;max-width:320px;font-family:monospace;';
           box.innerHTML = '<div style="color:#F1690D;margin-bottom:4px;">🌏 지구본 진단</div>' + lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
           document.body.appendChild(box);
         }, 2500);
@@ -1736,7 +1736,7 @@
       document.addEventListener('click', function(e){ if (!sg.contains(e.target) && e.target !== inp) hide(); });
     })();
 </script>
-  <script src="romi-bot.js?v=20260714a" defer></script>
+  <script src="romi-bot.js?v=20260719a" defer></script>
   <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
   <script>
   /* PC 프리미엄 스냅 v2 (ROMI Journey Scroll) — 인스턴트 페이저

@@ -126,7 +126,7 @@ img {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
-  z-index: 1000;
+  z-index: 530;
   transition: var(--transition-normal);
 }
 
@@ -816,7 +816,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 550;
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-normal), visibility var(--transition-normal);
@@ -1308,7 +1308,7 @@ img {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  z-index: 2500;
+  z-index: 560;
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-normal), visibility var(--transition-normal);
@@ -1399,7 +1399,7 @@ img {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  z-index: 3000;
+  z-index: 570;
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-normal), visibility var(--transition-normal);
@@ -1884,7 +1884,7 @@ img {
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 1500;
+  z-index: 540;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);

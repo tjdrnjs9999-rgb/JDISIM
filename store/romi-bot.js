@@ -18,9 +18,9 @@
   // ---------- 스타일 ----------
   var css = document.createElement('style');
   css.textContent =
-    '#rbFab{position:fixed;right:16px;bottom:' + BOTTOM + ';z-index:99900;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#F97316,#F59E0B);box-shadow:0 10px 26px rgba(249,115,22,0.45);display:flex;align-items:center;justify-content:center;transition:transform .2s;}' +
+    '#rbFab{position:fixed;right:16px;bottom:' + BOTTOM + ';z-index:630;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#F97316,#F59E0B);box-shadow:0 10px 26px rgba(249,115,22,0.45);display:flex;align-items:center;justify-content:center;transition:transform .2s;}' +
     '#rbFab:active{transform:scale(.92)}#rbFab img{width:38px;height:38px;object-fit:contain;pointer-events:none;}' +
-    '#rbPanel{position:fixed;right:12px;bottom:calc(' + BOTTOM + ' + 68px);z-index:99901;width:min(360px,calc(100vw - 24px));max-height:min(560px,70vh);background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(15,23,42,0.3);display:none;flex-direction:column;overflow:hidden;font-family:Pretendard,"Apple SD Gothic Neo",sans-serif;}' +
+    '#rbPanel{position:fixed;right:12px;bottom:calc(' + BOTTOM + ' + 68px);z-index:640;width:min(360px,calc(100vw - 24px));max-height:min(560px,70vh);background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(15,23,42,0.3);display:none;flex-direction:column;overflow:hidden;font-family:Pretendard,"Apple SD Gothic Neo",sans-serif;}' +
     '#rbPanel.on{display:flex;animation:rbUp .28s cubic-bezier(.2,.9,.3,1) both;}@keyframes rbUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}' +
     /* 모바일: 챗 열면 풀스크린 */
     '@media(max-width:640px){#rbPanel{left:0;right:0;bottom:0;top:0;width:100vw;height:100dvh;max-height:none;border-radius:0;}}' +

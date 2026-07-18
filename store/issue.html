@@ -25,7 +25,7 @@
   .i { vertical-align:-3px; }
 
   /* ── 오프라인 바 ── */
-  .offbar { position:fixed; top:0; left:0; right:0; z-index:99980; background:#101623; color:#fff; text-align:center; font-size:0.8rem; font-weight:700; padding:10px 14px; display:none; }
+  .offbar { position:fixed; top:0; left:0; right:0; z-index:660; background:#101623; color:#fff; text-align:center; font-size:0.8rem; font-weight:700; padding:10px 14px; display:none; }
   .offbar.on { display:block; }
 
   /* ── 헤더: 슬림 잉크 바 ── */
@@ -221,7 +221,7 @@
   .qr-stage { display:flex; justify-content:center; padding:6px 0 2px; }
   .qr-frame2 { background:#fff; border:1px solid #E9ECF2; border-radius:18px; padding:16px; box-shadow:0 6px 20px rgba(16,22,35,0.08); cursor:zoom-in; }
   .qrsvg { display:block; }
-  .qrfull { position:fixed; inset:0; z-index:99990; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; animation:qf 0.2s ease both; }
+  .qrfull { position:fixed; inset:0; z-index:690; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; animation:qf 0.2s ease both; }
   @keyframes qf { from { opacity:0; transform:scale(1.02); } to { opacity:1; transform:none; } }
   .qrfull svg { width:min(86vw,62vh,480px); height:auto; }
   .qrfull .qf-tip { font-size:0.87rem; font-weight:700; color:#3D4657; text-align:center; line-height:1.65; }
@@ -383,9 +383,9 @@
   .chip.care { border-color:rgba(251,191,36,0.55); color:#FBBF24; background:rgba(241,105,13,0.18); }
 
   /* ── 스마트 상담 시트 ── */
-  .sheet-dim { position:fixed; inset:0; z-index:99985; background:rgba(16,22,35,0.48); animation:dimIn 0.25s ease both; }
+  .sheet-dim { position:fixed; inset:0; z-index:670; background:rgba(16,22,35,0.48); animation:dimIn 0.25s ease both; }
   @keyframes dimIn { from { opacity:0; } to { opacity:1; } }
-  .sheet { position:fixed; left:0; right:0; bottom:0; z-index:99986; background:#fff; border-radius:26px 26px 0 0; box-shadow:0 -14px 46px rgba(16,22,35,0.22); animation:sheetUp 0.34s cubic-bezier(0.2,0.9,0.3,1) both; max-height:88dvh; overflow-y:auto; }
+  .sheet { position:fixed; left:0; right:0; bottom:0; z-index:680; background:#fff; border-radius:26px 26px 0 0; box-shadow:0 -14px 46px rgba(16,22,35,0.22); animation:sheetUp 0.34s cubic-bezier(0.2,0.9,0.3,1) both; max-height:88dvh; overflow-y:auto; }
   @keyframes sheetUp { from { transform:translateY(100%); } to { transform:none; } }
   .sheet-in { max-width:430px; margin:0 auto; padding:10px 20px calc(22px + env(safe-area-inset-bottom,0px)); }
   .sheet .grab { width:44px; height:5px; border-radius:4px; background:#E4E8EF; margin:4px auto 16px; }
@@ -397,7 +397,7 @@
   .pre-msg .pm-k { color:#B0A28C; }
 
   /* ── 콘페티 (단색 절제) ── */
-  .cf { position:fixed; top:-14px; z-index:9999; pointer-events:none; border-radius:2px; animation:cfall linear both; }
+  .cf { position:fixed; top:-14px; z-index:590; pointer-events:none; border-radius:2px; animation:cfall linear both; }
   @keyframes cfall { to { transform:translateY(105vh) rotate(560deg); opacity:0.5; } }
 
   /* ── 접근성 ── */
@@ -980,7 +980,7 @@ function brandFootHTML(){
 }
 function h(html){ $('app').innerHTML = html; }
 function esc(s){ return String(s || '').replace(/[<>&"]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
-function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(15,23,42,0.94);color:#fff;font-size:0.78rem;font-weight:800;padding:11px 19px;border-radius:24px;z-index:99999;max-width:86vw;text-align:center;'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
+function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(15,23,42,0.94);color:#fff;font-size:0.78rem;font-weight:800;padding:11px 19px;border-radius:24px;z-index:710;max-width:86vw;text-align:center;'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
 function copy(v,msg){ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(function(){ toast(msg||'복사됐어요'); }); } }
 function fmtDate(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var w=['일','월','화','수','목','금','토']; return (d.getMonth()+1)+'월 '+d.getDate()+'일('+w[d.getDay()]+')'; }catch(e){ return ''; } }
 function parseLpa(lpa){ var p=String(lpa||'').split('$'); return { smdp:p[1]||'', code:p[2]||'', confirm:p[3]||'' }; }
@@ -1906,7 +1906,7 @@ function openSignalFix(){
   if (old) { old.style.display = 'flex'; return; }
   var ov = document.createElement('div');
   ov.id = 'sfxOverlay';
-  ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:99950;display:flex;align-items:flex-end;justify-content:center;';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:650;display:flex;align-items:flex-end;justify-content:center;';
   ov.innerHTML = '<div style="background:#FFFDFB;border-radius:22px 22px 0 0;width:min(560px,100%);max-height:86vh;overflow-y:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));">' +
     '<div style="display:flex;justify-content:flex-end;margin-bottom:2px;"><button onclick="document.getElementById(\'sfxOverlay\').style.display=\'none\'" style="border:none;background:#F1F5F9;border-radius:50%;width:32px;height:32px;font-weight:900;cursor:pointer;">✕</button></div>' +
     '<div id="sfxMount"></div></div>';
@@ -1923,7 +1923,7 @@ function runDiagnose(){
   if (old) old.remove();
   var ov = document.createElement('div');
   ov.id = 'rdOverlay';
-  ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:99950;display:flex;align-items:flex-end;justify-content:center;';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:650;display:flex;align-items:flex-end;justify-content:center;';
   ov.innerHTML = '<div style="background:#FFFDFB;border-radius:22px 22px 0 0;width:min(560px,100%);max-height:86vh;overflow-y:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));font-family:inherit;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><b style="font-size:1rem;">🔍 로미 닥터 원클릭 진단</b>' +
     '<button onclick="document.getElementById(\'rdOverlay\').remove()" style="border:none;background:#F1F5F9;border-radius:50%;width:32px;height:32px;font-weight:900;cursor:pointer;">✕</button></div>' +
@@ -1978,13 +1978,13 @@ function runDiagnose(){
 }
 </script>
 <!-- ROMI Mode 위젯 (여행모드/한국모드 — 구매자 전용, 비구매자 자동 숨김) -->
-<script src="romi-mode.js?v=20260715a"></script>
+<script src="romi-mode.js?v=20260719a"></script>
 <script>
   // gateParams: aligo_bridge v6.3 실측 — care(항상) / o / n / bd / plan(조건부) + local(내 여행 카드 → 이 기기 주문). 하나라도 있으면 구매자 판정.
   RomiMode.init({ gateParams: ['care', 'cx', 'o', 'n', 'bd', 'plan', 'local'] });
   // 로미 챗봇 로드 (발급링크에서도 상담 가능)
   // ⚠️ 기존엔 이 코드가 </html> 뒤 생텍스트로 있어 화면에 노출 + 챗봇 미로드 — 2026-07-14 수정
-  (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260714a'; sc.defer = true; document.body.appendChild(sc); })();
+  (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260719a'; sc.defer = true; document.body.appendChild(sc); })();
 
   // 퍼널 KPI (Phase 2): 케어링크 오픈 1회 기록 — 베스트에포트, 개인정보 비전송 (구형 care= raw ICCID는 'legacy'로 익명화)
   (function(){ try {

@@ -115,7 +115,7 @@ window.RomiMode = (function () {
     + '.rm-card p{margin:0 0 12px;font-size:.94rem;font-weight:600;color:#475569;line-height:1.7}'
     + '.rm-btn{display:block;width:100%;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:.96rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;box-shadow:0 6px 18px rgba(249,115,22,.28)}'
     + '.rm-btn.home{background:#fff;color:#F2751F;border:1.5px solid rgba(249,115,22,.5);box-shadow:none}'
-    + '.rm-ov{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center}'
+    + '.rm-ov{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:590;display:flex;align-items:flex-end;justify-content:center}'
     + '.rm-sheet{background:#fff;border-radius:20px 20px 0 0;max-width:560px;width:100%;max-height:86vh;overflow-y:auto;padding:20px 18px 26px;color-scheme:only light}'
     + '.rm-sheet h3{margin:0 0 4px;font-size:1.1rem;font-weight:800;color:#0f172a}'
     + '.rm-sheet .rm-sub{font-size:.82rem;font-weight:700;color:#94a3b8;margin-bottom:14px}'

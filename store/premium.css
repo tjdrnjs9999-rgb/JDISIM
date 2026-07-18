@@ -412,7 +412,7 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
   position: fixed;
   right: 18px;
   bottom: 22px;
-  z-index: 5000;
+  z-index: 580;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1081,7 +1081,7 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 .romi-intro {
   position: fixed;
   inset: 0;
-  z-index: 2147483000;
+  z-index: 850;
   background: #0d0805;
   display: flex;
   align-items: center;
@@ -1543,7 +1543,7 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
   right: 9px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 900;
+  z-index: 510;
   flex-direction: column;
   gap: 9px;
 }
