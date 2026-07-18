@@ -1639,8 +1639,19 @@ function checkInstalled(iccid){
   if (CARE && window.CARE_API){
     var q = 'iccid='+encodeURIComponent(iccid)+'&action=install&store='+encodeURIComponent((order&&order.storeId)||'');
     fetch(window.CARE_API+'?'+q).then(function(r){return r.json();}).then(function(d){
-      if (d && d.isInstalled) instOk(d.message || '기기에 설치가 확인됐어요');
-      else instMsg('<div class="notice">아직 설치 전이에요 — 위의 원클릭 · QR · 수동 입력으로 설치해 주세요</div>');
+      if (d && d.isInstalled) { instOk(d.message || '기기에 설치가 확인됐어요'); return; }
+      // 2차 판정 (2026-07-18): 공급사 설치 알림은 지연·유실될 수 있음 — 사용 기록이 있으면 설치·개통 확정
+      fetch(window.CARE_API+'?action=usage&iccid='+encodeURIComponent(iccid)).then(function(r){return r.json();}).then(function(u){
+        var L = (u && (u.usageList || u.daily)) || [];
+        var used = 0; L.forEach(function(x){ used += Number(x.usedAmount || x.used || x.used_mb || 0); });
+        if (used > 0) { instOk('사용 기록으로 설치·개통이 확인됐어요'); return; }
+        // 3차: 단정하지 않음 — 폰에 회선이 보이면 설치된 것 (반영 지연·알림 유실 케이스)
+        instMsg('<div class="notice">아직 자동 확인이 안 돼요 — 설치 직후엔 반영까지 몇 분 걸릴 수 있어요.<br><strong>폰 설정 → 셀룰러(연결)에 새 회선이 보이면 설치된 거예요.</strong><br>' +
+          '<button type="button" class="btn btn-primary" style="margin-top:9px;width:100%;" onclick="instOk(\'설치 완료로 표시했어요 — 현지 도착하면 자동 개통돼요\')">네, 회선이 보여요 — 설치 완료</button>' +
+          '<div style="margin-top:7px;font-size:0.74rem;">회선이 안 보인다면 위의 원클릭 · QR · 수동 입력으로 설치해 주세요</div></div>');
+      }).catch(function(){
+        instMsg('<div class="notice">자동 확인이 지연되고 있어요 — <strong>폰 설정에 새 회선이 보이면 설치된 거예요.</strong><br><button type="button" class="btn btn-primary" style="margin-top:9px;width:100%;" onclick="instOk(\'설치 완료로 표시했어요\')">네, 회선이 보여요 — 설치 완료</button></div>');
+      });
     }).catch(function(){ instMsg('<div class="notice bad">확인에 실패했어요 — 잠시 후 다시 시도하거나 <button type="button" onclick="openHelp(&quot;설치 중 오류가 떠요&quot;)" style="border:none;background:none;padding:0;font:inherit;font-weight:800;color:#F1690D;cursor:pointer;text-decoration:underline;">상담 연결</button>로 도와드릴게요</div>'); });
     return;
   }
