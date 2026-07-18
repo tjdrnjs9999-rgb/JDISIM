@@ -1386,7 +1386,7 @@ function loadCare(){
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
       var cty = countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
       order = {
-        orderCode: e.orderCode || Q_ORDER || '', buyerName: Q_NAME || '', productName: e.prodName || '',
+        orderCode: e.orderCode || Q_ORDER || '', buyerName: Q_NAME || e.buyerName || d.buyerName || '', productName: e.prodName || '',
         option: e.option || e.Option || '', sku: PLAN, buyDate: Q_BUYDT || '',
         quantity: parseInt(e.count||'1',10)||1, country: cty,
         validity: validityOf(cty, Q_BUYDT), status: 'ISSUED', iccid: e.iccid || CARE,
