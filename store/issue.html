@@ -297,14 +297,24 @@
   .daybar .bar { flex:1; height:6px; border-radius:5px; background:#F2F4F8; overflow:hidden; }
   .daybar .bar i { display:block; height:100%; border-radius:5px; background:#F1690D; }
   .daybar .mb { flex-shrink:0; color:#101623; min-width:58px; text-align:right; font-variant-numeric:tabular-nums; }
-  /* 사용량 v2 (2026-07-18) */
+  /* 사용량 v3 — 컴팩트 (2026-07-18) */
   .donut-fg.lv2 { stroke:#D97706; } .donut-fg.lv3 { stroke:#DC2626; }
-  .us-pct { font-size:0.66rem; font-weight:800; color:#8B94A7; background:#F5F7FA; padding:3px 9px; border-radius:999px; font-variant-numeric:tabular-nums; }
+  .us-pct { font-size:0.64rem; font-weight:800; color:#8B94A7; background:#F5F7FA; padding:3px 9px; border-radius:999px; font-variant-numeric:tabular-nums; }
   .us-pct.warn { color:#B45309; background:rgba(217,119,6,0.1); } .us-pct.hot { color:#B91C1C; background:rgba(220,38,38,0.09); }
-  .pillstat .ic { display:block; font-size:0.8rem; margin-bottom:2px; opacity:0.75; }
-  .daybar.today { background:rgba(241,105,13,0.07); border:1px solid rgba(241,105,13,0.16); border-radius:10px; padding:7px 9px; margin:3px -2px; }
-  .daybar .tag { font-size:0.58rem; font-weight:900; color:#fff; background:#F1690D; border-radius:6px; padding:1.5px 6px; margin-left:5px; vertical-align:1px; }
-  .daybar .tag.mx { background:#94A3B8; }
+  .us-top { display:flex; align-items:center; gap:13px; margin-top:4px; }
+  .donut-wrap.sm { width:124px; height:124px; margin:0; flex-shrink:0; }
+  .donut-wrap.sm .donut-bg, .donut-wrap.sm .donut-fg { stroke-width:10; }
+  .donut-wrap.sm .donut-center { gap:2px; }
+  .donut-wrap.sm .donut-center .muted { font-size:0.6rem; }
+  .donut-wrap.sm .donut-center .big { font-size:1.02rem; }
+  .us-stats { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+  .us-chips { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:1px; }
+  .us-kv { display:flex; justify-content:space-between; align-items:center; background:#FAFBFC; border:1px solid #EFF2F6; border-radius:10px; padding:7px 11px; font-size:0.7rem; font-weight:700; color:#8B94A7; }
+  .us-kv b { font-size:0.82rem; font-weight:900; color:#101623; font-variant-numeric:tabular-nums; }
+  .us-kv b.or { color:#F2751F; }
+  .daybar { padding:6px 8px; border-radius:9px; }
+  .daybar.today { background:rgba(241,105,13,0.07); }
+  .daybar.today .d { color:#F1690D; font-weight:900; }
   .daybar .bar i { background:linear-gradient(90deg,#F97316,#F59E0B); }
   .us-note { margin-top:13px; }
   .us-note .cap { display:block; text-align:center; font-size:0.66rem; font-weight:600; color:#98A1B3; margin-top:8px; line-height:1.6; word-break:keep-all; }
@@ -1817,12 +1827,12 @@ function renderUsage(d){
       cd = ' · 다음 리셋까지 <b id="usCd">' + fmtDur(nx - shifted) + '</b> (한국시간 ' + (kh<10?'0':'') + kh + ':' + (ri.mm<10?'0':'') + ri.mm + ')';
       pbHtml = '<div class="rs-bar"><i id="usPb" style="width:' + Math.min(100, Math.max(2, (1 - (nx - shifted) / 86400e3) * 100)) + '%"></i></div>';
     }
-    resetCard = '<div class="rs-card">' +
+    resetCard = '<div class="rs-card" style="margin-top:9px;padding:10px 13px;">' +
       '<div style="font-weight:900;font-size:0.8rem;color:#0f766e;">⏱ 매일 데이터 리셋' + (ri && ri.txt ? ' — ' + esc(ri.txt) : '') + '</div>' +
       '<div style="font-size:0.75rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">리셋되면 다시 <b>' + fmtData(qi.mb) + '</b>를 쓸 수 있어요' + cd + '</div>' + pbHtml +
       (qi.fup ? '<div style="font-size:0.73rem;font-weight:600;color:#64748b;margin-top:5px;">오늘 용량을 다 써도 저속으로는 계속 이용할 수 있어요</div>' : '') + '</div>';
   }
-  var C=2*Math.PI*72; // r=72
+  var C=2*Math.PI*56; // r=56 (컴팩트 도넛)
   if (window._usTimer) { clearInterval(window._usTimer); window._usTimer = null; }
   var lvCls = pct >= 90 ? ' lv3' : pct >= 70 ? ' lv2' : '';          // 게이지 경고색: 70% 앰버 · 90% 레드
   var pctTxt = (pct > 0 && pct < 1) ? '1% 미만' : Math.round(pct) + '%';  // 2MB 써도 '0%'로 보이지 않게
@@ -1833,12 +1843,10 @@ function renderUsage(d){
   var dayRows = '';
   if (d.daily && d.daily.length) {
     var srt2 = d.daily.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1; }); // 최신이 위
-    dayRows = '<div style="font-weight:800;font-size:0.8rem;margin:15px 0 5px;">일별 사용 내역 <span class="muted" style="font-weight:700;">총 ' + srt2.length + '일</span></div>' +
+    dayRows = '<div style="font-weight:800;font-size:0.8rem;margin:14px 0 4px;">일별 사용 내역 <span class="muted" style="font-weight:700;">총 ' + srt2.length + '일</span></div>' +
       srt2.map(function(x){
         var isToday = x.date === todayKey;
-        var isMax = srt2.length > 1 && (x.mb || 0) === maxDay && maxDay > 0;
         return '<div class="daybar' + (isToday ? ' today' : '') + '"><span class="d">' + fmtDay(x.date) +
-          (isToday ? '<span class="tag">오늘</span>' : isMax ? '<span class="tag mx">최다</span>' : '') +
           (x.country ? ' <span style="color:#1B8E82;font-weight:800;">' + esc(x.country) + '</span>' : '') + '</span>' +
           '<span class="bar"><i style="width:' + Math.max(4, Math.round((x.mb || 0) / maxDay * 100)) + '%"></i></span>' +
           '<span class="mb">' + fmtData(x.mb || 0) + '</span></div>';
@@ -1847,19 +1855,25 @@ function renderUsage(d){
   var nowT = new Date();
   var hh2 = function(n){ return (n < 10 ? '0' : '') + n; };
   var updAt = hh2(nowT.getHours()) + ':' + hh2(nowT.getMinutes());
+  var badge = '<span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span>';
+  var kv = function(l, v, or){ return '<div class="us-kv"><span>' + l + '</span><b' + (or ? ' class="or"' : '') + '>' + v + '</b></div>'; };
+  var statsHtml = qi
+    ? kv('오늘 사용', fmtData(todayMb)) + kv('오늘 남음', fmtData(remain, true), true) + kv('여행 전체', fmtData(used))
+    : total
+    ? kv('사용한 데이터', fmtData(used)) + kv('남은 데이터', fmtData(remain, true), true)
+    : kv('여행 전체 사용', fmtData(used)) + ((d.daily && d.daily.length) ? kv('측정일수', d.daily.length + '일') : '');
   box.style.textAlign='inherit';
   box.innerHTML =
-    '<div class="donut-wrap"><svg width="172" height="172" viewBox="0 0 172 172">' +
+    '<div class="us-top">' +
+    '<div class="donut-wrap sm"><svg width="124" height="124" viewBox="0 0 124 124">' +
     '<defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
-    '<circle class="donut-bg" cx="86" cy="86" r="72"></circle>' +
-    '<circle class="donut-fg' + lvCls + '" id="dfg" cx="86" cy="86" r="72" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
-    '<div class="donut-center"><span class="muted">'+(qi?'오늘 남은 데이터':total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(qi? fmtData(remain,true) : total? fmtData(remain,true) : (used? fmtData(used) : '0 GB'))+'</span>' +
-    (pctChip || '<span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span>') + '</div></div>' +
-    (pctChip ? '<div style="text-align:center;margin-top:2px;"><span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span></div>' : '') +
-    ((d.country && d.status!=='expired')? '<div style="text-align:center;margin-top:8px;"><span style="display:inline-block;font-size:0.78rem;font-weight:800;color:#1B8E82;background:rgba(43,179,163,0.1);padding:5px 12px;border-radius:999px;">📍 '+esc(d.country)+' 현지망 접속 확인 ✓</span></div>' : '') +
-    (function(){ var dg=diagHistory(d.listHistory); if(!dg) return ''; var col=dg.t==='bad'?['#b91c1c','rgba(239,68,68,0.08)','#fecaca']:dg.t==='warn'?['#9a5b16','rgba(249,115,22,0.08)','#fed7aa']:['#15803d','rgba(34,197,94,0.08)','#bbf7d0']; var ic=dg.t==='bad'?'⚠️':dg.t==='warn'?'🔧':'✅'; return '<div style="margin-top:10px;background:'+col[1]+';border:1px solid '+col[2]+';border-radius:12px;padding:11px 13px;text-align:left;"><div style="font-weight:900;font-size:0.82rem;color:'+col[0]+';">'+ic+' '+esc(dg.title)+'</div><div style="font-size:0.76rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">'+esc(dg.msg)+'</div></div>'; })() +
-    (qi? '<div class="pillstat"><div><span class="ic">📊</span><div class="l">오늘 사용</div><div class="v">'+fmtData(todayMb)+'</div></div><div><span class="ic">🎁</span><div class="l">오늘 남음</div><div class="v" style="color:#F2751F;">'+fmtData(remain,true)+'</div></div><div><span class="ic">🧳</span><div class="l">여행 전체 사용</div><div class="v">'+fmtData(used)+'</div></div></div>' + resetCard
-      : total? '<div class="pillstat"><div><span class="ic">📊</span><div class="l">사용한 데이터</div><div class="v">'+fmtData(used)+'</div></div><div><span class="ic">🎁</span><div class="l">남은 데이터</div><div class="v" style="color:#F2751F;">'+fmtData(remain,true)+'</div></div></div>' : '') +
+    '<circle class="donut-bg" cx="62" cy="62" r="56"></circle>' +
+    '<circle class="donut-fg' + lvCls + '" id="dfg" cx="62" cy="62" r="56" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
+    '<div class="donut-center"><span class="muted">'+(qi?'오늘 남은':total?'남은 데이터':'전체 사용')+'</span><span class="big">'+(qi? fmtData(remain,true) : total? fmtData(remain,true) : (used? fmtData(used) : '0 GB'))+'</span></div></div>' +
+    '<div class="us-stats"><div class="us-chips">' + badge + pctChip + '</div>' + statsHtml + '</div></div>' +
+    ((d.country && d.status!=='expired')? '<div style="margin-top:9px;"><span style="display:inline-block;font-size:0.74rem;font-weight:800;color:#1B8E82;background:rgba(43,179,163,0.1);padding:5px 12px;border-radius:999px;">📍 '+esc(d.country)+' 현지망 접속 확인 ✓</span></div>' : '') +
+    (function(){ var dg=diagHistory(d.listHistory); if(!dg) return ''; var col=dg.t==='bad'?['#b91c1c','rgba(239,68,68,0.08)','#fecaca']:dg.t==='warn'?['#9a5b16','rgba(249,115,22,0.08)','#fed7aa']:['#15803d','rgba(34,197,94,0.08)','#bbf7d0']; var ic=dg.t==='bad'?'⚠️':dg.t==='warn'?'🔧':'✅'; return '<div style="margin-top:9px;background:'+col[1]+';border:1px solid '+col[2]+';border-radius:12px;padding:10px 13px;text-align:left;"><div style="font-weight:900;font-size:0.8rem;color:'+col[0]+';">'+ic+' '+esc(dg.title)+'</div><div style="font-size:0.74rem;font-weight:600;color:#475569;margin-top:2px;line-height:1.5;">'+esc(dg.msg)+'</div></div>'; })() +
+    resetCard +
     dayRows +
     '<div class="us-note">' +
     '<button class="btn btn-ghost" style="width:100%;" onclick="loadUsage()">↻ 새로고침</button>' +
