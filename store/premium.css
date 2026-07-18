@@ -850,7 +850,9 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
 .rf-days::-webkit-scrollbar { display: none; }
 .rf-day {
   flex-shrink: 0;
-  padding: 8px 14px;
+  min-width: 60px;           /* 균일폭 — "1일"~"30일" 텍스트 길이 무관 (2026-07-18 사장님 지시) */
+  padding: 8px 0;
+  text-align: center;
   border-radius: 999px;
   border: 1.5px solid rgba(241,105,13, 0.22);
   background: #fff;
