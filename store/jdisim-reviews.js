@@ -58,7 +58,7 @@
     st.textContent =
       '.jrv{--jrv-accent:var(--accent,#F2751F);--jrv-teal:var(--fox-teal,#2BB3A3);--jrv-ink:var(--ink-warm,#221510);font-family:inherit}' +
       '.jrv *{box-sizing:border-box}' +
-      '.jrv-stars{color:#F59E0B;letter-spacing:1px;font-size:.9em}.jrv-stars-off{color:#E4E8EF}' +
+      '.jrv-stars{color:#D97706;letter-spacing:1px;font-size:.9em}.jrv-stars-off{color:#E4E8EF}' +
       '.jrv-badge{display:inline-flex;align-items:center;gap:5px;background:var(--fox-teal-light,rgba(43,179,163,.1));color:var(--jrv-teal);font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:999px}' +
       '.jrv-badge::before{content:"✓";font-weight:900}' +
       /* strip */

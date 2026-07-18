@@ -855,8 +855,8 @@ body { background: linear-gradient(180deg, #FFFDFB 0%, #FFF6EE 8%, #f8fafc 26%);
   border: 1.5px solid rgba(241,105,13, 0.22);
   background: #fff;
   font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 0.875rem;   /* 14px — 대비 보완 (선택 칩 흰 글자) */
+  font-weight: 800;
   color: var(--text-muted);
   cursor: pointer;
 }
@@ -1588,7 +1588,7 @@ html.home-snap .snap-dots { display: flex; }
   border-color: rgba(241,105,13, 0.3);
 }
 .rv-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.rv-stars { color: #F59E0B; font-size: 0.9rem; letter-spacing: 2px; }
+.rv-stars { color: #D97706; font-size: 0.9rem; letter-spacing: 2px; }
 .rv-best {
   font-size: 0.64rem;
   font-weight: 800;
@@ -1828,7 +1828,7 @@ html.home-snap .snap-dots { display: flex; }
   --bg-glass: rgba(255, 253, 250, 0.86); /* 헤더 글래스 웜톤 */
   --text-main: #221510;                  /* 웜 잉크 */
   --text-muted: #5D5049;                 /* 웜 브라운그레이 */
-  --text-dim: #8A7A6D;                   /* 캡션 웜톤 */
+  --text-dim: #6B5D52;                   /* 캡션 웜톤 */
   --border-color: #EDE4D8;               /* 웜 보더 */
   --border-hover: #E0D2C2;
   --accent-success: #14A08F;             /* emerald → 폭스 틸 계열 */
