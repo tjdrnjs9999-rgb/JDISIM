@@ -1761,6 +1761,12 @@ function quotaFromText(){
 }
 function tzToday(off){ return new Date(Date.now() + off*3600e3).toISOString().slice(0,10); }
 function fmtDur(ms){ var h=Math.floor(ms/3600e3), mn=Math.round(ms%3600e3/60e3); return (h? h+'시간 ':'') + mn + '분'; }
+function fmtData(mb, floor){ // 1GB 미만은 MB 표기 · floor=잔여(내림 — 쓴 만큼 즉시 줄어 보이게)
+  if (mb < 1024) return (mb < 10 ? Math.round(mb*10)/10 : Math.round(mb)) + ' MB';
+  var g = mb/1024;
+  g = floor ? Math.floor(g*100)/100 : Math.round(g*100)/100;
+  return g + ' GB';
+}
 function renderUsage(d){
   maybeAutoActivate(d);
   try { var L0 = d && (d.usageList || d.daily) || []; var t0 = 0; L0.forEach(function(x){ t0 += Number(x.used || x.used_mb || 0); }); if (t0) window._lastUsedGB = (Math.round(t0 / 1024 * 10) / 10) + 'GB'; } catch(e){}
@@ -1802,11 +1808,11 @@ function renderUsage(d){
     '<defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
     '<circle class="donut-bg" cx="86" cy="86" r="72"></circle>' +
     '<circle class="donut-fg" id="dfg" cx="86" cy="86" r="72" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
-    '<div class="donut-center"><span class="muted">'+(qi?'오늘 남은 데이터':total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(qi? gb(remain)+' GB' : total? gb(remain)+' GB' : (used? gb(used)+' GB' : '0 GB'))+'</span>' +
+    '<div class="donut-center"><span class="muted">'+(qi?'오늘 남은 데이터':total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(qi? fmtData(remain,true) : total? fmtData(remain,true) : (used? fmtData(used) : '0 GB'))+'</span>' +
     '<span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span></div></div>' +
     ((d.country && d.status!=='expired')? '<div style="text-align:center;margin-top:8px;"><span style="display:inline-block;font-size:0.78rem;font-weight:800;color:#1B8E82;background:rgba(43,179,163,0.1);padding:5px 12px;border-radius:999px;">📍 '+esc(d.country)+' 현지망 접속 확인 ✓</span></div>' : '') +
     (function(){ var dg=diagHistory(d.listHistory); if(!dg) return ''; var col=dg.t==='bad'?['#b91c1c','rgba(239,68,68,0.08)','#fecaca']:dg.t==='warn'?['#9a5b16','rgba(249,115,22,0.08)','#fed7aa']:['#15803d','rgba(34,197,94,0.08)','#bbf7d0']; var ic=dg.t==='bad'?'⚠️':dg.t==='warn'?'🔧':'✅'; return '<div style="margin-top:10px;background:'+col[1]+';border:1px solid '+col[2]+';border-radius:12px;padding:11px 13px;text-align:left;"><div style="font-weight:900;font-size:0.82rem;color:'+col[0]+';">'+ic+' '+esc(dg.title)+'</div><div style="font-size:0.76rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">'+esc(dg.msg)+'</div></div>'; })() +
-    (qi? '<div class="pillstat"><div><div class="l">오늘 사용</div><div class="v">'+gb(todayMb)+' GB</div></div><div><div class="l">오늘 남음</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div><div><div class="l">여행 전체 사용</div><div class="v">'+gb(used)+' GB</div></div></div>' + resetCard
+    (qi? '<div class="pillstat"><div><div class="l">오늘 사용</div><div class="v">'+fmtData(todayMb)+'</div></div><div><div class="l">오늘 남음</div><div class="v" style="color:#F2751F;">'+fmtData(remain,true)+'</div></div><div><div class="l">여행 전체 사용</div><div class="v">'+fmtData(used)+'</div></div></div>' + resetCard
       : total? '<div class="pillstat"><div><div class="l">사용한 데이터</div><div class="v">'+gb(used)+' GB</div></div><div><div class="l">남은 데이터</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div></div>' : '') +
     ((d.daily&&d.daily.length)? '<div style="font-weight:800;font-size:0.8rem;margin:14px 0 4px;">일별 사용 내역 <span class="muted">총 '+d.daily.length+'일</span></div>' +
       d.daily.map(function(x){ return '<div class="daybar"><span class="d">'+esc(x.date)+(x.country?' <span style="color:#1B8E82;font-weight:800;">'+esc(x.country)+'</span>':'')+'</span><span class="bar"><i style="width:'+Math.max(4,Math.round((x.mb||0)/maxDay*100))+'%"></i></span><span class="mb">'+(x.mb>=1024? gb(x.mb)+'GB' : Math.round(x.mb)+'MB')+'</span></div>'; }).join('') : '') +
