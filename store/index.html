@@ -92,8 +92,8 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260716a">
-  <link rel="stylesheet" href="premium.css?v=20260718b">
+  <link rel="stylesheet" href="styles.css?v=20260719a">
+  <link rel="stylesheet" href="premium.css?v=20260719a">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
   <script src="jd-trip-cal.js?v=20260719a" defer></script>
@@ -180,7 +180,7 @@
       html.pc-snap .pc-dots { display: flex; }
       .pc-dot { width: 7px; height: 7px; border-radius: 999px; border: none; padding: 0; cursor: pointer; background: rgba(120,100,85,0.3); transition: height .3s cubic-bezier(.22,1,.36,1), background .3s; position: relative; }
       .pc-dot.active { height: 24px; background: var(--accent); box-shadow: 0 2px 8px rgba(241,105,13,0.4); }
-      .pc-dot.active::after { content: attr(data-label); position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 0.68rem; font-weight: 800; color: #C2410C; background: rgba(255,255,255,0.9); border: 1px solid rgba(241,105,13,0.25); padding: 3px 9px; border-radius: 9px; white-space: nowrap; box-shadow: 0 2px 8px rgba(241,105,13,0.12); }
+      .pc-dot.active::after { content: attr(data-label); position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size:0.75rem; font-weight: 800; color: #C2410C; background: rgba(255,255,255,0.9); border: 1px solid rgba(241,105,13,0.25); padding: 3px 9px; border-radius: 9px; white-space: nowrap; box-shadow: 0 2px 8px rgba(241,105,13,0.12); }
     }
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
@@ -190,8 +190,8 @@
   <!-- 🦊 로미 스플래시: 로딩 중 빈 화면 대신 브랜드 화면 (세션당 1회) -->
   <div id="jdSplash" style="position:fixed;inset:0;z-index:2000000;background:linear-gradient(180deg,#ffffff,#fff7f0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;transition:opacity 0.45s ease;">
     <img src="images/fox-hello.webp" alt="" style="width:96px;animation:jdSpBounce 1.15s ease-in-out infinite;" onerror="this.style.display='none'">
-    <div style="font-weight:900;font-size:1.2rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
-    <div style="font-size:0.78rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
+    <div style="font-weight:900;font-size:1.1875rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
+    <div style="font-size:0.75rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
     <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F1690D,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
   </div>
   <style>
@@ -204,19 +204,19 @@
     .jd-search .jd-box { display: flex; align-items: center; gap: 4px; background: #fff; border: 1.5px solid rgba(15,23,42,0.1); border-radius: 16px; padding: 5px 5px 5px 14px; box-shadow: 0 2px 10px rgba(15,23,42,0.05); transition: border-color .18s, box-shadow .18s; }
     .jd-search .jd-box:focus-within { border-color: #F1690D; box-shadow: 0 0 0 3px rgba(241,105,13,0.13); }
     .jd-search svg { width: 18px; height: 18px; flex-shrink: 0; color: #94a3b8; }
-    .jd-search input { flex: 1; min-width: 0; border: none; outline: none; background: none; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: #0f172a; padding: 10px 6px; }
+    .jd-search input { flex: 1; min-width: 0; border: none; outline: none; background: none; font-family: inherit; font-size:0.9375rem; font-weight: 600; color: #0f172a; padding: 10px 6px; }
     .jd-search input::placeholder { color: #a8b3c5; font-weight: 500; }
-    .jd-search .jd-x { flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 50%; background: #eef1f6; color: #64748b; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: none; }
-    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F1690D,#F59E0B); color: #fff; font-family: inherit; font-size: 0.84rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(241,105,13,0.28); }
+    .jd-search .jd-x { flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 50%; background: #eef1f6; color: #64748b; font-size:0.84375rem; font-weight: 800; cursor: pointer; display: none; }
+    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F1690D,#F59E0B); color: #fff; font-family: inherit; font-size:0.84375rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(241,105,13,0.28); }
     .jd-search .jd-go:active { transform: scale(0.96); }
     .jd-suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 14px; box-shadow: 0 16px 40px rgba(15,23,42,0.14); overflow: hidden; z-index: 300; display: none; }
     .jd-suggest.on { display: block; animation: jdSgIn .16s ease both; }
     @keyframes jdSgIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
     .jd-sg { display: flex; align-items: center; gap: 11px; width: 100%; padding: 12px 15px; border: none; background: none; font-family: inherit; cursor: pointer; text-align: left; }
     .jd-sg:hover, .jd-sg:active { background: #FFF7F0; }
-    .jd-sg .fl { font-size: 1.25rem; }
-    .jd-sg b { font-size: 0.88rem; font-weight: 800; color: #0f172a; }
-    .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F1690D; }
+    .jd-sg .fl { font-size:1.1875rem; }
+    .jd-sg b { font-size:0.84375rem; font-weight: 800; color: #0f172a; }
+    .jd-sg i { font-style: normal; margin-left: auto; font-size:0.75rem; font-weight: 800; color: #F1690D; }
 
 
     /* 지역 탭 가로 스크롤 (스크롤 불가 수정) */
@@ -361,10 +361,10 @@
         }
         .ts-item { flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 11px; min-width: 0; padding: 4px 14px; text-decoration: none; border-radius: 14px; transition: background 0.2s, transform 0.25s cubic-bezier(0.16,1,0.3,1); }
         a.ts-item:hover { background: rgba(255,255,255,0.85); transform: translateY(-2px); }
-        .ts-ic { font-size: 1.25rem; flex-shrink: 0; }
+        .ts-ic { font-size:1.1875rem; flex-shrink: 0; }
         .ts-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-        .ts-tx strong { font-size: 0.85rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
-        .ts-tx span { font-size: 0.72rem; font-weight: 600; color: #6b5d52; word-break: keep-all; }
+        .ts-tx strong { font-size:0.84375rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
+        .ts-tx span { font-size:0.75rem; font-weight: 600; color: #6b5d52; word-break: keep-all; }
         .ts-div { flex: 0 0 1px; align-self: center; height: 30px; background: rgba(34, 21, 16, 0.1); }
         @media (max-width: 980px) {
           .ts-dock { flex-wrap: wrap; gap: 8px 0; border-radius: 20px; }
@@ -376,24 +376,24 @@
       <section class="globe-section" style="position:relative;margin:56px 0 8px;padding:72px 24px;min-height:100vh;display:flex;align-items:center;background:radial-gradient(1200px 600px at 70% 40%, #EAF6FF 0%, #FFF6EC 55%, #FBF3E8 100%);overflow:hidden;">
         <div style="width:100%;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:0.9fr 1.1fr;gap:32px;align-items:center;position:relative;">
           <div>
-            <span style="display:inline-block;font-size:0.78rem;font-weight:800;letter-spacing:2.5px;color:#F8823B;margin-bottom:14px;">LIVE CONNECTED WORLD</span>
+            <span style="display:inline-block;font-size:0.75rem;font-weight:800;letter-spacing:2.5px;color:#F8823B;margin-bottom:14px;">LIVE CONNECTED WORLD</span>
             <h2 style="margin:0;font-size:2.6rem;line-height:1.25;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F1690D,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
-            <p style="margin:18px 0 0;font-size:1rem;line-height:1.75;color:#6b5d52;">지구본 위의 빛나는 점이 전부 JDISIM이 커버하는 여행지예요.<br>궁금한 나라를 <strong style="color:#F1690D;">직접 클릭</strong>해 보세요 — 그 나라 요금제로 바로 이동합니다.</p>
+            <p style="margin:18px 0 0;font-size:1.0625rem;line-height:1.75;color:#6b5d52;">지구본 위의 빛나는 점이 전부 JDISIM이 커버하는 여행지예요.<br>궁금한 나라를 <strong style="color:#F1690D;">직접 클릭</strong>해 보세요 — 그 나라 요금제로 바로 이동합니다.</p>
             <div style="display:flex;gap:22px;margin-top:28px;">
-              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="150">0</span><span style="color:#F1690D;">+</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">커버 국가</div></div>
+              <div><div style="font-size:1.625rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="150">0</span><span style="color:#F1690D;">+</span></div><div style="font-size:0.75rem;color:#64748b;font-weight:700;">커버 국가</div></div>
               <div style="width:1px;background:rgba(34,21,16,0.12);"></div>
-              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="15000">0</span><span style="color:#F1690D;">+</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">판매 요금제</div></div>
+              <div><div style="font-size:1.625rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="15000">0</span><span style="color:#F1690D;">+</span></div><div style="font-size:0.75rem;color:#64748b;font-weight:700;">판매 요금제</div></div>
               <div style="width:1px;background:rgba(34,21,16,0.12);"></div>
-              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="10">0</span><span style="color:#F1690D;">초</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">QR 개통</div></div>
+              <div><div style="font-size:1.625rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="10">0</span><span style="color:#F1690D;">초</span></div><div style="font-size:0.75rem;color:#64748b;font-weight:700;">QR 개통</div></div>
             </div>
           </div>
           <div style="position:relative;">
             <div id="pcGlobe" style="width:100%;height:620px;"></div>
             <div style="position:absolute;left:-14px;bottom:24px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none;animation:romiFloat 3.6s ease-in-out infinite;">
-              <div style="background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.8rem;font-weight:800;padding:9px 15px;border-radius:18px 18px 18px 4px;box-shadow:0 8px 22px rgba(241,105,13,0.45);">어디로 떠날까? 궁금한 나라를 콕! 🌏</div>
+              <div style="background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.84375rem;font-weight:800;padding:9px 15px;border-radius:18px 18px 18px 4px;box-shadow:0 8px 22px rgba(241,105,13,0.45);">어디로 떠날까? 궁금한 나라를 콕! 🌏</div>
               <img loading="lazy" src="images/fox-hello.webp" alt="로미" style="width:110px;filter:drop-shadow(0 10px 24px rgba(241,105,13,0.35));" onerror="this.parentNode.style.display='none'">
             </div>
-            <div style="text-align:center;font-size:0.74rem;font-weight:700;color:#475569;margin-top:-4px;">🖱️ 드래그로 돌려보고, 국가 점을 클릭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져 있어요</span></div>
+            <div style="text-align:center;font-size:0.75rem;font-weight:700;color:#475569;margin-top:-4px;">🖱️ 드래그로 돌려보고, 국가 점을 클릭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져 있어요</span></div>
           </div>
         </div>
       </section>
@@ -491,7 +491,7 @@
         @media (prefers-reduced-motion: reduce) { .globe-section [style*="romiFloat"] { animation: none !important; } }
         @media (max-width: 900px) {
           .globe-section > div:nth-child(2) { grid-template-columns: 1fr !important; }
-          .globe-section h2 { font-size: 1.9rem !important; }
+          .globe-section h2 { font-size:2rem !important; }
           #pcGlobe { height: 400px !important; }
         }
       </style>
@@ -539,9 +539,9 @@
         </div>
         <style>
           .ai2-head { text-align: center; margin-bottom: 34px; }
-          .ai2-eyebrow { font-size: 0.74rem; font-weight: 800; letter-spacing: 3px; color: #F1690D; }
+          .ai2-eyebrow { font-size:0.75rem; font-weight: 800; letter-spacing: 3px; color: #F1690D; }
           .app-info-title em { font-style: normal; background: linear-gradient(100deg, #F8823B, #D95903); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-          .ai2-sub { margin: 10px 0 0; font-size: 0.95rem; color: #8a7a6d; font-weight: 600; }
+          .ai2-sub { margin: 10px 0 0; font-size:0.9375rem; color: #8a7a6d; font-weight: 600; }
           .ai2-grid { gap: 22px; }
           .ai2-card {
             position: relative; overflow: hidden; cursor: pointer;
@@ -554,13 +554,13 @@
           .ai2-c2 { background: linear-gradient(160deg, #FDFEFF 0%, #E9F6F3 100%); border-color: rgba(43,179,163,0.2); }
           .ai2-c3 { background: linear-gradient(160deg, #FFFDFB 0%, #FBEFE0 100%); }
           .ai2-card:hover { transform: translateY(-8px); box-shadow: 0 22px 44px rgba(241,105,13, 0.16); }
-          .ai2-tag { display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 2px; color: #C2410C; background: rgba(255,255,255,0.8); border: 1px solid rgba(241,105,13,0.25); padding: 5px 12px; border-radius: 999px; }
+          .ai2-tag { display: inline-block; font-size:0.75rem; font-weight: 800; letter-spacing: 2px; color: #C2410C; background: rgba(255,255,255,0.8); border: 1px solid rgba(241,105,13,0.25); padding: 5px 12px; border-radius: 999px; }
           .ai2-c2 .ai2-tag { color: #0f766e; border-color: rgba(43,179,163,0.3); }
-          .ai2-card h3 { margin: 16px 0 10px; font-size: 1.5rem; line-height: 1.3; font-weight: 800; color: #221510; letter-spacing: -0.02em; }
+          .ai2-card h3 { margin: 16px 0 10px; font-size:1.625rem; line-height: 1.3; font-weight: 800; color: #221510; letter-spacing: -0.02em; }
           .ai2-card h3 em { font-style: normal; color: #D95903; }
           .ai2-c2 h3 em { color: #0f9488; }
-          .ai2-card p { margin: 0; font-size: 0.9rem; line-height: 1.65; color: #7a6a5d; font-weight: 600; }
-          .ai2-go { display: inline-block; margin-top: 16px; font-size: 0.82rem; font-weight: 800; color: #D95903; transition: transform .25s; }
+          .ai2-card p { margin: 0; font-size:0.9375rem; line-height: 1.65; color: #7a6a5d; font-weight: 600; }
+          .ai2-go { display: inline-block; margin-top: 16px; font-size:0.84375rem; font-weight: 800; color: #D95903; transition: transform .25s; }
           .ai2-c2 .ai2-go { color: #0f9488; }
           .ai2-card:hover .ai2-go { transform: translateX(4px); }
           .ai2-fox { position: absolute; right: -8px; bottom: -12px; width: 128px; filter: drop-shadow(0 10px 18px rgba(241,105,13,0.25)); transition: transform .35s cubic-bezier(.22,1,.36,1); pointer-events: none; }
@@ -614,7 +614,7 @@
       <section class="review-track-section">
         <div class="container">
           <div class="review-track-title-wrap">
-            <div class="review-track-count" style="font-size: 1.6rem; letter-spacing: 2px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">★★★★★</div>
+            <div class="review-track-count" style="font-size:1.625rem; letter-spacing: 2px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">★★★★★</div>
             <div class="review-fox-badge"><img src="images/fox-thumbsup.webp" alt="엄지척 로미" loading="lazy"></div>
             <h2 class="review-track-title">실제 이용 고객들의 100% 솔직한 리얼 후기</h2>
             <span class="review-source-badge">✅ 네이버 실구매 후기</span>
@@ -677,7 +677,7 @@
                 <ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--text-muted); text-align: left;">
                   <li style="margin-bottom: 8px;"><strong>국내 부가서비스 차단 확인:</strong> 이용 중인 국내 통신사 고객센터를 통해 '데이터 로밍 차단', '유심 잠금', '휴대폰 보호 서비스(분실 방지)' 등 외부 유심 사용을 막는 부가서비스가 켜져 있는지 확인하고 해지 신청을 해주세요.</li>
                   <li style="margin-bottom: 8px;"><strong>컨트리락(Country Lock) 해제 여부:</strong> 해외에서 직접 구매했거나 통신사 약정 폰의 경우 컨트리락이 걸려있는 경우가 있습니다. 미리 제조사에 확인해 완전히 풀어주셔야 합니다.
-                    <div style="margin-top: 10px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.85rem;">
+                    <div style="margin-top: 10px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); font-size:0.84375rem;">
                       📞 <strong>단말기 제조사 대표 고객센터:</strong><br>
                       - 삼성전자: 1588-3366 | 애플코리아: 080-333-4000 | LG전자: 1544-7777
                     </div>
@@ -887,8 +887,8 @@
             .rg-inner { display: grid; grid-template-columns: 282px 2px 1fr; align-items: stretch; gap: 0 24px; padding: 0; }
             /* ── 좌측 티켓 스텁 ── */
             .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 26px 22px 26px 28px; background: linear-gradient(170deg, rgba(241,105,13,0.055), rgba(245,158,11,0.02) 70%); }
-            .rg-eyebrow { font-size: 0.68rem; font-weight: 900; letter-spacing: 2.8px; color: #F1690D; }
-            .rg-title { font-size: 1.22rem; font-weight: 900; line-height: 1.4; color: #221510; letter-spacing: -0.018em; word-break: keep-all; }
+            .rg-eyebrow { font-size:0.75rem; font-weight: 900; letter-spacing: 2.8px; color: #F1690D; }
+            .rg-title { font-size:1.1875rem; font-weight: 900; line-height: 1.4; color: #221510; letter-spacing: -0.018em; word-break: keep-all; }
             .rg-code { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
             .rg-barcode { display: block; width: 128px; height: 24px; opacity: 0.62; background: repeating-linear-gradient(90deg, #221510 0 2px, transparent 2px 4px, #221510 4px 5px, transparent 5px 9px, #221510 9px 12px, transparent 12px 14px); }
             .rg-code span { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.2px; color: #b09a8a; font-family: 'SF Mono', 'Courier New', monospace; }
@@ -904,14 +904,14 @@
             .rg-row { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic badge" "txt txt"; row-gap: 13px; align-items: start; min-width: 0; padding: 18px 16px 17px; border-radius: 17px; background: rgba(255,255,255,0.75); border: 1px dashed rgba(241,105,13,0.2); text-decoration: none; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.25s, box-shadow 0.25s, border-color 0.25s; }
             .rg-row:hover { transform: translateY(-4px); background: #FFFFFF; border-color: rgba(241,105,13,0.4); box-shadow: 0 14px 28px rgba(241,105,13,0.13); }
             .rg-row:hover .rg-badge { transform: scale(1.14) rotate(-6deg); }
-            .rg-ic { grid-area: ic; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.28rem; }
+            .rg-ic { grid-area: ic; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size:1.375rem; }
             .rg-ic-orange { background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(241,105,13,0.05)); }
             .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.05)); }
             .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.05)); }
             .rg-txt { grid-area: txt; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-            .rg-txt strong { font-size: 0.93rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.42; }
-            .rg-txt span { font-size: 0.76rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.48; }
-            .rg-badge { grid-area: badge; justify-self: end; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
+            .rg-txt strong { font-size:0.9375rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.42; }
+            .rg-txt span { font-size:0.75rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.48; }
+            .rg-badge { grid-area: badge; justify-self: end; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size:0.84375rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
             .rg-b-orange { background: linear-gradient(135deg, #F1690D, #F8823B); box-shadow: 0 3px 9px rgba(241,105,13,0.35); }
             .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
             .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
@@ -933,15 +933,15 @@
             .dc-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 15px 20px; background: linear-gradient(165deg, #FFFFFF, #FFF9F3); border: 1px dashed rgba(241,105,13,0.28); border-radius: 18px; box-shadow: 0 6px 18px rgba(241,105,13,0.06); cursor: pointer; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, border-color 0.2s; }
             .dc-banner:hover { transform: translateY(-2px); border-color: rgba(241,105,13,0.5); box-shadow: 0 12px 26px rgba(241,105,13,0.12); }
             .dc-banner:focus-visible { outline: 2px solid rgba(241,105,13,0.55); outline-offset: 2px; }
-            .dc-ic { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(245,158,11,0.08)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+            .dc-ic { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(245,158,11,0.08)); display: flex; align-items: center; justify-content: center; font-size:1.375rem; flex-shrink: 0; }
             .dc-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-            .dc-tx strong { font-size: 0.95rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
-            .dc-tx span { font-size: 0.78rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; }
-            .dc-go { margin-left: auto; flex-shrink: 0; font-size: 0.82rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #F1690D, #F59E0B); padding: 10px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(241,105,13,0.3); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+            .dc-tx strong { font-size:0.9375rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
+            .dc-tx span { font-size:0.75rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; }
+            .dc-go { margin-left: auto; flex-shrink: 0; font-size:0.84375rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #F1690D, #F59E0B); padding: 10px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(241,105,13,0.3); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
             .dc-banner:hover .dc-go { transform: translateX(3px); }
-            @media (max-width: 640px) { .dc-go { padding: 9px 14px; font-size: 0.78rem; } }
+            @media (max-width: 640px) { .dc-go { padding: 9px 14px; font-size:0.75rem; } }
             /* ── 검색 결과 카운트 칩 ── */
-            .store-meta .product-count { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 14px; padding: 9px 17px; background: #FFFFFF; border: 1px solid rgba(241,105,13,0.14); border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #8a7a6d; box-shadow: 0 4px 12px rgba(241,105,13,0.05); }
+            .store-meta .product-count { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 14px; padding: 9px 17px; background: #FFFFFF; border: 1px solid rgba(241,105,13,0.14); border-radius: 999px; font-size:0.84375rem; font-weight: 700; color: #8a7a6d; box-shadow: 0 4px 12px rgba(241,105,13,0.05); }
             .store-meta .product-count span { color: #F1690D; font-weight: 900; }
           </style>
           <!-- 📱 기종 자가진단 배너 -->
@@ -984,7 +984,7 @@
           <input type="tel" class="checkout-input" id="lookupPhone" placeholder="010-1234-5678" style="width: 100%; height: 48px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text-main); padding: 0 16px;">
         </div>
 
-        <button class="action-btn" id="orderLookupBtn" style="width: 100%; height: 50px; font-weight: 700; font-size: 1rem;">
+        <button class="action-btn" id="orderLookupBtn" style="width: 100%; height: 50px; font-weight: 700; font-size:1.0625rem;">
           조회하기
         </button>
       </div>
@@ -1033,7 +1033,7 @@
         </div>
         <div class="cart-summary-row total" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">
           <span>총 예상 금액</span>
-          <span class="cart-summary-total-price" id="cartSummaryTotalPrice" style="font-weight: 800; color: var(--accent); font-size: 1.2rem;">0원</span>
+          <span class="cart-summary-total-price" id="cartSummaryTotalPrice" style="font-weight: 800; color: var(--accent); font-size:1.1875rem;">0원</span>
         </div>
         <button class="action-btn cart-checkout-btn" id="cartCheckoutBtn" style="margin-top: 16px; width: 100%;">
           📦 선택 상품 결제 진행하기
@@ -1050,11 +1050,11 @@
       </button>
       
       <div style="display: block !important; padding-top: 5px; text-align: left; width: 100%;">
-        <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+        <h3 style="font-size:1.1875rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
           📱 내 폰 eSIM 호환성 진단
         </h3>
         
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; text-align: left;">
+        <p style="font-size:0.84375rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; text-align: left;">
           제조사와 상세 기종을 선택하여 간편하게 개통 여부를 확인해 보세요.
         </p>
 
@@ -1062,8 +1062,8 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
           <!-- 1열: 제조사 선택 -->
           <div class="checkout-form-group" style="text-align: left;">
-            <label class="checkout-label" for="diagBrandSelect" style="font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; display: block; color: var(--text-muted);">1단계: 제조사 선택</label>
-            <select class="checkout-input" id="diagBrandSelect" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition-fast);">
+            <label class="checkout-label" for="diagBrandSelect" style="font-size:0.84375rem; font-weight: 700; margin-bottom: 6px; display: block; color: var(--text-muted);">1단계: 제조사 선택</label>
+            <select class="checkout-input" id="diagBrandSelect" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size:0.84375rem; cursor: pointer; outline: none; transition: var(--transition-fast);">
               <option value="" disabled selected>제조사 선택</option>
               <option value="Apple">Apple (iPhone/iPad)</option>
               <option value="Samsung">Samsung (Galaxy)</option>
@@ -1073,8 +1073,8 @@
           </div>
           <!-- 2열: 세부 기종 선택 -->
           <div class="checkout-form-group" style="text-align: left;">
-            <label class="checkout-label" for="diagModelSelect" style="font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; display: block; color: var(--text-muted);">2단계: 세부 기종 선택</label>
-            <select class="checkout-input" id="diagModelSelect" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition-fast);" disabled>
+            <label class="checkout-label" for="diagModelSelect" style="font-size:0.84375rem; font-weight: 700; margin-bottom: 6px; display: block; color: var(--text-muted);">2단계: 세부 기종 선택</label>
+            <select class="checkout-input" id="diagModelSelect" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size:0.84375rem; cursor: pointer; outline: none; transition: var(--transition-fast);" disabled>
               <option value="" disabled selected>기종 선택</option>
             </select>
           </div>
@@ -1087,27 +1087,27 @@
 
         <!-- 4. 내 폰에서 직접 확인하는 방법 (가로 배치형 카드 블록) -->
         <div style="margin-top: 20px; border-top: 1px solid rgba(0, 0, 0, 0.08); padding-top: 16px; text-align: left;">
-          <span class="checkout-label" style="font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; display: block; color: var(--text-muted);">💡 내 폰에서 직접 3초만에 확인하는 방법</span>
+          <span class="checkout-label" style="font-size:0.84375rem; font-weight: 700; margin-bottom: 12px; display: block; color: var(--text-muted);">💡 내 폰에서 직접 3초만에 확인하는 방법</span>
           
           <div class="diag-horizontal-guides" style="display: flex; flex-direction: column; gap: 8px;">
             <!-- Row 1: 키패드 -->
             <div style="background: rgba(0, 0, 0, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.1rem; flex-shrink: 0;">📞</span>
-              <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;">
+              <span style="font-size:1.0625rem; flex-shrink: 0;">📞</span>
+              <div style="font-size:0.75rem; color: var(--text-muted); line-height: 1.4;">
                 <strong style="color: var(--text-main); margin-right: 6px;">키패드 다이얼:</strong> 기본 전화 앱 키패드에서 <strong>*#06#</strong> 입력 후 화면에 <strong>EID 항목</strong>이 노출되면 지원
               </div>
             </div>
             <!-- Row 2: 아이폰 -->
             <div style="background: rgba(0, 0, 0, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.1rem; flex-shrink: 0;">🍎</span>
-              <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;">
+              <span style="font-size:1.0625rem; flex-shrink: 0;">🍎</span>
+              <div style="font-size:0.75rem; color: var(--text-muted); line-height: 1.4;">
                 <strong style="color: var(--text-main); margin-right: 6px;">iPhone 설정:</strong> <strong>설정 ➡️ 셀룰러</strong> 메뉴 내에 파란색 <strong>[eSIM 추가]</strong> 요금제 추가 버튼 유무 확인
               </div>
             </div>
             <!-- Row 3: 갤럭시 -->
             <div style="background: rgba(0, 0, 0, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.1rem; flex-shrink: 0;">🤖</span>
-              <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;">
+              <span style="font-size:1.0625rem; flex-shrink: 0;">🤖</span>
+              <div style="font-size:0.75rem; color: var(--text-muted); line-height: 1.4;">
                 <strong style="color: var(--text-main); margin-right: 6px;">Galaxy 설정:</strong> <strong>설정 ➡️ 연결 ➡️ SIM 관리자</strong>에서 <strong>[eSIM 추가]</strong> 항목 버튼 존재 여부 확인
               </div>
             </div>
@@ -1160,8 +1160,8 @@
 
             <!-- Country & Carrier Details -->
             <div style="text-align: center; margin-bottom: 20px;">
-              <h4 id="simCountryName" style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 4px;">일본 eSIM</h4>
-              <p id="simCarrierName" style="font-size: 0.72rem; color: rgba(255,255,255,0.6);">Softbank LTE | 로컬망 회선</p>
+              <h4 id="simCountryName" style="font-size:1.1875rem; font-weight: 800; color: #fff; margin-bottom: 4px;">일본 eSIM</h4>
+              <p id="simCarrierName" style="font-size:0.75rem; color: rgba(255,255,255,0.6);">Softbank LTE | 로컬망 회선</p>
             </div>
 
             <!-- Circular Progress Data Gauge -->
@@ -1176,7 +1176,7 @@
             </div>
 
             <!-- ICCID & Info Table -->
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 12px; font-size: 0.72rem; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 12px; font-size:0.75rem; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
               <div style="display: flex; justify-content: space-between;">
                 <span style="color: rgba(255,255,255,0.5);">ICCID 번호</span>
                 <span id="simIccidVal" style="font-weight: 700; color: #fff; letter-spacing: 0.5px;">8985200000001234567</span>
@@ -1193,7 +1193,7 @@
 
             <!-- Daily Usage mini Graph -->
             <div style="margin-top: 10px; margin-bottom: 10px;">
-              <div style="font-size: 0.72rem; font-weight: 700; color: #fff; margin-bottom: 8px;">📊 일별 데이터 소진 트렌드</div>
+              <div style="font-size:0.75rem; font-weight: 700; color: #fff; margin-bottom: 8px;">📊 일별 데이터 소진 트렌드</div>
               <div class="sim-usage-chart">
                 <div class="sim-chart-bar" style="height: 35%;" data-label="7/4"></div>
                 <div class="sim-chart-bar" style="height: 60%;" data-label="7/5"></div>
@@ -1221,7 +1221,7 @@
   <!-- Precaution Warning Modal -->
   <div class="precaution-overlay" id="precautionModal">
     <div class="precaution-container" style="background: var(--bg-secondary); width: 90%; max-width: 500px; border-radius: var(--radius-md); border: 1px solid var(--border-color); padding: 24px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; position: relative;">
-      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <h3 style="font-size:1.1875rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
         🚨 구매 전 필수 주의사항 안내
       </h3>
       
@@ -1233,7 +1233,7 @@
       <div style="margin-bottom: 20px; text-align: left;">
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
           <input type="checkbox" id="precautionAgreeCheck" style="width: 18px; height: 18px; accent-color: var(--accent);">
-          <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 600;">위 필수 주의사항을 모두 확인했으며 이에 동의합니다.</span>
+          <span style="font-size:0.84375rem; color: var(--text-main); font-weight: 600;">위 필수 주의사항을 모두 확인했으며 이에 동의합니다.</span>
         </label>
       </div>
 
@@ -1253,7 +1253,7 @@
         
         <!-- Selected Items Summary List -->
         <div class="checkout-form-group" style="background: var(--bg-secondary); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 20px;">
-          <span style="font-weight: 700; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">🛒 결제 상품 목록</span>
+          <span style="font-weight: 700; color: var(--text-main); font-size:0.9375rem; display: block; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">🛒 결제 상품 목록</span>
           <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; padding-right: 4px;">
             <!-- Rendered dynamically by app.js -->
           </div>
@@ -1273,8 +1273,8 @@
         <!-- Dynamic Carrier Activation Date Input (For Orange Spain, etc.) -->
         <div class="checkout-form-group" id="checkoutActivationDateGroup" style="display: none; margin-top: 20px;">
           <label class="checkout-label" for="checkoutActivationDate">📅 현지 개통 희망일 지정 (필수)</label>
-          <input type="date" class="checkout-input" id="checkoutActivationDate" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.95rem;">
-          <div id="activationDateHint" style="display:none; margin-top:9px; padding:10px 13px; background:linear-gradient(165deg,#FFFFFF,#FFF9F3); border:1px dashed rgba(241,105,13,0.3); border-radius:12px; font-size:0.8rem; font-weight:600; color:#8a7a6d; line-height:1.55; word-break:keep-all;"></div>
+          <input type="date" class="checkout-input" id="checkoutActivationDate" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size:0.9375rem;">
+          <div id="activationDateHint" style="display:none; margin-top:9px; padding:10px 13px; background:linear-gradient(165deg,#FFFFFF,#FFF9F3); border:1px dashed rgba(241,105,13,0.3); border-radius:12px; font-size:0.84375rem; font-weight:600; color:#8a7a6d; line-height:1.55; word-break:keep-all;"></div>
           <p style="font-size: 0.75rem; color: var(--accent-warning); margin-top: 6px; line-height: 1.4; font-weight: 500;">
             ※ 해당 상품은 사전 개통 예약이 필수입니다. 현지 도착 즉시 원활한 개통 완료를 위해, 실제 사용 예정일보다 <strong>하루 전날</strong>로 개통일을 지정해 주시기 바랍니다.
           </p>
@@ -1288,7 +1288,7 @@
           <span class="pay-method-label">결제 수단 선택</span>
           <div class="pay-method-options">
             <div class="pay-method-btn kakao selected" data-method="kakaopay">
-              <span style="font-size:1.1rem;">💛</span> 카카오페이
+              <span style="font-size:1.0625rem;">💛</span> 카카오페이
             </div>
             <!-- 신용·체크카드: 카드 PG 계약 완료 후 오픈 (카카오페이 단독 심사 요건으로 임시 제거) -->
           </div>
@@ -1296,17 +1296,17 @@
 
         <!-- 24시간 긴급 안심 케어 무료 보증 뱃지 -->
         <div class="safety-care-badge" style="margin-top: 16px; padding: 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-md); display: flex; align-items: flex-start; gap: 8px; text-align: left;">
-          <span style="font-size: 1.2rem; margin-top: -2px;">🛡️</span>
+          <span style="font-size:1.1875rem; margin-top: -2px;">🛡️</span>
           <div>
-            <span style="font-weight: 700; color: #10b981; font-size: 0.85rem;">24시간 긴급 안심 케어 보증 포함</span>
-            <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4;">현지 공항 도착 후 데이터 연결 장애 발생 시 24시간 카카오 채널을 통해 즉시 1:1 기술 지원을 보장하며, 문제 미해결 시 100% 전액 환불해 드립니다. 출국 전 안심하고 등록하세요.</p>
+            <span style="font-weight: 700; color: #10b981; font-size:0.84375rem;">24시간 긴급 안심 케어 보증 포함</span>
+            <p style="font-size:0.75rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4;">현지 공항 도착 후 데이터 연결 장애 발생 시 24시간 카카오 채널을 통해 즉시 1:1 기술 지원을 보장하며, 문제 미해결 시 100% 전액 환불해 드립니다. 출국 전 안심하고 등록하세요.</p>
           </div>
         </div>
 
         <!-- 국가별 맞춤형 스펙/주의사항 요약 카드 -->
         <div id="checkoutPrecautionCard" style="margin-top: 16px; padding: 16px; background: rgba(217, 119, 6, 0.05); border: 1px solid rgba(217, 119, 6, 0.2); border-radius: var(--radius-md); text-align: left; display: none;">
-          <span style="font-weight: 800; color: var(--accent-warning); font-size: 0.9rem; display: block; margin-bottom: 8px;">⚠️ [선택 상품 필수 확인사항]</span>
-          <ul id="checkoutPrecautionList" style="margin: 0; padding-left: 18px; font-size: 0.82rem; color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-weight: 800; color: var(--accent-warning); font-size:0.9375rem; display: block; margin-bottom: 8px;">⚠️ [선택 상품 필수 확인사항]</span>
+          <ul id="checkoutPrecautionList" style="margin: 0; padding-left: 18px; font-size:0.84375rem; color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; gap: 6px;">
             <!-- Dynamic elements generated by app.js -->
           </ul>
         </div>
@@ -1352,7 +1352,7 @@
         <div class="receipt-header">
           <div class="success-icon">✓</div>
           <h3 class="checkout-title" style="margin-bottom: 4px;">결제가 완료되었습니다! 🛫</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">카카오톡으로 <strong style="color: var(--accent);">eSIM 발급 링크</strong>를 보내드려요.<br>링크에서 원하시는 시점에 발급하시면 됩니다 — 발급 전에는 100% 환불 가능해요.</p>
+          <p style="font-size:0.84375rem; color: var(--text-muted);">카카오톡으로 <strong style="color: var(--accent);">eSIM 발급 링크</strong>를 보내드려요.<br>링크에서 원하시는 시점에 발급하시면 됩니다 — 발급 전에는 100% 환불 가능해요.</p>
         </div>
         
         <!-- Dynamic purchased items list with their QR codes -->
@@ -1371,7 +1371,7 @@
           </div>
           <div class="receipt-row">
             <span>결제 총액</span>
-            <span id="receiptPrice" style="font-weight: 800; color: var(--accent); font-size: 1.15rem;">0원</span>
+            <span id="receiptPrice" style="font-weight: 800; color: var(--accent); font-size:1.1875rem;">0원</span>
           </div>
         </div>
 
@@ -1391,20 +1391,20 @@
         <h2 class="section-title">📄 이용약관</h2>
         <p class="section-desc">JDISIM 사이트 이용에 관한 기본적인 규칙과 권리 및 의무 사항을 고지합니다.</p>
       </div>
-      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">제 1 조 (목적)</h3>
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size:0.9375rem;">
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">제 1 조 (목적)</h3>
         <p style="margin-bottom: 24px;">본 약관은 "버튼(Butt'on)"(이하 "회사"라 함)이 운영하는 인터넷 사이트 JDISIM(이하 "사이트"라 함)에서 제공하는 이동통신 관련 서비스 및 디지털 상품(eSIM)의 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">제 2 조 (용어의 정의)</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">제 2 조 (용어의 정의)</h3>
         <p style="margin-bottom: 24px;">1. "JDISIM"이란 회사가 디지털 무선 서비스(eSIM)를 이용자에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 상품을 거래할 수 있도록 설정한 가상의 영업장을 말합니다.<br>2. "이용자"란 사이트에 접속하여 본 약관에 따라 서비스를 이용하는 고객을 말합니다.</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">제 3 조 (디지털 상품의 특성 및 교환/환불)</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">제 3 조 (디지털 상품의 특성 및 교환/환불)</h3>
         <p style="margin-bottom: 24px;">JDISIM에서 판매하는 상품은 QR코드 스캔(설치)을 통해 효력이 발생하는 디지털 상품(eSIM)입니다. 「전자상거래법」 제17조 제2항 제5호에 따라 <strong>eSIM 프로필의 설치(다운로드)가 개시된 이후에는 청약철회가 제한</strong>되며, 이 사실은 결제 전 고지됩니다. <strong>설치 전에는 QR코드가 발송된 후라도 100% 환불이 가능</strong>합니다. 구매 전 반드시 기기 호환성(다이얼 *#06# 입력 시 EID 표시 여부)을 진단해 주시기 바랍니다. 세부 기준은 <a href="refund.html" style="color:#F1690D;font-weight:700;">취소·환불 규정</a>을 따릅니다.</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">제 4 조 (회사의 의무)</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">제 4 조 (회사의 의무)</h3>
         <p style="margin-bottom: 24px;">회사는 본 약관이 정하는 바에 따라 지속적이고 안정적인 서비스를 제공하는 데 최선을 다하며, 이용자의 개인 정보를 보호하기 위해 보안 시스템을 철저히 운영합니다.</p>
         
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">공고일자: 2026년 07월 07일 / 시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="terms.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 이용약관 전문 보기 →</a></p>
+        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">공고일자: 2026년 07월 07일 / 시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="terms.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 이용약관 전문 보기 →</a></p>
       </div>
     </div>
   </section>
@@ -1416,27 +1416,27 @@
         <h2 class="section-title">🔒 개인정보처리방침</h2>
         <p class="section-desc">회사는 이용자의 개인정보를 소중히 다루며, 관련 법령을 엄격히 준수합니다.</p>
       </div>
-      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">1. 수집하는 개인정보 항목</h3>
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size:0.9375rem;">
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">1. 수집하는 개인정보 항목</h3>
         <p style="margin-bottom: 24px;">회사는 주문 서비스 제공, QR코드 발송 및 본인 확인을 위해 아래의 정보를 수집합니다.<br>• 필수 항목: 수령인 이름, 이메일 주소, 휴대폰 번호<br>• 자동 수집 항목: 접속 IP, 쿠키, 서비스 이용 기록</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">2. 개인정보의 이용 목적</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">2. 개인정보의 이용 목적</h3>
         <p style="margin-bottom: 24px;">• 구입한 eSIM 상품의 개통 QR코드 전송<br>• 비회원 주문 내역 조회 및 결제 영수증 확인<br>• 제휴 및 기술 관련 고객 문의 대응</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">3. 개인정보의 보유 및 파기</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">3. 개인정보의 보유 및 파기</h3>
         <p style="margin-bottom: 24px;">관계 법령(전자상거래 등에서의 소비자보호에 관한 법률 등)에 의거하여, 계약 및 청약철회 등에 관한 기록은 5년간 보관한 후 파기합니다.</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">4. 개인정보 처리의 위탁</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">4. 개인정보 처리의 위탁</h3>
         <p style="margin-bottom: 24px;">회사는 원활한 서비스 제공을 위해 아래와 같이 개인정보 처리 업무를 위탁하고 있으며, 위탁계약 시 개인정보가 안전하게 관리될 수 있도록 필요한 사항을 규정하고 있습니다.<br>
         • 수탁업체: 서래대박통신 / 위탁업무: eSIM 상품(개통용 QR코드) 발송 및 개통 처리 / 제공항목: 수령인 이름, 휴대폰 번호, 이메일 주소<br>
         • 수탁업체: ㈜다우기술(알리고) / 위탁업무: 알림톡·문자 발송<br>
         • 수탁업체: 결제대행사(포트원 및 제휴 PG사: 카카오페이·다날 등) / 위탁업무: 결제 처리 및 결제 도용 방지<br>
         • 국외 이전: Vercel Inc. · Upstash Inc. · GitHub, Inc. (미국) / 주문 처리 시스템 운영 및 웹 호스팅 — 이전 항목은 주문 처리에 필요한 최소 정보이며, 거부 시 상품 구매가 제한될 수 있습니다.</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">5. 개인정보 보호책임자</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">5. 개인정보 보호책임자</h3>
         <p style="margin-bottom: 24px;">• 성명: 김성권<br>• 직책: 대표자<br>• 연락처 / 이메일: jdisim@naver.com</p>
         
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="privacy.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 개인정보처리방침 전문 보기 →</a></p>
+        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="privacy.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 개인정보처리방침 전문 보기 →</a></p>
       </div>
     </div>
   </section>
@@ -1448,17 +1448,17 @@
         <h2 class="section-title">🔄 이용 및 환불 규정</h2>
         <p class="section-desc">eSIM 상품의 특성상 적용되는 환불 및 교환 기준에 대해 안내해 드립니다.</p>
       </div>
-      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">1. 환불이 가능한 케이스 (100% 환불)</h3>
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size:0.9375rem;">
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">1. 환불이 가능한 케이스 (100% 환불)</h3>
         <p style="margin-bottom: 24px;">• <strong>eSIM 프로필 설치(다운로드) 전:</strong> QR코드가 발송된 후라도 단말기에 프로필을 등록하지 않았다면 100% 환불<br>• 구매 후 QR코드가 발송되지 않았거나 다운로드 링크가 열리지 않는 장애 발생 시<br>• 기기 호환성 진단을 통과하였음에도 현지에서 전혀 개통이 불가능하며, 고객센터 원격 기술 지원으로도 최종 미해결된 경우 (미개통 100% 환불 보장)</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">2. 환불이 불가능한 케이스 (예외 없음)</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">2. 환불이 불가능한 케이스 (예외 없음)</h3>
         <p style="margin-bottom: 24px;">아래 사유는 <strong>eSIM 프로필을 설치(다운로드)한 이후</strong>에는 환불이 불가합니다. (설치 전이라면 위 1항에 따라 환불 가능)<br>• <strong>디바이스 미지원:</strong> eSIM 미지원 단말기임에도 설치까지 진행한 경우 (구매 전 다이얼 *#06# EID 자가체크 필수)<br>• <strong>단말기 락(Lock):</strong> 컨트리 락 또는 캐리어 락이 해제되지 않은 휴대폰에 설치한 경우<br>• <strong>QR코드 유출 및 등록 오류:</strong> 발송된 QR코드를 제3자에게 유출하거나, 등록 후 단말기에서 eSIM을 임의로 삭제/초기화한 경우<br>• <strong>단순 변심:</strong> 프로필 설치(다운로드)로 디지털 상품의 제공이 개시된 경우</p>
 
-        <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">3. 기술 장애 신고 및 환불 절차</h3>
+        <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">3. 기술 장애 신고 및 환불 절차</h3>
         <p style="margin-bottom: 24px;">현지에서 데이터 연결 장애 발생 시, 카카오톡 채널 '@제이디아이심'을 통해 즉시 고장 화면 스크린샷과 함께 장애 접수를 해주셔야 합니다. 현지에서 연락 없이 귀국하신 후에는 장애 사실 확인이 불가능하여 환불 처리가 어렵습니다.</p>
         
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="refund.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 취소·환불 규정 전문 보기 →</a></p>
+        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="refund.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 취소·환불 규정 전문 보기 →</a></p>
       </div>
     </div>
   </section>
@@ -1492,7 +1492,7 @@
             <label class="checkout-label" for="partnerDetails">제휴 및 문의 상세 내용</label>
             <textarea id="partnerDetails" placeholder="제안 내용이나 대량 구매 수량 등을 구체적으로 남겨주세요" required style="width: 100%; height: 150px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text-main); padding: 12px 16px; font-family: inherit; line-height: 1.6; resize: none;"></textarea>
           </div>
-          <button type="submit" class="action-btn" style="width: 100%; height: 50px; font-size: 1rem;">
+          <button type="submit" class="action-btn" style="width: 100%; height: 50px; font-size:1.0625rem;">
             ✉️ 제휴 문의 제출하기
           </button>
         </form>
