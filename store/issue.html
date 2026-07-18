@@ -1274,7 +1274,8 @@ function bpassHTML(o, opts){
   var ri = resetInfo(o.country);
   if (p.daily && ri) cells += '<div><div class="sk">RESET</div><div class="sv" style="font-size:0.9rem;">↻ ' + esc(ri.t) + '</div></div>';
   if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(o.productName || '—') + '</div></div>';
-  var qty = o.quantity > 1 ? ' <em>× ' + o.quantity + '</em>' : '';
+  // (2026-07-18) 케어링크(ICCID 단위 티켓)에서는 수량 표시 제거 — 티켓 1장 = 회선 1개. 발급 전 주문 화면에서만 ×N 유지
+  var qty = (o.quantity > 1 && !(typeof CARE !== 'undefined' && CARE)) ? ' <em>× ' + o.quantity + '</em>' : '';
   var acts = opts.issued
     ? '<div class="tkt-acts">' +
       '<button type="button" onclick="qrFullOpen()">'+ico('expand',15)+'QR 크게</button>' +
