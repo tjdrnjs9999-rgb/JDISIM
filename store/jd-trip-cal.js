@@ -6,7 +6,7 @@
   'use strict';
   var CSS_ID = 'jdTripCalCss';
   var CSS = [
-    '.jdcal{background:#fff;border:1px solid #EFF2F6;border-radius:16px;padding:14px 12px;max-width:420px;}',
+    '.jdcal{background:#fff;border:1px solid #EFF2F6;border-radius:16px;padding:14px 12px;max-width:420px;margin:0 auto;}',
     '.jdcal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;}',
     '.jdcal-title{font-size:1.0625rem;font-weight:900;color:#101623;letter-spacing:-0.01em;}',
     '.jdcal-nav{width:44px;height:44px;border:1.5px solid #E2E8F0;border-radius:12px;background:#fff;color:#334155;font-size:1.0625rem;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;}',
