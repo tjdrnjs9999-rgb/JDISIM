@@ -1,0 +1,106 @@
+/* ============================================================
+   JDISIM Design Tokens v1 — 단일 정본 (2026-07-18)
+   모든 표면(index·mobile·issue·guide·login)이 이 파일만 참조한다.
+   규칙:
+   1) 색·크기·그림자·z-index·모션의 리터럴 값은 이 파일에만 존재
+   2) styles.css / premium.css / 인라인은 var() 참조로 수렴 (Phase 2~3)
+   3) 신규 UI는 토큰 밖 값 사용 금지
+   ============================================================ */
+:root {
+  /* ---------- Brand · Orange (여우) — 유일 정본 ---------- */
+  --jd-brand-50:  #FFF4EC;
+  --jd-brand-100: #FFE4D1;
+  --jd-brand-200: #FEC9A4;
+  --jd-brand-300: #FCA46A;
+  --jd-brand-400: #F8823B;
+  --jd-brand-500: #F1690D;   /* Primary — 로고·CTA */
+  --jd-brand-600: #D95903;   /* hover */
+  --jd-brand-700: #B04A06;   /* pressed · 흰 배경 위 브랜드 텍스트(4.5:1↑) */
+  --jd-brand-800: #8A3B08;
+  --jd-brand-900: #5C2807;
+
+  /* ---------- Secondary · Teal (스카프) ---------- */
+  --jd-teal-50:  #EAF7F5;
+  --jd-teal-100: #CDEeE9;
+  --jd-teal-300: #6CCDC0;
+  --jd-teal-500: #1B8E82;   /* Secondary — 검증·현지망·케어 */
+  --jd-teal-600: #157569;
+  --jd-teal-700: #0F5D54;
+
+  /* ---------- Neutral (잉크·그레이) ---------- */
+  --jd-ink:        #101623;  /* 본문 최강조 */
+  --jd-neutral-900:#1E293B;
+  --jd-neutral-700:#334155;  /* 본문 */
+  --jd-neutral-500:#64748B;  /* 보조 (흰 배경 4.5:1 통과) */
+  --jd-neutral-400:#8B94A7;  /* 캡션 — 12px 미만 금지 */
+  --jd-neutral-300:#CBD5E1;  /* 비활성 텍스트 */
+  --jd-neutral-200:#E2E8F0;  /* 라인 강 */
+  --jd-neutral-100:#EFF2F6;  /* 라인 약 */
+  --jd-neutral-50: #F7F8FA;  /* 서피스 약 */
+  --jd-white:      #FFFFFF;
+
+  /* ---------- Semantic ---------- */
+  --jd-success: #16A34A;  --jd-success-bg: #F0FDF4;  --jd-success-line: #BBF7D0;
+  --jd-warning: #B45309;  --jd-warning-bg: #FFFBEB;  --jd-warning-line: #FDE68A;
+  --jd-danger:  #DC2626;  --jd-danger-bg:  #FEF2F2;  --jd-danger-line:  #FECACA;
+  --jd-info:    #2563EB;  --jd-info-bg:    #EFF6FF;  --jd-info-line:    #BFDBFE;
+
+  /* ---------- Background / Surface ---------- */
+  --jd-bg:        var(--jd-white);
+  --jd-surface:   var(--jd-neutral-50);
+  --jd-card:      var(--jd-white);
+  --jd-line:      var(--jd-neutral-100);
+  --jd-line-2:    var(--jd-neutral-200);
+
+  /* ---------- Typography — Pretendard 단일 스택 ---------- */
+  --jd-font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --jd-font-mono: 'SF Mono', ui-monospace, Menlo, monospace;  /* ICCID·코드 전용 */
+  /* 8단 스케일 (px / line-height / weight 권장) */
+  --jd-t-display: 2.0rem;    /* 32 · 1.25 · 900 — 히어로 한정 */
+  --jd-t-h1:      1.625rem;  /* 26 · 1.3  · 900 */
+  --jd-t-h2:      1.375rem;  /* 22 · 1.35 · 800 */
+  --jd-t-h3:      1.1875rem; /* 19 · 1.4  · 800 */
+  --jd-t-body-lg: 1.0625rem; /* 17 · 1.6  · 500~700 */
+  --jd-t-body:    0.9375rem; /* 15 · 1.6  · 500 — 기본 본문 */
+  --jd-t-caption: 0.84375rem;/* 13.5 · 1.5 · 600 */
+  --jd-t-micro:   0.75rem;   /* 12 · 1.45 · 700 — 최소 허용 크기 */
+  --jd-lh-tight: 1.3;  --jd-lh-body: 1.6;  --jd-lh-caption: 1.5;
+
+  /* ---------- Spacing — 8pt 그리드 ---------- */
+  --jd-s-1: 4px;  --jd-s-2: 8px;   --jd-s-3: 12px;  --jd-s-4: 16px;
+  --jd-s-5: 24px; --jd-s-6: 32px;  --jd-s-7: 48px;  --jd-s-8: 64px;
+
+  /* ---------- Radius — 4단 ---------- */
+  --jd-r-sm: 8px;    /* 칩·인풋 내부 */
+  --jd-r-md: 12px;   /* 버튼·인풋 */
+  --jd-r-lg: 16px;   /* 카드·시트 */
+  --jd-r-full: 999px;
+
+  /* ---------- Elevation — 4단 ---------- */
+  --jd-e-1: 0 1px 2px rgba(16,22,35,0.05);
+  --jd-e-2: 0 2px 8px rgba(16,22,35,0.07);
+  --jd-e-3: 0 8px 24px rgba(16,22,35,0.10);
+  --jd-e-4: 0 16px 48px rgba(16,22,35,0.16);
+  --jd-e-brand: 0 6px 18px rgba(241,105,13,0.28);  /* Primary CTA 전용 */
+
+  /* ---------- Z-index — 6단 (이 밖의 값 금지) ---------- */
+  --jd-z-base: 0;
+  --jd-z-dropdown: 100;
+  --jd-z-sticky: 200;     /* 헤더·하단바·Sticky CTA */
+  --jd-z-overlay: 300;    /* dim */
+  --jd-z-modal: 400;      /* 모달·바텀시트 */
+  --jd-z-toast: 500;
+
+  /* ---------- Motion — 3단 ---------- */
+  --jd-m-fast: 120ms;   /* hover·press */
+  --jd-m-base: 200ms;   /* fade·slide */
+  --jd-m-slow: 320ms;   /* 시트·페이지 전환 */
+  --jd-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---------- Touch ---------- */
+  --jd-tap-min: 44px;   /* 탭 가능 요소 최소 높이 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --jd-m-fast: 0ms; --jd-m-base: 0ms; --jd-m-slow: 0ms; }
+}

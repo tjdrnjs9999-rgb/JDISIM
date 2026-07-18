@@ -25,7 +25,7 @@
   <meta name="twitter:description" content="전 세계 150개국 eSIM, 주문 후 빠르게 QR코드 발송. 공항 대기 없이 스캔 한 번으로 현지 데이터 개통!">
   <meta name="twitter:image" content="https://jdisim.co.kr/images/fox-hello.png">
   <meta name="description" content="전 세계 150개국 데이터를 공항 대기 없이 QR코드로 간편하게 로밍하세요. 속도 저하 없는 1등 로컬망 요금제를 가장 합리적인 가격에 선보입니다.">
-  <meta name="theme-color" content="#F97316">
+  <meta name="theme-color" content="#F1690D">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -94,6 +94,8 @@
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260716a">
   <link rel="stylesheet" href="premium.css?v=20260715a">
+  <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
+  <link rel="stylesheet" href="jd-ui.css?v=20260718b">
 <style id="hero-light-critical">
     /* 라이트 히어로 강제 — 캐시된 구 CSS 무력화 */
     .m-hero, .hero-video-frame { background: linear-gradient(165deg,#FFFDFB 0%,#FFF1E2 42%,#DFF4F1 100%) !important; }
@@ -101,10 +103,10 @@
     .m-hero-content { color: #221510 !important; }
     .m-hero-title, .hero-video-title { color: #221510 !important; text-shadow: 0 2px 14px rgba(255,255,255,0.8) !important; }
     .m-hero-sub { color: #4a3a30 !important; opacity: 1 !important; }
-    .m-hero-badge { background: rgba(255,255,255,0.88) !important; border-color: rgba(242,117,31,0.3) !important; color: #C2410C !important; }
+    .m-hero-badge { background: rgba(255,255,255,0.88) !important; border-color: rgba(241,105,13,0.3) !important; color: #C2410C !important; }
     .m-hero-cta-ghost { background: rgba(255,255,255,0.78) !important; border-color: rgba(34,21,16,0.18) !important; color: #221510 !important; }
     .m-hero-stats { border-top-color: rgba(34,21,16,0.12) !important; color: #221510 !important; }
-    .m-hero-stats strong { color: #E8590C !important; }
+    .m-hero-stats strong { color: #D95903 !important; }
     .m-hero-stat-div { background: rgba(34,21,16,0.14) !important; }
   </style>
 <style id="pc-snap-style">
@@ -176,8 +178,8 @@
       .pc-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 900; display: none; flex-direction: column; gap: 10px; }
       html.pc-snap .pc-dots { display: flex; }
       .pc-dot { width: 7px; height: 7px; border-radius: 999px; border: none; padding: 0; cursor: pointer; background: rgba(120,100,85,0.3); transition: height .3s cubic-bezier(.22,1,.36,1), background .3s; position: relative; }
-      .pc-dot.active { height: 24px; background: var(--accent); box-shadow: 0 2px 8px rgba(242,117,31,0.4); }
-      .pc-dot.active::after { content: attr(data-label); position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 0.68rem; font-weight: 800; color: #C2410C; background: rgba(255,255,255,0.9); border: 1px solid rgba(242,117,31,0.25); padding: 3px 9px; border-radius: 9px; white-space: nowrap; box-shadow: 0 2px 8px rgba(242,117,31,0.12); }
+      .pc-dot.active { height: 24px; background: var(--accent); box-shadow: 0 2px 8px rgba(241,105,13,0.4); }
+      .pc-dot.active::after { content: attr(data-label); position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 0.68rem; font-weight: 800; color: #C2410C; background: rgba(255,255,255,0.9); border: 1px solid rgba(241,105,13,0.25); padding: 3px 9px; border-radius: 9px; white-space: nowrap; box-shadow: 0 2px 8px rgba(241,105,13,0.12); }
     }
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
@@ -189,7 +191,7 @@
     <img src="images/fox-hello.webp" alt="" style="width:96px;animation:jdSpBounce 1.15s ease-in-out infinite;" onerror="this.style.display='none'">
     <div style="font-weight:900;font-size:1.2rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
     <div style="font-size:0.78rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
-    <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F97316,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
+    <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F1690D,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
   </div>
   <style>
     @keyframes jdSpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -199,12 +201,12 @@
     /* ── JD 통합 검색바 (모바일·PC 공통) ── */
     .jd-search { position: relative; margin-bottom: 18px; }
     .jd-search .jd-box { display: flex; align-items: center; gap: 4px; background: #fff; border: 1.5px solid rgba(15,23,42,0.1); border-radius: 16px; padding: 5px 5px 5px 14px; box-shadow: 0 2px 10px rgba(15,23,42,0.05); transition: border-color .18s, box-shadow .18s; }
-    .jd-search .jd-box:focus-within { border-color: #F97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.13); }
+    .jd-search .jd-box:focus-within { border-color: #F1690D; box-shadow: 0 0 0 3px rgba(241,105,13,0.13); }
     .jd-search svg { width: 18px; height: 18px; flex-shrink: 0; color: #94a3b8; }
     .jd-search input { flex: 1; min-width: 0; border: none; outline: none; background: none; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: #0f172a; padding: 10px 6px; }
     .jd-search input::placeholder { color: #a8b3c5; font-weight: 500; }
     .jd-search .jd-x { flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 50%; background: #eef1f6; color: #64748b; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: none; }
-    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F97316,#F59E0B); color: #fff; font-family: inherit; font-size: 0.84rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(249,115,22,0.28); }
+    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F1690D,#F59E0B); color: #fff; font-family: inherit; font-size: 0.84rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(241,105,13,0.28); }
     .jd-search .jd-go:active { transform: scale(0.96); }
     .jd-suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 14px; box-shadow: 0 16px 40px rgba(15,23,42,0.14); overflow: hidden; z-index: 300; display: none; }
     .jd-suggest.on { display: block; animation: jdSgIn .16s ease both; }
@@ -213,7 +215,7 @@
     .jd-sg:hover, .jd-sg:active { background: #FFF7F0; }
     .jd-sg .fl { font-size: 1.25rem; }
     .jd-sg b { font-size: 0.88rem; font-weight: 800; color: #0f172a; }
-    .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F2751F; }
+    .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F1690D; }
 
 
     /* 지역 탭 가로 스크롤 (스크롤 불가 수정) */
@@ -373,22 +375,22 @@
       <section class="globe-section" style="position:relative;margin:56px 0 8px;padding:72px 24px;min-height:100vh;display:flex;align-items:center;background:radial-gradient(1200px 600px at 70% 40%, #EAF6FF 0%, #FFF6EC 55%, #FBF3E8 100%);overflow:hidden;">
         <div style="width:100%;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:0.9fr 1.1fr;gap:32px;align-items:center;position:relative;">
           <div>
-            <span style="display:inline-block;font-size:0.78rem;font-weight:800;letter-spacing:2.5px;color:#FB923C;margin-bottom:14px;">LIVE CONNECTED WORLD</span>
-            <h2 style="margin:0;font-size:2.6rem;line-height:1.25;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
-            <p style="margin:18px 0 0;font-size:1rem;line-height:1.75;color:#6b5d52;">지구본 위의 빛나는 점이 전부 JDISIM이 커버하는 여행지예요.<br>궁금한 나라를 <strong style="color:#f97316;">직접 클릭</strong>해 보세요 — 그 나라 요금제로 바로 이동합니다.</p>
+            <span style="display:inline-block;font-size:0.78rem;font-weight:800;letter-spacing:2.5px;color:#F8823B;margin-bottom:14px;">LIVE CONNECTED WORLD</span>
+            <h2 style="margin:0;font-size:2.6rem;line-height:1.25;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F1690D,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
+            <p style="margin:18px 0 0;font-size:1rem;line-height:1.75;color:#6b5d52;">지구본 위의 빛나는 점이 전부 JDISIM이 커버하는 여행지예요.<br>궁금한 나라를 <strong style="color:#F1690D;">직접 클릭</strong>해 보세요 — 그 나라 요금제로 바로 이동합니다.</p>
             <div style="display:flex;gap:22px;margin-top:28px;">
-              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="150">0</span><span style="color:#f97316;">+</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">커버 국가</div></div>
+              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="150">0</span><span style="color:#F1690D;">+</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">커버 국가</div></div>
               <div style="width:1px;background:rgba(34,21,16,0.12);"></div>
-              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="15000">0</span><span style="color:#f97316;">+</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">판매 요금제</div></div>
+              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="15000">0</span><span style="color:#F1690D;">+</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">판매 요금제</div></div>
               <div style="width:1px;background:rgba(34,21,16,0.12);"></div>
-              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="10">0</span><span style="color:#f97316;">초</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">QR 개통</div></div>
+              <div><div style="font-size:1.6rem;font-weight:900;color:#221510;"><span class="globe-count" data-to="10">0</span><span style="color:#F1690D;">초</span></div><div style="font-size:0.78rem;color:#64748b;font-weight:700;">QR 개통</div></div>
             </div>
           </div>
           <div style="position:relative;">
             <div id="pcGlobe" style="width:100%;height:620px;"></div>
             <div style="position:absolute;left:-14px;bottom:24px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none;animation:romiFloat 3.6s ease-in-out infinite;">
-              <div style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.8rem;font-weight:800;padding:9px 15px;border-radius:18px 18px 18px 4px;box-shadow:0 8px 22px rgba(249,115,22,0.45);">어디로 떠날까? 궁금한 나라를 콕! 🌏</div>
-              <img loading="lazy" src="images/fox-hello.webp" alt="로미" style="width:110px;filter:drop-shadow(0 10px 24px rgba(249,115,22,0.35));" onerror="this.parentNode.style.display='none'">
+              <div style="background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.8rem;font-weight:800;padding:9px 15px;border-radius:18px 18px 18px 4px;box-shadow:0 8px 22px rgba(241,105,13,0.45);">어디로 떠날까? 궁금한 나라를 콕! 🌏</div>
+              <img loading="lazy" src="images/fox-hello.webp" alt="로미" style="width:110px;filter:drop-shadow(0 10px 24px rgba(241,105,13,0.35));" onerror="this.parentNode.style.display='none'">
             </div>
             <div style="text-align:center;font-size:0.74rem;font-weight:700;color:#475569;margin-top:-4px;">🖱️ 드래그로 돌려보고, 국가 점을 클릭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져 있어요</span></div>
           </div>
@@ -461,7 +463,7 @@
         가이드·FAQ로 내려가려 하면 후기 상단으로 되감기는 스크롤 트랩을 만들었음) */
 
     /* ===== 전역 마이크로 디테일 ===== */
-    ::selection { background: rgba(249, 115, 22, 0.22); }
+    ::selection { background: rgba(241,105,13, 0.22); }
     body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     /* ===== 전역: 스크롤바 전면 숨김 (페이지·탭바·시트 등 모든 스크롤 영역) ===== */
     * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
@@ -536,31 +538,31 @@
         </div>
         <style>
           .ai2-head { text-align: center; margin-bottom: 34px; }
-          .ai2-eyebrow { font-size: 0.74rem; font-weight: 800; letter-spacing: 3px; color: #F2751F; }
-          .app-info-title em { font-style: normal; background: linear-gradient(100deg, #FF8A3C, #E8590C); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+          .ai2-eyebrow { font-size: 0.74rem; font-weight: 800; letter-spacing: 3px; color: #F1690D; }
+          .app-info-title em { font-style: normal; background: linear-gradient(100deg, #F8823B, #D95903); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
           .ai2-sub { margin: 10px 0 0; font-size: 0.95rem; color: #8a7a6d; font-weight: 600; }
           .ai2-grid { gap: 22px; }
           .ai2-card {
             position: relative; overflow: hidden; cursor: pointer;
             min-height: 300px; border-radius: 24px; padding: 28px 26px;
             background: linear-gradient(160deg, #FFFDFB 0%, #FFF3E6 100%);
-            border: 1px solid rgba(242, 117, 31, 0.16);
-            box-shadow: 0 10px 30px rgba(242, 117, 31, 0.08);
+            border: 1px solid rgba(241,105,13, 0.16);
+            box-shadow: 0 10px 30px rgba(241,105,13, 0.08);
             transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s;
           }
           .ai2-c2 { background: linear-gradient(160deg, #FDFEFF 0%, #E9F6F3 100%); border-color: rgba(43,179,163,0.2); }
           .ai2-c3 { background: linear-gradient(160deg, #FFFDFB 0%, #FBEFE0 100%); }
-          .ai2-card:hover { transform: translateY(-8px); box-shadow: 0 22px 44px rgba(242, 117, 31, 0.16); }
-          .ai2-tag { display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 2px; color: #C2410C; background: rgba(255,255,255,0.8); border: 1px solid rgba(242,117,31,0.25); padding: 5px 12px; border-radius: 999px; }
+          .ai2-card:hover { transform: translateY(-8px); box-shadow: 0 22px 44px rgba(241,105,13, 0.16); }
+          .ai2-tag { display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 2px; color: #C2410C; background: rgba(255,255,255,0.8); border: 1px solid rgba(241,105,13,0.25); padding: 5px 12px; border-radius: 999px; }
           .ai2-c2 .ai2-tag { color: #0f766e; border-color: rgba(43,179,163,0.3); }
           .ai2-card h3 { margin: 16px 0 10px; font-size: 1.5rem; line-height: 1.3; font-weight: 800; color: #221510; letter-spacing: -0.02em; }
-          .ai2-card h3 em { font-style: normal; color: #E8590C; }
+          .ai2-card h3 em { font-style: normal; color: #D95903; }
           .ai2-c2 h3 em { color: #0f9488; }
           .ai2-card p { margin: 0; font-size: 0.9rem; line-height: 1.65; color: #7a6a5d; font-weight: 600; }
-          .ai2-go { display: inline-block; margin-top: 16px; font-size: 0.82rem; font-weight: 800; color: #E8590C; transition: transform .25s; }
+          .ai2-go { display: inline-block; margin-top: 16px; font-size: 0.82rem; font-weight: 800; color: #D95903; transition: transform .25s; }
           .ai2-c2 .ai2-go { color: #0f9488; }
           .ai2-card:hover .ai2-go { transform: translateX(4px); }
-          .ai2-fox { position: absolute; right: -8px; bottom: -12px; width: 128px; filter: drop-shadow(0 10px 18px rgba(242,117,31,0.25)); transition: transform .35s cubic-bezier(.22,1,.36,1); pointer-events: none; }
+          .ai2-fox { position: absolute; right: -8px; bottom: -12px; width: 128px; filter: drop-shadow(0 10px 18px rgba(241,105,13,0.25)); transition: transform .35s cubic-bezier(.22,1,.36,1); pointer-events: none; }
           .ai2-card:hover .ai2-fox { transform: translateY(-8px) rotate(-3deg) scale(1.06); }
           .ai2-orb { position: absolute; right: -36px; top: -36px; width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, rgba(255,170,90,0.3), transparent 70%); pointer-events: none; }
           .ai2-c2 .ai2-orb { background: radial-gradient(circle, rgba(64,205,190,0.25), transparent 70%); }
@@ -659,7 +661,7 @@
                 <ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--text-muted); text-align: left;">
                   <li style="margin-bottom: 8px;"><strong>설치(다운로드) 전:</strong> QR코드가 발송된 후라도 프로필을 단말기에 등록하지 않았다면 언제든 취소 가능, 100% 전액 환불됩니다.</li>
                   <li style="margin-bottom: 8px;"><strong>설치(다운로드) 후:</strong> 디지털 상품 특성상 환불이 불가합니다. 단, 현지에서 정상 개통되지 않아 고객센터 접수 후에도 해결되지 않으면 100% 환불을 보장합니다.</li>
-                  <li style="margin-bottom: 8px;"><strong>발급 장애·상품 불량 시:</strong> 장애 확인 즉시 재발급 또는 100% 환불 처리해 드립니다. (<a href="refund.html" style="color:#F2751F;font-weight:700;">환불 규정 전문</a>)</li>
+                  <li style="margin-bottom: 8px;"><strong>발급 장애·상품 불량 시:</strong> 장애 확인 즉시 재발급 또는 100% 환불 처리해 드립니다. (<a href="refund.html" style="color:#F1690D;font-weight:700;">환불 규정 전문</a>)</li>
                 </ul>
               </div>
             </div>
@@ -878,45 +880,45 @@
           <style>
             /* store-meta: 티켓·배너·카운트를 세로 스택 풀폭으로 (flex 짓눌림 방지) */
             .store-meta { display: block; }
-            .rg-ticket { position: relative; background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%); border: 1px solid rgba(242,117,31,0.16); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 36px rgba(242,117,31,0.1); }
-            .rg-edge { height: 5px; background: linear-gradient(90deg, #F97316, #F59E0B 40%, #2BB3A3 70%, #F97316); background-size: 200% 100%; animation: rgEdgeFlow 8s linear infinite; }
+            .rg-ticket { position: relative; background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%); border: 1px solid rgba(241,105,13,0.16); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 36px rgba(241,105,13,0.1); }
+            .rg-edge { height: 5px; background: linear-gradient(90deg, #F1690D, #F59E0B 40%, #2BB3A3 70%, #F1690D); background-size: 200% 100%; animation: rgEdgeFlow 8s linear infinite; }
             @keyframes rgEdgeFlow { 0% { background-position: 0 0; } 100% { background-position: 200% 0; } }
             .rg-inner { display: grid; grid-template-columns: 282px 2px 1fr; align-items: stretch; gap: 0 24px; padding: 0; }
             /* ── 좌측 티켓 스텁 ── */
-            .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 26px 22px 26px 28px; background: linear-gradient(170deg, rgba(249,115,22,0.055), rgba(245,158,11,0.02) 70%); }
-            .rg-eyebrow { font-size: 0.68rem; font-weight: 900; letter-spacing: 2.8px; color: #F97316; }
+            .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 26px 22px 26px 28px; background: linear-gradient(170deg, rgba(241,105,13,0.055), rgba(245,158,11,0.02) 70%); }
+            .rg-eyebrow { font-size: 0.68rem; font-weight: 900; letter-spacing: 2.8px; color: #F1690D; }
             .rg-title { font-size: 1.22rem; font-weight: 900; line-height: 1.4; color: #221510; letter-spacing: -0.018em; word-break: keep-all; }
             .rg-code { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
             .rg-barcode { display: block; width: 128px; height: 24px; opacity: 0.62; background: repeating-linear-gradient(90deg, #221510 0 2px, transparent 2px 4px, #221510 4px 5px, transparent 5px 9px, #221510 9px 12px, transparent 12px 14px); }
             .rg-code span { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.2px; color: #b09a8a; font-family: 'SF Mono', 'Courier New', monospace; }
-            .rg-fox { position: absolute; right: 12px; bottom: 10px; width: 78px; filter: drop-shadow(0 6px 14px rgba(249,115,22,0.28)); animation: rgFoxFloat 3.6s ease-in-out infinite; }
+            .rg-fox { position: absolute; right: 12px; bottom: 10px; width: 78px; filter: drop-shadow(0 6px 14px rgba(241,105,13,0.28)); animation: rgFoxFloat 3.6s ease-in-out infinite; }
             @keyframes rgFoxFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
             /* ── 세로 절취선 (펀칭홀) ── */
-            .rg-perf { position: relative; width: 0; border-left: 2px dashed rgba(242,117,31,0.22); }
-            .rg-perf::before, .rg-perf::after { content: ''; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #FAF8F4; border: 1px solid rgba(242,117,31,0.16); }
+            .rg-perf { position: relative; width: 0; border-left: 2px dashed rgba(241,105,13,0.22); }
+            .rg-perf::before, .rg-perf::after { content: ''; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #FAF8F4; border: 1px solid rgba(241,105,13,0.16); }
             .rg-perf::before { top: -8px; }
             .rg-perf::after { bottom: -8px; }
             /* ── 우측 보장 3열 (카드형) ── */
             .rg-rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-content: center; padding: 22px 26px 22px 0; }
-            .rg-row { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic badge" "txt txt"; row-gap: 13px; align-items: start; min-width: 0; padding: 18px 16px 17px; border-radius: 17px; background: rgba(255,255,255,0.75); border: 1px dashed rgba(242,117,31,0.2); text-decoration: none; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.25s, box-shadow 0.25s, border-color 0.25s; }
-            .rg-row:hover { transform: translateY(-4px); background: #FFFFFF; border-color: rgba(242,117,31,0.4); box-shadow: 0 14px 28px rgba(242,117,31,0.13); }
+            .rg-row { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic badge" "txt txt"; row-gap: 13px; align-items: start; min-width: 0; padding: 18px 16px 17px; border-radius: 17px; background: rgba(255,255,255,0.75); border: 1px dashed rgba(241,105,13,0.2); text-decoration: none; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.25s, box-shadow 0.25s, border-color 0.25s; }
+            .rg-row:hover { transform: translateY(-4px); background: #FFFFFF; border-color: rgba(241,105,13,0.4); box-shadow: 0 14px 28px rgba(241,105,13,0.13); }
             .rg-row:hover .rg-badge { transform: scale(1.14) rotate(-6deg); }
             .rg-ic { grid-area: ic; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.28rem; }
-            .rg-ic-orange { background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(249,115,22,0.05)); }
+            .rg-ic-orange { background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(241,105,13,0.05)); }
             .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.05)); }
             .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.05)); }
             .rg-txt { grid-area: txt; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
             .rg-txt strong { font-size: 0.93rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.42; }
             .rg-txt span { font-size: 0.76rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.48; }
             .rg-badge { grid-area: badge; justify-self: end; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
-            .rg-b-orange { background: linear-gradient(135deg, #F97316, #FB923C); box-shadow: 0 3px 9px rgba(249,115,22,0.35); }
+            .rg-b-orange { background: linear-gradient(135deg, #F1690D, #F8823B); box-shadow: 0 3px 9px rgba(241,105,13,0.35); }
             .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
             .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
             @media (max-width: 959px) {
               .rg-inner { grid-template-columns: 1fr; gap: 0; }
               .rg-stub { padding: 20px 20px 16px; }
               .rg-fox { width: 64px; bottom: 8px; }
-              .rg-perf { width: auto; height: 0; margin: 0 16px; border-left: none; border-top: 2px dashed rgba(242,117,31,0.22); }
+              .rg-perf { width: auto; height: 0; margin: 0 16px; border-left: none; border-top: 2px dashed rgba(241,105,13,0.22); }
               .rg-perf::before, .rg-perf::after { top: -8px; bottom: auto; }
               .rg-perf::before { left: -24px; }
               .rg-perf::after { left: auto; right: -24px; }
@@ -927,19 +929,19 @@
             }
             @media (prefers-reduced-motion: reduce) { .rg-fox, .rg-edge { animation: none !important; } .rg-row, .rg-badge { transition: none !important; } }
             /* ── 📱 자가진단 배너 (웜 팔레트 · 티켓 자매 디자인) ── */
-            .dc-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 15px 20px; background: linear-gradient(165deg, #FFFFFF, #FFF9F3); border: 1px dashed rgba(242,117,31,0.28); border-radius: 18px; box-shadow: 0 6px 18px rgba(242,117,31,0.06); cursor: pointer; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, border-color 0.2s; }
-            .dc-banner:hover { transform: translateY(-2px); border-color: rgba(242,117,31,0.5); box-shadow: 0 12px 26px rgba(242,117,31,0.12); }
-            .dc-banner:focus-visible { outline: 2px solid rgba(249,115,22,0.55); outline-offset: 2px; }
-            .dc-ic { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(245,158,11,0.08)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+            .dc-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 15px 20px; background: linear-gradient(165deg, #FFFFFF, #FFF9F3); border: 1px dashed rgba(241,105,13,0.28); border-radius: 18px; box-shadow: 0 6px 18px rgba(241,105,13,0.06); cursor: pointer; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, border-color 0.2s; }
+            .dc-banner:hover { transform: translateY(-2px); border-color: rgba(241,105,13,0.5); box-shadow: 0 12px 26px rgba(241,105,13,0.12); }
+            .dc-banner:focus-visible { outline: 2px solid rgba(241,105,13,0.55); outline-offset: 2px; }
+            .dc-ic { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(245,158,11,0.08)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
             .dc-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
             .dc-tx strong { font-size: 0.95rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
             .dc-tx span { font-size: 0.78rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; }
-            .dc-go { margin-left: auto; flex-shrink: 0; font-size: 0.82rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #F97316, #F59E0B); padding: 10px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(249,115,22,0.3); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+            .dc-go { margin-left: auto; flex-shrink: 0; font-size: 0.82rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #F1690D, #F59E0B); padding: 10px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(241,105,13,0.3); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
             .dc-banner:hover .dc-go { transform: translateX(3px); }
             @media (max-width: 640px) { .dc-go { padding: 9px 14px; font-size: 0.78rem; } }
             /* ── 검색 결과 카운트 칩 ── */
-            .store-meta .product-count { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 14px; padding: 9px 17px; background: #FFFFFF; border: 1px solid rgba(242,117,31,0.14); border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #8a7a6d; box-shadow: 0 4px 12px rgba(242,117,31,0.05); }
-            .store-meta .product-count span { color: #F97316; font-weight: 900; }
+            .store-meta .product-count { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 14px; padding: 9px 17px; background: #FFFFFF; border: 1px solid rgba(241,105,13,0.14); border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #8a7a6d; box-shadow: 0 4px 12px rgba(241,105,13,0.05); }
+            .store-meta .product-count span { color: #F1690D; font-weight: 900; }
           </style>
           <!-- 📱 기종 자가진단 배너 -->
           <div class="dc-banner" role="button" tabindex="0" aria-label="기종 자가진단 열기" onclick="var b=document.getElementById('navDeviceCheckBtn'); if(b) b.click();" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
@@ -1271,7 +1273,7 @@
         <div class="checkout-form-group" id="checkoutActivationDateGroup" style="display: none; margin-top: 20px;">
           <label class="checkout-label" for="checkoutActivationDate">📅 현지 개통 희망일 지정 (필수)</label>
           <input type="date" class="checkout-input" id="checkoutActivationDate" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size: 0.95rem;">
-          <div id="activationDateHint" style="display:none; margin-top:9px; padding:10px 13px; background:linear-gradient(165deg,#FFFFFF,#FFF9F3); border:1px dashed rgba(242,117,31,0.3); border-radius:12px; font-size:0.8rem; font-weight:600; color:#8a7a6d; line-height:1.55; word-break:keep-all;"></div>
+          <div id="activationDateHint" style="display:none; margin-top:9px; padding:10px 13px; background:linear-gradient(165deg,#FFFFFF,#FFF9F3); border:1px dashed rgba(241,105,13,0.3); border-radius:12px; font-size:0.8rem; font-weight:600; color:#8a7a6d; line-height:1.55; word-break:keep-all;"></div>
           <p style="font-size: 0.75rem; color: var(--accent-warning); margin-top: 6px; line-height: 1.4; font-weight: 500;">
             ※ 해당 상품은 사전 개통 예약이 필수입니다. 현지 도착 즉시 원활한 개통 완료를 위해, 실제 사용 예정일보다 <strong>하루 전날</strong>로 개통일을 지정해 주시기 바랍니다.
           </p>
@@ -1396,12 +1398,12 @@
         <p style="margin-bottom: 24px;">1. "JDISIM"이란 회사가 디지털 무선 서비스(eSIM)를 이용자에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 상품을 거래할 수 있도록 설정한 가상의 영업장을 말합니다.<br>2. "이용자"란 사이트에 접속하여 본 약관에 따라 서비스를 이용하는 고객을 말합니다.</p>
 
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">제 3 조 (디지털 상품의 특성 및 교환/환불)</h3>
-        <p style="margin-bottom: 24px;">JDISIM에서 판매하는 상품은 QR코드 스캔(설치)을 통해 효력이 발생하는 디지털 상품(eSIM)입니다. 「전자상거래법」 제17조 제2항 제5호에 따라 <strong>eSIM 프로필의 설치(다운로드)가 개시된 이후에는 청약철회가 제한</strong>되며, 이 사실은 결제 전 고지됩니다. <strong>설치 전에는 QR코드가 발송된 후라도 100% 환불이 가능</strong>합니다. 구매 전 반드시 기기 호환성(다이얼 *#06# 입력 시 EID 표시 여부)을 진단해 주시기 바랍니다. 세부 기준은 <a href="refund.html" style="color:#F2751F;font-weight:700;">취소·환불 규정</a>을 따릅니다.</p>
+        <p style="margin-bottom: 24px;">JDISIM에서 판매하는 상품은 QR코드 스캔(설치)을 통해 효력이 발생하는 디지털 상품(eSIM)입니다. 「전자상거래법」 제17조 제2항 제5호에 따라 <strong>eSIM 프로필의 설치(다운로드)가 개시된 이후에는 청약철회가 제한</strong>되며, 이 사실은 결제 전 고지됩니다. <strong>설치 전에는 QR코드가 발송된 후라도 100% 환불이 가능</strong>합니다. 구매 전 반드시 기기 호환성(다이얼 *#06# 입력 시 EID 표시 여부)을 진단해 주시기 바랍니다. 세부 기준은 <a href="refund.html" style="color:#F1690D;font-weight:700;">취소·환불 규정</a>을 따릅니다.</p>
 
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">제 4 조 (회사의 의무)</h3>
         <p style="margin-bottom: 24px;">회사는 본 약관이 정하는 바에 따라 지속적이고 안정적인 서비스를 제공하는 데 최선을 다하며, 이용자의 개인 정보를 보호하기 위해 보안 시스템을 철저히 운영합니다.</p>
         
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">공고일자: 2026년 07월 07일 / 시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="terms.html" style="color:#F2751F;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 이용약관 전문 보기 →</a></p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">공고일자: 2026년 07월 07일 / 시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="terms.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 이용약관 전문 보기 →</a></p>
       </div>
     </div>
   </section>
@@ -1433,7 +1435,7 @@
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">5. 개인정보 보호책임자</h3>
         <p style="margin-bottom: 24px;">• 성명: 김성권<br>• 직책: 대표자<br>• 연락처 / 이메일: jdisim@naver.com</p>
         
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="privacy.html" style="color:#F2751F;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 개인정보처리방침 전문 보기 →</a></p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="privacy.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 개인정보처리방침 전문 보기 →</a></p>
       </div>
     </div>
   </section>
@@ -1455,7 +1457,7 @@
         <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 12px; font-weight: 700;">3. 기술 장애 신고 및 환불 절차</h3>
         <p style="margin-bottom: 24px;">현지에서 데이터 연결 장애 발생 시, 카카오톡 채널 '@제이디아이심'을 통해 즉시 고장 화면 스크린샷과 함께 장애 접수를 해주셔야 합니다. 현지에서 연락 없이 귀국하신 후에는 장애 사실 확인이 불가능하여 환불 처리가 어렵습니다.</p>
         
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="refund.html" style="color:#F2751F;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 취소·환불 규정 전문 보기 →</a></p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="refund.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 취소·환불 규정 전문 보기 →</a></p>
       </div>
     </div>
   </section>
@@ -1589,7 +1591,7 @@
           });
           var box = document.createElement('div');
           box.style.cssText = 'position:fixed;left:10px;bottom:80px;z-index:999999;background:rgba(15,23,42,0.95);color:#4ade80;font-size:12px;font-weight:700;padding:14px 16px;border-radius:12px;line-height:1.8;max-width:320px;font-family:monospace;';
-          box.innerHTML = '<div style="color:#f97316;margin-bottom:4px;">🌏 지구본 진단</div>' + lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
+          box.innerHTML = '<div style="color:#F1690D;margin-bottom:4px;">🌏 지구본 진단</div>' + lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
           document.body.appendChild(box);
         }, 2500);
       }
@@ -1690,7 +1692,7 @@
         if (e.target && e.target.tagName === 'IMG') e.preventDefault();
       });
       try {
-        console.log('%c⚠️ 잠깐!', 'color:#F97316;font-size:28px;font-weight:900;');
+        console.log('%c⚠️ 잠깐!', 'color:#F1690D;font-size:28px;font-weight:900;');
         console.log('%c본 사이트의 코드·디자인·데이터는 JDISIM의 자산입니다.\n무단 복제 및 크롤링은 저작권법에 따라 법적 책임이 따를 수 있습니다.', 'font-size:13px;color:#334155;');
       } catch (e) {}
     })();
@@ -1853,7 +1855,7 @@
     document.addEventListener('dragstart', function (e) {
       if (e.target && e.target.tagName === 'IMG') e.preventDefault();
     });
-    try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F2751F;font-weight:bold;font-size:14px'); } catch (e) {}
+    try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F1690D;font-weight:bold;font-size:14px'); } catch (e) {}
   })();
   </script>
 </body>

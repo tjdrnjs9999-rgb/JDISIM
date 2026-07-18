@@ -1,0 +1,118 @@
+/* ============================================================
+   JDISIM UI v1 — 토큰 위 코어 컴포넌트 + 기존 클래스 호환 매핑
+   (2026-07-18, Phase 2) · jd-tokens.css 뒤에 로드
+   원칙: 기존 클래스명을 토큰으로 재정의 → 마크업 무수정으로 수렴
+         레이아웃(크기·배치)은 건드리지 않고 색·radius·그림자·상태만 통일
+   ============================================================ */
+
+/* ---------- 페이지 가로 오버플로 봉인 (기존 M 버그: 장식 글로우·마퀴가 뷰포트 밖으로) ---------- */
+html, body { overflow-x: hidden; }
+
+/* ---------- 버튼 3변형 (신규 표준 클래스) ---------- */
+.jd-btn {
+  min-height: var(--jd-tap-min);
+  padding: 0 22px;
+  border-radius: var(--jd-r-md);
+  border: none;
+  font-family: var(--jd-font);
+  font-size: var(--jd-t-body);
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background var(--jd-m-fast) var(--jd-ease), transform var(--jd-m-fast) var(--jd-ease), box-shadow var(--jd-m-fast) var(--jd-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.jd-btn:active { transform: scale(0.97); }
+.jd-btn:focus-visible { outline: 3px solid var(--jd-brand-200); outline-offset: 2px; }
+.jd-btn--primary { background: var(--jd-brand-500); color: #fff; box-shadow: var(--jd-e-brand); }
+.jd-btn--primary:hover { background: var(--jd-brand-600); }
+.jd-btn--secondary { background: var(--jd-card); color: var(--jd-brand-700); border: 1.5px solid var(--jd-brand-500); }
+.jd-btn--secondary:hover { background: var(--jd-brand-50); }
+.jd-btn--ghost { background: transparent; color: var(--jd-neutral-700); border: 1.5px solid var(--jd-line-2); }
+.jd-btn--ghost:hover { background: var(--jd-surface); }
+.jd-btn:disabled, .jd-btn[aria-disabled="true"] {
+  background: var(--jd-neutral-100); color: var(--jd-neutral-400);
+  box-shadow: none; cursor: not-allowed; border-color: transparent; transform: none;
+}
+
+/* ---------- 기존 버튼 클래스 → 토큰 수렴 (마크업 무수정 호환층) ---------- */
+.btn-primary, .b-orange { background: var(--jd-brand-500); }
+.btn-primary:hover, .b-orange:hover { background: var(--jd-brand-600); }
+.btn-secondary { border-color: var(--jd-brand-500); color: var(--jd-brand-700); }
+.b-teal { background: var(--jd-teal-500); }
+.b-teal:hover { background: var(--jd-teal-600); }
+.b-amber { background: var(--jd-warning); }
+
+/* ---------- 카드 ---------- */
+.jd-card {
+  background: var(--jd-card);
+  border: 1px solid var(--jd-line);
+  border-radius: var(--jd-r-lg);
+  box-shadow: var(--jd-e-2);
+}
+
+/* ---------- 입력 ---------- */
+.jd-input {
+  width: 100%; min-height: var(--jd-tap-min);
+  border: 1.5px solid var(--jd-line-2);
+  border-radius: var(--jd-r-md);
+  padding: 0 14px;
+  font-family: var(--jd-font); font-size: var(--jd-t-body); color: var(--jd-ink);
+  background: var(--jd-card);
+  outline: none;
+  transition: border-color var(--jd-m-fast) var(--jd-ease), box-shadow var(--jd-m-fast) var(--jd-ease);
+}
+.jd-input:focus { border-color: var(--jd-brand-500); box-shadow: 0 0 0 3px rgba(241,105,13,0.15); }
+.jd-input::placeholder { color: var(--jd-neutral-400); }
+
+/* ---------- 뱃지 ---------- */
+.jd-badge { display: inline-flex; align-items: center; gap: 4px; font-size: var(--jd-t-micro); font-weight: 800; padding: 4px 10px; border-radius: var(--jd-r-full); }
+.jd-badge--brand { background: var(--jd-brand-50); color: var(--jd-brand-700); }
+.jd-badge--teal  { background: var(--jd-teal-50);  color: var(--jd-teal-600); }
+.jd-badge--ok    { background: var(--jd-success-bg); color: var(--jd-success); }
+.jd-badge--warn  { background: var(--jd-warning-bg); color: var(--jd-warning); }
+.jd-badge--bad   { background: var(--jd-danger-bg);  color: var(--jd-danger); }
+
+/* ---------- 알림 박스 (semantic) ---------- */
+.jd-note { border-radius: var(--jd-r-md); padding: 12px 14px; font-size: var(--jd-t-caption); font-weight: 600; line-height: var(--jd-lh-caption); }
+.jd-note--warn { background: var(--jd-warning-bg); border: 1px solid var(--jd-warning-line); color: var(--jd-warning); }
+.jd-note--bad  { background: var(--jd-danger-bg);  border: 1px solid var(--jd-danger-line);  color: var(--jd-danger); }
+.jd-note--ok   { background: var(--jd-success-bg); border: 1px solid var(--jd-success-line); color: var(--jd-success); }
+.jd-note--info { background: var(--jd-info-bg);    border: 1px solid var(--jd-info-line);    color: var(--jd-info); }
+
+/* ---------- 토스트 ---------- */
+.jd-toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: var(--jd-z-toast);
+  background: var(--jd-ink); color: #fff;
+  font-size: var(--jd-t-caption); font-weight: 700;
+  padding: 11px 16px; border-radius: var(--jd-r-md);
+  box-shadow: var(--jd-e-3);
+  animation: jdToastIn var(--jd-m-base) var(--jd-ease);
+}
+@keyframes jdToastIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ---------- 스켈레톤 ---------- */
+.jd-skel {
+  border-radius: var(--jd-r-sm);
+  background: linear-gradient(90deg, var(--jd-neutral-100) 25%, var(--jd-neutral-200) 50%, var(--jd-neutral-100) 75%);
+  background-size: 200% 100%;
+  animation: jdSkel 1.1s infinite;
+}
+@keyframes jdSkel { to { background-position: -200% 0; } }
+
+/* ---------- 모달 · 바텀시트 (레이어 규칙만 — 기존 구현 위 얹기) ---------- */
+.jd-dim { position: fixed; inset: 0; background: rgba(16,22,35,0.45); z-index: var(--jd-z-overlay); animation: jdFade var(--jd-m-base) var(--jd-ease); }
+.jd-modal { z-index: var(--jd-z-modal); border-radius: var(--jd-r-lg); background: var(--jd-card); box-shadow: var(--jd-e-4); }
+.jd-sheet { z-index: var(--jd-z-modal); border-radius: var(--jd-r-lg) var(--jd-r-lg) 0 0; background: var(--jd-card); box-shadow: var(--jd-e-4); animation: jdSheetUp var(--jd-m-slow) var(--jd-ease); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@keyframes jdFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes jdSheetUp { from { transform: translateY(24px); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
+
+/* ---------- 퍼널 터치 타깃 승격 (M3) — 구매 경로 칩 44px ---------- */
+.pw-day-chip { min-height: var(--jd-tap-min) !important; }
+.rf-day { min-height: 40px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .jd-btn, .jd-input, .jd-toast, .jd-dim, .jd-sheet, .jd-skel { animation: none !important; transition: none !important; }
+}

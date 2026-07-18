@@ -17,8 +17,8 @@
   <link rel="stylesheet" href="premium.css?v=20260715a">
   <style>
     :root {
-      --brand: #F2751F;
-      --brand-deep: #E8590C;
+      --brand: #F1690D;
+      --brand-deep: #D95903;
       --teal: #2BB3A3;
       --ink: #221510;
       --muted: #64748b;
@@ -37,7 +37,7 @@
       position: sticky; top: 0; z-index: 100;
       background: rgba(253, 251, 248, 0.86);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(242, 117, 31, 0.12);
+      border-bottom: 1px solid rgba(241,105,13, 0.12);
     }
     .g-header-in { max-width: 760px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
     .g-back {
@@ -48,10 +48,10 @@
     }
     .g-header-title { font-weight: 800; font-size: 1.02rem; flex: 1; }
     .g-store-btn {
-      background: linear-gradient(135deg, #F97316, #F59E0B);
+      background: linear-gradient(135deg, #F1690D, #F59E0B);
       color: #fff; text-decoration: none; font-weight: 800; font-size: 0.8rem;
       padding: 9px 16px; border-radius: 999px;
-      box-shadow: 0 6px 14px rgba(242, 117, 31, 0.3);
+      box-shadow: 0 6px 14px rgba(241,105,13, 0.3);
     }
 
     /* 히어로 */
@@ -60,15 +60,15 @@
       background:
         radial-gradient(120% 90% at 85% 10%, rgba(43, 179, 163, 0.14) 0%, transparent 50%),
         linear-gradient(160deg, #FFF6EC 0%, #FFE9D3 100%);
-      border-bottom: 1px solid rgba(242, 117, 31, 0.14);
+      border-bottom: 1px solid rgba(241,105,13, 0.14);
       padding: 44px 0 30px;
     }
     .g-hero .wrap { position: relative; }
     .g-hero-eyebrow {
       display: inline-block; font-size: 0.66rem; font-weight: 800;
       letter-spacing: 0.22em; text-indent: 0.22em; text-transform: uppercase;
-      color: var(--brand); background: rgba(242, 117, 31, 0.1);
-      border: 1px solid rgba(242, 117, 31, 0.28);
+      color: var(--brand); background: rgba(241,105,13, 0.1);
+      border: 1px solid rgba(241,105,13, 0.28);
       padding: 6px 13px; border-radius: 999px; margin-bottom: 14px;
     }
     .g-hero h1 { font-size: clamp(1.7rem, 6.4vw, 2.3rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.22; }
@@ -109,31 +109,31 @@
     .g-hub-btn .hi { display: block; font-size: 1.65rem; line-height: 1; margin-bottom: 9px; }
     .g-hub-btn b { display: block; font-size: 0.95rem; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
     .g-hub-btn small { display: block; font-size: 0.76rem; font-weight: 700; color: var(--dim); margin-top: 3px; }
-    .g-hub-btn:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(242, 117, 31, 0.1); }
+    .g-hub-btn:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(241,105,13, 0.1); }
     .g-hub-btn.active {
       border-color: var(--brand); background: var(--cream);
-      box-shadow: 0 10px 22px rgba(242, 117, 31, 0.12);
+      box-shadow: 0 10px 22px rgba(241,105,13, 0.12);
     }
     .g-hub-btn.active::after {
       content: '▾ 아래에 열림'; position: absolute; top: 13px; right: 13px;
       font-size: 0.62rem; font-weight: 800; color: var(--brand);
     }
-    .g-hub-btn.hot { border-color: rgba(242, 117, 31, 0.45); }
+    .g-hub-btn.hot { border-color: rgba(241,105,13, 0.45); }
     .g-hub-btn.hot .hi::after { content: ' 🔥'; font-size: 0.9rem; }
     .g-collapsible { display: none; }
     .g-collapsible.open { display: block; animation: heroRise .4s ease both; }
 
     /* 🩺 로미 닥터 1분 진단 */
     .g-doctor-card {
-      background: #fff; border: 1.5px solid rgba(242, 117, 31, 0.3);
+      background: #fff; border: 1.5px solid rgba(241,105,13, 0.3);
       border-radius: var(--radius); padding: 22px;
-      box-shadow: 0 10px 26px rgba(242, 117, 31, 0.08);
+      box-shadow: 0 10px 26px rgba(241,105,13, 0.08);
     }
     .g-doc-smart {
       display: block; width: 100%; text-align: left; cursor: pointer;
       border: none; border-radius: 15px; padding: 15px 16px;
-      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
-      font-family: inherit; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+      background: linear-gradient(135deg, #F1690D, #F59E0B); color: #fff;
+      font-family: inherit; box-shadow: 0 8px 20px rgba(241,105,13, 0.3);
       transition: transform .16s ease;
     }
     .g-doc-smart:hover { transform: translateY(-2px); }
@@ -162,7 +162,7 @@
     .g-doc-step:first-of-type { border-top: none; }
     .g-doc-step .n {
       flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
-      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      background: linear-gradient(135deg, #F1690D, #F59E0B); color: #fff;
       font-size: 0.76rem; font-weight: 900;
       display: flex; align-items: center; justify-content: center; margin-top: 2px;
     }
@@ -174,8 +174,8 @@
     .g-doc-ok { border: 1px solid #bbf7d0; background: #f0fdf4; color: #15803d; }
     .g-doc-esc {
       border: none; color: #fff;
-      background: linear-gradient(135deg, #F97316, #F59E0B);
-      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+      background: linear-gradient(135deg, #F1690D, #F59E0B);
+      box-shadow: 0 6px 16px rgba(241,105,13, 0.3);
     }
     .g-doc-note {
       margin-top: 14px; padding: 13px 15px; border-radius: 13px;
@@ -205,7 +205,7 @@
     }
     .g-check-num {
       flex-shrink: 0; width: 40px; height: 40px; border-radius: 13px;
-      background: var(--cream); border: 1px solid rgba(242, 117, 31, 0.2);
+      background: var(--cream); border: 1px solid rgba(241,105,13, 0.2);
       display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
     }
     .g-check h3 { font-size: 0.98rem; font-weight: 800; margin-bottom: 4px; }
@@ -232,7 +232,7 @@
     .g-step:last-child { border-bottom: none; }
     .g-step-n {
       flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%;
-      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff;
+      background: linear-gradient(135deg, #F1690D, #F59E0B); color: #fff;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.8rem; font-weight: 800;
     }
@@ -240,7 +240,7 @@
     .g-step p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
     .g-path {
       display: inline-block; background: var(--cream);
-      border: 1px solid rgba(242, 117, 31, 0.22); color: var(--brand-deep);
+      border: 1px solid rgba(241,105,13, 0.22); color: var(--brand-deep);
       font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; margin-top: 6px;
     }
 
@@ -254,11 +254,11 @@
     .g-line-row .k small { display: block; font-weight: 600; color: var(--dim); font-size: 0.72rem; margin-top: 1px; }
     .g-pill { flex-shrink: 0; font-size: 0.78rem; font-weight: 800; padding: 6px 13px; border-radius: 999px; }
     .g-pill.main { background: rgba(79, 70, 229, 0.08); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); }
-    .g-pill.jd { background: var(--cream); color: var(--brand-deep); border: 1px solid rgba(242, 117, 31, 0.3); }
+    .g-pill.jd { background: var(--cream); color: var(--brand-deep); border: 1px solid rgba(241,105,13, 0.3); }
     .g-pill.on { background: rgba(3, 169, 78, 0.08); color: #03A94E; border: 1px solid rgba(3, 169, 78, 0.28); }
     .g-pill.off { background: rgba(220, 38, 38, 0.06); color: #DC2626; border: 1px solid rgba(220, 38, 38, 0.22); }
     .g-warn {
-      background: #FFF7ED; border: 1px solid rgba(242, 117, 31, 0.3);
+      background: #FFF7ED; border: 1px solid rgba(241,105,13, 0.3);
       border-radius: 14px; padding: 14px 16px; margin-top: 14px;
       font-size: 0.82rem; color: #9A3412; font-weight: 600; line-height: 1.65;
     }
@@ -268,7 +268,7 @@
     .g-progress { flex: 1; height: 8px; background: #f1ece6; border-radius: 999px; overflow: hidden; }
     .g-progress-bar {
       height: 100%; width: 0%;
-      background: linear-gradient(90deg, #F97316, #F59E0B);
+      background: linear-gradient(90deg, #F1690D, #F59E0B);
       border-radius: 999px; transition: width .4s cubic-bezier(.22,1,.36,1);
     }
     .g-progress-txt { font-size: 0.8rem; font-weight: 800; color: var(--brand); min-width: 64px; text-align: right; }
@@ -281,14 +281,14 @@
     .g-todo input { width: 19px; height: 19px; accent-color: var(--brand); margin-top: 2px; flex-shrink: 0; }
     .g-todo .t { font-size: 0.88rem; font-weight: 700; }
     .g-todo .t small { display: block; font-weight: 600; color: var(--dim); font-size: 0.74rem; margin-top: 2px; }
-    .g-todo:has(input:checked) { background: var(--cream); border-color: rgba(242, 117, 31, 0.35); }
+    .g-todo:has(input:checked) { background: var(--cream); border-color: rgba(241,105,13, 0.35); }
     .g-todo:has(input:checked) .t { text-decoration: line-through; color: var(--dim); }
     .g-todo-phase { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; color: var(--teal); margin: 18px 0 9px; }
     .g-todo-phase:first-of-type { margin-top: 0; }
     .g-done-msg {
       display: none; text-align: center; padding: 16px;
       background: linear-gradient(135deg, #FFF6EC, #FFE9D3);
-      border: 1px solid rgba(242, 117, 31, 0.3); border-radius: 16px;
+      border: 1px solid rgba(241,105,13, 0.3); border-radius: 16px;
       font-weight: 800; color: var(--brand-deep); margin-top: 8px;
     }
     .g-done-msg.show { display: block; animation: heroRise .5s ease both; }
@@ -325,9 +325,9 @@
       font-weight: 800; font-size: 0.9rem; padding: 13px 22px; border-radius: 999px;
     }
     .g-cta-store {
-      background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; text-decoration: none;
+      background: linear-gradient(135deg, #F1690D, #F59E0B); color: #fff; text-decoration: none;
       font-weight: 800; font-size: 0.9rem; padding: 13px 22px; border-radius: 999px;
-      box-shadow: 0 8px 20px rgba(242, 117, 31, 0.4);
+      box-shadow: 0 8px 20px rgba(241,105,13, 0.4);
     }
     .g-footer { text-align: center; font-size: 0.7rem; color: var(--dim); padding: 0 0 40px; line-height: 1.8; }
 
@@ -702,7 +702,7 @@
       'no-qr': { icon: '📮', title: 'QR코드가 안 왔어요', steps: [
         '결제 후 발급까지 <strong>평균 5~15분</strong> 걸려요 — 조금만 기다려 주세요',
         '문자함과 <strong>카카오톡 차단 메시지함</strong>, 이메일 <strong>스팸함</strong>을 확인해 주세요',
-        '<a href="mobile.html#orders" style="color:#F2751F;font-weight:800;">주문 조회 페이지</a>에서 이름·연락처로 검색하면 발급 정보를 볼 수 있어요',
+        '<a href="mobile.html#orders" style="color:#F1690D;font-weight:800;">주문 조회 페이지</a>에서 이름·연락처로 검색하면 발급 정보를 볼 수 있어요',
         '주문이 조회되는데 QR만 안 왔다면 발송 오류일 수 있어요 — 바로 상담으로 도와드릴게요'
       ]},
       'slow': { icon: '🐢', title: '인터넷이 느리거나 자주 끊겨요', steps: [

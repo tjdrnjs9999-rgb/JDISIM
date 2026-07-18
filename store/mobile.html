@@ -107,7 +107,7 @@
         b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:99998;background:#0f172a;color:#fff;border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 14px 34px rgba(15,23,42,0.4);font-size:0.78rem;font-weight:700;line-height:1.5;';
         b.innerHTML = '<img src="icon-192.png" style="width:36px;height:36px;border-radius:10px;flex-shrink:0;" alt="">' +
           '<div style="min-width:0;">' + html + '</div>' +
-          (onAction ? '<button id="pwaGo" style="flex-shrink:0;margin-left:auto;background:linear-gradient(135deg,#F97316,#F59E0B);border:none;color:#fff;font-weight:800;font-size:0.74rem;padding:9px 13px;border-radius:20px;">설치</button>' : '') +
+          (onAction ? '<button id="pwaGo" style="flex-shrink:0;margin-left:auto;background:linear-gradient(135deg,#F1690D,#F59E0B);border:none;color:#fff;font-weight:800;font-size:0.74rem;padding:9px 13px;border-radius:20px;">설치</button>' : '') +
           '<button id="pwaX" style="flex-shrink:0;background:none;border:none;color:#64748b;font-size:1rem;font-weight:800;padding:4px;' + (onAction ? '' : 'margin-left:auto;') + '">✕</button>';
         document.body.appendChild(b);
         document.getElementById('pwaX').onclick = function () { b.remove(); try { localStorage.setItem('jd_pwa_hint', '1'); } catch (e) {} };
@@ -168,7 +168,7 @@
   <meta property="og:url" content="https://jdisim.co.kr">
   <meta name="twitter:card" content="summary">
   <meta name="description" content="JDISIM 모바일 전용 앱 스타일 스토어. 주문 후 빠르게 이심 QR 발송!">
-  <meta name="theme-color" content="#F97316">
+  <meta name="theme-color" content="#F1690D">
   <meta name="color-scheme" content="only light">
   <meta name="google-site-verification" content="5qoNvbOir5nIZgUNzUSL4m_cilh118YFylNVuEkwRU4">
   <meta name="supported-color-schemes" content="light">
@@ -198,6 +198,8 @@
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260713c">
   <link rel="stylesheet" href="premium.css?v=20260715a">
+  <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
+  <link rel="stylesheet" href="jd-ui.css?v=20260718b">
   <!-- 폰트 정본 (2026-07-15): Pretendard 하나로 통일 — 국문·숫자 모두 선명, 로케비와 동급 렌더링 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <!-- Lucide Icons CDN -->
@@ -275,7 +277,7 @@
     }
 
     /* Header Bar */
-    .app-header {  background: #F2751F !important; 
+    .app-header {  background: #F1690D !important; 
       position: sticky;
       top: 0;
       z-index: 100;
@@ -300,7 +302,7 @@
     }
 
     .app-logo-badge {
-      background: linear-gradient(135deg, #F97316, #a855f7);
+      background: linear-gradient(135deg, #F1690D, #a855f7);
       width: 28px;
       height: 28px;
       border-radius: 8px;
@@ -391,13 +393,13 @@
     }
 
     .nav-item.active {
-      color: #F2751F;
+      color: #F1690D;
     }
 
     /* Home Hero Promo Banner */
     .hero-promo {
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.07), rgba(168, 85, 247, 0.07));
-      border: 1px solid rgba(249, 115, 22, 0.15);
+      background: linear-gradient(135deg, rgba(241,105,13, 0.07), rgba(168, 85, 247, 0.07));
+      border: 1px solid rgba(241,105,13, 0.15);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 24px;
@@ -431,7 +433,7 @@
     }
 
     .hero-promo-btn {
-      background: linear-gradient(90deg, #F97316, #a855f7);
+      background: linear-gradient(90deg, #F1690D, #a855f7);
       border: none;
       color: white;
       font-weight: 700;
@@ -439,7 +441,7 @@
       border-radius: 30px;
       font-size: 0.85rem;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+      box-shadow: 0 4px 15px rgba(241,105,13, 0.3);
     }
 
     /* Horizontal Category Scroller */
@@ -473,10 +475,10 @@
     }
 
     .category-tab.active {
-      background: rgba(242, 117, 31, 0.08);
-      border-color: #F2751F;
-      color: #F2751F;
-      box-shadow: 0 2px 8px rgba(242, 117, 31, 0.1);
+      background: rgba(241,105,13, 0.08);
+      border-color: #F1690D;
+      color: #F1690D;
+      box-shadow: 0 2px 8px rgba(241,105,13, 0.1);
     }
 
     /* Search Bar */
@@ -486,17 +488,17 @@
     .m-cat { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 2px 2px 4px; margin-bottom: 14px; }
     .m-cat::-webkit-scrollbar { display: none; }
     .m-cat-btn { flex-shrink: 0; padding: 9px 14px; border-radius: 20px; border: 1.5px solid rgba(15,23,42,0.1); background: #fff; font-family: inherit; font-size: 0.78rem; font-weight: 700; color: #475569; cursor: pointer; white-space: nowrap; }
-    .m-cat-btn.active { background: linear-gradient(135deg,#F97316,#F59E0B); border-color: transparent; color: #fff; box-shadow: 0 5px 14px rgba(249,115,22,0.3); }
+    .m-cat-btn.active { background: linear-gradient(135deg,#F1690D,#F59E0B); border-color: transparent; color: #fff; box-shadow: 0 5px 14px rgba(241,105,13,0.3); }
 
     /* ── JD 통합 검색바 (모바일·PC 공통) ── */
     .jd-search { position: relative; margin-bottom: 18px; }
     .jd-search .jd-box { display: flex; align-items: center; gap: 4px; background: #fff; border: 1.5px solid rgba(15,23,42,0.1); border-radius: 16px; padding: 5px 5px 5px 14px; box-shadow: 0 2px 10px rgba(15,23,42,0.05); transition: border-color .18s, box-shadow .18s; }
-    .jd-search .jd-box:focus-within { border-color: #F97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.13); }
+    .jd-search .jd-box:focus-within { border-color: #F1690D; box-shadow: 0 0 0 3px rgba(241,105,13,0.13); }
     .jd-search svg { width: 18px; height: 18px; flex-shrink: 0; color: #94a3b8; }
     .jd-search input { flex: 1; min-width: 0; border: none; outline: none; background: none; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: #0f172a; padding: 10px 6px; }
     .jd-search input::placeholder { color: #a8b3c5; font-weight: 500; }
     .jd-search .jd-x { flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 50%; background: #eef1f6; color: #64748b; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: none; }
-    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F97316,#F59E0B); color: #fff; font-family: inherit; font-size: 0.84rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(249,115,22,0.28); }
+    .jd-search .jd-go { flex-shrink: 0; height: 40px; padding: 0 18px; border: none; border-radius: 12px; background: linear-gradient(135deg,#F1690D,#F59E0B); color: #fff; font-family: inherit; font-size: 0.84rem; font-weight: 800; cursor: pointer; box-shadow: 0 5px 14px rgba(241,105,13,0.28); }
     .jd-search .jd-go:active { transform: scale(0.96); }
     .jd-suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 14px; box-shadow: 0 16px 40px rgba(15,23,42,0.14); overflow: hidden; z-index: 300; display: none; }
     .jd-suggest.on { display: block; animation: jdSgIn .16s ease both; }
@@ -505,7 +507,7 @@
     .jd-sg:hover, .jd-sg:active { background: #FFF7F0; }
     .jd-sg .fl { font-size: 1.25rem; }
     .jd-sg b { font-size: 0.88rem; font-weight: 800; color: #0f172a; }
-    .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F2751F; }
+    .jd-sg i { font-style: normal; margin-left: auto; font-size: 0.76rem; font-weight: 800; color: #F1690D; }
 
 
     /* Product Grid */
@@ -568,7 +570,7 @@
       font-weight: 900;
       padding: 3px 8px;
       border-radius: 20px;
-      background: linear-gradient(135deg, #EF4444, #F97316);
+      background: linear-gradient(135deg, #EF4444, #F1690D);
       color: #fff;
       box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
     }
@@ -583,7 +585,7 @@
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      color: #F2751F;
+      color: #F1690D;
       box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
     }
     .store-net-badge.local { color: #16a34a; }
@@ -652,7 +654,7 @@
     .store-card-perday {
       font-size: 0.74rem;
       font-weight: 700;
-      color: #F2751F;
+      color: #F1690D;
     }
 
     /* 📱 기종 자가진단 배너 */
@@ -663,9 +665,9 @@
       margin: 10px 0 2px;
       padding: 12px 14px;
       background: linear-gradient(165deg, #FFFFFF, #FFF9F3);
-      border: 1px dashed rgba(242, 117, 31, 0.26);
+      border: 1px dashed rgba(241,105,13, 0.26);
       border-radius: 16px;
-      box-shadow: 0 5px 16px rgba(242, 117, 31, 0.06);
+      box-shadow: 0 5px 16px rgba(241,105,13, 0.06);
       cursor: pointer;
       transition: transform 0.18s ease;
     }
@@ -673,7 +675,7 @@
     .dcb-icon {
       width: 38px; height: 38px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(245, 158, 11, 0.12));
+      background: linear-gradient(135deg, rgba(241,105,13, 0.12), rgba(245, 158, 11, 0.12));
       display: flex; align-items: center; justify-content: center;
       font-size: 1.15rem;
       flex-shrink: 0;
@@ -687,15 +689,15 @@
       font-size: 0.74rem;
       font-weight: 800;
       color: #fff;
-      background: linear-gradient(135deg, #F97316, #F59E0B);
+      background: linear-gradient(135deg, #F1690D, #F59E0B);
       padding: 8px 13px;
       border-radius: 22px;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+      box-shadow: 0 4px 12px rgba(241,105,13, 0.3);
       white-space: nowrap;
     }
 
     /* ===== 전역 마이크로 디테일 ===== */
-    ::selection { background: rgba(249, 115, 22, 0.22); }
+    ::selection { background: rgba(241,105,13, 0.22); }
     body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     button, .nav-item, .category-tab, .store-card, .recent-chip { touch-action: manipulation; }
     html { -webkit-text-size-adjust: 100%; }
@@ -727,11 +729,11 @@
       width: 21px; height: 21px;
       margin-right: 8px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #F97316, #F59E0B);
+      background: linear-gradient(135deg, #F1690D, #F59E0B);
       color: #fff;
       font-size: 0.7rem;
       font-weight: 900;
-      box-shadow: 0 3px 8px rgba(249, 115, 22, 0.3);
+      box-shadow: 0 3px 8px rgba(241,105,13, 0.3);
       flex-shrink: 0;
     }
     .option-group-title { align-items: center; color: #1e293b; }
@@ -781,7 +783,7 @@
       margin-top: 20px !important;
       box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
     }
-    .checkout-total-price { color: #F2751F !important; }
+    .checkout-total-price { color: #F1690D !important; }
     /* 수령 정보 입력 */
     .bottom-sheet input.tracker-input {
       height: 50px !important;
@@ -796,8 +798,8 @@
     /* 폼 포커스: 브랜드 오렌지 링 */
     #carrierSelect:focus, #capacitySelect:focus, #daysSelect:focus, #planTypeSelect:focus,
     .bottom-sheet .tracker-input:focus, #storeSearchInput:focus {
-      border-color: #F97316 !important;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14) !important;
+      border-color: #F1690D !important;
+      box-shadow: 0 0 0 3px rgba(241,105,13, 0.14) !important;
     }
 
     /* 히어로 중앙 하단 스크롤 유도선(세로선) 제거 */
@@ -942,14 +944,14 @@
       position: relative;
       margin: 12px 0 16px;
       background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%);
-      border: 1px solid rgba(242, 117, 31, 0.16);
+      border: 1px solid rgba(241,105,13, 0.16);
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 28px rgba(242, 117, 31, 0.1);
+      box-shadow: 0 10px 28px rgba(241,105,13, 0.1);
     }
     .rg-edge {
       height: 5px;
-      background: linear-gradient(90deg, #F97316, #F59E0B 40%, #2BB3A3 70%, #F97316);
+      background: linear-gradient(90deg, #F1690D, #F59E0B 40%, #2BB3A3 70%, #F1690D);
       background-size: 200% 100%;
       animation: rgEdgeFlow 8s linear infinite;
     }
@@ -966,7 +968,7 @@
       font-size: 0.66rem;
       font-weight: 900;
       letter-spacing: 2.6px;
-      color: #F97316;
+      color: #F1690D;
       margin-bottom: 6px;
     }
     .rg-title {
@@ -980,14 +982,14 @@
     .rg-fox {
       width: 66px;
       flex-shrink: 0;
-      filter: drop-shadow(0 6px 14px rgba(249, 115, 22, 0.28));
+      filter: drop-shadow(0 6px 14px rgba(241,105,13, 0.28));
       animation: rgFoxFloat 3.6s ease-in-out infinite;
     }
     @keyframes rgFoxFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     /* 절취선 (보딩패스 펀칭) */
     .rg-perf {
       position: relative;
-      border-top: 2px dashed rgba(242, 117, 31, 0.22);
+      border-top: 2px dashed rgba(241,105,13, 0.22);
       margin: 0 12px;
     }
     .rg-perf::before, .rg-perf::after {
@@ -997,7 +999,7 @@
       width: 16px; height: 16px;
       border-radius: 50%;
       background: #FAF8F4;
-      border: 1px solid rgba(242, 117, 31, 0.16);
+      border: 1px solid rgba(241,105,13, 0.16);
     }
     .rg-perf::before { left: -21px; }
     .rg-perf::after { right: -21px; }
@@ -1022,7 +1024,7 @@
       justify-content: center;
       font-size: 1.12rem;
     }
-    .rg-ic-orange { background: linear-gradient(135deg, rgba(249,115,22,0.14), rgba(249,115,22,0.06)); }
+    .rg-ic-orange { background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(241,105,13,0.06)); }
     .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.06)); }
     .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.06)); }
     .rg-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -1040,7 +1042,7 @@
       font-weight: 900;
       color: #fff;
     }
-    .rg-b-orange { background: linear-gradient(135deg, #F97316, #FB923C); box-shadow: 0 3px 9px rgba(249,115,22,0.35); }
+    .rg-b-orange { background: linear-gradient(135deg, #F1690D, #F8823B); box-shadow: 0 3px 9px rgba(241,105,13,0.35); }
     .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
     .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
     @media (prefers-reduced-motion: reduce) { .rg-fox, .rg-edge { animation: none !important; } }
@@ -1100,9 +1102,9 @@
       letter-spacing: 0.5px;
       padding: 3px 8px;
       border-radius: 20px;
-      background: linear-gradient(135deg, #F97316, #F59E0B);
+      background: linear-gradient(135deg, #F1690D, #F59E0B);
       color: #fff;
-      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+      box-shadow: 0 2px 8px rgba(241,105,13, 0.4);
     }
     /* 데이터 로딩 중 스켈레톤 카드 */
     .store-skel {
@@ -1171,14 +1173,14 @@
     .store-card-btn {
       margin: 2px 12px 12px;
       width: calc(100% - 24px);
-      background: linear-gradient(135deg, #F97316 0%, #F2751F 100%);
+      background: linear-gradient(135deg, #F1690D 0%, #F1690D 100%);
       border: none;
       color: #ffffff;
       font-size: 0.78rem;
       font-weight: 800;
       padding: 10px 0;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.22);
+      box-shadow: 0 4px 12px rgba(241,105,13, 0.22);
     }
 
     /* Old Card */ .old-card {
@@ -1199,7 +1201,7 @@
     .mobile-product-card:active {
       transform: scale(0.97);
       background: rgba(255, 255, 255, 0.9);
-      border-color: rgba(249, 115, 22, 0.3);
+      border-color: rgba(241,105,13, 0.3);
     }
 
     .product-flag-img {
@@ -1221,7 +1223,7 @@
     .product-country-tag {
       font-size: 0.75rem;
       font-weight: 800;
-      color: #F2751F;
+      color: #F1690D;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -1240,11 +1242,11 @@
       gap: 4px;
       font-size: 0.7rem;
       font-weight: 700;
-      background: rgba(242, 117, 31, 0.06);
-      border: 1px solid rgba(242, 117, 31, 0.12);
+      background: rgba(241,105,13, 0.06);
+      border: 1px solid rgba(241,105,13, 0.12);
       padding: 3px 9px;
       border-radius: 20px;
-      color: #F2751F;
+      color: #F1690D;
       width: fit-content;
     }
 
@@ -1272,7 +1274,7 @@
     }
 
     .buy-btn-small {
-      background: linear-gradient(135deg, #F97316 0%, #F2751F 100%);
+      background: linear-gradient(135deg, #F1690D 0%, #F1690D 100%);
       border: none;
       color: white;
       font-size: 0.75rem;
@@ -1280,7 +1282,7 @@
       padding: 7px 14px;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+      box-shadow: 0 4px 12px rgba(241,105,13, 0.25);
       transition: all 0.2s;
     }
 
@@ -1391,10 +1393,10 @@
     }
 
     .option-pill.active {
-      background: rgba(242, 117, 31, 0.08);
-      border-color: #F2751F;
-      color: #F2751F;
-      box-shadow: 0 2px 10px rgba(242, 117, 31, 0.15);
+      background: rgba(241,105,13, 0.08);
+      border-color: #F1690D;
+      color: #F1690D;
+      box-shadow: 0 2px 10px rgba(241,105,13, 0.15);
     }
 
     /* ===== ROMI Step Sheet: 단계 잠금 위저드 ===== */
@@ -1408,7 +1410,7 @@
     .jd-step .jd-step-head { margin: 0; cursor: default; align-items: center; gap: 8px; }
     .jd-step .jd-step-label { display: inline-flex; align-items: center; }
     .jd-step .jd-step-value {
-      margin-left: auto; font-size: 0.8rem; font-weight: 800; color: #F2751F;
+      margin-left: auto; font-size: 0.8rem; font-weight: 800; color: #F1690D;
       max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .jd-step .jd-step-state { font-size: 0.72rem; margin-left: 6px; flex-shrink: 0; }
@@ -1419,9 +1421,9 @@
       user-select: none;
     }
     .jd-step.active {
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.055), rgba(245, 158, 11, 0.04));
-      border-color: rgba(249, 115, 22, 0.35);
-      box-shadow: 0 6px 22px rgba(249, 115, 22, 0.12);
+      background: linear-gradient(135deg, rgba(241,105,13, 0.055), rgba(245, 158, 11, 0.04));
+      border-color: rgba(241,105,13, 0.35);
+      box-shadow: 0 6px 22px rgba(241,105,13, 0.12);
       animation: jdStepIn 0.32s cubic-bezier(0.34, 1.3, 0.64, 1);
     }
     .jd-step.active .jd-step-state { display: none; }
@@ -1469,25 +1471,25 @@
     }
     .jd-plan-guide > div + div { border-top: 1px dashed rgba(15, 23, 42, 0.1); }
     .jd-plan-guide strong { color: #0f172a; font-weight: 800; }
-    .jd-plan-guide em { font-style: normal; color: #F2751F; font-weight: 800; }
+    .jd-plan-guide em { font-style: normal; color: #F1690D; font-weight: 800; }
     .jd-step .option-pill.active {
-      background: rgba(249, 115, 22, 0.1); border-color: #F2751F; color: #b45309;
-      box-shadow: 0 2px 10px rgba(249, 115, 22, 0.18);
+      background: rgba(241,105,13, 0.1); border-color: #F1690D; color: #b45309;
+      box-shadow: 0 2px 10px rgba(241,105,13, 0.18);
     }
     /* 통신사 커스텀 드롭다운 */
     .jd-drop-btn {
       width: 100%; min-height: 52px; border-radius: 14px; padding: 0 16px; margin-top: 6px;
-      background: #fff; border: 1.5px solid rgba(249, 115, 22, 0.45); color: #0f172a;
+      background: #fff; border: 1.5px solid rgba(241,105,13, 0.45); color: #0f172a;
       font-weight: 800; font-size: 0.92rem; font-family: inherit;
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      cursor: pointer; box-shadow: 0 3px 12px rgba(249, 115, 22, 0.1);
+      cursor: pointer; box-shadow: 0 3px 12px rgba(241,105,13, 0.1);
       transition: all 0.2s ease;
     }
-    .jd-drop-btn.open { border-radius: 14px 14px 4px 4px; border-color: #F2751F; }
+    .jd-drop-btn.open { border-radius: 14px 14px 4px 4px; border-color: #F1690D; }
     .jd-drop-btn.open i, .jd-drop-btn.open svg { transform: rotate(180deg); }
     .jd-drop-btn i, .jd-drop-btn svg { transition: transform 0.2s ease; }
     .jd-drop-list {
-      border: 1.5px solid #F2751F; border-top: none; border-radius: 4px 4px 14px 14px;
+      border: 1.5px solid #F1690D; border-top: none; border-radius: 4px 4px 14px 14px;
       background: #fff; overflow: hidden; box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
       animation: jdStepIn 0.22s ease;
     }
@@ -1498,7 +1500,7 @@
       text-align: left; cursor: pointer;
     }
     .jd-drop-item:first-child { border-top: none; }
-    .jd-drop-item:active { background: rgba(249, 115, 22, 0.07); }
+    .jd-drop-item:active { background: rgba(241,105,13, 0.07); }
     .jd-drop-item .jd-net-badge {
       flex-shrink: 0; font-size: 0.66rem; font-weight: 800; padding: 2px 7px; border-radius: 9px;
     }
@@ -1526,12 +1528,12 @@
     .checkout-total-price {
       font-size: 1.3rem;
       font-weight: 800;
-      color: #F2751F;
+      color: #F1690D;
     }
 
     .order-action-btn {
       width: 100%;
-      background: linear-gradient(90deg, #F97316, #F2751F);
+      background: linear-gradient(90deg, #F1690D, #F1690D);
       border: none;
       color: white;
       font-weight: 800;
@@ -1540,7 +1542,7 @@
       border-radius: 30px;
       margin-top: 16px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.25);
+      box-shadow: 0 4px 15px rgba(241,105,13, 0.25);
     }
 
     /* Devices self check card */
@@ -1608,18 +1610,18 @@
 
     .tracker-input:focus {
       background: #ffffff;
-      border-color: #F2751F;
+      border-color: #F1690D;
     }
 
     .tracker-btn {
-      background: #F2751F;
+      background: #F1690D;
       border: none;
       color: white;
       font-weight: 800;
       padding: 12px;
       border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(242, 117, 31, 0.2);
+      box-shadow: 0 4px 12px rgba(241,105,13, 0.2);
     }
 
     .order-card {
@@ -1719,9 +1721,9 @@
       border: 1px solid #e2e8f0;
     }
     .option-pill.active {
-      background: #F2751F;
+      background: #F1690D;
       color: #fff;
-      border-color: #F2751F;
+      border-color: #F1690D;
     }
     
   /* Click Fix */
@@ -1743,10 +1745,10 @@
     .m-hero-content { color: #221510 !important; }
     .m-hero-title, .hero-video-title { color: #221510 !important; text-shadow: 0 2px 14px rgba(255,255,255,0.8) !important; }
     .m-hero-sub { color: #4a3a30 !important; opacity: 1 !important; }
-    .m-hero-badge { background: rgba(255,255,255,0.88) !important; border-color: rgba(242,117,31,0.3) !important; color: #C2410C !important; }
+    .m-hero-badge { background: rgba(255,255,255,0.88) !important; border-color: rgba(241,105,13,0.3) !important; color: #C2410C !important; }
     .m-hero-cta-ghost { background: rgba(255,255,255,0.78) !important; border-color: rgba(34,21,16,0.18) !important; color: #221510 !important; }
     .m-hero-stats { border-top-color: rgba(34,21,16,0.12) !important; color: #221510 !important; }
-    .m-hero-stats strong { color: #E8590C !important; }
+    .m-hero-stats strong { color: #D95903 !important; }
     .m-hero-stat-div { background: rgba(34,21,16,0.14) !important; }
   </style>
 <style id="premium-snap">
@@ -1756,9 +1758,9 @@
       content: attr(data-label);
       position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
       font-size: 0.62rem; font-weight: 800; color: #C2410C; letter-spacing: 0.04em;
-      background: rgba(255,255,255,0.88); border: 1px solid rgba(242,117,31,0.25);
+      background: rgba(255,255,255,0.88); border: 1px solid rgba(241,105,13,0.25);
       padding: 2px 7px; border-radius: 8px; white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(242,117,31,0.12); pointer-events: none;
+      box-shadow: 0 2px 8px rgba(241,105,13,0.12); pointer-events: none;
     }
     /* 스냅 패널 내부 콘텐츠가 하단바·챗봇과 겹치지 않게 (원본 규칙 보강) */
     html.home-snap #view-home .snap-panel { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
@@ -1837,7 +1839,7 @@
   .ck-card { background: #fff; border: 1px solid #ece5dd; border-radius: 10px; padding: 14px 15px; margin-bottom: 12px; }
   .ck-label { font-size: 14px; font-weight: 800; color: #221510; margin-bottom: 10px; }
   .ck-input { width: 100%; padding: 13px 14px; border: 1.5px solid #e5ddd2; border-radius: 8px; font-family: inherit; font-size: 16px; font-weight: 700; color: #221510; margin-bottom: 8px; }
-  .ck-input:focus { outline: none; border-color: #F2751F; }
+  .ck-input:focus { outline: none; border-color: #F1690D; }
   .ck-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; margin-top: 8px; }
   .ck-fold summary { cursor: pointer; font-size: 13px; font-weight: 700; color: #64748b; list-style: none; padding: 4px 0; }
   .ck-fold summary::-webkit-details-marker { display: none; }
@@ -1851,9 +1853,9 @@
   .pw-tab { border: none; background: transparent; font-family: inherit; padding: 12px 4px 13px; cursor: pointer; text-align: center; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .15s ease; }
   .pw-tab b { display: block; font-size: 20px; font-weight: 800; color: #a8a095; letter-spacing: -0.02em; }
   .pw-tab small { display: block; font-size: 11px; font-weight: 700; color: #bdb5aa; margin-top: 2px; }
-  .pw-tab.active { border-bottom: 3px solid #F2751F; }
+  .pw-tab.active { border-bottom: 3px solid #F1690D; }
   .pw-tab.active b { color: #221510; }
-  .pw-tab.active small { color: #F2751F; }
+  .pw-tab.active small { color: #F1690D; }
 
   /* 섹션 라벨 — 큰 글자 */
   .pw-block { margin: 20px 0 0; }
@@ -1872,8 +1874,8 @@
   .pw-car .net.local { background: rgba(43, 179, 163, 0.12); color: #1B8E82; }
   .pw-car .net.roam { background: rgba(99, 102, 241, 0.1); color: #4f46e5; }
   .pw-car .net.multi { background: rgba(245, 158, 11, 0.13); color: #b45309; }
-  .pw-car.active { border-color: #F2751F; border-width: 2px; background: #FFF8F2; }
-  .pw-car.active::after { content: '✓'; margin-left: auto; color: #F2751F; font-weight: 900; font-size: 18px; }
+  .pw-car.active { border-color: #F1690D; border-width: 2px; background: #FFF8F2; }
+  .pw-car.active::after { content: '✓'; margin-left: auto; color: #F1690D; font-weight: 900; font-size: 18px; }
 
   /* 사용 기간 드롭다운 — 각진, 18px */
   .pw-days-select {
@@ -1891,13 +1893,13 @@
     border: 1.5px solid #e5ddd2; border-radius: 8px; background: #fff;
     padding: 16px 16px; margin-bottom: 9px; font-family: inherit; cursor: pointer; transition: all .12s ease;
   }
-  .pw-prod:hover, .pw-prod.active { border-color: #F2751F; background: #FFF8F2; }
+  .pw-prod:hover, .pw-prod.active { border-color: #F1690D; background: #FFF8F2; }
   .pw-prod .cap { font-size: 20px; font-weight: 800; color: #221510; line-height: 1.3; letter-spacing: -0.02em; }
   .pw-prod .sub { font-size: 13px; font-weight: 700; color: #a8a095; margin-top: 3px; }
   .pw-prod .price { margin-left: auto; text-align: right; flex-shrink: 0; }
-  .pw-prod .price b { display: block; font-size: 20px; font-weight: 900; color: #F2751F; }
+  .pw-prod .price b { display: block; font-size: 20px; font-weight: 900; color: #F1690D; }
   .pw-prod .price small { font-size: 12px; font-weight: 700; color: #a8a095; }
-  .pw-prod .go { flex-shrink: 0; color: #F2751F; font-weight: 900; font-size: 20px; }
+  .pw-prod .go { flex-shrink: 0; color: #F1690D; font-weight: 900; font-size: 20px; }
 
   /* 상세/수량/카트 레이어 (상세는 팝업 유지) */
   .pv-layer { position: fixed; inset: 0; background: rgba(11, 16, 32, 0.55); backdrop-filter: blur(3px); z-index: 100005; display: flex; align-items: flex-end; }
@@ -1905,15 +1907,15 @@
   .pv-grab { width: 42px; height: 4.5px; border-radius: 4px; background: #e2e8f0; margin: -4px auto 14px; }
   .pv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
   .pv-tile { background: #fff; border: 1px solid #ece5dd; border-radius: 8px; padding: 12px 13px; }
-  .pv-tile .ic { font-size: 1.15rem; line-height: 1; color: #F2751F; }
+  .pv-tile .ic { font-size: 1.15rem; line-height: 1; color: #F1690D; }
   .pv-tile .ic svg { width: 21px; height: 21px; stroke-width: 2.2; }
   .pv-tile .k { font-size: 12px; font-weight: 800; color: #8a8378; margin-top: 5px; letter-spacing: 0.02em; }
   .pv-tile .v { font-size: 14px; font-weight: 800; color: #221510; margin-top: 2px; line-height: 1.45; word-break: keep-all; }
-  .pv-cta { display: block; width: 100%; border: none; border-radius: 10px; padding: 16px; background: linear-gradient(135deg, #F97316, #F59E0B); color: #fff; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35); }
+  .pv-cta { display: block; width: 100%; border: none; border-radius: 10px; padding: 16px; background: linear-gradient(135deg, #F1690D, #F59E0B); color: #fff; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(241,105,13, 0.35); }
   .pv-app-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #221510, #46280f); color: #fff; border-radius: 10px; padding: 12px 14px; margin: 12px 0; font-size: 13px; font-weight: 700; line-height: 1.5; }
   .pv-app-banner b { color: #FFB56B; }
   .pv-qty-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #ece5dd; border-radius: 10px; padding: 13px 15px; }
-  .pv-warn-ic { color: #F2751F; flex-shrink: 0; }
+  .pv-warn-ic { color: #F1690D; flex-shrink: 0; }
   .pv-warn-ic svg { width: 16px; height: 16px; stroke-width: 2.2; margin-top: 2px; }
 </style>
 <style id="jd-readability">
@@ -1984,7 +1986,7 @@
     <img src="images/fox-hello.webp" alt="" style="width:96px;animation:jdSpBounce 1.15s ease-in-out infinite;" onerror="this.style.display='none'">
     <div style="font-weight:900;font-size:1.2rem;color:#0f172a;letter-spacing:1.5px;">JDISIM</div>
     <div style="font-size:0.78rem;font-weight:700;color:#b45309;">🦊 로미가 여행 준비 중이에요…</div>
-    <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F97316,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
+    <div style="width:130px;height:4px;border-radius:4px;background:#f3e9dd;overflow:hidden;"><div style="width:42%;height:100%;border-radius:4px;background:linear-gradient(90deg,#F1690D,#F59E0B);animation:jdSpBar 1.25s ease-in-out infinite;"></div></div>
   </div>
   <style>
     @keyframes jdSpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -2055,11 +2057,11 @@
       <button onclick="toggleAppMenu(false)" style="width:34px;height:34px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;">✕</button>
     </div>
     <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:6px 2px 8px;">서비스</div>
-    <a href="biz.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">🏢 기업·단체 비즈니스<span style="margin-left:auto;color:#F2751F;">→</span></a>
-    <a href="guide.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">🩺 로미 케어센터<span style="margin-left:auto;color:#F2751F;">→</span></a>
-    <a href="guide/dualsim.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">📱 듀얼심 설정 가이드<span style="margin-left:auto;color:#F2751F;">→</span></a>
+    <a href="biz.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">🏢 기업·단체 비즈니스<span style="margin-left:auto;color:#F1690D;">→</span></a>
+    <a href="guide.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">🩺 로미 케어센터<span style="margin-left:auto;color:#F1690D;">→</span></a>
+    <a href="guide/dualsim.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.92rem;font-weight:800;margin-bottom:9px;">📱 듀얼심 설정 가이드<span style="margin-left:auto;color:#F1690D;">→</span></a>
     <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:16px 2px 8px;">내 정보</div>
-    <button onclick="toggleAppMenu(false);switchNav('orders')" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;font-family:inherit;font-size:0.92rem;font-weight:800;color:#221510;margin-bottom:9px;cursor:pointer;">👤 로그인 · 주문 조회<span style="margin-left:auto;color:#F2751F;">→</span></button>
+    <button onclick="toggleAppMenu(false);switchNav('orders')" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;font-family:inherit;font-size:0.92rem;font-weight:800;color:#221510;margin-bottom:9px;cursor:pointer;">👤 로그인 · 주문 조회<span style="margin-left:auto;color:#F1690D;">→</span></button>
     <div style="font-size:0.72rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:16px 2px 8px;">고객 지원</div>
     <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:none;border-radius:14px;background:#FEE500;text-decoration:none;color:#191919;font-size:0.92rem;font-weight:800;">💬 카카오톡 24시간 상담</a>
   </div>
@@ -2081,11 +2083,11 @@
           <button class="m-hero-cta-ghost" onclick="scrollToRomi()">🦊 로미에게 3초 추천받기</button>
         </div>
         <div class="m-hero-stats">
-          <div><strong>1,700<em style="font-style:normal;color:#F97316">+</em></strong><span>누적 고객</span></div>
+          <div><strong>1,700<em style="font-style:normal;color:#F1690D">+</em></strong><span>누적 고객</span></div>
           <div class="m-hero-stat-div"></div>
           <div><strong>10초</strong><span>QR 개통</span></div>
           <div class="m-hero-stat-div"></div>
-          <div><strong>150<em style="font-style:normal;color:#F97316">+</em></strong><span>지원 국가</span></div>
+          <div><strong>150<em style="font-style:normal;color:#F1690D">+</em></strong><span>지원 국가</span></div>
         </div>
       </div>
       <img src="images/fox-hello.webp" alt="JDISIM 마스코트 로미" class="m-hero-fox">
@@ -2095,15 +2097,15 @@
     <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
     <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;margin-left:-16px;margin-right:-16px;background:radial-gradient(140% 90% at 50% 30%, #EAF6FF 0%, #F6FBFF 55%, #FFF8F0 100%);overflow:hidden;padding:40px 20px;">
       <div style="position:relative;text-align:center;">
-        <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#FB923C;">LIVE CONNECTED WORLD</span>
-        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F97316,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
-        <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#6b5d52;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#f97316;">직접 탭</strong>하면 요금제가 바로 열려요</p>
+        <span style="font-size:0.7rem;font-weight:800;letter-spacing:2.5px;color:#F8823B;">LIVE CONNECTED WORLD</span>
+        <h2 style="margin:10px 0 0;font-size:1.55rem;line-height:1.35;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F1690D,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
+        <p style="margin:10px 0 0;font-size:0.8rem;line-height:1.65;color:#6b5d52;">빛나는 점이 전부 JDISIM 여행지 —<br>궁금한 나라를 <strong style="color:#F1690D;">직접 탭</strong>하면 요금제가 바로 열려요</p>
       </div>
       <div style="position:relative;">
         <div id="mGlobe" style="width:100%;height:min(92vw, 420px);margin-top:4px;"></div>
         <div style="position:absolute;right:2px;bottom:34px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none;animation:romiFloat 3.6s ease-in-out infinite;">
-          <div style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:800;padding:7px 11px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 16px rgba(249,115,22,0.45);">궁금한 나라를 콕! 🌏</div>
-          <img src="images/fox-hello.webp" alt="로미" style="width:72px;filter:drop-shadow(0 8px 18px rgba(249,115,22,0.35));" onerror="this.parentNode.style.display='none'">
+          <div style="background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.74rem;font-weight:800;padding:7px 11px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 16px rgba(241,105,13,0.45);">궁금한 나라를 콕! 🌏</div>
+          <img src="images/fox-hello.webp" alt="로미" style="width:72px;filter:drop-shadow(0 8px 18px rgba(241,105,13,0.35));" onerror="this.parentNode.style.display='none'">
         </div>
         <div style="text-align:center;font-size:0.74rem;font-weight:700;color:#475569;">👆 돌려보고, 국가 점을 탭해 보세요<br><span style="font-weight:600;color:#5b6a94;">🌆 지금 밤인 지역엔 실제 도시 불빛이 켜져요</span></div>
       </div>
@@ -2172,25 +2174,25 @@
 
     <!-- Quick Utilities Dashboard Links -->
     <h3 style="font-size: 0.95rem; font-weight: 800; margin: 28px 0 16px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
-      <i data-lucide="layout-grid" style="color: #F2751F; width: 18px; height: 18px;"></i> 퀵 서비스 메뉴
+      <i data-lucide="layout-grid" style="color: #F1690D; width: 18px; height: 18px;"></i> 퀵 서비스 메뉴
     </h3>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
       <div class="device-check-card" onclick="openDeviceCheck()" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; transition: transform 0.2s;">
-        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #F2751F; margin-bottom: 6px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #F1690D; margin-bottom: 6px;">
           <i data-lucide="smartphone" style="width:16px; height:16px;"></i> eSIM 기종 진단
         </div>
         <div style="font-size: 0.72rem; color: #475569; line-height: 1.4;">내 폰이 eSIM을 지원하는지 3초 만에 확인하기</div>
       </div>
       
       <div class="device-check-card" onclick="switchNav('orders')" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; transition: transform 0.2s;">
-        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #F2751F; margin-bottom: 6px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #F1690D; margin-bottom: 6px;">
           <i data-lucide="receipt" style="width:16px; height:16px;"></i> 내 eSIM 조회
         </div>
         <div style="font-size: 0.72rem; color: #475569; line-height: 1.4;">구매한 이심의 QR코드 및 발급 번호 실시간 조회</div>
       </div>
       
       <div class="device-check-card" onclick="window.location.assign('guide.html#doctor')" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; transition: transform 0.2s;">
-        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #F2751F; margin-bottom: 6px;">
+        <div style="font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: #F1690D; margin-bottom: 6px;">
           <i data-lucide="help-circle" style="width:16px; height:16px;"></i> 이용 장애 가이드
         </div>
         <div style="font-size: 0.72rem; color: #475569; line-height: 1.4;">케어센터 로미 닥터 1분 진단으로 바로 해결</div>
@@ -2312,7 +2314,7 @@
         <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름">
         <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 (숫자만)">
         <button class="tracker-btn" onclick="searchOrders()">📦 주문·QR 조회</button>
-        <button type="button" onclick="document.getElementById('usageName').value=document.getElementById('orderSearchName').value;document.getElementById('usagePhone').value=document.getElementById('orderSearchPhone').value;lookupUsageByPhone();" style="width:100%;height:48px;margin-top:8px;border:1.5px solid rgba(242,117,31,0.4);border-radius:12px;background:#fff;color:#F2751F;font-weight:800;font-size:0.9rem;cursor:pointer;">📡 실시간 사용량 조회</button>
+        <button type="button" onclick="document.getElementById('usageName').value=document.getElementById('orderSearchName').value;document.getElementById('usagePhone').value=document.getElementById('orderSearchPhone').value;lookupUsageByPhone();" style="width:100%;height:48px;margin-top:8px;border:1.5px solid rgba(241,105,13,0.4);border-radius:12px;background:#fff;color:#F1690D;font-weight:800;font-size:0.9rem;cursor:pointer;">📡 실시간 사용량 조회</button>
       </div>
       <!-- 통합 폼 값 전달용 (lookupUsageByPhone·checkUsage가 읽는 기존 id 유지) -->
       <input type="hidden" id="usageName"><input type="hidden" id="usagePhone">
@@ -2322,17 +2324,17 @@
       <details style="margin-top:12px;border-top:1px dashed rgba(34,21,16,0.08);padding-top:10px;">
         <summary style="list-style:none;font-size:0.78rem;font-weight:700;color:#8a7a6d;cursor:pointer;-webkit-tap-highlight-color:transparent;">📊 사용량 확인법 · ICCID 직접 조회 ▾</summary>
         <div style="padding:9px 0 2px;font-size:0.78rem;line-height:1.7;color:#5D5049;">
-          <strong style="color:#F2751F;">아이폰</strong> — 설정 → 셀룰러 → 여행 eSIM 회선 → '현재 기간' (여행 시작 때 '통계 재설정' 추천)<br>
-          <strong style="color:#F2751F;">갤럭시</strong> — 설정 → 연결 → 데이터 사용 → 해당 SIM<br>
-          <strong style="color:#F2751F;">통신사 직접</strong> — 몰디브: 727로 'myusage' 문자 · 몽골: *1411# 통화 · 프랑스 오렌지: 225 통화
+          <strong style="color:#F1690D;">아이폰</strong> — 설정 → 셀룰러 → 여행 eSIM 회선 → '현재 기간' (여행 시작 때 '통계 재설정' 추천)<br>
+          <strong style="color:#F1690D;">갤럭시</strong> — 설정 → 연결 → 데이터 사용 → 해당 SIM<br>
+          <strong style="color:#F1690D;">통신사 직접</strong> — 몰디브: 727로 'myusage' 문자 · 몽골: *1411# 통화 · 프랑스 오렌지: 225 통화
         </div>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID (89로 시작)" style="flex:1;height:44px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;margin:0;">
-          <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 16px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;">조회</button>
+          <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 16px;border:none;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;">조회</button>
         </div>
       </details>
 
-      <button type="button" onclick="window.location.assign('guide.html#doctor')" style="display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:11px 12px;border:1px dashed rgba(242,117,31,0.35);border-radius:13px;background:rgba(249,115,22,0.04);color:#221510;font-family:inherit;font-size:0.84rem;font-weight:800;cursor:pointer;text-align:left;">🩺 이심이 안 되나요? — 로미 닥터 1분 진단<span style="margin-left:auto;color:#F2751F;">→</span></button>
+      <button type="button" onclick="window.location.assign('guide.html#doctor')" style="display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:11px 12px;border:1px dashed rgba(241,105,13,0.35);border-radius:13px;background:rgba(241,105,13,0.04);color:#221510;font-family:inherit;font-size:0.84rem;font-weight:800;cursor:pointer;text-align:left;">🩺 이심이 안 되나요? — 로미 닥터 1분 진단<span style="margin-left:auto;color:#F1690D;">→</span></button>
     </div>
   </main>
 
@@ -2379,7 +2381,7 @@
 
       <!-- Buy Flow v3 (2026-07-17): 통신망 = 자동 추천 + '바꾸기' 접힘 (질문 단계에서 제거). 개통안내는 치명 정보라 접힘 밖 유지 -->
       <details class="pw-block" id="pwCarrierBlock" style="display:none;">
-        <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.82rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">선택해 주세요</b> <span id="pwCarrierCta" style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;font-weight:800;">👇 아래에서 선택</span></summary>
+        <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.82rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">선택해 주세요</b> <span id="pwCarrierCta" style="color:#F1690D;text-decoration:underline;text-underline-offset:2px;font-weight:800;">👇 아래에서 선택</span></summary>
         <div class="pw-label" style="margin-top:10px;">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
         <div id="carrierPills" class="pw-carriers"></div>
       </details>
@@ -2440,7 +2442,7 @@
       <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
       <p>2. 키패드에 <strong>*#06#</strong>을 차례로 입력합니다.</p>
       <p>3. 화면에 기기 고유식별 정보 창이 뜹니다. 목록 중에 <strong>EID</strong> 항목이 있다면 eSIM을 지원하는 단말기입니다.</p>
-      <p style="color: #F2751F; font-weight: 700; background: rgba(242, 117, 31, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+      <p style="color: #F1690D; font-weight: 700; background: rgba(241,105,13, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
         ※ EID 글자가 없거나 보이지 않는 구형 기종은 eSIM 로밍을 사용할 수 없으므로 구매 전 꼭 체크해 주세요!
       </p>
     </div>
@@ -2448,7 +2450,7 @@
       <p>아이패드는 <strong>Wi-Fi + Cellular 모델</strong>만 eSIM을 쓸 수 있어요 (Wi-Fi 전용 모델 불가).</p>
       <p>확인법: <strong>설정 → 셀룰러 메뉴가 있으면</strong> Cellular 모델입니다. 셀룰러 메뉴 안에 <strong>eSIM 추가</strong>가 보이면 바로 사용 가능!</p>
       <p><strong>지원 기종:</strong> iPad Pro 11 (전 세대) · iPad Pro 12.9 (3세대~) · iPad Air (3세대~) · iPad (7세대~) · iPad mini (5세대~)의 Cellular 모델</p>
-      <p style="color: #F2751F; font-weight: 700; background: rgba(242, 117, 31, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+      <p style="color: #F1690D; font-weight: 700; background: rgba(241,105,13, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
         ※ 태블릿은 데이터 전용이에요 — 전화·문자 기능은 없고, 지도·검색·영상은 모두 가능합니다.
       </p>
     </div>
@@ -2456,7 +2458,7 @@
       <p>갤럭시탭은 <strong>5G 모델 중에서도 일부만</strong> eSIM을 지원해요 (Wi-Fi 전용 모델 불가).</p>
       <p>확인법: <strong>설정 → 연결 → SIM 관리자</strong>에 <strong>eSIM 추가</strong> 메뉴가 있으면 사용 가능합니다.</p>
       <p><strong>지원 기종:</strong> 갤럭시탭 S9 시리즈 5G ~ 최신 S 시리즈 5G (국내 정식 발매 기준)</p>
-      <p style="color: #F2751F; font-weight: 700; background: rgba(242, 117, 31, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
+      <p style="color: #F1690D; font-weight: 700; background: rgba(241,105,13, 0.08); padding: 8px 12px; border-radius: 8px; margin: 4px 0 0 0;">
         ※ 구형 탭·Wi-Fi 모델은 eSIM 불가 — 일행 폰의 핫스팟 공유로 함께 쓰는 걸 추천해요. 헷갈리면 기종명을 카톡으로 보내주세요, 바로 확인해 드립니다!
       </p>
     </div>
@@ -2826,7 +2828,7 @@
         if (networkType === '로컬망') {
           networkBadgeStyle = `background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.16); color: #16a34a;`;
         } else {
-          networkBadgeStyle = `background: rgba(242, 117, 31, 0.06); border: 1px solid rgba(242, 117, 31, 0.12); color: #F2751F;`;
+          networkBadgeStyle = `background: rgba(241,105,13, 0.06); border: 1px solid rgba(241,105,13, 0.12); color: #F1690D;`;
         }
 
         const card = document.createElement('div');
@@ -2997,11 +2999,11 @@
       // 검색/필터 결과가 없을 때: 로미 빈 상태
       if (!listContainer.children.length) {
         listContainer.innerHTML = `
-          <div style="grid-column:1/-1;text-align:center;padding:44px 20px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(242,117,31,0.24);border-radius:20px;">
+          <div style="grid-column:1/-1;text-align:center;padding:44px 20px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(241,105,13,0.24);border-radius:20px;">
             <img loading="lazy" src="images/fox-hello.webp" alt="" style="width:82px;opacity:0.9;" onerror="this.style.display='none'">
             <div style="font-weight:800;color:#221510;margin-top:10px;">앗, 찾으시는 여행지가 없어요 🦊</div>
             <div style="font-size:0.78rem;color:#8a7a6d;font-weight:600;margin-top:4px;line-height:1.6;">국가 이름을 다시 확인해 보시거나<br>전체보기에서 둘러보세요</div>
-            <button type="button" onclick="document.getElementById('storeSearchInput').value='';renderStoreProducts('all','');" style="margin-top:14px;padding:10px 22px;border:none;border-radius:22px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 5px 14px rgba(249,115,22,0.3);">전체 상품 보기</button>
+            <button type="button" onclick="document.getElementById('storeSearchInput').value='';renderStoreProducts('all','');" style="margin-top:14px;padding:10px 22px;border:none;border-radius:22px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.8rem;box-shadow:0 5px 14px rgba(241,105,13,0.3);">전체 상품 보기</button>
           </div>`;
       }
       if (window.lucide) lucide.createIcons();
@@ -3141,7 +3143,7 @@
 
     function buildTravelTipsHTML(country) {
       const t = TRAVEL_TIPS[country];
-      const li = arr => arr.map(x => `<div style="display:flex;gap:8px;padding:5px 0;font-size:0.76rem;line-height:1.55;color:#334155;"><span style="flex-shrink:0;width:4.5px;height:4.5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${x}</span></div>`).join('');
+      const li = arr => arr.map(x => `<div style="display:flex;gap:8px;padding:5px 0;font-size:0.76rem;line-height:1.55;color:#334155;"><span style="flex-shrink:0;width:4.5px;height:4.5px;border-radius:50%;background:#F1690D;margin-top:7px;"></span><span>${x}</span></div>`).join('');
       const box = (title, inner, open) => `
         <details ${open ? 'open' : ''} style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin-top:9px;overflow:hidden;width:100%;">
           <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기 ▾</span></summary>
@@ -3150,7 +3152,7 @@
       let html = '';
       if (t) {
         html += box(`🧳 ${country} 여행 준비물`,
-          `<div style="font-size:0.72rem;font-weight:800;color:#F2751F;padding:3px 0 4px;">🔌 ${t.power}</div>` + li(t.items), false);
+          `<div style="font-size:0.72rem;font-weight:800;color:#F1690D;padding:3px 0 4px;">🔌 ${t.power}</div>` + li(t.items), false);
         if (t.issues && t.issues.length) {
           html += box(`📌 ${country}, 이건 알고 가세요`, li(t.issues), false);
         }
@@ -3180,13 +3182,13 @@
           <div style="padding:14px 16px 6px;">
             <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:5px 0;"><span style="color:#94a3b8;font-weight:600;">주문번호</span><strong>${order.orderCode || '-'}</strong></div>
             <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:5px 0;"><span style="color:#94a3b8;font-weight:600;">수령인</span><strong>${order.buyerName || order.name || '-'}</strong></div>
-            <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:5px 0;border-top:1px dashed #e2e8f0;margin-top:4px;padding-top:9px;"><span style="color:#94a3b8;font-weight:600;">결제 금액</span><strong style="color:#F2751F;font-size:0.95rem;">${(order.totalPrice || 0).toLocaleString()}원</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:5px 0;border-top:1px dashed #e2e8f0;margin-top:4px;padding-top:9px;"><span style="color:#94a3b8;font-weight:600;">결제 금액</span><strong style="color:#F1690D;font-size:0.95rem;">${(order.totalPrice || 0).toLocaleString()}원</strong></div>
           </div>
           <div style="height:16px;margin:8px 16px 0;border-radius:2px;opacity:0.85;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
-          <div style="text-align:center;font-size:0.72rem;font-weight:700;color:#64748b;padding:10px 16px 16px;line-height:1.6;">📩 카카오톡으로 <strong style="color:#F2751F;">eSIM 발급 링크</strong>를 보내드려요 (발급 전 100% 환불 가능)</div>
+          <div style="text-align:center;font-size:0.72rem;font-weight:700;color:#64748b;padding:10px 16px 16px;line-height:1.6;">📩 카카오톡으로 <strong style="color:#F1690D;">eSIM 발급 링크</strong>를 보내드려요 (발급 전 100% 환불 가능)</div>
           <div style="display:flex;gap:7px;padding:4px 12px 14px;">
             ${[['💬','STEP 1','카톡 링크 도착'],['🎫','STEP 2','원하는 때 발급'],['🛬','STEP 3','현지서 로밍 ON']].map(s => `
-            <div style="flex:1;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.18);border-radius:12px;padding:9px 4px;text-align:center;">
+            <div style="flex:1;background:rgba(241,105,13,0.05);border:1px solid rgba(241,105,13,0.18);border-radius:12px;padding:9px 4px;text-align:center;">
               <div style="font-size:1rem;">${s[0]}</div>
               <div style="font-size:0.54rem;font-weight:800;color:#b45309;margin-top:3px;letter-spacing:0.5px;">${s[1]}</div>
               <div style="font-size:0.74rem;font-weight:800;color:#0f172a;margin-top:1px;">${s[2]}</div>
@@ -3196,14 +3198,14 @@
         ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : `<a href="login.html?return=${encodeURIComponent('mobile.html#orders')}" style="display:block;width:100%;max-width:330px;margin-top:9px;text-align:center;padding:13px;border-radius:14px;background:rgba(255,255,255,0.1);border:1.5px dashed rgba(255,255,255,0.45);color:#fff;font-weight:800;font-size:0.82rem;text-decoration:none;${reduced ? '' : 'animation:tcFade 0.5s ease 0.62s both;'}">💰 이 번호로 1분 가입하면 <b style="color:#fbbf24;">2,000원 쿠폰</b> + 주문·케어링크 평생 보관</a>`; } catch(e){ return ''; } })()}
         <div style="width:100%;max-width:330px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.7s both;'}">${buildTravelTipsHTML(country)}</div>
         <button id="tcShareBtn" style="margin-top:18px;padding:12px 22px;border:1.5px solid rgba(255,255,255,0.35);border-radius:24px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.8rem;font-weight:800;${reduced ? '' : 'animation:tcFade 0.5s ease 1.05s both;'}">📤 여행 메이트에게 공유하기</button>
-        <button id="tcDoneBtn" style="margin:12px 0 8px;padding:14px 34px;border:none;border-radius:26px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.9rem;font-weight:800;box-shadow:0 10px 26px rgba(249,115,22,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.9s both;'}">주문 내역 확인하기 →</button>
+        <button id="tcDoneBtn" style="margin:12px 0 8px;padding:14px 34px;border:none;border-radius:26px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.9rem;font-weight:800;box-shadow:0 10px 26px rgba(241,105,13,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.9s both;'}">주문 내역 확인하기 →</button>
         <div style="margin-bottom:auto;"></div>`;
       document.body.appendChild(layer);
       // 색종이 (모션 최소화 설정 시 생략)
       if (!reduced) {
         for (let i = 0; i < 34; i++) {
           const c = document.createElement('span');
-          const colors = ['#F97316', '#F59E0B', '#fbbf24', '#fff', '#4ade80'];
+          const colors = ['#F1690D', '#F59E0B', '#fbbf24', '#fff', '#4ade80'];
           c.style.cssText = `position:absolute;top:-12px;left:${Math.random() * 100}%;width:${6 + Math.random() * 5}px;height:${9 + Math.random() * 6}px;background:${colors[i % colors.length]};border-radius:2px;opacity:0.95;animation:tcConfetti ${2.4 + Math.random() * 1.6}s linear ${Math.random() * 0.9}s both;transform:rotate(${Math.random() * 360}deg);`;
           layer.appendChild(c);
         }
@@ -3253,7 +3255,7 @@
             .then(function(u){ renderUsageFlexible(u, pick, nm); });
         })
         .catch(function(){
-          box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">해당 번호로 등록된 eSIM을 찾지 못했어요.<br>구매 시 입력한 번호가 맞는지 확인하시거나, 발급 카톡의 <strong>내 티켓 열기</strong>에서 바로 확인할 수 있어요. 문제가 계속되면 카톡 상담으로 도와드릴게요.</div>';
+          box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(241,105,13,0.06);border:1px solid rgba(241,105,13,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">해당 번호로 등록된 eSIM을 찾지 못했어요.<br>구매 시 입력한 번호가 맞는지 확인하시거나, 발급 카톡의 <strong>내 티켓 열기</strong>에서 바로 확인할 수 있어요. 문제가 계속되면 카톡 상담으로 도와드릴게요.</div>';
         });
     }
 
@@ -3306,7 +3308,7 @@
       }
       var donut = '<div style="display:flex;align-items:center;gap:14px;margin-top:12px;">' +
         '<svg width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0;">' +
-        '<defs><linearGradient id="myDonutG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
+        '<defs><linearGradient id="myDonutG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1690D"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
         '<circle cx="60" cy="60" r="52" fill="none" stroke="#f1ece6" stroke-width="11"></circle>' +
         '<circle cx="60" cy="60" r="52" fill="none" stroke="' + ringColor + '" stroke-width="11" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="' + CIRC + '" stroke-dashoffset="' + (CIRC * (1 - pct / 100)) + '" style="transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1);"></circle>' +
         '<text x="60" y="50" text-anchor="middle" style="font-size:8.5px;font-weight:700;fill:#94a3b8;">' + centerTop + '</text>' +
@@ -3314,11 +3316,11 @@
         (centerSub ? '<text x="60" y="84" text-anchor="middle" style="font-size:7.5px;font-weight:700;fill:#b7a99a;">' + centerSub + '</text>' : '') +
         '</svg>' +
         '<div style="min-width:0;flex:1;">' +
-        '<div style="font-size:0.84rem;font-weight:900;color:#F2751F;">누적 사용 ' + gb(totalUsed) + '</div>' +
+        '<div style="font-size:0.84rem;font-weight:900;color:#F1690D;">누적 사용 ' + gb(totalUsed) + '</div>' +
         (rows ? '<div style="margin-top:5px;border-top:1px dashed #f1e6d8;padding-top:5px;">' + rows + '</div>' : '') +
         '</div></div>';
       box.style.display='block';
-      box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">' +
+      box.innerHTML = '<div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(241,105,13,0.25);border-radius:12px;padding:13px 14px;">' +
         '<div style="display:flex;align-items:center;gap:8px;"><img loading="lazy" src="images/fox-thumbsup.webp" style="width:34px;height:34px;object-fit:contain;" onerror="this.remove()"><div>' +
         '<div style="font-size:0.8rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' ' + statusBadge + localBadge + '</div>' +
         (prod ? '<div style="font-size:0.74rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
@@ -3344,7 +3346,7 @@
       if (window.CARE_API) { box.style.display='block'; box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#64748b;padding:8px 2px;">⏳ 조회 중...</div>'; fetch(window.CARE_API + '?action=usage&iccid=' + encodeURIComponent(iccid)).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(u){ renderUsageFlexible(u, null, ''); }).catch(function(){ box.innerHTML='<div style="font-size:0.74rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border-radius:10px;padding:10px 12px;">조회에 실패했어요 — ICCID를 확인하시거나 잠시 후 다시 시도해 주세요</div>'; }); return; }
       if (!window.USAGE_API_URL) {
         box.style.display = 'block';
-        box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">🛠️ 실시간 자동 조회는 곧 오픈돼요!<br>지금은 위의 <strong>\'데이터 사용량 확인하는 법\'</strong>으로 기기에서 바로 확인할 수 있어요</div>';
+        box.innerHTML = '<div style="font-size:0.74rem;font-weight:700;color:#9a5b16;background:rgba(241,105,13,0.06);border:1px solid rgba(241,105,13,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">🛠️ 실시간 자동 조회는 곧 오픈돼요!<br>지금은 위의 <strong>\'데이터 사용량 확인하는 법\'</strong>으로 기기에서 바로 확인할 수 있어요</div>';
         return;
       }
       box.style.display = 'block';
@@ -3368,7 +3370,7 @@
       const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : '#22c55e';
       box.style.display = 'block';
       box.innerHTML = `
-        <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(242,117,31,0.25);border-radius:12px;padding:13px 14px;">
+        <div style="background:linear-gradient(180deg,#fff,#fffaf5);border:1px solid rgba(241,105,13,0.25);border-radius:12px;padding:13px 14px;">
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.76rem;font-weight:800;color:#0f172a;">
             <span>${d.plan_name || '내 eSIM'}</span>
             <span style="color:${d.status === 'active' ? '#15803d' : '#64748b'};font-size:0.74rem;">${d.status === 'active' ? '● 사용 중' : d.status === 'expired' ? '만료됨' : '대기 중'}</span>
@@ -3379,7 +3381,7 @@
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:0.7rem;font-weight:700;color:#64748b;">
             <span>사용 ${gb(used)} / ${gb(total)}</span>
-            <span style="color:#0f172a;">남은 데이터 <strong style="color:#F2751F;">${Math.round(remainGb * 10) / 10}GB</strong></span>
+            <span style="color:#0f172a;">남은 데이터 <strong style="color:#F1690D;">${Math.round(remainGb * 10) / 10}GB</strong></span>
           </div>` : '<div style="margin-top:8px;font-size:0.72rem;font-weight:700;color:#15803d;">♾️ 무제한 요금제 — 마음껏 쓰세요!</div>'}
           ${d.expires_at ? `<div style="margin-top:7px;font-size:0.74rem;font-weight:600;color:#94a3b8;">유효기간: ${d.expires_at} 까지</div>` : ''}
         </div>`;
@@ -3418,7 +3420,7 @@
       layer = document.createElement('div');
       layer.id = 'installGuide';
       layer.style.cssText = 'position:fixed;inset:0;background:rgba(11,16,32,0.6);backdrop-filter:blur(4px);z-index:1000003;display:flex;align-items:flex-end;';
-      const step = (n, t) => `<div style="display:flex;gap:10px;padding:9px 0;font-size:0.79rem;line-height:1.6;color:#334155;"><span style="flex-shrink:0;width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${n}</span><span>${t}</span></div>`;
+      const step = (n, t) => `<div style="display:flex;gap:10px;padding:9px 0;font-size:0.79rem;line-height:1.6;color:#334155;"><span style="flex-shrink:0;width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${n}</span><span>${t}</span></div>`;
       layer.innerHTML = `
         <div style="background:#fdfefe;width:100%;border-radius:24px 24px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom,0px));max-height:86vh;overflow-y:auto;overscroll-behavior:contain;">
           <div style="width:42px;height:4.5px;border-radius:4px;background:#e2e8f0;margin:-6px auto 14px;"></div>
@@ -3430,7 +3432,7 @@
           </div>
           <div id="igBody"></div>
           ${lpa ? `<button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='📋 설치 코드가 복사됐어요 — 직접 입력에 붙여넣으세요';})" style="width:100%;margin-top:12px;padding:13px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.8rem;font-weight:800;color:#0f172a;">📋 설치 코드 복사하기</button>` : ''}
-          <button type="button" onclick="document.getElementById('installGuide').remove()" style="width:100%;margin-top:9px;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.8rem;font-weight:800;">확인했어요</button>
+          <button type="button" onclick="document.getElementById('installGuide').remove()" style="width:100%;margin-top:9px;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.8rem;font-weight:800;">확인했어요</button>
         </div>`;
       layer.onclick = (e) => { if (e.target === layer) layer.remove(); };
       document.body.appendChild(layer);
@@ -3695,8 +3697,8 @@
       const plans = pwPlansOfType();
       const days = Array.from(new Set(plans.map(p => parseInt(p.duration, 10)))).filter(d => d).sort((a, b) => a - b);
       const paint = (b, on) => {
-        b.style.background = on ? '#F2751F' : '#fff';
-        b.style.borderColor = on ? '#F2751F' : '#ece5dd';
+        b.style.background = on ? '#F1690D' : '#fff';
+        b.style.borderColor = on ? '#F1690D' : '#ece5dd';
         b.style.color = on ? '#fff' : '#221510';
         const sub = b.querySelectorAll('span')[1];
         if (sub) sub.style.color = on ? 'rgba(255,255,255,0.85)' : '#8a7a6d';
@@ -3809,7 +3811,7 @@
       el.style.display = 'block';
     }
     function timingBadge(lead, must) {
-      return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.76rem;font-weight:900;padding:5px 12px;border-radius:999px;margin-bottom:7px;box-shadow:0 4px 12px rgba(239,68,68,0.3);animation:jdTbPulse 1.5s ease-in-out 3;">⏰ 출국 ${lead} 전 구매 ${must ? '필수' : '권장'}</div>`;
+      return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F1690D);color:#fff;font-size:0.76rem;font-weight:900;padding:5px 12px;border-radius:999px;margin-bottom:7px;box-shadow:0 4px 12px rgba(239,68,68,0.3);animation:jdTbPulse 1.5s ease-in-out 3;">⏰ 출국 ${lead} 전 구매 ${must ? '필수' : '권장'}</div>`;
     }
     function renderActivationNotice() {
       const el = document.getElementById('activationNotice');
@@ -3824,7 +3826,7 @@
           + (longLead
             ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 현지 날짜가 하루 어긋날 수 있어요 — 여유 있게 <strong>출국 최소 3일 전에 주문</strong>해 주세요.</div>'
             : '');
-        bg = 'rgba(249,115,22,0.07)'; border = 'rgba(249,115,22,0.35)'; color = '#9a5b16';
+        bg = 'rgba(241,105,13,0.07)'; border = 'rgba(241,105,13,0.35)'; color = '#9a5b16';
       } else if (act.includes('즉시 개통')) {
         html = timingBadge('직전(1~2일)', true)
           + '<div>🚨 <strong>QR 발급·설치 즉시 사용일 시작</strong> — 미리 사면 여행 전에 기간이 녹아요. 출국 직전에 구매하고, 설치는 출발 당일이나 현지 도착 후에!</div>';
@@ -3924,7 +3926,7 @@
       const body = document.getElementById('detailBody');
       body.innerHTML = `
           <div style="min-width:0;">
-            <span style="display:inline-block;font-size:0.68rem;font-weight:900;color:#F2751F;background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);padding:4px 10px;border-radius:999px;">${typeBadge}</span>
+            <span style="display:inline-block;font-size:0.68rem;font-weight:900;color:#F1690D;background:rgba(241,105,13,0.08);border:1px solid rgba(241,105,13,0.3);padding:4px 10px;border-radius:999px;">${typeBadge}</span>
             <div style="font-size:1.45rem;font-weight:900;color:#221510;letter-spacing:-0.02em;line-height:1.3;margin-top:10px;">${currentSelectedCountry} ${capLbl} ${selectedDays}일</div>
             <div style="font-size:0.82rem;font-weight:600;color:#5D5049;margin-top:5px;line-height:1.55;">${descLine}</div>
           </div>
@@ -3933,7 +3935,7 @@
             <div style="min-width:0;font-size:0.8rem;font-weight:700;color:#8a8378;line-height:1.6;">서비스 지역 <b style="color:#221510;">${currentSelectedCountry}</b><br>통신사 <b style="color:#221510;">${cleanCarrier(activeCarrier.carrier)}</b>${dualNet}</div>
           </div>
           <div style="display:flex;align-items:baseline;gap:8px;margin:14px 0 2px;">
-            <b style="font-size:1.6rem;font-weight:900;color:#F2751F;">${p.final_price.toLocaleString()}원</b>
+            <b style="font-size:1.6rem;font-weight:900;color:#F1690D;">${p.final_price.toLocaleString()}원</b>
             ${selectedDays > 1 ? `<span style="font-size:0.76rem;font-weight:700;color:#94a3b8;">하루 약 ${Math.round(p.final_price / selectedDays).toLocaleString()}원 꼴</span>` : ''}
           </div>
           ${feel ? `<div style="font-size:0.78rem;font-weight:700;color:#9a5b16;margin-top:4px;">${feel}</div>` : ''}
@@ -3950,7 +3952,7 @@
             ${tile('signal', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
           </div>
           ${anHTML}
-          ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:8px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(249,115,22,0.05));">
+          ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:8px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(241,105,13,0.05));">
             <div style="font-size:0.8rem;font-weight:900;color:#b91c1c;margin-bottom:2px;">🔎 구매 전 꼭 알기</div>
             ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
           </div>` : ''}
@@ -4003,7 +4005,7 @@
           </div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:12px 2px 0;">
             <span style="font-size:0.82rem;font-weight:800;color:#5D5049;">총 상품 금액</span>
-            <b id="checkoutTotalPrice" class="checkout-total-price" style="font-size:1.2rem;color:#F2751F;">0원</b>
+            <b id="checkoutTotalPrice" class="checkout-total-price" style="font-size:1.2rem;color:#F1690D;">0원</b>
           </div>
           <div id="qtyAppDisc" style="display:none;justify-content:space-between;margin:4px 2px 0;font-size:0.76rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span id="qtyAppDiscVal"></span></div>
           <div class="pv-app-banner">📱 <span><b>앱으로 구매하면 전 상품 5% 할인!</b><br><span style="opacity:0.85;">홈 화면에 추가만 하면 돼요 — 공유 → '홈 화면에 추가'</span></span></div>
@@ -4097,8 +4099,8 @@
                 <div style="font-size:0.84rem;font-weight:800;color:#221510;">${x.country} · ${cleanCarrier(x.carrier)}</div>
                 <div style="font-size:0.72rem;font-weight:700;color:#94a3b8;margin-top:1px;">${x.capLbl} / ${x.days}일 × ${x.qty}개</div>
               </div>
-              <b style="font-size:0.88rem;font-weight:900;color:#F2751F;flex-shrink:0;">${(x.price * x.qty).toLocaleString()}원</b>
-              <button type="button" onclick="jdCartOrder(${i})" style="flex-shrink:0;padding:9px 12px;border-radius:11px;border:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-family:inherit;font-size:0.74rem;font-weight:800;cursor:pointer;">주문</button>
+              <b style="font-size:0.88rem;font-weight:900;color:#F1690D;flex-shrink:0;">${(x.price * x.qty).toLocaleString()}원</b>
+              <button type="button" onclick="jdCartOrder(${i})" style="flex-shrink:0;padding:9px 12px;border-radius:11px;border:none;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-family:inherit;font-size:0.74rem;font-weight:800;cursor:pointer;">주문</button>
               <button type="button" onclick="jdCartRemove(${i})" aria-label="삭제" style="flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid #ece5dd;background:#fff;color:#94a3b8;font-weight:800;cursor:pointer;">✕</button>
             </div>`).join('')}
           <div style="font-size:0.7rem;font-weight:700;color:#94a3b8;margin:6px 2px 0;">국가별 개통 정책이 달라 상품별로 결제해 주세요 — 각 [주문] 버튼이 바로 결제로 이어져요</div>
@@ -4163,7 +4165,7 @@
       const yt = gb * 1;          // 유튜브 HD ≈ 1GB/시간
       const insta = gb * 1.4;     // 인스타·릴스 ≈ 0.7GB/시간
       const fmt = h => h >= 10 ? Math.round(h) + '시간' : (Math.round(h * 10) / 10) + '시간';
-      const chip = t => `<span style="display:inline-block;white-space:nowrap;background:#fff;border:1px solid rgba(249,115,22,0.25);border-radius:20px;padding:3px 10px;margin:3px 4px 0 0;">${t}</span>`;
+      const chip = t => `<span style="display:inline-block;white-space:nowrap;background:#fff;border:1px solid rgba(241,105,13,0.25);border-radius:20px;padding:3px 10px;margin:3px 4px 0 0;">${t}</span>`;
       box.innerHTML = `<div style="margin-bottom:2px;">💡 <strong style="white-space:nowrap;">${prefix} ${val}</strong>이면 이 정도예요</div>`
         + chip(`📺 유튜브 약 ${fmt(yt)}`) + chip(`📸 인스타 약 ${fmt(insta)}`) + chip('🗺️ 지도·카톡 부담없이');
       box.style.display = 'block';
@@ -4294,8 +4296,8 @@
         <div class="ck-card">
           <div class="ck-row"><span style="color:#5D5049;font-weight:700;">상품 금액</span><span id="ckBase" style="font-weight:800;">-</span></div>
           <div class="ck-row" id="ckDiscRow" style="display:none;color:#15803d;font-weight:800;"><span>📱 앱 할인 5%</span><span id="ckDisc"></span></div>
-          <div class="ck-row" id="ckCouponRow" style="display:none;"><span style="color:#F2751F;font-weight:800;">쿠폰 할인</span><span id="ckCoupon" style="color:#F2751F;font-weight:800;"></span></div>
-          <div class="ck-row" style="margin-top:11px;padding-top:11px;border-top:1px dashed #ece5dd;"><span style="font-size:15px;font-weight:900;">최종 결제 금액</span><b id="ckFinal" style="font-size:21px;color:#F2751F;">-</b></div>
+          <div class="ck-row" id="ckCouponRow" style="display:none;"><span style="color:#F1690D;font-weight:800;">쿠폰 할인</span><span id="ckCoupon" style="color:#F1690D;font-weight:800;"></span></div>
+          <div class="ck-row" style="margin-top:11px;padding-top:11px;border-top:1px dashed #ece5dd;"><span style="font-size:15px;font-weight:900;">최종 결제 금액</span><b id="ckFinal" style="font-size:21px;color:#F1690D;">-</b></div>
           ${!jdIsApp() ? '<div class="ck-row" style="margin-top:7px;"><span style="font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.08);border-radius:6px;padding:3px 8px;">📱 앱 전용 5% 할인가</span><span id="ckAppHint" style="font-size:13px;font-weight:900;color:#7c3aed;"></span></div>' : ''}
         </div>
         <div id="mwDeviceCheck"></div>
@@ -4312,7 +4314,7 @@
         <details class="ck-card ck-fold" style="padding:12px 15px;">
           <summary>⚠️ 구매 전 꼭 확인</summary>
           <div style="margin-top:8px;font-size:12.5px;color:#5D5049;line-height:1.6;">
-            ${precautions.map(t => `<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid #f3ede5;"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F97316;margin-top:6px;"></span><span class="jd-ku">${t}</span></div>`).join('')}
+            ${precautions.map(t => `<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid #f3ede5;"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F1690D;margin-top:6px;"></span><span class="jd-ku">${t}</span></div>`).join('')}
           </div>
         </details>
         <details class="ck-card ck-fold" style="padding:12px 15px;">
@@ -4332,9 +4334,9 @@
             · 결제 오류·이중 결제는 카카오톡 고객센터로 접수해 주시면 확인 후 정정하며, 그 밖의 사항은 각 결제대행사의 표준약관을 따릅니다.
           </div>
         </details>
-        <label id="ckAgreeBox" style="display:flex;align-items:center;gap:11px;margin:4px 0 4px;cursor:pointer;padding:13px 14px;background:rgba(242,117,31,0.06);border:1.5px solid rgba(242,117,31,0.35);border-radius:10px;">
-          <input type="checkbox" id="ckAgreeCheck" style="width:21px;height:21px;accent-color:#F2751F;flex-shrink:0;">
-          <span style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고 이용약관·개인정보·결제에 동의합니다 <span style="color:#F2751F;">(필수)</span></span>
+        <label id="ckAgreeBox" style="display:flex;align-items:center;gap:11px;margin:4px 0 4px;cursor:pointer;padding:13px 14px;background:rgba(241,105,13,0.06);border:1.5px solid rgba(241,105,13,0.35);border-radius:10px;">
+          <input type="checkbox" id="ckAgreeCheck" style="width:21px;height:21px;accent-color:#F1690D;flex-shrink:0;">
+          <span style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고 이용약관·개인정보·결제에 동의합니다 <span style="color:#F1690D;">(필수)</span></span>
         </label>`;
 
       const dtitle = document.querySelector('#view-checkout .pp-title');
@@ -4359,8 +4361,8 @@
       check.onchange = () => {
         payBtn.disabled = !check.checked;
         payBtn.style.opacity = check.checked ? '1' : '0.5';
-        agreeBox.style.borderColor = check.checked ? '#22c55e' : 'rgba(242,117,31,0.35)';
-        agreeBox.style.background = check.checked ? 'rgba(34,197,94,0.07)' : 'rgba(242,117,31,0.06)';
+        agreeBox.style.borderColor = check.checked ? '#22c55e' : 'rgba(241,105,13,0.35)';
+        agreeBox.style.background = check.checked ? 'rgba(34,197,94,0.07)' : 'rgba(241,105,13,0.06)';
         renderCheckoutTotals(); // 버튼 문구(동의하고 결제 ↔ 결제하기) 갱신
       };
       payBtn.onclick = () => {
@@ -4448,10 +4450,10 @@
           const usable = (j.coupons || []).filter(c => !c.used && (!c.expires || c.expires >= today) && (!c.min_order || orderTotal >= c.min_order));
           const box = document.getElementById('checkoutCouponBox');
           if (!box || !usable.length) return;
-          box.innerHTML = '<div class="ck-card" style="margin:0;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.04);">'
+          box.innerHTML = '<div class="ck-card" style="margin:0;border:1.5px dashed rgba(241,105,13,0.45);background:rgba(241,105,13,0.04);">'
             + '<div class="ck-label">💰 쿠폰 적용</div>'
-            + usable.slice(0, 3).map((c, i) => '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#5D5049;"><input type="radio" name="ckCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F2751F;"><span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F2751F;">' + (c.type === 'cost' ? (couponValue(c) > 0 ? '-' + couponValue(c).toLocaleString() + '원 (원가 적용)' : '이 상품 적용불가') : '-' + Number(c.amount).toLocaleString() + '원') + '</b></span></label>').join('')
-            + '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#8a7a6d;"><input type="radio" name="ckCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F2751F;"><span>적용 안 함</span></label></div>';
+            + usable.slice(0, 3).map((c, i) => '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#5D5049;"><input type="radio" name="ckCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F1690D;"><span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F1690D;">' + (c.type === 'cost' ? (couponValue(c) > 0 ? '-' + couponValue(c).toLocaleString() + '원 (원가 적용)' : '이 상품 적용불가') : '-' + Number(c.amount).toLocaleString() + '원') + '</b></span></label>').join('')
+            + '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#8a7a6d;"><input type="radio" name="ckCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F1690D;"><span>적용 안 함</span></label></div>';
           box.style.display = 'block';
           box.querySelectorAll('input[name="ckCoupon"]').forEach(r => r.addEventListener('change', function () {
             const idx = parseInt(this.value, 10);
@@ -4708,10 +4710,10 @@
           <div style="display:flex;align-items:center;margin:2px 2px 12px;">
             ${steps.map((label, i) => {
               const done = i <= doneUpto;
-              return `${i ? `<div style="flex:1;height:2px;background:${done ? 'linear-gradient(90deg,#F97316,#F59E0B)' : '#e2e8f0'};margin:0 3px 14px;"></div>` : ''}
+              return `${i ? `<div style="flex:1;height:2px;background:${done ? 'linear-gradient(90deg,#F1690D,#F59E0B)' : '#e2e8f0'};margin:0 3px 14px;"></div>` : ''}
               <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                <div style="width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;${done ? 'background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;box-shadow:0 2px 6px rgba(249,115,22,0.35);' : 'background:#fff;border:2px solid #e2e8f0;color:#cbd5e1;'}">${done ? '✓' : i + 1}</div>
-                <div style="font-size:0.56rem;font-weight:800;color:${done ? '#F2751F' : '#94a3b8'};white-space:nowrap;">${label}</div>
+                <div style="width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;${done ? 'background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;box-shadow:0 2px 6px rgba(241,105,13,0.35);' : 'background:#fff;border:2px solid #e2e8f0;color:#cbd5e1;'}">${done ? '✓' : i + 1}</div>
+                <div style="font-size:0.56rem;font-weight:800;color:${done ? '#F1690D' : '#94a3b8'};white-space:nowrap;">${label}</div>
               </div>`;
             }).join('')}
           </div>
@@ -4725,7 +4727,7 @@
           </div>
           ${isIOS ? `
           <a href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${encodeURIComponent(lpa)}"
-             style="display:block;text-align:center;padding:13px;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.84rem;text-decoration:none;box-shadow:0 5px 14px rgba(249,115,22,0.3);margin-bottom:8px;">⚡ 탭 한 번으로 eSIM 설치 (iOS 17.4+)</a>` : ''}
+             style="display:block;text-align:center;padding:13px;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.84rem;text-decoration:none;box-shadow:0 5px 14px rgba(241,105,13,0.3);margin-bottom:8px;">⚡ 탭 한 번으로 eSIM 설치 (iOS 17.4+)</a>` : ''}
           <div style="display:flex;gap:8px;margin-bottom:8px;">
             <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='📋 설치 코드가 복사됐어요';})"
               style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">설치 코드 복사</button>
@@ -4744,10 +4746,10 @@
           </div>`
           : `
           ${issueUrl ? `
-          <a href="${issueUrl}" style="display:block;text-align:center;padding:14px;border-radius:12px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 5px 14px rgba(249,115,22,0.3);margin-bottom:8px;">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
+          <a href="${issueUrl}" style="display:block;text-align:center;padding:14px;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.86rem;text-decoration:none;box-shadow:0 5px 14px rgba(241,105,13,0.3);margin-bottom:8px;">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
           <div style="font-size:0.72rem;color:#64748b;line-height:1.55;">발급 전에는 100% 환불 가능 · 발급 후 취소 불가 · 사용일은 현지 활성화부터 카운트</div>`
           : `
-          <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#9a5b16;line-height:1.6;">🛠️ 발급 정보를 준비 중이에요 — 준비되면 <strong>카카오톡으로 발급 링크</strong>를 보내드려요. 링크가 안 왔다면 아래로 문의해 주세요.</div>
+          <div style="background:rgba(241,105,13,0.06);border:1px solid rgba(241,105,13,0.2);border-radius:12px;padding:12px 13px;font-size:0.76rem;font-weight:700;color:#9a5b16;line-height:1.6;">🛠️ 발급 정보를 준비 중이에요 — 준비되면 <strong>카카오톡으로 발급 링크</strong>를 보내드려요. 링크가 안 왔다면 아래로 문의해 주세요.</div>
           <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[발급 링크 요청] 주문번호: ${o.orderCode}');window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
             style="width:100%;margin-top:8px;padding:12px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.76rem;font-weight:800;color:#0f172a;">💬 발급 링크 다시 받기 (카톡)</button>`}`}
         </div>`;
@@ -4885,7 +4887,7 @@
           });
           var box = document.createElement('div');
           box.style.cssText = 'position:fixed;left:10px;bottom:80px;z-index:999999;background:rgba(15,23,42,0.95);color:#4ade80;font-size:12px;font-weight:700;padding:14px 16px;border-radius:12px;line-height:1.8;max-width:320px;font-family:monospace;';
-          box.innerHTML = '<div style="color:#f97316;margin-bottom:4px;">🌏 지구본 진단</div>' + lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
+          box.innerHTML = '<div style="color:#F1690D;margin-bottom:4px;">🌏 지구본 진단</div>' + lines.map(function (l) { return '<div>' + l + '</div>'; }).join('');
           document.body.appendChild(box);
         }, 2500);
       }
@@ -5133,7 +5135,7 @@
         if (e.target && e.target.tagName === 'IMG') e.preventDefault();
       });
       try {
-        console.log('%c⚠️ 잠깐!', 'color:#F97316;font-size:28px;font-weight:900;');
+        console.log('%c⚠️ 잠깐!', 'color:#F1690D;font-size:28px;font-weight:900;');
         console.log('%c본 사이트의 코드·디자인·데이터는 JDISIM의 자산입니다.\n무단 복제 및 크롤링은 저작권법에 따라 법적 책임이 따를 수 있습니다.', 'font-size:13px;color:#334155;');
       } catch (e) {}
     })();
@@ -5217,7 +5219,7 @@
     document.addEventListener('dragstart', function (e) {
       if (e.target && e.target.tagName === 'IMG') e.preventDefault();
     });
-    try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F2751F;font-weight:bold;font-size:14px'); } catch (e) {}
+    try { console.log('%c© JDISIM — 로미 캐릭터·디자인·코드의 무단 복제/사용을 금합니다.', 'color:#F1690D;font-weight:bold;font-size:14px'); } catch (e) {}
   })();
   </script>
   <style id="mobile-page-anim">
@@ -5330,7 +5332,7 @@
         var today = new Date(); today.setHours(0, 0, 0, 0);
         var d = new Date(dep); d.setHours(0, 0, 0, 0);
         var diff = Math.round((d - today) / 86400000);
-        if (diff > 0) ddayHtml = '<span style="background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;box-shadow:0 3px 9px rgba(249,115,22,0.3);">✈️ D-' + diff + '</span>';
+        if (diff > 0) ddayHtml = '<span style="background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;box-shadow:0 3px 9px rgba(241,105,13,0.3);">✈️ D-' + diff + '</span>';
         else if (diff === 0) ddayHtml = '<span style="background:linear-gradient(135deg,#2BB3A3,#40CDBE);color:#fff;font-size:0.74rem;font-weight:900;padding:4px 11px;border-radius:999px;">✈️ 오늘 출국!</span>';
       }
       var testBadge = isTest ? ' <span style="background:#EEF2F7;color:#64748B;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:999px;vertical-align:middle;">테스트 주문</span>' : '';
@@ -5341,19 +5343,19 @@
       var careLabel = isCare ? '🎫 여행 케어 데스크 열기' : '🎫 내 케어링크 열기';
 
       slot.innerHTML =
-        '<div style="position:relative;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(242,117,31,0.22);border-radius:18px;padding:0 0 12px;margin:12px 0 14px;overflow:hidden;box-shadow:0 10px 26px rgba(242,117,31,0.09);">'
-        + '<div style="height:4px;background:linear-gradient(90deg,#F97316,#F59E0B 55%,#2BB3A3);"></div>'
+        '<div style="position:relative;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(241,105,13,0.22);border-radius:18px;padding:0 0 12px;margin:12px 0 14px;overflow:hidden;box-shadow:0 10px 26px rgba(241,105,13,0.09);">'
+        + '<div style="height:4px;background:linear-gradient(90deg,#F1690D,#F59E0B 55%,#2BB3A3);"></div>'
         + '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px 4px;">'
         +   '<div style="flex:1;min-width:0;">'
-        +     '<div style="font-size:0.68rem;font-weight:900;letter-spacing:2px;color:#F97316;">MY TRIP · 내 여행</div>'
+        +     '<div style="font-size:0.68rem;font-weight:900;letter-spacing:2px;color:#F1690D;">MY TRIP · 내 여행</div>'
         +     '<div style="font-size:0.98rem;font-weight:800;color:#221510;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + testBadge + '</div>'
         +     '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">' + subLine + '</div>'
         +   '</div>'
         +   '<img loading="lazy" src="images/fox-thumbsup.webp" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
         + '</div>'
         + '<div style="display:flex;gap:8px;padding:10px 14px 0;">'
-        +   '<a href="' + careHref.replace(/"/g, '&quot;') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(249,115,22,0.28);">' + careLabel + '</a>'
-        +   '<button type="button" data-mt-rebuy style="flex:1;background:#fff;border:1.5px solid rgba(242,117,31,0.4);color:#F2751F;font-family:inherit;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;cursor:pointer;">같은 나라 재구매</button>'
+        +   '<a href="' + careHref.replace(/"/g, '&quot;') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(241,105,13,0.28);">' + careLabel + '</a>'
+        +   '<button type="button" data-mt-rebuy style="flex:1;background:#fff;border:1.5px solid rgba(241,105,13,0.4);color:#F1690D;font-family:inherit;font-size:0.82rem;font-weight:800;padding:11px 8px;border-radius:13px;cursor:pointer;">같은 나라 재구매</button>'
         + '</div></div>';
       var rb = slot.querySelector('[data-mt-rebuy]');
       if (rb) rb.addEventListener('click', function () {
@@ -5374,15 +5376,15 @@
       var slot = document.getElementById('pwaCard');
       if (!slot) return;
       slot.innerHTML =
-        '<div style="position:relative;display:flex;align-items:center;gap:12px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(242,117,31,0.35);border-radius:16px;padding:13px 14px;margin:6px 0 20px;">'
-        + '<img loading="lazy" src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;box-shadow:0 4px 10px rgba(242,117,31,0.2);" onerror="this.remove()">'
+        '<div style="position:relative;display:flex;align-items:center;gap:12px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(241,105,13,0.35);border-radius:16px;padding:13px 14px;margin:6px 0 20px;">'
+        + '<img loading="lazy" src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;box-shadow:0 4px 10px rgba(241,105,13,0.2);" onerror="this.remove()">'
         + '<div style="flex:1;min-width:0;">'
         +   '<div style="font-size:0.88rem;font-weight:800;color:#221510;">앱스토어 없이, 1초만에 앱으로</div>'
         +   '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:2px;">홈 화면에 추가하면 주문·QR·케어를 앱처럼 써요</div>'
         + '</div>'
         + (mode === 'ios'
-          ? '<span style="flex-shrink:0;font-size:0.72rem;font-weight:800;color:#F2751F;text-align:center;line-height:1.4;">공유 버튼 →<br>홈 화면에 추가</span>'
-          : '<button type="button" data-pwa-go style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);border:none;color:#fff;font-family:inherit;font-size:0.8rem;font-weight:800;padding:10px 15px;border-radius:22px;cursor:pointer;box-shadow:0 4px 12px rgba(249,115,22,0.3);">설치</button>')
+          ? '<span style="flex-shrink:0;font-size:0.72rem;font-weight:800;color:#F1690D;text-align:center;line-height:1.4;">공유 버튼 →<br>홈 화면에 추가</span>'
+          : '<button type="button" data-pwa-go style="flex-shrink:0;background:linear-gradient(135deg,#F1690D,#F59E0B);border:none;color:#fff;font-family:inherit;font-size:0.8rem;font-weight:800;padding:10px 15px;border-radius:22px;cursor:pointer;box-shadow:0 4px 12px rgba(241,105,13,0.3);">설치</button>')
         + '<button type="button" data-pwa-x aria-label="닫기" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#c9b8a9;font-size:0.9rem;cursor:pointer;padding:4px;">✕</button>'
         + '</div>';
       var go = slot.querySelector('[data-pwa-go]');
@@ -5460,7 +5462,7 @@
         +     '<span style="display:block;font-size:0.95rem;font-weight:800;">가입만 해도 <b style="color:#FDBA74;">2,000원 쿠폰</b> ✈️</span>'
         +     '<span style="display:block;font-size:0.78rem;font-weight:600;color:#B7BFCF;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
         +   '</span>'
-        +   '<span style="flex-shrink:0;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(249,115,22,0.35);">로그인</span></a>'
+        +   '<span style="flex-shrink:0;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.82rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(241,105,13,0.35);">로그인</span></a>'
         + quick
         + '</div>';
     }
@@ -5471,22 +5473,22 @@
       var fresh = coupons.filter(function (c) { return !c.used && !cExpired(c); });
       var deadCoupons = coupons.filter(function (c) { return c.used || cExpired(c); });
       var html =
-        '<div style="background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(242,117,31,0.22);border-radius:18px;overflow:hidden;margin:0 0 14px;box-shadow:0 10px 26px rgba(242,117,31,0.09);">'
-        + '<div style="height:4px;background:linear-gradient(90deg,#F97316,#F59E0B 55%,#2BB3A3);"></div>'
+        '<div style="background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(241,105,13,0.22);border-radius:18px;overflow:hidden;margin:0 0 14px;box-shadow:0 10px 26px rgba(241,105,13,0.09);">'
+        + '<div style="height:4px;background:linear-gradient(90deg,#F1690D,#F59E0B 55%,#2BB3A3);"></div>'
         + '<div style="display:flex;align-items:center;gap:10px;padding:13px 15px 10px;">'
-        +   '<span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(249,115,22,0.14),rgba(245,158,11,0.08));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</span>'
+        +   '<span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(241,105,13,0.14),rgba(245,158,11,0.08));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</span>'
         +   '<span style="flex:1;min-width:0;"><b style="font-size:0.98rem;color:#221510;">' + esc((me.profile && me.profile.name) || me.phoneMasked || '여행자') + ' 님</b>'
         +   '<span style="display:block;font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:1px;">주문 ' + orders.length + '건 · 쿠폰 ' + fresh.length + '장</span></span>'
         +   '<button type="button" data-m-logout style="border:none;background:none;font-family:inherit;font-size:0.76rem;font-weight:700;color:#B0A28C;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px;">로그아웃</button>'
         + '</div>';
       // 🎟️ 쿠폰 지갑 (2026-07-17): 발급된 모든 쿠폰 표시 — 원가 구매권(type:'cost')은 금액 대신 라벨, 지난 쿠폰은 접힘
       if (fresh.length || deadCoupons.length) {
-        html += '<div style="margin:0 12px 7px;font-size:0.82rem;font-weight:800;color:#221510;">🎟️ 내 쿠폰 <b style="color:#F2751F;">' + fresh.length + '장</b></div>';
+        html += '<div style="margin:0 12px 7px;font-size:0.82rem;font-weight:800;color:#221510;">🎟️ 내 쿠폰 <b style="color:#F1690D;">' + fresh.length + '장</b></div>';
         fresh.forEach(function (c) {
           var isCost = c.type === 'cost';
           var icon = isCost ? '💎' : (c.reason === 'welcomeback' ? '🧡' : '🎟️');
-          var amt = isCost ? '<b style="color:#7c3aed;">어떤 상품이든 원가로</b>' : '<b style="color:#F2751F;">' + Number(c.amount || 0).toLocaleString() + '원</b>';
-          html += '<div style="margin:0 12px 8px;padding:12px 14px;border:1.5px dashed ' + (isCost ? 'rgba(124,58,237,0.45)' : 'rgba(242,117,31,0.5)') + ';border-radius:14px;background:' + (isCost ? 'rgba(124,58,237,0.05)' : 'rgba(249,115,22,0.05)') + ';">'
+          var amt = isCost ? '<b style="color:#7c3aed;">어떤 상품이든 원가로</b>' : '<b style="color:#F1690D;">' + Number(c.amount || 0).toLocaleString() + '원</b>';
+          html += '<div style="margin:0 12px 8px;padding:12px 14px;border:1.5px dashed ' + (isCost ? 'rgba(124,58,237,0.45)' : 'rgba(241,105,13,0.5)') + ';border-radius:14px;background:' + (isCost ? 'rgba(124,58,237,0.05)' : 'rgba(241,105,13,0.05)') + ';">'
             + '<div style="font-size:0.88rem;font-weight:800;color:#221510;">' + icon + ' ' + esc(c.name) + ' ' + amt + '</div>'
             + '<div style="font-size:0.74rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + (c.note ? esc(c.note) + ' · ' : '') + (c.expires ? esc(c.expires) + '까지' : '기한 없음') + (c.min_order ? ' · ' + Number(c.min_order).toLocaleString() + '원 이상 주문 시' : '') + ' · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div>'
             + '<div style="font-size:0.72rem;font-weight:700;color:#1B8E82;margin-top:4px;">💡 결제 직전 화면에 자동으로 떠요 — 누르면 바로 적용</div></div>';
@@ -5505,7 +5507,7 @@
         html += '<div style="display:flex;align-items:center;gap:10px;margin:0 12px 9px;padding:11px 13px;background:#fff;border:1px solid #F0E7DB;border-radius:14px;">'
           + '<span style="flex:1;min-width:0;"><b style="font-size:0.88rem;color:#221510;">' + esc(o.country || '여행') + '</b>'
           + '<span style="display:block;font-size:0.72rem;font-weight:600;color:#8a7a6d;margin-top:1px;">' + esc((o.plan || '').slice(0, 30)) + ' · ' + esc((o.at || '').slice(0, 10)) + '</span></span>'
-          + (o.care_url ? '<a href="' + o.care_url.replace(/"/g, '&quot;') + '" style="flex-shrink:0;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-size:0.76rem;font-weight:800;padding:8px 13px;border-radius:20px;">🎫 케어링크</a>' : '')
+          + (o.care_url ? '<a href="' + o.care_url.replace(/"/g, '&quot;') + '" style="flex-shrink:0;text-decoration:none;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.76rem;font-weight:800;padding:8px 13px;border-radius:20px;">🎫 케어링크</a>' : '')
           + '</div>';
       });
       if (!orders.length) html += '<div style="margin:0 12px 12px;padding:14px;text-align:center;font-size:0.82rem;font-weight:600;color:#8a7a6d;background:#FFFDFB;border:1px dashed #EDE4D8;border-radius:14px;">아직 연결된 주문이 없어요 — 구매하시면 여기에 자동으로 모여요</div>';
@@ -5514,7 +5516,7 @@
       html += '<div style="margin:2px 12px 12px;padding:12px 13px;background:#FFFDFB;border:1px solid #F0E7DB;border-radius:14px;font-size:0.78rem;font-weight:600;color:#8a7a6d;line-height:1.75;">'
         + '<div style="font-size:0.8rem;font-weight:800;color:#221510;margin-bottom:4px;">⚙️ 내 계정</div>'
         + '이메일 ' + esc(pf.email || '미등록') + ' · 혜택 알림 ' + (pf.marketing ? 'ON' : 'OFF')
-        + '<br>💡 쿠폰은 <b style="color:#F2751F;">결제 직전 화면에서 선택</b>하면 자동 차감돼요 (조건 충족 시에만 표시)'
+        + '<br>💡 쿠폰은 <b style="color:#F1690D;">결제 직전 화면에서 선택</b>하면 자동 차감돼요 (조건 충족 시에만 표시)'
         + '<br>정보 수정·탈퇴는 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#1B8E82;font-weight:800;">카카오톡 고객센터</a>로 — 탈퇴 시 즉시 파기돼요</div>';
       html += '<div style="height:8px;"></div></div>';
       zone.innerHTML = html;
