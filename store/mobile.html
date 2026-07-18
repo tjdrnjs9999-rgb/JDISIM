@@ -4289,7 +4289,10 @@
       try { savedBuyer = JSON.parse(localStorage.getItem('jd_buyer') || '{}'); } catch (e) {}
       const capLbl = (activePlan.data_limit === '무제한' && window.JD_UNL) ? window.JD_UNL.label(activePlan.product_code) : activePlan.data_limit;
       const q = s => String(s || '').replace(/"/g, '&quot;');
-      const precautions = getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier).concat([
+      const fupM = /^([\d.]+(?:GB|MB))\+([\d.]+\s*(?:M|K)bps)$/i.exec(String(activePlan.data_limit || ''));
+      const precautions = (fupM ? [`<strong>속도 제한 안내:</strong> 매일 고속 <strong>${fupM[1]}</strong> 소진 후에는 <strong>${fupM[2]}</strong> 저속으로 전환돼 계속 이용됩니다 (완전 무제한 아님)`] : [])
+        .concat(((typeof getCriticalFlags === 'function' ? getCriticalFlags() : []) || []).map(x => x.t))
+        .concat(getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier)).concat([
         '<strong>기종 확인:</strong> 키패드 *#06# 입력 시 <strong>EID</strong>가 보여야 사용 가능 (중국/홍콩/마카오 구매 아이폰 불가)',
         '<strong>취소/환불:</strong> 설치(다운로드) 전까지 <strong>100% 환불</strong>, 설치 후엔 디지털 상품 특성상 불가 (<a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a>)',
         '<strong>현지 장애:</strong> 프로필을 지우지 말고 24시간 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#2563eb;font-weight:800;">카톡 상담</a>으로 접수 시 미해결 100% 환불'
@@ -4333,8 +4336,8 @@
         </div>
         <div id="checkoutCouponBox" style="display:none;margin-bottom:12px;"></div>
         ${memberBanner}
-        <details class="ck-card ck-fold" style="padding:12px 15px;">
-          <summary>⚠️ 구매 전 꼭 확인</summary>
+        <details class="ck-card ck-fold" open style="padding:12px 15px;">
+          <summary>⚠️ 구매 전 꼭 확인 ${precautions.length}가지 — 읽고 아래에 체크해 주세요</summary>
           <div style="margin-top:8px;font-size:12.5px;color:#5D5049;line-height:1.6;">
             ${precautions.map(t => `<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid #f3ede5;"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F1690D;margin-top:6px;"></span><span class="jd-ku">${t}</span></div>`).join('')}
           </div>
@@ -4358,7 +4361,7 @@
         </details>
         <label id="ckAgreeBox" style="display:flex;align-items:center;gap:11px;margin:4px 0 4px;cursor:pointer;padding:13px 14px;background:rgba(241,105,13,0.06);border:1.5px solid rgba(241,105,13,0.35);border-radius:10px;">
           <input type="checkbox" id="ckAgreeCheck" style="width:21px;height:21px;accent-color:#F1690D;flex-shrink:0;">
-          <span style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.5;">주문 내용을 확인했고 이용약관·개인정보·결제에 동의합니다 <span style="color:#F1690D;">(필수)</span></span>
+          <span style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.5;">위 <b>'구매 전 꼭 확인 ${precautions.length}가지'</b>와 주문 내용을 확인했고, 이용약관·개인정보·결제에 동의합니다 <span style="color:#F1690D;">(필수)</span></span>
         </label>`;
 
       const dtitle = document.querySelector('#view-checkout .pp-title');
@@ -4380,7 +4383,11 @@
       const check = document.getElementById('ckAgreeCheck');
       const payBtn = document.getElementById('checkoutPayBtn');
       const agreeBox = document.getElementById('ckAgreeBox');
+      // 확인 증빙 (2026-07-18): 체크 순간의 시각·항목수·문구 해시 — 분쟁 시 "이 문구를 보고 체크했다" 재현용
+      window.__ackMeta = null;
+      const __ackHash = (function (txt) { let h = 5381; for (let i = 0; i < txt.length; i++) h = ((h << 5) + h + txt.charCodeAt(i)) >>> 0; return h.toString(36); })(precautions.join('|').replace(/<[^>]+>/g, ''));
       check.onchange = () => {
+        window.__ackMeta = check.checked ? { at: new Date().toISOString(), n: precautions.length, h: __ackHash } : null;
         payBtn.disabled = !check.checked;
         payBtn.style.opacity = check.checked ? '1' : '0.5';
         agreeBox.style.borderColor = check.checked ? '#22c55e' : 'rgba(241,105,13,0.35)';
@@ -4610,7 +4617,8 @@
           customData: JSON.stringify({
             sku: activePlan.product_code,
             qty: purchaseQty || 1,
-            name: name, phone: phone, amount: priceVal
+            name: name, phone: phone, amount: priceVal,
+            ack: window.__ackMeta || null
           })
         }).then(function(rsp) {
           if (rsp.code != null) {
