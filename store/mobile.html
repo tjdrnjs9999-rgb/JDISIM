@@ -3950,16 +3950,23 @@
           <div class="pv-grid">
             ${tile('database', '데이터', dataTile)}
             ${tile('refresh-cw', '데이터 리셋', resetTile)}
-            ${tile('calendar', '사용일 리셋', dayResetTile)}
             ${tile('zap', '개통 시점', activeCarrier.activation)}
             ${tile('hourglass', '유효기간', activeCarrier.validity)}
             ${tile('wifi', '핫스팟', activeCarrier.hotspot)}
-            ${tile('battery-charging', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)}
-            ${tile('qr-code', 'eSIM 등록', 'QR 수신 후 와이파이에서 설치')}
-            ${tile('phone', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)}
             ${tile('signal', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
           </div>
-          ${anHTML}
+          <details style="margin:8px 0 2px;border:1px solid #EFF2F6;border-radius:10px;background:#FAFBFC;">
+            <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:0.84375rem;font-weight:800;color:#334155;-webkit-tap-highlight-color:transparent;">📂 상세 스펙 · 개통 안내 더 보기 <span style="margin-left:auto;font-size:0.75rem;font-weight:700;color:#8B94A7;">펼치기 ▾</span></summary>
+            <div style="padding:2px 9px 9px;">
+              <div class="pv-grid" style="margin-top:0;">
+                ${tile('calendar', '사용일 리셋', dayResetTile)}
+                ${tile('battery-charging', '충전 / 연장', `${activeCarrier.charging || '-'} / ${activeCarrier.extension || '-'}`)}
+                ${tile('qr-code', 'eSIM 등록', 'QR 수신 후 와이파이에서 설치')}
+                ${tile('phone', '전화 / 문자', `${activeCarrier.calls || '-'} / ${activeCarrier.sms || '-'}`)}
+              </div>
+              ${anHTML}
+            </div>
+          </details>
           ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:8px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(241,105,13,0.05));">
             <div style="font-size:0.84375rem;font-weight:900;color:#b91c1c;margin-bottom:2px;">🔎 구매 전 꼭 알기</div>
             ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
