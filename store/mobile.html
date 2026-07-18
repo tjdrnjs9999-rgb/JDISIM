@@ -2385,10 +2385,10 @@
     </div>
 
     <div class="pp-body">
-      <div class="pw-tabs" id="ptypeTabs"></div>
+      <div class="pw-tabs" id="ptypeTabs" style="display:none !important;"></div>
 
       <!-- Buy Flow v3 (2026-07-17): 통신망 = 자동 추천 + '바꾸기' 접힘 (질문 단계에서 제거). 개통안내는 치명 정보라 접힘 밖 유지 -->
-      <details class="pw-block" id="pwCarrierBlock" style="display:none;">
+      <details class="pw-block" id="pwCarrierBlock" style="display:none !important;">
         <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.84375rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">선택해 주세요</b> <span id="pwCarrierCta" style="color:#F1690D;text-decoration:underline;text-underline-offset:2px;font-weight:800;">👇 아래에서 선택</span></summary>
         <div class="pw-label" style="margin-top:10px;">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
         <div id="carrierPills" class="pw-carriers" style="padding-bottom:2px;"></div>
@@ -2399,14 +2399,17 @@
       </details>
 
       <div class="pw-block" id="pwDaysBlock" style="display:none;">
-        <div class="pw-label">며칠 쓰세요?</div>
+        <div class="pw-label">언제 떠나세요? <em>날짜를 고르면 리셋 시간까지 맞춰드려요</em></div>
+        <div id="tripCalBox"></div>
+        <div id="tripDateMsg" style="display:none;margin-top:8px;font-size:0.84375rem;font-weight:700;line-height:1.55;"></div>
+        <div class="pw-label" style="margin-top:14px;">또는 일수로 바로 <em>출발일 포함</em></div>
         <div id="daysChips" style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;"></div>
-        <details id="tripDatePick" style="margin-top:8px;">
-          <summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.84375rem;font-weight:800;color:#B04A06;-webkit-tap-highlight-color:transparent;">📅 여행 날짜로 고르기 <span style="font-size:0.75rem;font-weight:700;color:#8B94A7;">— 출발·귀국일만 넣으면 딱 맞는 일수를 골라드려요</span></summary>
-          <div id="tripCalBox" style="margin-top:9px;"></div>
-          <div id="tripDateMsg" style="display:none;margin-top:8px;font-size:0.84375rem;font-weight:700;line-height:1.55;"></div>
-        </details>
-        <div id="daysFeel" data-moved-to-detail style="display:none !important;margin-top:8px;font-size:0.84375rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
+        <div id="daysFeel" data-moved-to-detail style="display:none !important;"></div>
+      </div>
+
+      <div class="pw-block" id="pwStyleBlock" style="display:none;">
+        <div class="pw-label">데이터, 어떻게 쓰세요?</div>
+        <div id="styleCards" style="display:flex;flex-direction:column;gap:9px;"></div>
       </div>
 
       <div class="pw-block" id="pwProdBlock" style="display:none;margin-bottom:20px;">
@@ -3592,7 +3595,37 @@
     // 흐름: 유형 3탭(무제한/데일리/총용량) → 통신사 알약(로컬/로밍 표기) → 일수 → 상품 선택
     //       → 상세 팝업(정보 그리드+유의사항) → 수량 미니시트(앱 5%·카트/바로구매) → 주문 팝업(수령·쿠폰·동의·결제)
     let allCarrierOptions = [];
-    let selectedProductType = ''; // 무제한 | 데일리 | 총용량
+    let selectedProductType = ''; // 무제한 | 데일리 | 총용량 (하위 호환 — v4에선 스타일이 정본)
+    let selectedStyle = '';       // v4: 마음껏 | 보통 | 가볍게 | 전체
+
+    // v4 스타일 매핑 (고객 언어 → 상품): 시안 승인 2026-07-19
+    function styleOf(pl) {
+      const cap = planCap(pl);
+      if (cap === '무제한') return '마음껏';                       // 진짜/등급 불문 상위 — 카드에 정직 라벨
+      if (/^[\d.]+\s*Mbps$/i.test(cap)) return '마음껏';          // 속도컷 무제한(10Mbps류)
+      const fup = /^([\d.]+)(GB|MB)\+/i.exec(cap);
+      if (fup) { const gb = fup[2].toUpperCase() === 'GB' ? parseFloat(fup[1]) : parseFloat(fup[1]) / 1024; return gb >= 3 ? '마음껏' : (gb >= 1 ? '보통' : '가볍게'); }
+      const m = /^([\d.]+)(GB|MB)$/i.exec(cap);
+      if (!m) return '보통';
+      const gb = m[2].toUpperCase() === 'GB' ? parseFloat(m[1]) : parseFloat(m[1]) / 1024;
+      if (pl.service_type === '데일리' || pl.service_type === '무제한') {
+        return gb >= 3 ? '마음껏' : (gb >= 1 ? '보통' : '가볍게');
+      }
+      return gb <= 3 ? '가볍게' : (gb > 10 ? '마음껏' : '보통');   // 총용량
+    }
+    const STYLE_META = {
+      '마음껏': { ic: '🎬', t: '마음껏', s: '유튜브·핫스팟·영상통화 걱정 없이' },
+      '보통':   { ic: '📱', t: '보통',   s: 'SNS·지도·검색 위주 — 매일 1~2GB' },
+      '가볍게': { ic: '💬', t: '가볍게', s: '메신저·지도 정도 — 최소 요금' },
+      '전체':   { ic: '🗂', t: '전체 상품 보기', s: '모든 상품을 직접 비교' }
+    };
+    function shortReset(code) {
+      try { const r = window.JD_RESETS && window.JD_RESETS.get(code);
+        if (!r || !r.data) return '';
+        const m = /([가-힣]+)\s*(?:서부\s*)?시간\s*(\d{1,2}:\d{2})/.exec(r.data);
+        return m ? m[1] + ' ' + m[2] + ' 리셋' : (/총 사용량/.test(r.data) ? '' : '');
+      } catch (e) { return ''; }
+    }
 
     const __SCOPE_CO = ['중국','홍콩','마카오','대만','미국','캐나다','멕시코','일본','태국','싱가포르','말레이시아','베트남'];
     function netScope(g) {
@@ -3618,29 +3651,89 @@
     };
 
     function initProductWizard(preferCarrier) {
+      // ═══ v4 (2026-07-19): 날짜(캘린더 펼침)/일수 → 사용 스타일 → 통합 추천 리스트. 통신사·유형 탭 단계 폐지 ═══
       window.__preferCarrier = preferCarrier || '';
-      selectedProductType = ''; activeCarrier = null; activePlan = null; selectedDays = 0;
+      selectedProductType = ''; selectedStyle = ''; activeCarrier = null; activePlan = null; selectedDays = 0;
       purchaseQty = 1;
-      ['pwCarrierBlock', 'pwDaysBlock', 'pwProdBlock'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      ['pwCarrierBlock', 'pwStyleBlock', 'pwProdBlock'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
       ['activationNotice', 'daysFeel'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      const cal = document.getElementById('tripCalBox');
+      if (cal) cal._bound = false; // 국가 바뀌면 캘린더 재마운트
+      renderDaysRow();
+      renderStyleCards();
+    }
 
-      const avail = ['무제한', '데일리', '총용량'].filter(t => allCarrierOptions.some(g => carrierHasType(g, t)));
-      const tabs = document.getElementById('ptypeTabs');
-      if (!tabs || !avail.length) return;
-      tabs.className = 'pw-tabs' + (avail.length === 2 ? ' two' : avail.length === 1 ? ' one' : '');
-      tabs.innerHTML = avail.map(t =>
-        `<button type="button" class="pw-tab" data-ptype="${t}"><b>${PW_TABS[t].b}</b><small>${PW_TABS[t].s}</small></button>`
-      ).join('');
-      tabs.querySelectorAll('[data-ptype]').forEach(b => b.addEventListener('click', () => pwSelectType(b.getAttribute('data-ptype'))));
+    function renderStyleCards() {
+      const box = document.getElementById('styleCards');
+      const block = document.getElementById('pwStyleBlock');
+      if (!box || !block) return;
+      const styles = ['마음껏', '보통', '가볍게'].filter(st =>
+        allCarrierOptions.some(g => (g.plans || []).some(pl => styleOf(pl) === st)));
+      styles.push('전체');
+      box.innerHTML = styles.map(st => {
+        const m = STYLE_META[st];
+        let mn = 0;
+        allCarrierOptions.forEach(g => (g.plans || []).forEach(pl => {
+          if (st !== '전체' && styleOf(pl) !== st) return;
+          if (selectedDays && parseInt(pl.duration, 10) !== selectedDays) return;
+          if (!mn || pl.final_price < mn) mn = pl.final_price;
+        }));
+        return `<button type="button" class="pw-car" data-style="${st}"><span class="car-main"><span class="car-name">${m.ic} ${m.t}</span><span class="car-sub">${m.s}${mn ? ' · ' + mn.toLocaleString() + '원~' : ''}</span></span></button>`;
+      }).join('');
+      box.querySelectorAll('[data-style]').forEach(b => b.addEventListener('click', () => {
+        selectedStyle = b.dataset.style;
+        box.querySelectorAll('.pw-car').forEach(x => x.classList.toggle('active', x.dataset.style === selectedStyle));
+        jdTrack('wizard_step', { step: 'style', value: selectedStyle, country: currentSelectedCountry || '' });
+        renderMixedList();
+      }));
+      block.style.display = 'block';
+    }
 
-      // 딥링크 통신사가 있으면 그 통신사가 파는 유형을 기본 탭으로
-      const wanted = allCarrierOptions.find(cx => cx.carrier === preferCarrier);
-      let def = avail[0];
-      if (wanted) {
-        const wTypes = avail.filter(t => carrierHasType(wanted, t));
-        if (wTypes.length) def = wTypes[0];
+    // v4 통합 추천 리스트 — 전 통신사에서 (스타일×일수) 매칭, 가격순. 통신사는 카드 속성(배지·리셋)
+    function renderMixedList() {
+      const box = document.getElementById('productList');
+      const block = document.getElementById('pwProdBlock');
+      if (!box || !block || !selectedDays || !selectedStyle) return;
+      let items = [];
+      allCarrierOptions.forEach(g => (g.plans || []).forEach(pl => {
+        if (selectedStyle !== '전체' && styleOf(pl) !== selectedStyle) return;
+        items.push({ g, pl, d: parseInt(pl.duration, 10) });
+      }));
+      let exact = items.filter(x => x.d === selectedDays);
+      let note = '';
+      if (!exact.length && items.length) {
+        const bigger = items.filter(x => x.d > selectedDays).sort((a, b) => a.d - b.d);
+        if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div style="font-size:0.84375rem;font-weight:700;color:#B45309;margin-bottom:8px;">⚠️ ${selectedDays}일 상품이 없어 <b>${d2}일권</b>으로 커버해 드려요</div>`; }
       }
-      pwSelectType(def);
+      exact.sort((a, b) => a.pl.final_price - b.pl.final_price);
+      const NET2 = { '로컬망': '<span class="net local">🏠 로컬</span>', '로밍망': '<span class="net roam">🌐 로밍</span>', '멀티': '<span class="net multi">✨ 멀티</span>' };
+      window.__pwMixed = exact;
+      box.innerHTML = note + (exact.map((x, i) => {
+        const cap = planCap(x.pl);
+        const capLbl = cap === '무제한'
+          ? ((window.JD_UNL && window.JD_UNL.isTrue(x.pl.product_code)) ? '완전 무제한' : '무제한(속도정책 확인)')
+          : ((x.pl.service_type === '데일리' || x.pl.service_type === '무제한') ? '매일 ' + cap : '전체 ' + cap);
+        const rst = shortReset(x.pl.product_code);
+        const sub = [x.pl.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋', rst, x.g.network_speed || ''].filter(Boolean).join(' · ');
+        return `<button type="button" class="pw-car" data-mixidx="${i}" style="width:100%;">
+          <span class="car-main"><span class="car-name">${cleanCarrier(x.g.carrier)} · ${capLbl}${i === 0 ? ' <span style="font-size:0.6875rem;font-weight:900;color:#fff;background:#F1690D;border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : ''}</span>
+          <span class="car-sub">${sub}</span></span>
+          ${NET2[netScope(x.g)] || ''}
+          <span style="flex-shrink:0;font-size:1.1875rem;font-weight:900;color:#101623;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.75rem;font-weight:700;">원</span></span>
+        </button>`;
+      }).join('') || '<div style="font-size:0.84375rem;color:#94a3b8;font-weight:700;padding:8px 2px;">이 조합의 상품이 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>');
+      box.querySelectorAll('[data-mixidx]').forEach(b => b.addEventListener('click', () => {
+        const x = window.__pwMixed[parseInt(b.dataset.mixidx, 10)];
+        if (!x) return;
+        activeCarrier = x.g; selectedCarrier = x.g.carrier;
+        selectedProductType = planTypeOf(x.pl);
+        selectedPlanType = (selectedProductType === '총용량') ? '총용량' : '데일리';
+        try { renderActivationNotice(); } catch (e) {}
+        window.__pwPlans = [x.pl];
+        openProductDetail(0);
+      }));
+      block.style.display = 'block';
+      if (block.scrollIntoView) setTimeout(() => block.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
     }
 
     function pwSelectType(t) {
@@ -3714,7 +3807,10 @@
       const box = document.getElementById('daysChips');
       const block = document.getElementById('pwDaysBlock');
       if (!box || !block) return;
-      const plans = pwPlansOfType();
+      // v4: 일수 = 이 나라 전 상품 union (날짜가 첫 질문이므로 유형·통신사 무관)
+      const allPlans = [];
+      allCarrierOptions.forEach(g => (g.plans || []).forEach(pl => allPlans.push(pl)));
+      const plans = allPlans;
       const days = Array.from(new Set(plans.map(p => parseInt(p.duration, 10)))).filter(d => d).sort((a, b) => a - b);
       const paint = (b, on) => {
         b.style.background = on ? '#F1690D' : '#fff';
@@ -3723,18 +3819,34 @@
         const sub = b.querySelectorAll('span')[1];
         if (sub) sub.style.color = on ? 'rgba(255,255,255,0.85)' : '#8a7a6d';
       };
-      // 12칼럼 직사각형: 기본 4개/행(스팬3), 마지막 행 잔여 r개는 12/r 스팬으로 폭 균등 분배 — 빈칸 0 (2026-07-19)
-      const perRow = 4, n = days.length;
-      const lastStart = n - (n % perRow || perRow);
-      box.innerHTML = days.map((d, i) => {
-        const span = i >= lastStart ? 12 / (n - lastStart) : 12 / perRow;
-        return `<button type="button" class="pw-day-chip" data-day="${d}" style="grid-column:span ${span};min-height:52px;border-radius:999px;border:1.5px solid #ece5dd;background:#fff;color:#475569;font:inherit;font-size:1.0625rem;font-weight:800;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;">${d}일</button>`;
-      }).join('');
-      box.querySelectorAll('.pw-day-chip').forEach(b => b.addEventListener('click', () => {
-        box.querySelectorAll('.pw-day-chip').forEach(x => paint(x, false));
-        paint(b, true);
-        pwSelectDays(parseInt(b.dataset.day, 10));
-      }));
+      // 12칼럼 직사각형 + 16개 초과 시 접기 (union 일수가 39개까지 나옴 — 4행까지만 기본 노출, 2026-07-19)
+      const CAP = 16;
+      const shown = days.length > CAP ? days.slice(0, CAP - 1) : days;
+      const moreCnt = days.length - shown.length;
+      const renderChips = (list, extra) => {
+        const all = extra ? list.concat(['__more__']) : list;
+        const perRow = 4, n = all.length;
+        const lastStart = n - (n % perRow || perRow);
+        return all.map((d, i) => {
+          const span = i >= lastStart ? 12 / (n - lastStart) : 12 / perRow;
+          if (d === '__more__') return `<button type="button" id="pwMoreDays" style="grid-column:span ${span};min-height:52px;border-radius:999px;border:1.5px dashed #cbd5e1;background:#F7F8FA;color:#64748B;font:inherit;font-size:0.9375rem;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;">+${moreCnt}개 ▾</button>`;
+          return `<button type="button" class="pw-day-chip" data-day="${d}" style="grid-column:span ${span};min-height:52px;border-radius:999px;border:1.5px solid #ece5dd;background:#fff;color:#475569;font:inherit;font-size:1.0625rem;font-weight:800;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;">${d}일</button>`;
+        }).join('');
+      };
+      box.innerHTML = renderChips(shown, moreCnt > 0);
+      const moreBtn = box.querySelector('#pwMoreDays');
+      if (moreBtn) moreBtn.addEventListener('click', () => {
+        box.innerHTML = renderChips(days, false);
+        bindChips();
+      });
+      function bindChips() {
+        box.querySelectorAll('.pw-day-chip').forEach(b => b.addEventListener('click', () => {
+          box.querySelectorAll('.pw-day-chip').forEach(x => paint(x, false));
+          paint(b, true);
+          pwSelectDays(parseInt(b.dataset.day, 10));
+        }));
+      }
+      bindChips();
       block.style.display = 'block';
       if (days.length === 1) box.querySelector('.pw-day-chip').click();
       // 📅 날짜로 고르기 (2026-07-18): 출발·귀국 → 일수 자동 계산 → 정확 일치 or 한 단계 위 자동 선택
@@ -3768,9 +3880,10 @@
 
     function pwSelectDays(d) {
       selectedDays = d;
-      renderDaysFeel(d);
       jdTrack('wizard_step', { step: 'days', value: String(d), country: currentSelectedCountry || '' });
-      renderProductList();
+      renderStyleCards(); // 최저가 서브라인을 일수 기준으로 갱신
+      if (selectedStyle) { renderMixedList(); }
+      else { const sb = document.getElementById('pwStyleBlock'); if (sb && sb.scrollIntoView) setTimeout(() => sb.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120); }
     }
 
     function renderProductList() {
