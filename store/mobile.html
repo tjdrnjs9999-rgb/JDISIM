@@ -2393,7 +2393,7 @@
 
       <div class="pw-block" id="pwDaysBlock" style="display:none;">
         <div class="pw-label">며칠 쓰세요?</div>
-        <div id="daysChips" style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;"></div>
+        <div id="daysChips" style="display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;"></div>
         <div id="daysFeel" data-moved-to-detail style="display:none !important;margin-top:8px;font-size:0.84375rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
       </div>
 
@@ -3710,7 +3710,7 @@
       box.innerHTML = days.map(d => {
         const prices = plans.filter(p => parseInt(p.duration, 10) === d).map(p => p.final_price);
         const mn = prices.length ? Math.min.apply(null, prices) : 0;
-        return `<button type="button" class="pw-day-chip" data-day="${d}" style="width:100%;padding:9px 4px;border-radius:11px;border:1.5px solid #ece5dd;background:#fff;color:#221510;font:inherit;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;"><span style="display:block;font-size:0.84375rem;font-weight:900;">${d}일</span><span style="display:block;font-size:0.75rem;font-weight:700;color:#8a7a6d;margin-top:2px;">${mn ? mn.toLocaleString() + '원~' : ''}</span></button>`;
+        return `<button type="button" class="pw-day-chip" data-day="${d}" style="flex:0 0 auto;min-width:64px;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #ece5dd;background:#fff;color:#475569;font:inherit;font-size:0.9375rem;font-weight:800;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;">${d}일</button>`;
       }).join('');
       box.querySelectorAll('.pw-day-chip').forEach(b => b.addEventListener('click', () => {
         box.querySelectorAll('.pw-day-chip').forEach(x => paint(x, false));
@@ -3862,7 +3862,7 @@
       // 유효기간 경고: "구매일/발급일로부터 N일" 상품은 구매 타이밍이 중요
       // 희망일 상품과 겹치면 개통 안내 + 유효기간 두 주의가 모두 표시됨 (2026-07-14 지시)
       const vm = String(activeCarrier.validity || '').match(/(구매일|발급일)로부터\s*(\d+)일/);
-      if (vm) {
+      if (vm && !act.includes('희망일')) {  // 희망일 지정 상품은 유효기간 무의미 — 표기 제거 (2026-07-18)
         const days = parseInt(vm[2], 10);
         if (days <= 15) {
           html += `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,0.08);color:#b91c1c;">⏳ <strong>${vm[1]}로부터 ${days}일 안에 현지 개통 필수!</strong> 출국 ${days}일 전 이내에 구매하세요${act.includes('희망일') ? ` — 개통 희망일도 ${days}일 안쪽으로 지정` : ''}</div>`;
@@ -3958,7 +3958,7 @@
             ${tile('database', '데이터', dataTile)}
             ${tile('refresh-cw', '데이터 리셋', resetTile)}
             ${tile('zap', '개통 시점', activeCarrier.activation)}
-            ${tile('hourglass', '유효기간', activeCarrier.validity)}
+            ${String(activeCarrier.activation || '').includes('희망일') ? '' : tile('hourglass', '유효기간', activeCarrier.validity)}
             ${tile('wifi', '핫스팟', activeCarrier.hotspot)}
             ${tile('signal', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
           </div>
