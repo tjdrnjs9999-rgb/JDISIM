@@ -1864,20 +1864,26 @@
   .pw-label { display: flex; align-items: baseline; gap: 8px; font-size: 19px; font-weight: 800; color: #221510; margin-bottom: 11px; letter-spacing: -0.02em; }
   .pw-label em { font-style: normal; font-weight: 600; color: #a8a095; font-size: 12px; margin-left: auto; text-align: right; }
 
-  /* 통신사 — 각진 세로 리스트 (알약 제거, 딱딱한 느낌) */
-  .pw-carriers { display: flex; flex-direction: column; gap: 8px; }
+  /* 통신사 카드 v2 (2026-07-19) — 이름+망 배지+속도·최저가 서브라인, 선택 시 브랜드 바 */
+  .pw-carriers { display: flex; flex-direction: column; gap: 9px; margin-bottom: 0; }
   .pw-car {
-    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-    border: 1.5px solid #e5ddd2; border-radius: 8px; background: #fff;
-    padding: 15px 16px; font-family: inherit; font-size: 18px; font-weight: 800; color: #221510;
-    cursor: pointer; transition: all .12s ease;
+    position: relative; display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    border: 1.5px solid #EFF2F6; border-radius: 14px; background: #fff;
+    padding: 14px 16px; font-family: inherit; cursor: pointer;
+    transition: border-color .12s ease, background .12s ease, transform .12s ease;
+    box-shadow: 0 1px 2px rgba(16,22,35,0.05);
   }
-  .pw-car .net { font-size: 12px; font-weight: 900; padding: 3px 9px; border-radius: 5px; flex-shrink: 0; }
-  .pw-car .net.local { background: rgba(43, 179, 163, 0.12); color: #1B8E82; }
-  .pw-car .net.roam { background: rgba(99, 102, 241, 0.1); color: #4f46e5; }
-  .pw-car .net.multi { background: rgba(245, 158, 11, 0.13); color: #b45309; }
-  .pw-car.active { border-color: #F1690D; border-width: 2px; background: #FFF8F2; }
-  .pw-car.active::after { content: '✓'; margin-left: auto; color: #F1690D; font-weight: 900; font-size: 18px; }
+  .pw-car:active { transform: scale(0.985); }
+  .pw-car .car-main { min-width: 0; flex: 1; }
+  .pw-car .car-name { display: block; font-size: 17px; font-weight: 800; color: #101623; letter-spacing: -0.01em; }
+  .pw-car .car-sub { display: block; margin-top: 3px; font-size: 13.5px; font-weight: 600; color: #64748B; font-variant-numeric: tabular-nums; }
+  .pw-car .net { font-size: 12px; font-weight: 900; padding: 5px 11px; border-radius: 999px; flex-shrink: 0; }
+  .pw-car .net.local { background: #EAF7F5; color: #157569; }
+  .pw-car .net.roam { background: #EFF6FF; color: #2563EB; }
+  .pw-car .net.multi { background: #FFFBEB; color: #B45309; }
+  .pw-car.active { border-color: #F1690D; background: #FFF8F2; }
+  .pw-car.active::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: #F1690D; }
+  .pw-car.active::after { content: '✓'; margin-left: 4px; color: #F1690D; font-weight: 900; font-size: 19px; flex-shrink: 0; }
 
   /* 사용 기간 드롭다운 — 각진, 18px */
   .pw-days-select {
@@ -2385,7 +2391,7 @@
       <details class="pw-block" id="pwCarrierBlock" style="display:none;">
         <summary style="list-style:none;-webkit-tap-highlight-color:transparent;cursor:pointer;font-size:0.84375rem;font-weight:800;color:#8a7a6d;padding:2px 0;">📶 통신망: <b id="pwCarrierName" style="color:#221510;">선택해 주세요</b> <span id="pwCarrierCta" style="color:#F1690D;text-decoration:underline;text-underline-offset:2px;font-weight:800;">👇 아래에서 선택</span></summary>
         <div class="pw-label" style="margin-top:10px;">통신사 <em>로컬 = 현지 직통 · 로밍 = 간편 개통</em></div>
-        <div id="carrierPills" class="pw-carriers"></div>
+        <div id="carrierPills" class="pw-carriers" style="padding-bottom:2px;"></div>
       </details>
       <details id="pwInfoFold" style="display:none;margin-top:12px;border:1px solid #EFF2F6;border-radius:10px;background:#FAFBFC;">
         <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:0.84375rem;font-weight:800;color:#334155;-webkit-tap-highlight-color:transparent;">📌 개통 시점 · 유효기간 안내 <span style="margin-left:auto;font-size:0.75rem;font-weight:700;color:#8B94A7;">펼치기 ▾</span></summary>
@@ -3654,10 +3660,14 @@
       const block = document.getElementById('pwCarrierBlock');
       if (!box || !block) return;
       carrierOptions = allCarrierOptions.filter(g => carrierHasType(g, selectedProductType));
-      const NET = { '로컬망': '<span class="net local">로컬</span>', '로밍망': '<span class="net roam">로밍</span>', '멀티': '<span class="net multi">멀티</span>' };
-      box.innerHTML = carrierOptions.map((cx, i) =>
-        `<button type="button" class="pw-car" data-caridx="${i}">${NET[netScope(cx)] || ''}${cleanCarrier(cx.carrier)}</button>`
-      ).join('');
+      const NET = { '로컬망': '<span class="net local">🏠 로컬</span>', '로밍망': '<span class="net roam">🌐 로밍</span>', '멀티': '<span class="net multi">✨ 멀티</span>' };
+      box.innerHTML = carrierOptions.map((cx, i) => {
+        const tp = (cx.plans || []).filter(pl => pl.service_type === selectedProductType);
+        const pls = tp.length ? tp : (cx.plans || []);
+        const mn = pls.length ? Math.min.apply(null, pls.map(pl => pl.final_price)) : 0;
+        const sub = [cx.network_speed || '', mn ? mn.toLocaleString() + '원~' : ''].filter(Boolean).join(' · ');
+        return `<button type="button" class="pw-car" data-caridx="${i}"><span class="car-main"><span class="car-name">${cleanCarrier(cx.carrier)}</span>${sub ? `<span class="car-sub">${sub}</span>` : ''}</span>${NET[netScope(cx)] || ''}</button>`;
+      }).join('');
       box.querySelectorAll('[data-caridx]').forEach(b => b.addEventListener('click', () => pwSelectCarrier(parseInt(b.getAttribute('data-caridx'), 10))));
       block.style.display = 'block';
 
