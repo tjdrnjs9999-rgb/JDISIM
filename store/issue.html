@@ -1322,7 +1322,7 @@ function bpassHTML(o, opts){
     '<div class="tkt-hero"><span class="flag">'+fl+'</span><span class="nm"><b>'+esc(o.country || '여행')+qty+'</b><i>KOR → '+cc+' <em>· ' + (opts.issued ? '준비 완료, 좋은 여행 되세요 ✈️' : '곧 만나요 ✈️') + '</em></i></span></div>' +
     '<div class="specs">' + cells + '</div>' +
     '<div class="tkt-grid">' +
-      '<div class="f"><div class="k">PASSENGER · 수령인</div><div class="v">'+esc(o.buyerName || '—')+'</div></div>' +
+      '<div class="f"><div class="k">PASSENGER · 수령인</div><div class="v">'+(o.buyerName ? esc(o.buyerName)+' 님' : '—')+'</div></div>' +
       '<div class="f"><div class="k">VALID · 유효기간</div><div class="v">'+esc(o.validity || 'QR 안내문 참조')+'</div></div>' +
     '</div>' +
     '<div class="tkt-perf"></div>' +
