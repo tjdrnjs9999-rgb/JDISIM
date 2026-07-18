@@ -1860,6 +1860,10 @@
 
   /* 섹션 라벨 — 큰 글자 */
   .pw-block { margin: 20px 0 0; }
+  .pw-step { animation: pwSlideIn 0.2s cubic-bezier(0.2,0,0,1); }
+  @keyframes pwSlideIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+  .pw-sum { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid #FEC9A4; background: #FFF4EC; color: #B04A06; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 0.84375rem; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  @media (prefers-reduced-motion: reduce) { .pw-step { animation: none; } }
   #daysFeel { display: none !important; } /* 보조 감성 문구 — 상세페이지 feel로 이관 (2026-07-18) */
   .pw-label { display: flex; align-items: baseline; gap: 8px; font-size: 19px; font-weight: 800; color: #221510; margin-bottom: 11px; letter-spacing: -0.02em; }
   .pw-label em { font-style: normal; font-weight: 600; color: #a8a095; font-size: 12px; margin-left: auto; text-align: right; }
@@ -2402,18 +2406,19 @@
         <div class="pw-label">언제 떠나세요? <em>날짜를 고르면 리셋 시간까지 맞춰드려요</em></div>
         <div id="tripCalBox"></div>
         <div id="tripDateMsg" style="display:none;margin-top:8px;font-size:0.84375rem;font-weight:700;line-height:1.55;"></div>
-        <div class="pw-label" style="margin-top:14px;">또는 일수로 바로 <em>출발일 포함</em></div>
-        <div id="daysChips" style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;"></div>
+        <div id="daysChips" style="display:none;"></div>
         <div id="daysFeel" data-moved-to-detail style="display:none !important;"></div>
       </div>
 
-      <div class="pw-block" id="pwStyleBlock" style="display:none;">
+      <div class="pw-block pw-step" id="pwStyleBlock" style="display:none;">
+        <div id="pwSum2" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;"></div>
         <div class="pw-label">데이터, 어떻게 쓰세요?</div>
         <div id="styleCards" style="display:flex;flex-direction:column;gap:9px;"></div>
       </div>
 
-      <div class="pw-block" id="pwProdBlock" style="display:none;margin-bottom:20px;">
-        <div class="pw-label">상품 선택 <em>눌러서 상세 정보 확인</em></div>
+      <div class="pw-block pw-step" id="pwProdBlock" style="display:none;margin-bottom:20px;">
+        <div id="pwSum3" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;"></div>
+        <div class="pw-label">딱 맞는 상품이에요 <em>가격순 · 눌러서 상세</em></div>
         <div id="productList"></div>
       </div>
     </div>
@@ -3597,6 +3602,25 @@
     let allCarrierOptions = [];
     let selectedProductType = ''; // 무제한 | 데일리 | 총용량 (하위 호환 — v4에선 스타일이 정본)
     let selectedStyle = '';       // v4: 마음껏 | 보통 | 가볍게 | 전체
+    let tripLabel = '';           // v4.1: 요약 칩용 "7/20~7/24 · 5일"
+
+    // v4.1 풀스크린 스텝 위저드: 한 화면 = 한 질문 (2026-07-19 사장님 승인)
+    function pwStep(n, replace) {
+      const blocks = { 1: 'pwDaysBlock', 2: 'pwStyleBlock', 3: 'pwProdBlock' };
+      Object.values(blocks).forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      const cur = document.getElementById(blocks[n]);
+      if (cur) {
+        cur.style.display = 'block';
+        cur.classList.remove('pw-step'); void cur.offsetWidth; cur.classList.add('pw-step'); // 슬라이드인 재트리거
+      }
+      const sum2 = document.getElementById('pwSum2'), sum3 = document.getElementById('pwSum3');
+      const chip = (txt, step) => `<button type="button" class="pw-sum" onclick="pwStep(${step})">${txt} ✎</button>`;
+      if (n === 2 && sum2) sum2.innerHTML = chip('📅 ' + (tripLabel || (selectedDays + '일')), 1);
+      if (n === 3 && sum3) sum3.innerHTML = chip('📅 ' + (tripLabel || (selectedDays + '일')), 1) + (selectedStyle ? chip((STYLE_META[selectedStyle] || {}).ic + ' ' + selectedStyle, 2) : '');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      try { if (!replace) history.pushState({ pwStep: n }, '', '#step' + n); } catch (e) {}
+    }
+    window.pwStep = pwStep;
 
     // v4 스타일 매핑 (고객 언어 → 상품): 시안 승인 2026-07-19
     function styleOf(pl) {
@@ -3659,8 +3683,10 @@
       ['activationNotice', 'daysFeel'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
       const cal = document.getElementById('tripCalBox');
       if (cal) cal._bound = false; // 국가 바뀌면 캘린더 재마운트
+      tripLabel = '';
       renderDaysRow();
       renderStyleCards();
+      pwStep(1, true);
     }
 
     function renderStyleCards() {
@@ -3685,8 +3711,8 @@
         box.querySelectorAll('.pw-car').forEach(x => x.classList.toggle('active', x.dataset.style === selectedStyle));
         jdTrack('wizard_step', { step: 'style', value: selectedStyle, country: currentSelectedCountry || '' });
         renderMixedList();
+        pwStep(3);
       }));
-      block.style.display = 'block';
     }
 
     // v4 통합 추천 리스트 — 전 통신사에서 (스타일×일수) 매칭, 가격순. 통신사는 카드 속성(배지·리셋)
@@ -3732,8 +3758,7 @@
         window.__pwPlans = [x.pl];
         openProductDetail(0);
       }));
-      block.style.display = 'block';
-      if (block.scrollIntoView) setTimeout(() => block.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+      // 표시·스크롤은 pwStep(3)이 담당 (v4.1)
     }
 
     function pwSelectType(t) {
@@ -3860,20 +3885,26 @@
         if (saved && saved.dep < todayIso) saved = null;
         window.JDTripCal.mount(calBox, { dep: saved && saved.dep, ret: saved && saved.ret, onRange: (depIso, retIso) => {
           const trip = Math.round((new Date(retIso) - new Date(depIso)) / 86400e3) + 1; // 출발일 포함
-          const avail = [...box.querySelectorAll('.pw-day-chip')].map(b => parseInt(b.dataset.day, 10)).sort((a, b) => a - b);
+          const avail = [];
+          allCarrierOptions.forEach(g => (g.plans || []).forEach(pl => { const d = parseInt(pl.duration, 10); if (d && avail.indexOf(d) < 0) avail.push(d); }));
+          avail.sort((a, b) => a - b);
           if (!avail.length) return;
           const pick = avail.find(d => d >= trip) || avail[avail.length - 1];
-          const btn = box.querySelector(`.pw-day-chip[data-day="${pick}"]`);
-          if (btn) btn.click();
+          const range = depIso.slice(5).replace('-', '/') + '~' + retIso.slice(5).replace('-', '/');
+          tripLabel = range + ' · ' + pick + '일';
           msg.style.display = 'block';
           if (pick >= trip) {
             msg.style.color = '#15803d';
-            msg.innerHTML = `✅ ${trip}일 여행(${depIso.slice(5).replace('-', '/')}~${retIso.slice(5).replace('-', '/')}) — <b>${pick}일권${pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요'}</b>`;
+            msg.innerHTML = `✅ ${trip}일 여행(${range}) — <b>${pick}일권${pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요'}</b>`;
           } else {
             msg.style.color = '#b45309';
             msg.innerHTML = `⚠️ ${trip}일 여행인데 최대 <b>${pick}일권</b>까지 있어요 — ${pick}일권 + 추가 구매(현지에서 케어링크로 안내) 조합을 추천해요`;
           }
           try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: depIso, ret: retIso })); } catch (e) {}
+          selectedDays = pick;
+          jdTrack('wizard_step', { step: 'days', value: String(pick), country: currentSelectedCountry || '' });
+          renderStyleCards();
+          setTimeout(() => pwStep(2), 350); // 판정 문구를 잠깐 보여주고 자동 전환
         } });
       })();
     }
@@ -3881,9 +3912,8 @@
     function pwSelectDays(d) {
       selectedDays = d;
       jdTrack('wizard_step', { step: 'days', value: String(d), country: currentSelectedCountry || '' });
-      renderStyleCards(); // 최저가 서브라인을 일수 기준으로 갱신
-      if (selectedStyle) { renderMixedList(); }
-      else { const sb = document.getElementById('pwStyleBlock'); if (sb && sb.scrollIntoView) setTimeout(() => sb.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120); }
+      renderStyleCards();
+      pwStep(2);
     }
 
     function renderProductList() {
@@ -4968,7 +4998,10 @@
     // Initial render
     
     // 뒤로가기 대응: 시트가 열려 있으면 시트만 닫고, 아니면 해시 기준 뷰 복원
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', (ev) => {
+      // v4.1 스텝 위저드 뒤로가기
+      const st = ev.state || history.state || {};
+      if (st.pwStep) { pwStep(st.pwStep, true); return; }
       // 구매/결제 뷰에서 뒤로가기 → 상세 뷰 복귀
       const cv = document.getElementById('view-checkout');
       if (cv && cv.classList.contains('active')) {
