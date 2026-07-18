@@ -1159,20 +1159,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         <div class="config-group">
           <div class="config-section-title">3. 며칠 쓰세요?</div>
-          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;">
-            ${availableDurations.map(dur => {
-              const pl = durFilteredPlans.find(x => x.duration === dur);
+          <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;margin-top:8px;">
+            ${availableDurations.map((dur, di2) => {
               const on = dur === activeDuration;
-              return `<button type="button" class="jd-chip jd-dur-chip" data-val="${dur}" style="min-width:64px;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border-color)'};background:${on ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${on ? '#fff' : 'var(--text-main)'};font:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;text-align:center;">${dur}일</button>`;
+              const n2 = availableDurations.length, perRow2 = 4;
+              const lastStart2 = n2 - (n2 % perRow2 || perRow2);
+              const span2 = di2 >= lastStart2 ? 12 / (n2 - lastStart2) : 3;
+              return `<button type="button" class="jd-chip jd-dur-chip" data-val="${dur}" style="grid-column:span ${span2};min-height:52px;border-radius:999px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border-color)'};background:${on ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${on ? '#fff' : 'var(--text-main)'};font:inherit;font-size:1.0625rem;font-weight:800;cursor:pointer;text-align:center;">${dur}일</button>`;
             }).join('')}
           </div>
           <details id="pcTripPick" style="margin-top:9px;">
             <summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:800;color:#B04A06;">📅 여행 날짜로 고르기 <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);">— 출발·귀국일만 넣으면 딱 맞는 일수를 골라드려요</span></summary>
-            <div style="display:flex;gap:8px;margin-top:8px;align-items:center;max-width:420px;">
-              <input type="date" id="pcTripDep" style="flex:1;min-height:42px;border:1.5px solid var(--border-color);border-radius:10px;padding:0 10px;font:inherit;font-size:0.82rem;font-weight:700;color:var(--text-main);background:var(--bg-tertiary);">
-              <span style="color:var(--text-muted);font-weight:800;">→</span>
-              <input type="date" id="pcTripRet" style="flex:1;min-height:42px;border:1.5px solid var(--border-color);border-radius:10px;padding:0 10px;font:inherit;font-size:0.82rem;font-weight:700;color:var(--text-main);background:var(--bg-tertiary);">
-            </div>
+            <div id="pcTripCal" style="margin-top:8px;"></div>
             <div id="pcTripMsg" style="display:none;margin-top:7px;font-size:0.8rem;font-weight:700;line-height:1.55;"></div>
           </details>
         </div>
@@ -1300,36 +1298,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     // 📅 날짜로 고르기 (2026-07-19): 출발·귀국 → 일수 계산 → 해당 칩 자동 클릭
     (function bindPcTrip() {
-      const dep = modalContent.querySelector('#pcTripDep'), ret = modalContent.querySelector('#pcTripRet'), msg = modalContent.querySelector('#pcTripMsg');
-      if (!dep || !ret || dep._bound) return;
-      dep._bound = true;
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      dep.min = today.toISOString().slice(0, 10);
-      const onPick = () => {
-        if (!dep.value) return;
-        ret.min = dep.value;
-        if (!ret.value || ret.value < dep.value) return;
-        const trip = Math.round((new Date(ret.value) - new Date(dep.value)) / 86400e3) + 1;
-        const avail = [...modalContent.querySelectorAll('.jd-dur-chip')].map(b => parseInt(b.dataset.val, 10)).filter(Boolean).sort((a, b) => a - b);
+      const calBox = modalContent.querySelector('#pcTripCal'), msg = modalContent.querySelector('#pcTripMsg');
+      if (!calBox || calBox._bound || !window.JDTripCal) return;
+      calBox._bound = true;
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null'); } catch (e) {}
+      const todayIso = new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
+      if (saved && saved.dep < todayIso) saved = null;
+      window.JDTripCal.mount(calBox, { dep: saved && saved.dep, ret: saved && saved.ret, onRange: (depIso, retIso) => {
+        const trip = Math.round((new Date(retIso) - new Date(depIso)) / 86400e3) + 1;
+        const avail = [...modalContent.querySelectorAll('.jd-dur-chip')].map(b => parseInt(b.dataset.val, 10)).filter(Boolean).sort((x, y) => x - y);
         if (!avail.length) return;
         const pick = avail.find(d => d >= trip) || avail[avail.length - 1];
-        try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: dep.value, ret: ret.value, msgPick: pick, msgTrip: trip })); } catch (e) {}
+        try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: depIso, ret: retIso, msgPick: pick, msgTrip: trip })); } catch (e) {}
         const btn = modalContent.querySelector(`.jd-dur-chip[data-val="${pick}"]`);
-        if (btn && pick !== undefined) btn.click(); // 클릭 → 재렌더 (아래 복원 로직이 메시지 재표시)
-      };
-      dep.addEventListener('change', onPick);
-      ret.addEventListener('change', onPick);
+        if (btn) btn.click(); // 클릭 → 재렌더 (아래 복원 로직이 메시지·캘린더 재표시)
+      } });
+      // 재렌더 복원: 저장된 판정 메시지 + 캘린더 펼침 유지
       try {
-        const t = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null');
-        if (t && t.dep >= dep.min) {
-          dep.value = t.dep; ret.value = t.ret;
-          if (t.msgPick && t.msgTrip) {
-            const det = modalContent.querySelector('#pcTripPick');
-            msg.style.display = 'block';
-            if (t.msgPick >= t.msgTrip) { msg.style.color = '#15803d'; msg.innerHTML = '✅ ' + t.msgTrip + '일 여행 — <b>' + t.msgPick + '일권' + (t.msgPick === t.msgTrip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>'; }
-            else { msg.style.color = '#b45309'; msg.innerHTML = '⚠️ ' + t.msgTrip + '일 여행인데 최대 <b>' + t.msgPick + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요'; }
-            if (det && document.activeElement !== dep) det.open = true;
-          }
+        const t = saved;
+        if (t && t.msgPick && t.msgTrip) {
+          const det = modalContent.querySelector('#pcTripPick');
+          msg.style.display = 'block';
+          if (t.msgPick >= t.msgTrip) { msg.style.color = '#15803d'; msg.innerHTML = '✅ ' + t.msgTrip + '일 여행 — <b>' + t.msgPick + '일권' + (t.msgPick === t.msgTrip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>'; }
+          else { msg.style.color = '#b45309'; msg.innerHTML = '⚠️ ' + t.msgTrip + '일 여행인데 최대 <b>' + t.msgPick + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요'; }
+          if (det) det.open = true;
         }
       } catch (e) {}
     })();

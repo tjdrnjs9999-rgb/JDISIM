@@ -200,6 +200,7 @@
   <link rel="stylesheet" href="premium.css?v=20260718b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
+  <script src="jd-trip-cal.js?v=20260719a" defer></script>
   <!-- 폰트 정본 (2026-07-15): Pretendard 하나로 통일 — 국문·숫자 모두 선명, 로케비와 동급 렌더링 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <!-- Lucide Icons CDN -->
@@ -2393,14 +2394,10 @@
 
       <div class="pw-block" id="pwDaysBlock" style="display:none;">
         <div class="pw-label">며칠 쓰세요?</div>
-        <div id="daysChips" style="display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;"></div>
+        <div id="daysChips" style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;"></div>
         <details id="tripDatePick" style="margin-top:8px;">
           <summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.84375rem;font-weight:800;color:#B04A06;-webkit-tap-highlight-color:transparent;">📅 여행 날짜로 고르기 <span style="font-size:0.75rem;font-weight:700;color:#8B94A7;">— 출발·귀국일만 넣으면 딱 맞는 일수를 골라드려요</span></summary>
-          <div style="display:flex;gap:8px;margin-top:9px;align-items:center;">
-            <input type="date" id="tripDep" style="flex:1;min-height:44px;border:1.5px solid #E2E8F0;border-radius:10px;padding:0 10px;font:inherit;font-size:0.84375rem;font-weight:700;color:#101623;background:#fff;">
-            <span style="color:#8B94A7;font-weight:800;">→</span>
-            <input type="date" id="tripRet" style="flex:1;min-height:44px;border:1.5px solid #E2E8F0;border-radius:10px;padding:0 10px;font:inherit;font-size:0.84375rem;font-weight:700;color:#101623;background:#fff;">
-          </div>
+          <div id="tripCalBox" style="margin-top:9px;"></div>
           <div id="tripDateMsg" style="display:none;margin-top:8px;font-size:0.84375rem;font-weight:700;line-height:1.55;"></div>
         </details>
         <div id="daysFeel" data-moved-to-detail style="display:none !important;margin-top:8px;font-size:0.84375rem;font-weight:700;color:#475569;line-height:1.55;padding:0 2px;"></div>
@@ -3716,10 +3713,12 @@
         const sub = b.querySelectorAll('span')[1];
         if (sub) sub.style.color = on ? 'rgba(255,255,255,0.85)' : '#8a7a6d';
       };
-      box.innerHTML = days.map(d => {
-        const prices = plans.filter(p => parseInt(p.duration, 10) === d).map(p => p.final_price);
-        const mn = prices.length ? Math.min.apply(null, prices) : 0;
-        return `<button type="button" class="pw-day-chip" data-day="${d}" style="flex:0 0 auto;min-width:64px;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #ece5dd;background:#fff;color:#475569;font:inherit;font-size:0.9375rem;font-weight:800;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;">${d}일</button>`;
+      // 12칼럼 직사각형: 기본 4개/행(스팬3), 마지막 행 잔여 r개는 12/r 스팬으로 폭 균등 분배 — 빈칸 0 (2026-07-19)
+      const perRow = 4, n = days.length;
+      const lastStart = n - (n % perRow || perRow);
+      box.innerHTML = days.map((d, i) => {
+        const span = i >= lastStart ? 12 / (n - lastStart) : 12 / perRow;
+        return `<button type="button" class="pw-day-chip" data-day="${d}" style="grid-column:span ${span};min-height:52px;border-radius:999px;border:1.5px solid #ece5dd;background:#fff;color:#475569;font:inherit;font-size:1.0625rem;font-weight:800;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;">${d}일</button>`;
       }).join('');
       box.querySelectorAll('.pw-day-chip').forEach(b => b.addEventListener('click', () => {
         box.querySelectorAll('.pw-day-chip').forEach(x => paint(x, false));
@@ -3729,18 +3728,16 @@
       block.style.display = 'block';
       if (days.length === 1) box.querySelector('.pw-day-chip').click();
       // 📅 날짜로 고르기 (2026-07-18): 출발·귀국 → 일수 자동 계산 → 정확 일치 or 한 단계 위 자동 선택
-      (function bindTripDates() {
-        const dep = document.getElementById('tripDep'), ret = document.getElementById('tripRet'), msg = document.getElementById('tripDateMsg');
-        if (!dep || !ret || dep._bound) return;
-        dep._bound = true;
-        const today = new Date(); today.setHours(0, 0, 0, 0);
-        dep.min = today.toISOString().slice(0, 10);
-        const onPick = () => {
-          if (!dep.value) return;
-          ret.min = dep.value;
-          if (!ret.value || ret.value < dep.value) return;
-          const nights = Math.round((new Date(ret.value) - new Date(dep.value)) / 86400e3);
-          const trip = nights + 1; // 출발일 포함
+      (function bindTripCal() {
+        const calBox = document.getElementById('tripCalBox'), msg = document.getElementById('tripDateMsg');
+        if (!calBox || calBox._bound || !window.JDTripCal) return;
+        calBox._bound = true;
+        let saved = null;
+        try { saved = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null'); } catch (e) {}
+        const todayIso = new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
+        if (saved && saved.dep < todayIso) saved = null;
+        window.JDTripCal.mount(calBox, { dep: saved && saved.dep, ret: saved && saved.ret, onRange: (depIso, retIso) => {
+          const trip = Math.round((new Date(retIso) - new Date(depIso)) / 86400e3) + 1; // 출발일 포함
           const avail = [...box.querySelectorAll('.pw-day-chip')].map(b => parseInt(b.dataset.day, 10)).sort((a, b) => a - b);
           if (!avail.length) return;
           const pick = avail.find(d => d >= trip) || avail[avail.length - 1];
@@ -3749,17 +3746,13 @@
           msg.style.display = 'block';
           if (pick >= trip) {
             msg.style.color = '#15803d';
-            msg.innerHTML = `✅ ${trip}일 여행(${dep.value.slice(5).replace('-', '/')}~${ret.value.slice(5).replace('-', '/')}) — <b>${pick}일권${pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요'}</b>`;
+            msg.innerHTML = `✅ ${trip}일 여행(${depIso.slice(5).replace('-', '/')}~${retIso.slice(5).replace('-', '/')}) — <b>${pick}일권${pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요'}</b>`;
           } else {
             msg.style.color = '#b45309';
             msg.innerHTML = `⚠️ ${trip}일 여행인데 최대 <b>${pick}일권</b>까지 있어요 — ${pick}일권 + 추가 구매(현지에서 케어링크로 안내) 조합을 추천해요`;
           }
-          try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: dep.value, ret: ret.value })); } catch (e) {}
-        };
-        dep.addEventListener('change', onPick);
-        ret.addEventListener('change', onPick);
-        // 이전 입력 기억 복원
-        try { const t = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null'); if (t && t.dep >= dep.min) { dep.value = t.dep; ret.value = t.ret; } } catch (e) {}
+          try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: depIso, ret: retIso })); } catch (e) {}
+        } });
       })();
     }
 
