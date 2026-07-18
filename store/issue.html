@@ -1685,6 +1685,7 @@ function loadUsage(){
         if(dt)daily.push({date:dt,mb:mb,country:r.country||''});
         if(r.total||r.totalMb)total=Number(r.total||r.totalMb);
       });
+      window._planOption = String(d.planOption || ''); // 일일 용량 파싱 소스 (실측 필드)
       var expired = String(d.status||'')==='2';
       var lastCountry = (daily.length && daily[daily.length-1].country) || (lst[0]&&lst[0].country) || '';
       renderUsage({used_mb:used,total_mb:total,status:expired?'expired':'active',daily:daily,country:lastCountry,listHistory:d.listHistory||[]});
@@ -1734,6 +1735,32 @@ function diagHistory(hist){
   };
   return M[id] || null;
 }
+// ── 오늘 남은 데이터 (2026-07-18 사장님 지시) — 데일리 상품은 리셋 타임존 기준 '오늘'로 계산 ──
+var TZ_OFF = {일본:9,한국:9,중국:8,홍콩:8,마카오:8,대만:8,몽골:8,싱가포르:8,말레이시아:8,필리핀:8,베트남:7,태국:7,캄보디아:7,라오스:7,인도네시아:7,몰디브:5,스페인:1,유럽:0,영국:0,미국:-8,캐나다:-5,호주:10,뉴질랜드:12};
+function resetInfo(){
+  try{
+    var code = (order && order.sku) || PLAN;
+    var R = window.JD_RESETS && code ? window.JD_RESETS.get(code) : null;
+    if(!R || !R.data) return null;
+    var m = /([가-힣]+)\s*(?:서부\s*)?시간\s*(\d{1,2}):(\d{2})/.exec(R.data);
+    if(!m) return { txt: R.data };                      // '사용시점부터 24시간' 등 — 문구만 표시
+    var off = TZ_OFF[m[1]]; if(off==null) return { txt: R.data };
+    if(/서부/.test(R.data)) off = -8;
+    return { txt: R.data, off: off, hh: +m[2], mm: +m[3] };
+  }catch(e){ return null; }
+}
+function quotaFromText(){
+  // 일일 제공량: planOption(공급사) → 주문 옵션명 → 상품명 순으로 탐색
+  var txt = [(window._planOption||''), (order&&order.option)||'', (order&&order.productName)||''].join(' ');
+  var m = /매일\s*([\d.]+)\s*(GB|MB)/i.exec(txt) || /([\d.]+)\s*(GB|MB)\s*\+\s*[\d.]+\s*(?:M|K)bps/i.exec(txt);
+  if(!m) return null;
+  var mb = parseFloat(m[1]) * (/gb/i.test(m[2]) ? 1024 : 1);
+  if(!mb) return null;
+  var fup = /\+\s*[\d.]+\s*(?:m|k)bps|소진\s*후|저속|무제한/i.test(txt);
+  return { mb: mb, fup: fup };
+}
+function tzToday(off){ return new Date(Date.now() + off*3600e3).toISOString().slice(0,10); }
+function fmtDur(ms){ var h=Math.floor(ms/3600e3), mn=Math.round(ms%3600e3/60e3); return (h? h+'시간 ':'') + mn + '분'; }
 function renderUsage(d){
   maybeAutoActivate(d);
   try { var L0 = d && (d.usageList || d.daily) || []; var t0 = 0; L0.forEach(function(x){ t0 += Number(x.used || x.used_mb || 0); }); if (t0) window._lastUsedGB = (Math.round(t0 / 1024 * 10) / 10) + 'GB'; } catch(e){}
@@ -1741,6 +1768,32 @@ function renderUsage(d){
   var used=Number(d.used_mb)||0, total=Number(d.total_mb)||0;
   var remain=Math.max(0,total-used);
   var pct= total? Math.min(100, used/total*100) : 0;
+  // 데일리 상품: '오늘' = 리셋 타임존의 오늘 날짜 — 리셋 시각이 지나면 자동으로 0부터 (기록 자체가 새 날짜로 쌓임)
+  var qi = quotaFromText(), ri = resetInfo();
+  var todayMb = 0;
+  if (qi && d.daily && d.daily.length) {
+    var srt = d.daily.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+    var last = srt[srt.length-1];
+    var pd = (ri && ri.off != null) ? tzToday(ri.off) : tzToday(9);
+    if (last.date === pd) todayMb = Number(last.mb) || 0;
+  }
+  if (qi) { remain = Math.max(0, qi.mb - todayMb); pct = Math.min(100, todayMb / qi.mb * 100); }
+  var resetCard = '';
+  if (qi) {
+    var cd = '';
+    if (ri && ri.off != null) {
+      var shifted = Date.now() + ri.off*3600e3;
+      var lo = new Date(shifted);
+      var nx = Date.UTC(lo.getUTCFullYear(), lo.getUTCMonth(), lo.getUTCDate(), ri.hh, ri.mm||0);
+      if (nx <= shifted) nx += 86400e3;
+      var kh = ((ri.hh + 9 - ri.off) % 24 + 24) % 24;
+      cd = ' · 다음 리셋까지 <b>' + fmtDur(nx - shifted) + '</b> (한국시간 ' + (kh<10?'0':'') + kh + ':' + (ri.mm<10?'0':'') + ri.mm + ')';
+    }
+    resetCard = '<div style="margin-top:10px;background:rgba(43,179,163,0.07);border:1px solid rgba(43,179,163,0.22);border-radius:12px;padding:11px 13px;text-align:left;">' +
+      '<div style="font-weight:900;font-size:0.8rem;color:#0f766e;">⏱ 매일 데이터 리셋' + (ri && ri.txt ? ' — ' + esc(ri.txt) : '') + '</div>' +
+      '<div style="font-size:0.75rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">리셋되면 다시 <b>' + gb(qi.mb) + 'GB</b>를 쓸 수 있어요' + cd + '</div>' +
+      (qi.fup ? '<div style="font-size:0.73rem;font-weight:600;color:#64748b;margin-top:3px;">오늘 용량을 다 써도 저속으로는 계속 이용할 수 있어요</div>' : '') + '</div>';
+  }
   var C=2*Math.PI*72; // r=72
   var maxDay = Math.max.apply(null, (d.daily||[{mb:1}]).map(function(x){return x.mb||1;}));
   box.style.textAlign='inherit';
@@ -1749,11 +1802,12 @@ function renderUsage(d){
     '<defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
     '<circle class="donut-bg" cx="86" cy="86" r="72"></circle>' +
     '<circle class="donut-fg" id="dfg" cx="86" cy="86" r="72" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
-    '<div class="donut-center"><span class="muted">'+(total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(total? gb(remain)+' GB' : (used? gb(used)+' GB' : '0 GB'))+'</span>' +
+    '<div class="donut-center"><span class="muted">'+(qi?'오늘 남은 데이터':total?'현재 남은 데이터':'지금까지 쓴 데이터')+'</span><span class="big">'+(qi? gb(remain)+' GB' : total? gb(remain)+' GB' : (used? gb(used)+' GB' : '0 GB'))+'</span>' +
     '<span class="badge '+(d.status==='active'?'ok':'wait')+'">'+(d.status==='active'?'사용 중':d.status==='expired'?'만료됨':'개통 대기')+'</span></div></div>' +
     ((d.country && d.status!=='expired')? '<div style="text-align:center;margin-top:8px;"><span style="display:inline-block;font-size:0.78rem;font-weight:800;color:#1B8E82;background:rgba(43,179,163,0.1);padding:5px 12px;border-radius:999px;">📍 '+esc(d.country)+' 현지망 접속 확인 ✓</span></div>' : '') +
     (function(){ var dg=diagHistory(d.listHistory); if(!dg) return ''; var col=dg.t==='bad'?['#b91c1c','rgba(239,68,68,0.08)','#fecaca']:dg.t==='warn'?['#9a5b16','rgba(249,115,22,0.08)','#fed7aa']:['#15803d','rgba(34,197,94,0.08)','#bbf7d0']; var ic=dg.t==='bad'?'⚠️':dg.t==='warn'?'🔧':'✅'; return '<div style="margin-top:10px;background:'+col[1]+';border:1px solid '+col[2]+';border-radius:12px;padding:11px 13px;text-align:left;"><div style="font-weight:900;font-size:0.82rem;color:'+col[0]+';">'+ic+' '+esc(dg.title)+'</div><div style="font-size:0.76rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">'+esc(dg.msg)+'</div></div>'; })() +
-    (total? '<div class="pillstat"><div><div class="l">사용한 데이터</div><div class="v">'+gb(used)+' GB</div></div><div><div class="l">남은 데이터</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div></div>' : '') +
+    (qi? '<div class="pillstat"><div><div class="l">오늘 사용</div><div class="v">'+gb(todayMb)+' GB</div></div><div><div class="l">오늘 남음</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div><div><div class="l">여행 전체 사용</div><div class="v">'+gb(used)+' GB</div></div></div>' + resetCard
+      : total? '<div class="pillstat"><div><div class="l">사용한 데이터</div><div class="v">'+gb(used)+' GB</div></div><div><div class="l">남은 데이터</div><div class="v" style="color:#F2751F;">'+gb(remain)+' GB</div></div></div>' : '') +
     ((d.daily&&d.daily.length)? '<div style="font-weight:800;font-size:0.8rem;margin:14px 0 4px;">일별 사용 내역 <span class="muted">총 '+d.daily.length+'일</span></div>' +
       d.daily.map(function(x){ return '<div class="daybar"><span class="d">'+esc(x.date)+(x.country?' <span style="color:#1B8E82;font-weight:800;">'+esc(x.country)+'</span>':'')+'</span><span class="bar"><i style="width:'+Math.max(4,Math.round((x.mb||0)/maxDay*100))+'%"></i></span><span class="mb">'+(x.mb>=1024? gb(x.mb)+'GB' : Math.round(x.mb)+'MB')+'</span></div>'; }).join('') : '') +
     '<button class="btn btn-ghost" style="margin-top:12px;" onclick="loadUsage()">새로고침</button>';
@@ -1767,6 +1821,7 @@ function renderError(title,msg){
 
 loadOrder();
 </script>
+<script src="jd-resets.js?v=20260715" defer></script>
 <script src="signalfix.js?v=20260713" defer></script>
 <script>
 function openSignalFix(){
