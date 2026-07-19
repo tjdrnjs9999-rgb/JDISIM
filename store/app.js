@@ -977,49 +977,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   window.enhanceOptionSelects = enhanceOptionSelects;
 
-  function attachTripDatePicker(sel) {
-    if (!sel || sel.options.length < 2) return;
-    const host = sel.parentElement;
-    const prev = host.querySelector('[data-tripfor="' + sel.id + '"]');
-    if (prev) prev.remove();
-    const det = document.createElement('details');
-    det.setAttribute('data-tripfor', sel.id);
-    det.style.cssText = 'margin-top:8px;';
-    det.innerHTML =
-      '<summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.84375rem;font-weight:800;color:#B04A06;">\uD83D\uDCC5 여행 날짜로 고르기 <span style="font-size:0.75rem;font-weight:700;color:#8B94A7;">— 출발·귀국일만 넣으면 딱 맞는 일수를 골라드려요</span></summary>' +
-      '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;max-width:420px;">' +
-      '<input type="date" class="tp-dep" style="flex:1;min-height:42px;border:1.5px solid #E2E8F0;border-radius:10px;padding:0 10px;font:inherit;font-size:0.84375rem;font-weight:700;color:#101623;background:#fff;">' +
-      '<span style="color:#8B94A7;font-weight:800;">\u2192</span>' +
-      '<input type="date" class="tp-ret" style="flex:1;min-height:42px;border:1.5px solid #E2E8F0;border-radius:10px;padding:0 10px;font:inherit;font-size:0.84375rem;font-weight:700;color:#101623;background:#fff;"></div>' +
-      '<div class="tp-msg" style="display:none;margin-top:7px;font-size:0.84375rem;font-weight:700;line-height:1.55;"></div>';
-    (host.querySelector('.opt-group[data-for="' + sel.id + '"]') || sel).insertAdjacentElement('afterend', det);
-    const dep = det.querySelector('.tp-dep'), ret = det.querySelector('.tp-ret'), msg = det.querySelector('.tp-msg');
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    dep.min = today.toISOString().slice(0, 10);
-    const dayOf = (opt) => parseInt(opt.value, 10) || parseInt(String(opt.textContent).replace(/[^0-9]/g, ''), 10) || 0;
-    const onPick = () => {
-      if (!dep.value) return;
-      ret.min = dep.value;
-      if (!ret.value || ret.value < dep.value) return;
-      const trip = Math.round((new Date(ret.value) - new Date(dep.value)) / 86400e3) + 1;
-      const opts = [...sel.options].map(o => ({ o, d: dayOf(o) })).filter(x => x.d > 0).sort((a, b) => a.d - b.d);
-      if (!opts.length) return;
-      const hit = opts.find(x => x.d >= trip) || opts[opts.length - 1];
-      if (sel.value !== hit.o.value) { sel.value = hit.o.value; sel.dispatchEvent(new Event('change', { bubbles: true })); }
-      msg.style.display = 'block';
-      if (hit.d >= trip) {
-        msg.style.color = '#15803d';
-        msg.innerHTML = '\u2705 ' + trip + '일 여행 — <b>' + hit.d + '일권' + (hit.d === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>';
-      } else {
-        msg.style.color = '#b45309';
-        msg.innerHTML = '\u26A0\uFE0F ' + trip + '일 여행인데 최대 <b>' + hit.d + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요';
-      }
-      try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: dep.value, ret: ret.value })); } catch (e) {}
-    };
-    dep.addEventListener('change', onPick);
-    ret.addEventListener('change', onPick);
-    try { const t = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null'); if (t && t.dep >= dep.min) { dep.value = t.dep; ret.value = t.ret; } } catch (e) {}
-  }
+  // (리팩토링 2026-07-19: attachTripDatePicker 제거 — PC는 pcTripCal 방식, 이 함수는 무대상 잔재)
+  
 
   // lite/full 통신사명 불일치로 병합이 빠진 상품 구제: 국가(+통신망)로 full에서 plans 복구
   function ensurePlans(carrier) {

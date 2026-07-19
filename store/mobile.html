@@ -4345,14 +4345,8 @@
     }
 
     // 일수 계산 도우미: "4일권 = 3박 4일" — 잘못 산 일수를 미리 방지
-    function renderDaysFeel(d) {
-      const el = document.getElementById('daysFeel');
-      if (!el) return;
-      if (!d || isNaN(d)) { el.style.display = 'none'; return; }
-      const trip = d === 1 ? '당일치기·짧은 경유에 좋아요' : `${d - 1}박 ${d}일 일정에 딱 맞아요`;
-      el.innerHTML = `✈️ ${d}일권은 <strong style="color:#0f172a;">${trip}</strong> · 사용일은 개통 시점부터 계산돼요`;
-      el.style.display = 'block';
-    }
+    // (리팩토링 2026-07-19: renderDaysFeel 제거 — v4에서 참조 0, 감성 문구는 상세 feel이 대체)
+    
 
     // 데이터 체감 번역기: "2GB"를 "유튜브 2시간·인스타 3시간"으로 번역
     function renderCapacityFeel(val, isDaily) {
