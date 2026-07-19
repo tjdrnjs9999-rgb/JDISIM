@@ -5170,30 +5170,34 @@
       return picks;
     }
     function romiOpenPlan(country, carrier, dataLimit, days) {
+      // 딥링크 자동 진입 v4 (2026-07-19 수리): 구 버전은 통신사 선설정(activeCarrier)을 기다리다
+      // v4에서 영원히 미충족 → 무력화됐었음. v4 문법 = 데이터 로드만 기다렸다가 상세로 직행.
       switchNav('home');
-      openBottomSheet(country, carrier); // 통신사는 딥링크로 자동 선택
-      // 퍼널 v2: 데이터 로드 완료를 기다렸다가 추천 상품까지 자동 진입
+      openBottomSheet(country);
       const capVal = String(dataLimit).replace('매일 ', '').replace('총 ', '').trim();
       const wantDays = parseInt(days, 10);
       let tries = 0;
       const timer = setInterval(() => {
         tries++;
-        if (tries > 20) { clearInterval(timer); return; }
-        if (!activeCarrier || activeCarrier.carrier !== carrier) return; // 아직 로드/선택 중
+        if (tries > 25) { clearInterval(timer); return; }
+        if (currentSelectedCountry !== country || !allCarrierOptions.length) return; // 데이터 로드 대기
         clearInterval(timer);
-        const plan = (activeCarrier.plans || []).find(p => planCap(p) === capVal && parseInt(p.duration, 10) === wantDays)
-          || (activeCarrier.plans || []).find(p => planCap(p) === capVal);
+        const g = allCarrierOptions.find(x => x.carrier === carrier) || allCarrierOptions[0];
+        if (!g) return;
+        const plan = (g.plans || []).find(p => planCap(p) === capVal && parseInt(p.duration, 10) === wantDays)
+          || (g.plans || []).find(p => planCap(p) === capVal)
+          || (g.plans || [])[0];
         if (!plan) return;
-        // 해당 상품의 유형 탭으로 전환 (통신사 재선택 자동)
-        window.__preferCarrier = carrier;
-        pwSelectType(planTypeOf(plan));
-        // 일수 선택 (Buy Flow v3: 가격 칩 클릭)
-        const dVal = String(parseInt(plan.duration, 10) || wantDays);
-        const dChip = document.querySelector('#daysChips .pw-day-chip[data-day="' + dVal + '"]');
-        if (dChip) dChip.click();
-        // 상품 상세까지 자동 오픈
-        const idx = (window.__pwPlans || []).findIndex(p => p.product_code === plan.product_code);
-        if (idx >= 0) openProductDetail(idx);
+        // v4 상태 정렬 후 상세 직행 (뒤로가기 시 스텝1 캘린더로 자연 복귀)
+        selectedDays = parseInt(plan.duration, 10) || wantDays;
+        selectedStyle = styleOf(plan);
+        activeCarrier = g; selectedCarrier = g.carrier;
+        selectedProductType = planTypeOf(plan);
+        selectedPlanType = (selectedProductType === '총용량') ? '총용량' : '데일리';
+        try { renderActivationNotice(); } catch (e) {}
+        try { renderStyleCards(); renderMixedList(); } catch (e) {}
+        window.__pwPlans = [plan];
+        openProductDetail(0);
       }, 180);
     }
     // ===== 스냅 스크롤 경험: 진행 인디케이터 + 등장 연출 + 카운트업 =====
