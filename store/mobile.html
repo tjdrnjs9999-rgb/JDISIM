@@ -4614,7 +4614,8 @@
     // 구매 페이지 금액 재계산 (수량·쿠폰 변경 시)
     // 💎 원가 구매권 (type:'cost'): 어떤 상품이든 결제 시점에 "원가+카드3.3%+메시지30원"만 내도록 동적 할인 계산
     //    지인결제 = ceil((원가원화×수량+30)/0.967, 10원) — 결제액에서 수수료가 빠져도 정확히 본전 회수
-    var COST_FX = { CNY: 231, HKD: 200, KRW: 1 }; // 도도매 환율 정본 (×1.06은 아래 적용) — USD 등 미확정은 적용 불가
+    var COST_FX = { CNY: 231, HKD: 200, KRW: 1 }; // 정본: tools/pricing_constants.mjs (값 변경 시 동반 갱신) — USD 등 미확정은 적용 불가
+    var JD_COST_MARKUP = 1.06;
     function couponValue(c) {
       if (!c) return 0;
       if (c.type !== 'cost') return Number(c.amount) || 0;
@@ -4622,7 +4623,7 @@
       var fx = COST_FX[activePlan.unit];
       if (!fx) return 0; // 환율 미확정 상품 — 원가권 적용 불가
       var esimTotal = activePlan.final_price * purchaseQty;
-      var cost = activePlan.original_price * fx * 1.06 * purchaseQty;
+      var cost = activePlan.original_price * fx * JD_COST_MARKUP * purchaseQty;
       var friendPay = Math.ceil((cost + 30) / 0.967 / 10) * 10;
       return Math.max(0, esimTotal - friendPay);
     }

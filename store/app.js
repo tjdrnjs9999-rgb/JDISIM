@@ -1547,7 +1547,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 12.5 주의사항 팝업 모달 제어 함수
   // ── 💰 PC 결제 쿠폰 (2026-07-17) — 회원 쿠폰 조회·적용. 원가권(type:'cost')은 단일 상품 결제에서만 동적 계산 ──
-  var PC_COST_FX = { CNY: 231, HKD: 200, KRW: 1 };
+  var PC_COST_FX = { CNY: 231, HKD: 200, KRW: 1 }; // 정본: tools/pricing_constants.mjs (값 변경 시 동반 갱신)
+  var JD_COST_MARKUP = 1.06;
   function pcCouponValue(c, base) {
     if (!c) return 0;
     if (c.type !== 'cost') return Math.min(Number(c.amount) || 0, base);
@@ -1557,7 +1558,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!fx) return 0;                                                // 환율 미확정 통화 차단
     var qty = it.quantity || 1;
     var esimTotal = Math.round(it.plan.final_price + (qty - 1) * it.plan.final_price * 0.9);
-    var cost = it.plan.original_price * fx * 1.06 * qty;
+    var cost = it.plan.original_price * fx * JD_COST_MARKUP * qty;
     var friendPay = Math.ceil((cost + 30) / 0.967 / 10) * 10;
     return Math.max(0, Math.min(esimTotal - friendPay, base));
   }
