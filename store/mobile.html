@@ -4676,6 +4676,13 @@
         .then(r => r.json())
         .then(j => {
           if (!j || !j.ok) return;
+          // 로그인 회원 자동 입력 (2026-07-20 사장님 지시) — 빈 칸만 채움 (직접 수정한 값 존중)
+          try {
+            const p = j.profile || {};
+            const nm = document.getElementById('buyerName'), em = document.getElementById('buyerEmail');
+            if (nm && !nm.value.trim() && p.name) nm.value = p.name;
+            if (em && !em.value.trim() && p.email) em.value = p.email;
+          } catch (e) {}
           const today = new Date().toISOString().slice(0, 10);
           const usable = (j.coupons || []).filter(c => !c.used && (!c.expires || c.expires >= today) && (!c.min_order || orderTotal >= c.min_order));
           const box = document.getElementById('checkoutCouponBox');

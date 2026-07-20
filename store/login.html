@@ -334,6 +334,9 @@ h1, h2, h3, h4, strong { text-wrap: balance; }
         try {
           localStorage.setItem('jd_member_token', x.j.token);
           localStorage.setItem('jd_member_phone', x.j.phoneMasked || '');
+          // 체크아웃 자동 입력 (2026-07-20): 로그인에 쓴 실번호를 구매자 정보에 병합
+          var b = {}; try { b = JSON.parse(localStorage.getItem('jd_buyer') || '{}'); } catch(e2){}
+          b.phone = phone; localStorage.setItem('jd_buyer', JSON.stringify(b));
         } catch(e){}
         clearInterval(timerIv);
         if (x.j.needProfile) {
@@ -387,7 +390,14 @@ h1, h2, h3, h4, strong { text-wrap: balance; }
       .then(function(x){
         btn.disabled = false;
         if (x.s !== 200) { say($('msg3'), (x.j && x.j.error) || '가입에 실패했어요', 'err'); return; }
-        try { localStorage.setItem('jd_member_phone', name + ' 님'); } catch(e){}
+        try {
+          localStorage.setItem('jd_member_phone', name + ' 님');
+          // 체크아웃 자동 입력 (2026-07-20): 가입 이름·이메일을 구매자 정보에 병합 (빈 칸만)
+          var b = {}; try { b = JSON.parse(localStorage.getItem('jd_buyer') || '{}'); } catch(e2){}
+          if (!b.name) b.name = name;
+          if (!b.email && email) b.email = email;
+          localStorage.setItem('jd_buyer', JSON.stringify(b));
+        } catch(e){}
         board();
       })
       .catch(function(){ btn.disabled = false; say($('msg3'), '연결이 원활하지 않아요 — 잠시 후 다시', 'err'); });
