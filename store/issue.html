@@ -1447,6 +1447,22 @@ function loadOrder(){
     .catch(function(){ renderError('주문을 찾지 못했어요','링크가 만료되었거나 잘못되었을 수 있어요. 카톡 상담으로 문의해 주세요.'); });
 }
 
+// ── 컴팩트 접이식 + 티켓 공유 (2026-07-20 사장님 승인: 유의사항 한곳 집결 · 선물하기) ──
+function foldHTML(title, inner, open){
+  return '<details class="card"' + (open ? ' open' : '') + ' style="padding:13px 15px;"><summary style="list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:7px;font-weight:900;font-size:0.875rem;color:#0f172a;">' + title + '<span class="muted" style="margin-left:auto;font-size:0.72rem;font-weight:700;">펼치기 ▾</span></summary><div style="margin-top:10px;">' + inner + '</div></details>';
+}
+function shareTicketHTML(){
+  if (LOCAL || DEMO) return '';
+  var qn = (order && order.quantity > 1) ? '<div class="center" style="margin-top:5px;"><span class="muted" style="font-size:0.72rem;">티켓 ' + order.quantity + '개 주문 — 각 티켓 링크는 알림톡·이메일로 따로 도착했어요. 이 버튼은 지금 이 티켓을 보내요.</span></div>' : '';
+  return '<button type="button" class="btn btn-ghost" style="width:100%;margin:10px 0 0;" onclick="shareTicket()">📤 동행자에게 이 티켓 보내기</button>' + qn;
+}
+function shareTicket(){
+  var url = location.href;
+  var msg = '✈️ JDISIM 여행 eSIM 티켓이 도착했어요' + (order && order.productName ? ' — ' + order.productName : '') + '\n티켓 하나로 발급 · QR · 설치 · 사용량까지!';
+  if (navigator.share) { navigator.share({ title: 'JDISIM 여행 티켓', text: msg, url: url }).catch(function(){}); }
+  else if (navigator.clipboard) { navigator.clipboard.writeText(msg + '\n' + url); toast('📋 티켓 링크가 복사됐어요 — 카톡에 붙여넣어 보내세요'); }
+}
+
 // ---------------- 발급 전 ----------------
 function renderPreIssue(){
   setRoute(order.country);
@@ -1456,14 +1472,13 @@ function renderPreIssue(){
     (order.autoIssueAt&&fmtDate(order.autoIssueAt) ? '<div class="irow"><span class="ic">' + ico('bolt', 17) + '</span><span class="tx"><strong>'+fmtDate(order.autoIssueAt)+' 자동 발급 예정</strong> — 환불을 원하시면 그 전에 카톡 주세요</span></div>' : '') +
     '<div class="irow"><span class="ic">' + ico('alert', 17) + '</span><span class="tx">발급 후에는 <strong>취소·환불 불가</strong> — 지금은 100% 환불 가능해요</span></div>';
   h(bpassHTML(order, {issued:false}) +
-    skyWHTML() +
     romiSay('') +
-    deviceCheckHTML() +
-    '<div class="card">' + secHd('check', 'BEFORE YOU ISSUE', '발급 전 30초 확인') + '<div style="margin-top:8px;">' + irows + '</div></div>' +
     '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, eSIM 지원 기종이 맞아요 <span style="color:#F1690D;">(필수)</span></span></label>' +
     '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후 <strong>취소·환불 불가</strong> 및 <strong>유효기간 내 활성화</strong> 필요함을 확인했어요 <span style="color:#F1690D;">(필수)</span></span></label>' +
     '<div class="center" style="margin:12px 0 4px;"><span class="muted">동의 후 아래 <strong>발급하기</strong> · QR 생성은 수 초~수 분</span></div>' +
-    buildBriefHTML(order.country || '') +
+    shareTicketHTML() +
+    foldHTML('📂 발급 전 확인 · 내 기종 · 여행 준비',
+      '<div style="margin:2px 0 6px;">' + irows + '</div>' + deviceCheckHTML() + skyWHTML() + buildBriefHTML(order.country || ''), false) +
     brandFootHTML());
   paintSkyW(); renderRomi(); reveal(); loadWeather();
   devBrand(/iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iphone' : /Android/.test(navigator.userAgent) ? 'galaxy' : 'iphone');
@@ -1581,22 +1596,25 @@ function renderIssued(lpa, revisit){
   window._lpa = lpa;
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
-    skyWHTML() +
-    '<div class="trust">' +
-      '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
-      '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
-      '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
-    '</div>' +
+    '<div class="card" style="padding:11px 15px;display:flex;gap:9px;align-items:flex-start;background:#fef2f2;border:1px solid #fecaca;"><span style="flex-shrink:0;">⚠️</span><span style="font-size:0.78rem;font-weight:800;color:#b91c1c;line-height:1.55;">설치한 eSIM 프로필 <b>절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</span></div>' +
+    shareTicketHTML() +
     romiSay('', 'fox-qr') +
-    journeyHTML() +
     '<div class="card rv" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
     '<div id="usageBody" class="center" style="margin-top:8px;"><div class="muted" style="padding:4px 0 10px;">현지에서 개통되면 여기에 실시간 사용량이 표시돼요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
-    buildBriefHTML((order&&order.country)||'') +
-    sosHTML((order&&order.country)||'') +
-    '<div class="warnband rv">' +
-    '<div class="w red">'+ico('alert',16)+'<span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담</span></div>' +
-    '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
-    '</div>' +
+    journeyHTML() +
+    foldHTML('📂 안내·유의사항 전체 — 여행 브리핑 · SOS · 보증',
+      skyWHTML() +
+      '<div class="trust">' +
+        '<div><span class="tic">'+ico('bolt',16)+'</span><b>즉시 발급</b><span>결제 후 바로 QR</span></div>' +
+        '<div><span class="tic">'+ico('shield',16)+'</span><b>기기 내 생성</b><span>QR 외부 전송 0</span></div>' +
+        '<div><span class="tic">'+ico('chat',16)+'</span><b>연중무휴</b><span>카톡 상담</span></div>' +
+      '</div>' +
+      buildBriefHTML((order&&order.country)||'') +
+      sosHTML((order&&order.country)||'') +
+      '<div class="warnband">' +
+      '<div class="w red">'+ico('alert',16)+'<span><strong>설치한 eSIM 프로필, 절대 삭제 금지</strong><br>삭제하면 재발급이 안 돼요 — 문제가 생기면 삭제 대신 카톡 상담</span></div>' +
+      '<div class="w amber">'+ico('clock',16)+'<span><strong>'+esc((order&&order.validity)||'유효기간 내 활성화 필요 (QR 안내문 참조)')+'</strong><br>기간 내에 현지에서 활성화해 주세요</span></div>' +
+      '</div>', false) +
     brandFootHTML());
   renderInstallCard();
   paintSkyW(); renderRomi(); reveal(); loadWeather();
