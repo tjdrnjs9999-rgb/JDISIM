@@ -1488,16 +1488,26 @@ function shareTicket(){
 function renderPreIssue(){
   setRoute(order.country);
   seedDep();
-  // 핵심 요약만 노출 (중복 제거: 유효기간=보딩패스 VALID · 환불불가=동의 라벨) — 긴 설명은 아래 접이식
+  // 꼭 알아야 하는 것 = 명시 리스트 + 읽음 체크 필수 (2026-07-20 사장님 지시) — 긴 설명은 아래 접이식
+  var musts = [
+    ['⏱', '발급해도 <strong>사용일은 시작되지 않아요</strong> — 현지에서 신호를 잡는 순간부터 카운트'],
+    ['📅', '<strong>' + esc(order.validity || '유효기간 내 활성화 필요 (기간은 QR 안내문 참조)') + '</strong> — 기간 안에 활성화하지 않으면 만료'],
+    ['🚫', '발급 후에는 <strong>취소·환불이 불가</strong>해요 — 발급 전인 지금은 100% 환불 가능'],
+    ['⚠️', '설치한 eSIM 프로필은 <strong>절대 삭제 금지</strong> — 삭제하면 재발급이 안 돼요']
+  ];
+  if (order.autoIssueAt && fmtDate(order.autoIssueAt)) musts.push(['⚡', '<strong>' + fmtDate(order.autoIssueAt) + ' 자동 발급 예정</strong> — 환불을 원하시면 그 전에 카톡 주세요']);
+  window.__mustN = musts.length;
   var summary =
     '<div class="card" style="padding:12px 15px;">' +
-    '<div style="display:flex;gap:9px;align-items:flex-start;padding:3px 0;"><span style="flex-shrink:0;">⏱</span><span style="font-size:0.8rem;font-weight:700;color:#334155;line-height:1.55;"><strong>발급해도 사용일은 시작되지 않아요</strong> — 현지에서 신호를 잡는 순간부터 카운트</span></div>' +
-    (order.autoIssueAt && fmtDate(order.autoIssueAt) ? '<div style="display:flex;gap:9px;align-items:flex-start;padding:3px 0;border-top:1px solid #f1f5f9;margin-top:4px;padding-top:8px;"><span style="flex-shrink:0;">⚡</span><span style="font-size:0.8rem;font-weight:700;color:#334155;line-height:1.55;"><strong>' + fmtDate(order.autoIssueAt) + ' 자동 발급 예정</strong> — 환불은 그 전에 카톡 주세요</span></div>' : '') +
+    '<div style="font-weight:900;font-size:0.84375rem;color:#0f172a;margin-bottom:5px;">📌 발급 전 꼭 확인 ' + musts.length + '가지</div>' +
+    musts.map(function(m, i){
+      return '<div style="display:flex;gap:9px;align-items:flex-start;padding:6px 0;' + (i ? 'border-top:1px solid #f1f5f9;' : '') + '"><span style="flex-shrink:0;">' + m[0] + '</span><span style="font-size:0.8rem;font-weight:700;color:#334155;line-height:1.55;">' + m[1] + '</span></div>';
+    }).join('') +
     '</div>';
   h(bpassHTML(order, {issued:false}) +
     summary +
     '<label class="agree-box" id="agDevice"><input type="checkbox"><span>*#06#으로 <strong>EID를 확인</strong>했고, eSIM 지원 기종이 맞아요 <span style="color:#F1690D;">(필수)</span></span></label>' +
-    '<label class="agree-box" id="agRefund"><input type="checkbox"><span>발급 후 <strong>취소·환불 불가</strong> 및 <strong>유효기간 내 활성화</strong> 필요함을 확인했어요 <span style="color:#F1690D;">(필수)</span></span></label>' +
+    '<label class="agree-box" id="agRefund"><input type="checkbox"><span>위 <strong>꼭 확인 ' + musts.length + '가지</strong>를 모두 읽고 이해했어요 <span style="color:#F1690D;">(필수)</span></span></label>' +
     '<div class="center" style="margin:12px 0 4px;"><span class="muted">동의 후 아래 <strong>발급하기</strong> · QR 생성은 수 초~수 분</span></div>' +
     shareTicketHTML() +
     foldHTML('📂 자세한 안내 — 내 기종 확인 · 여행 준비 · 현지 날씨',
@@ -1519,6 +1529,8 @@ function attemptIssue(){
     buzz(30); toast('필수 동의 2가지를 먼저 체크해 주세요');
     return;
   }
+  // 체크 증빙 (2026-07-20): 체크 시각 + 꼭 확인 항목 수 — 발급 요청에 실어 서버 issue_log에 보존
+  window.__issueAck = { at: new Date().toISOString(), n: window.__mustN || 0, device: true, refund: true };
   doIssue();
 }
 
@@ -1573,7 +1585,7 @@ function doIssue(){
   if (CARE){
     // 케어 모드 발급 (2026-07-20): 발급하기 → 프록시 action=issue → 도매(도도매) issue-esim API 호출 → info 폴링으로 QR 수신
     var iq = CX ? ('action=issue&t=' + encodeURIComponent(CX)) : ('action=issue&iccid=' + encodeURIComponent(CARE));
-    fetch(window.CARE_API + '?' + iq, { method:'POST' })
+    fetch(window.CARE_API + '?' + iq, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ack: window.__issueAck || null }) })
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(d){
         if (d && d.error) throw d;
