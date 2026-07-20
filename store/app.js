@@ -1643,7 +1643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
         <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">⚡ 결제하면 QR이 카톡·문자로 자동 발송돼요</div>
-        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">🛡️ 설치 전엔 100% 환불 · 설치 후엔 환불 불가</div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">🛡️ 발급 전엔 100% 환불 · 발급 후엔 환불 불가</div>
       </div>
     `;
 
@@ -1890,7 +1890,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     ess.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:7px;margin:12px 0 2px;">
         <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">⚡ 결제하면 QR이 카톡·문자로 자동 발송돼요</div>
-        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">🛡️ 설치 전엔 100% 환불 · 설치 후엔 환불 불가</div>
+        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">🛡️ 발급 전엔 100% 환불 · 발급 후엔 환불 불가</div>
       </div>
       <details style="margin-top:8px;text-align:left;"><summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--text-muted);padding:4px 0;">📱 내 폰 eSIM 지원 확인 · 🔄 환불 규정 자세히</summary>
         <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.7;padding:8px 2px 2px;">

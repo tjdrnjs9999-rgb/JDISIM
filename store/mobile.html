@@ -4184,7 +4184,7 @@
             <div style="font-size:0.84375rem;font-weight:900;color:#b91c1c;margin-bottom:2px;">🔎 구매 전 꼭 알기</div>
             ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
           </div>` : ''}
-          <div style="font-size:0.75rem;font-weight:700;color:#8a7a6d;margin:12px 2px 0;line-height:1.6;">🛡️ 미개통 시 100% 환불 · 설치(다운로드) 전 100% 취소 가능 · 24시간 카톡 케어</div>`;
+          <div style="font-size:0.75rem;font-weight:700;color:#8a7a6d;margin:12px 2px 0;line-height:1.6;">🛡️ 미개통 시 100% 환불 · 발급 전 100% 취소 가능 · 24시간 카톡 케어</div>`;
       const dtitle = document.getElementById('detailTitle');
       if (dtitle) dtitle.innerText = `${capLbl} ${selectedDays}일`;
       const buyBtn = document.getElementById('detailBuyBtn');
@@ -4494,7 +4494,7 @@
         .concat(((typeof getCriticalFlags === 'function' ? getCriticalFlags() : []) || []).map(x => x.t))
         .concat(getCustomPrecautions(currentSelectedCountry, activeCarrier.carrier)).concat([
         '<strong>기종 확인:</strong> 키패드 *#06# 입력 시 <strong>EID</strong>가 보여야 사용 가능 (중국/홍콩/마카오 구매 아이폰 불가)',
-        '<strong>취소/환불:</strong> 설치(다운로드) 전까지 <strong>100% 환불</strong>, 설치 후엔 디지털 상품 특성상 불가 (<a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a>)',
+        '<strong>취소/환불:</strong> 발급하기 전까지 <strong>100% 환불</strong>, 발급(QR 생성) 후엔 디지털 상품 특성상 불가 (<a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a>)',
         '<strong>현지 장애:</strong> 프로필을 지우지 말고 24시간 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#2563eb;font-weight:800;">카톡 상담</a>으로 접수 시 미해결 100% 환불'
       ]);
       const memberBanner = (function () {
@@ -4558,7 +4558,7 @@
             · 주문·판매·환불 등 서비스 이용 조건은 이용약관을 따릅니다. <a href="terms.html" target="_blank" style="color:#2563eb;font-weight:800;">이용약관 전문 보기</a><br>
             · 결제는 전자지급결제대행사 <b>포트원(PortOne)</b> 및 제휴 PG(카카오페이·다날 등)를 통해 처리되며, 카드번호 등 결제수단 정보는 당사에 저장되지 않습니다.<br>
             · 결제 승인·취소·환불은 결제대행사를 통해 처리되며, 환불 시 원 결제수단으로 환급됩니다(카드사 기준 3~7영업일).<br>
-            · eSIM은 디지털 상품으로 <b>설치(다운로드) 전에는 100% 환불</b>되며, 설치 후에는 단순 변심 환불이 제한됩니다 — 상세 기준은 <a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a> 참조.<br>
+            · eSIM은 디지털 상품으로 <b>발급(QR 생성) 전에는 100% 환불</b>되며, 발급 후에는 단순 변심 환불이 제한됩니다 — 상세 기준은 <a href="refund.html" target="_blank" style="color:#2563eb;font-weight:800;">환불 규정</a> 참조.<br>
             · 미성년자가 법정대리인 동의 없이 결제한 경우 본인 또는 법정대리인이 결제를 취소할 수 있습니다.<br>
             · 결제 오류·이중 결제는 카카오톡 고객센터로 접수해 주시면 확인 후 정정하며, 그 밖의 사항은 각 결제대행사의 표준약관을 따릅니다.
           </div>
