@@ -470,11 +470,13 @@
     /* ===== 전역: 스크롤바 전면 숨김 (페이지·탭바·시트 등 모든 스크롤 영역) ===== */
     * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
     *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-    /* 예외 (2026-07-20 사장님 지시): 지역 탭·위저드 상품 리스트는 스크롤바 노출 */
-    .tabs-scroll, .pcw-scroll { scrollbar-width: thin !important; scrollbar-color: var(--accent) var(--bg-tertiary) !important; }
+    /* 예외 (2026-07-20 사장님 지시): 지역 탭·위저드 상품 리스트는 스크롤바 노출 — 반투명 */
+    .tabs-scroll, .pcw-scroll { scrollbar-width: thin !important; scrollbar-color: rgba(241,105,13,0.38) transparent !important; }
     .tabs-scroll::-webkit-scrollbar, .pcw-scroll::-webkit-scrollbar { display: block !important; height: 6px !important; width: 8px !important; }
-    .tabs-scroll::-webkit-scrollbar-thumb, .pcw-scroll::-webkit-scrollbar-thumb { background: var(--accent) !important; border-radius: 6px !important; }
-    .tabs-scroll::-webkit-scrollbar-track, .pcw-scroll::-webkit-scrollbar-track { background: var(--bg-tertiary) !important; border-radius: 6px !important; }
+    .tabs-scroll::-webkit-scrollbar-thumb, .pcw-scroll::-webkit-scrollbar-thumb { background: rgba(241,105,13,0.38) !important; border-radius: 6px !important; }
+    .tabs-scroll::-webkit-scrollbar-track, .pcw-scroll::-webkit-scrollbar-track { background: rgba(15,23,42,0.06) !important; border-radius: 6px !important; }
+    /* (2026-07-20 사장님 지시) PC 줄바꿈 = 의미단위 — 팝업·리스트 포함 전 요소 keep-all 강제 */
+    .modal-content, .modal-content *, .tab-btn, .product-card, .product-card * { word-break: keep-all; }
     /* ===== 전역: 한글 의미단위 줄바꿈 · 말줄임(...) 금지 ===== */
     body { word-break: keep-all; overflow-wrap: break-word; }
     /* ===== 상품 카드: 호버 리프트 + 이미지 줌 ===== */
