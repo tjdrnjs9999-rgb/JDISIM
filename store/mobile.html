@@ -3723,7 +3723,10 @@
         const bigger = items.filter(x => x.d > selectedDays).sort((a, b) => a.d - b.d);
         if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div style="font-size:0.84375rem;font-weight:700;color:#B45309;margin-bottom:8px;">⚠️ ${selectedDays}일 상품이 없어 <b>${d2}일권</b>으로 커버해 드려요</div>`; }
       }
-      exact.sort((a, b) => a.pl.final_price - b.pl.final_price);
+      // 용량 적은 순 정렬 (2026-07-20) — 같은 용량은 가격순, 무제한·용량미상은 맨 뒤
+      const capMB = (pl) => { const s = planCap(pl); if (s === '무제한') return Infinity; const m = /^([\d.]+)\s*(GB|MB)/i.exec(s); return m ? parseFloat(m[1]) * (m[2].toUpperCase() === 'GB' ? 1024 : 1) : 1e9; };
+      exact.sort((a, b) => (capMB(a.pl) - capMB(b.pl)) || (a.pl.final_price - b.pl.final_price));
+      const bestIdx = exact.reduce((bi, x, i) => x.pl.final_price < exact[bi].pl.final_price ? i : bi, 0);
       const NET2 = { '로컬망': '<span class="net local">🏠 로컬</span>', '로밍망': '<span class="net roam">🌐 로밍</span>', '멀티': '<span class="net multi">✨ 멀티</span>' };
       window.__pwMixed = exact;
       box.innerHTML = note + (exact.map((x, i) => {
@@ -3734,7 +3737,7 @@
         const rst = shortReset(x.pl.product_code);
         const sub = [x.pl.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋', rst, x.g.network_speed || ''].filter(Boolean).join(' · ');
         return `<button type="button" class="pw-car" data-mixidx="${i}" style="width:100%;">
-          <span class="car-main"><span class="car-name">${cleanCarrier(x.g.carrier)} · ${capLbl}${i === 0 ? ' <span style="font-size:0.6875rem;font-weight:900;color:#fff;background:#F1690D;border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : ''}</span>
+          <span class="car-main"><span class="car-name">${cleanCarrier(x.g.carrier)} · ${capLbl}${i === bestIdx ? ' <span style="font-size:0.6875rem;font-weight:900;color:#fff;background:#F1690D;border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : ''}</span>
           <span class="car-sub">${sub}</span></span>
           ${NET2[netScope(x.g)] || ''}
           <span style="flex-shrink:0;font-size:1.1875rem;font-weight:900;color:#101623;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.75rem;font-weight:700;">원</span></span>
