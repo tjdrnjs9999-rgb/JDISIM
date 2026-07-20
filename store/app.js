@@ -1056,50 +1056,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 4단계 캐스케이딩 옵션 로직 (데일리/총용량 구분)
     const p = activeCarrier;
     
-    // 1. Available Types (데일리 vs 총용량)
+    // 캐스케이드 v4 (2026-07-20 사장님 지시): 질문 순서 = 모바일과 동일 — ①며칠 → ②쓰는 방식 → ③용량
+    // 1. Durations: 전체 플랜의 일수 유니온 (일수가 첫 질문)
+    const availableDurations = Array.from(new Set(p.plans.map(pl => parseInt(pl.duration, 10)))).sort((a, b) => a - b);
+    if (!availableDurations.includes(parseInt(activeDuration, 10))) {
+      activeDuration = availableDurations[0];
+    }
+    const durPlans = p.plans.filter(pl => parseInt(pl.duration, 10) === parseInt(activeDuration, 10));
+
+    // 2. Types (매일 리셋 vs 전체 기간) — 선택한 일수에서 가능한 것만
     const types = new Set();
-    p.plans.forEach(pl => {
-      if (pl.service_type === '데일리' || pl.service_type === '무제한') types.add('데일리');
-      else if (pl.service_type === '총용량' || pl.data_limit.includes('총')) types.add('총용량');
-      else types.add('총용량');
+    durPlans.forEach(pl => {
+      types.add((pl.service_type === '데일리' || pl.service_type === '무제한') ? '데일리' : '총용량');
     });
     const typeList = Array.from(types);
-    
-    // Validate activePlanType
     if (!window.activePlanType || !typeList.includes(window.activePlanType)) {
       window.activePlanType = typeList[0];
     }
-    
-    // 2. Filter plans by Type
     const isDaily = (window.activePlanType === '데일리');
-    const typeFilteredPlans = p.plans.filter(pl => (pl.service_type === '데일리' || pl.service_type === '무제한') === isDaily);
-    
-    // 3. Available Capacities
+    const typeFilteredPlans = durPlans.filter(pl => (pl.service_type === '데일리' || pl.service_type === '무제한') === isDaily);
+
+    // 3. Capacities — 용량 오름차순, 무제한은 맨 뒤 (모바일 리스트와 동일 규칙)
     const caps = new Set();
     typeFilteredPlans.forEach(pl => {
-      const c = pl.data_limit.replace('매일 ', '').replace('총 ', '').trim();
-      caps.add(c);
+      caps.add(pl.data_limit.replace('매일 ', '').replace('총 ', '').trim());
     });
-    const capList = Array.from(caps).sort((a,b) => {
-       const parseSize = s => parseFloat(s.replace(/[^\d.]/g, '')) * (s.includes('MB') ? 1 : 1024);
-       return parseSize(a) - parseSize(b);
+    const capList = Array.from(caps).sort((a, b) => {
+      const parseSize = s => s === '무제한' ? Infinity : parseFloat(s.replace(/[^\d.]/g, '')) * (s.includes('MB') ? 1 : 1024);
+      return parseSize(a) - parseSize(b);
     });
-    
     if (!activeDataLimit || !capList.includes(activeDataLimit.replace('매일 ', '').replace('총 ', '').trim())) {
       activeDataLimit = (isDaily ? '매일 ' : (typeFilteredPlans[0].data_limit.includes('총') ? '총 ' : '')) + capList[0];
     }
-    
     const cleanActiveData = activeDataLimit.replace('매일 ', '').replace('총 ', '').trim();
-    
-    // 4. Available Durations
-    const durFilteredPlans = typeFilteredPlans.filter(pl => pl.data_limit.replace('매일 ', '').replace('총 ', '').trim() === cleanActiveData);
-    const availableDurations = Array.from(new Set(durFilteredPlans.map(pl => pl.duration))).sort((a, b) => a - b);
-    
-    if (!availableDurations.includes(activeDuration)) {
-      activeDuration = availableDurations[0];
-    }
-    
-    activePlan = durFilteredPlans.find(pl => pl.duration === activeDuration) || durFilteredPlans[0];
+
+    activePlan = typeFilteredPlans.find(pl => pl.data_limit.replace('매일 ', '').replace('총 ', '').trim() === cleanActiveData) || typeFilteredPlans[0];
+
+    // 일수 UI: 12개 이하 = 칩 그리드(+캘린더 접힘) / 초과 = 캘린더 기본(모바일 방식) + 칩 접힘
+    const manyDur = availableDurations.length > 12;
+    const durChipsHTML = availableDurations.map((dur, di2) => {
+      const on = parseInt(dur, 10) === parseInt(activeDuration, 10);
+      let span2;
+      if (manyDur) span2 = 2;
+      else {
+        const n2 = availableDurations.length, perRow2 = 4;
+        const lastStart2 = n2 - (n2 % perRow2 || perRow2);
+        span2 = di2 >= lastStart2 ? 12 / (n2 - lastStart2) : 3;
+      }
+      return `<button type="button" class="jd-chip jd-dur-chip" data-val="${dur}" style="grid-column:span ${span2};min-height:${manyDur ? 42 : 52}px;border-radius:999px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border-color)'};background:${on ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${on ? '#fff' : 'var(--text-main)'};font:inherit;font-size:${manyDur ? '0.85rem' : '1.0625rem'};font-weight:800;cursor:pointer;text-align:center;">${dur}일</button>`;
+    }).join('');
+    const durGridHTML = `<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:7px;margin-top:8px;">${durChipsHTML}</div>`;
+    const durSectionHTML = manyDur
+      ? `<div style="margin-top:8px;"><div id="pcTripCal"></div><div id="pcTripMsg" style="display:none;margin-top:7px;font-size:0.8rem;font-weight:700;line-height:1.55;"></div></div>
+         <details style="margin-top:9px;"><summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:800;color:#B04A06;">🔢 일수 직접 고르기 <b style="color:var(--accent);">현재 ${activeDuration}일</b></summary>${durGridHTML}</details>`
+      : `${durGridHTML}
+         <details id="pcTripPick" style="margin-top:9px;"><summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:800;color:#B04A06;">📅 여행 날짜로 고르기 <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);">— 출발·귀국일만 넣으면 딱 맞는 일수를 골라드려요</span></summary><div id="pcTripCal" style="margin-top:8px;"></div><div id="pcTripMsg" style="display:none;margin-top:7px;font-size:0.8rem;font-weight:700;line-height:1.55;"></div></details>`;
     
     // 최종 금액 계산
     const basePrice = activePlan.final_price;
@@ -1124,38 +1135,25 @@ document.addEventListener('DOMContentLoaded', async () => {
           </h2>
         </div>
         
-        <!-- Buy Flow v3 (2026-07-16): 드롭다운 4개 → 칩 UI. 질문 순서 = 고객 사고 순서(타입→용량→일수).
+        <!-- Buy Flow v4 (2026-07-20): 질문 순서 = 모바일 퍼널과 동일(며칠→쓰는 방식→용량).
              통신망은 자동 선택 + "바꾸기" 접힘으로 강등 — 대부분 고객은 통신사를 고르지 않는다. -->
         <div class="config-group">
-          <div class="config-section-title">1. 플랜 타입</div>
+          <div class="config-section-title">1. 며칠 쓰세요?${manyDur ? ' <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">— 여행 날짜를 고르면 딱 맞는 일수를 골라드려요 · 현재 <b style="color:var(--accent);">' + activeDuration + '일</b></span>' : ''}</div>
+          ${durSectionHTML}
+        </div>
+
+        <div class="config-group">
+          <div class="config-section-title">2. 어떻게 쓰실래요?</div>
           <div style="display:flex;gap:8px;margin-top:8px;">
             ${typeList.map(t => `<button type="button" class="jd-chip jd-type-chip" data-val="${t}" style="flex:1;padding:13px 10px;border-radius:12px;border:1.5px solid ${t === window.activePlanType ? 'var(--accent)' : 'var(--border-color)'};background:${t === window.activePlanType ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${t === window.activePlanType ? '#fff' : 'var(--text-main)'};font:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;">${t === '데일리' ? '📅 매일 리셋' : '🎒 전체 기간'}</button>`).join('')}
           </div>
         </div>
 
         <div class="config-group">
-          <div class="config-section-title">2. 하루 데이터</div>
+          <div class="config-section-title">3. ${isDaily ? '하루 데이터' : '전체 데이터'}</div>
           <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;">
             ${capList.map(c => `<button type="button" class="jd-chip jd-cap-chip" data-val="${c}" style="padding:11px 15px;border-radius:11px;border:1.5px solid ${c === cleanActiveData ? 'var(--accent)' : 'var(--border-color)'};background:${c === cleanActiveData ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${c === cleanActiveData ? '#fff' : 'var(--text-main)'};font:inherit;font-size:0.88rem;font-weight:800;cursor:pointer;">${c === '무제한' ? unlOptLabel : c}</button>`).join('')}
           </div>
-        </div>
-
-        <div class="config-group">
-          <div class="config-section-title">3. 며칠 쓰세요?</div>
-          <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px;margin-top:8px;">
-            ${availableDurations.map((dur, di2) => {
-              const on = dur === activeDuration;
-              const n2 = availableDurations.length, perRow2 = 4;
-              const lastStart2 = n2 - (n2 % perRow2 || perRow2);
-              const span2 = di2 >= lastStart2 ? 12 / (n2 - lastStart2) : 3;
-              return `<button type="button" class="jd-chip jd-dur-chip" data-val="${dur}" style="grid-column:span ${span2};min-height:52px;border-radius:999px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border-color)'};background:${on ? 'var(--accent)' : 'var(--bg-tertiary)'};color:${on ? '#fff' : 'var(--text-main)'};font:inherit;font-size:1.0625rem;font-weight:800;cursor:pointer;text-align:center;">${dur}일</button>`;
-            }).join('')}
-          </div>
-          <details id="pcTripPick" style="margin-top:9px;">
-            <summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:800;color:#B04A06;">📅 여행 날짜로 고르기 <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);">— 출발·귀국일만 넣으면 딱 맞는 일수를 골라드려요</span></summary>
-            <div id="pcTripCal" style="margin-top:8px;"></div>
-            <div id="pcTripMsg" style="display:none;margin-top:7px;font-size:0.8rem;font-weight:700;line-height:1.55;"></div>
-          </details>
         </div>
 
         <details class="config-group" style="margin-top:4px;">
