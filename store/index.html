@@ -92,7 +92,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260720b">
+  <link rel="stylesheet" href="styles.css?v=20260720c">
   <link rel="stylesheet" href="premium.css?v=20260719b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
@@ -220,7 +220,10 @@
 
 
     /* 지역 탭 가로 스크롤 (스크롤 불가 수정) */
-    .tabs-scroll { display: flex !important; flex-wrap: nowrap !important; gap: 8px; overflow-x: auto !important; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+    /* (2026-07-20) 가로 스크롤 강제는 좁은 화면 전용 — PC(≥1024px)는 styles.css의 줄바꿈(flex-wrap)이 적용돼 탭 전부 노출 */
+    @media (max-width: 1023.98px) {
+      .tabs-scroll { display: flex !important; flex-wrap: nowrap !important; gap: 8px; overflow-x: auto !important; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+    }
     .tabs-scroll .tab-btn { flex-shrink: 0; white-space: nowrap; }
 
 </style>
@@ -1568,7 +1571,7 @@
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="jd-devices.js?v=20260717b"></script>
-  <script src="app.js?v=20260720h"></script>
+  <script src="app.js?v=20260720i"></script>
   <script src="globe.js?v=20260717a" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {

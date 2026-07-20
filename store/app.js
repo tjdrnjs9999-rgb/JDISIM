@@ -335,6 +335,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (e.key === 'Enter') handleStoreSearch();
     });
     
+    // (2026-07-20) 지역 탭 가로 스크롤: PC 마우스 휠(세로)을 가로 이동으로 변환 — 잘린 탭 접근 보장
+    tabsContainer.addEventListener('wheel', (e) => {
+      if (tabsContainer.scrollWidth > tabsContainer.clientWidth && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        tabsContainer.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }, { passive: false });
+
     // 카테고리 탭 이벤트 리스너 연동
     tabsContainer.addEventListener('click', (e) => {
       const btn = e.target.closest('.tab-btn');
