@@ -3790,3 +3790,32 @@ select.checkout-input option {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
 }
+
+/* ── PC 앵커 팝업 (2026-07-20 사장님 지시): 상품 카드 옆 컴팩트 구매 팝업 + 카드 스포트라이트 ──
+   .anchored: JS(anchorModal)가 카드 옆 좌표를 잡아 고정 배치. 공간 없거나 <1024px면 클래스 미부여 = 기존 중앙 모달 */
+.modal-overlay.anchored {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+}
+.modal-overlay.anchored .modal-container {
+  position: fixed;
+  width: 470px;
+  max-width: calc(100vw - 24px);
+  transform: none;
+}
+.modal-overlay.anchored .modal-content {
+  grid-template-columns: 1fr;
+  gap: 18px;
+  padding: 22px 22px 18px;
+  max-height: inherit;
+}
+.modal-overlay.anchored .modal-sidebar { padding: 16px; }
+.modal-overlay.anchored .modal-title { font-size: 1.2rem; }
+.modal-overlay.anchored .modal-close { top: 14px; right: 14px; }
+/* 클릭한 카드만 선명하게 — 배경 blur(오버레이) 위로 승격 */
+.jd-spotlight {
+  position: relative;
+  z-index: 551 !important; /* .modal-overlay(550) 위 */
+  box-shadow: 0 0 0 3px var(--accent), 0 18px 50px rgba(0, 0, 0, 0.5) !important;
+}

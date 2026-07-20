@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             bestCarrier = c;
           }
         });
-        openModal(bestCarrier);
+        openModal(bestCarrier, card);
       });
       featuredGrid.appendChild(card);
     });
@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             bestCarrier = c;
           }
         });
-        openModal(bestCarrier);
+        openModal(bestCarrier, card);
       });
       
       productGrid.appendChild(card);
@@ -997,7 +997,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     return merged;
   }
 
-  function openModal(prod) {
+  // PC 앵커 팝업 (2026-07-20 사장님 지시): 클릭한 카드 옆에 컴팩트 팝업, 카드만 선명(스포트라이트)
+  function anchorModal() {
+    const box = productModal.querySelector('.modal-container');
+    productModal.classList.remove('anchored');
+    if (box) { box.style.left = ''; box.style.top = ''; box.style.maxHeight = ''; }
+    document.querySelectorAll('.jd-spotlight').forEach(el => el.classList.remove('jd-spotlight'));
+    const a = window.__modalAnchor;
+    if (!a || !a.getBoundingClientRect || !box || window.innerWidth < 1024) return; // 좁은 화면은 기존 중앙 모달
+    const r = a.getBoundingClientRect();
+    const W = 470, GAP = 14, M = 12;
+    let left = null;
+    if (r.right + GAP + W + M <= window.innerWidth) left = r.right + GAP;
+    else if (r.left - GAP - W >= M) left = r.left - GAP - W;
+    if (left == null) return; // 옆 공간이 없으면 중앙 폴백
+    productModal.classList.add('anchored');
+    const H = Math.min(window.innerHeight - 2 * M, 660);
+    const top = Math.max(M, Math.min(r.top, window.innerHeight - H - M));
+    box.style.left = left + 'px';
+    box.style.top = top + 'px';
+    box.style.maxHeight = H + 'px';
+    a.classList.add('jd-spotlight');
+  }
+  function openModal(prod, anchorEl) {
+    if (anchorEl !== undefined) window.__modalAnchor = anchorEl;
     if (!window.__fullReady && (!prod.plans || !prod.plans.length)) {
       document.body.style.cursor = 'progress';
       window.ensureFullProducts(function () {
@@ -1023,6 +1046,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderModalContent(sameCountryProducts);
     
     productModal.classList.add('active');
+    anchorModal(); // 카드 옆 앵커 + 스포트라이트 (공간 없으면 중앙 폴백)
     document.body.style.overflow = 'hidden'; // 스크롤 락
     history.pushState({ modal: true }, '', location.hash || '#home');
   }
@@ -1192,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <button class="cta-buy" id="buyNowBtn">
             <span class="cta-buy-main">⚡ 즉시 구매하기</span>
-            <span class="cta-buy-sub">${finalPriceVal.toLocaleString()}원 · 카카오페이/카드</span>
+            <span class="cta-buy-sub">${finalPriceVal.toLocaleString()}원 · 카카오페이</span>
           </button>
           <button class="cta-cart" id="addToCartBtn">🛒 장바구니 담기</button>
           <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:9px;font-size:0.78rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
@@ -1778,6 +1802,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderGrid();
     }
     productModal.classList.remove('active');
+    productModal.classList.remove('anchored');
+    document.querySelectorAll('.jd-spotlight').forEach(el => el.classList.remove('jd-spotlight'));
+    window.__modalAnchor = null;
     document.body.style.overflow = 'auto'; // 스크롤 복구
     if (history.state && history.state.modal) history.back(); // 히스토리 정리
   }
@@ -2830,6 +2857,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 상품 팝업이 열려 있으면 페이지 이동 대신 팝업만 닫기
     if (productModal && productModal.classList.contains('active')) {
       productModal.classList.remove('active');
+      productModal.classList.remove('anchored');
+      document.querySelectorAll('.jd-spotlight').forEach(el => el.classList.remove('jd-spotlight'));
+      window.__modalAnchor = null;
       document.body.style.overflow = 'auto';
       if (window.__globeSearch) {
         window.__globeSearch = false;
