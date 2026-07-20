@@ -1796,7 +1796,7 @@ function diagHistory(hist){
   return M[id] || null;
 }
 // ── 오늘 남은 데이터 (2026-07-18 사장님 지시) — 데일리 상품은 리셋 타임존 기준 '오늘'로 계산 ──
-var TZ_OFF = {일본:9,한국:9,중국:8,홍콩:8,마카오:8,대만:8,몽골:8,싱가포르:8,말레이시아:8,필리핀:8,베트남:7,태국:7,캄보디아:7,라오스:7,인도네시아:7,몰디브:5,스페인:1,유럽:0,영국:0,미국:-8,캐나다:-5,호주:10,뉴질랜드:12};
+var TZ_OFF = {일본:9,한국:9,중국:8,홍콩:8,마카오:8,대만:8,몽골:8,싱가포르:8,말레이시아:8,필리핀:8,베트남:7,태국:7,캄보디아:7,라오스:7,인도네시아:7,몰디브:5,인도:5.5,스페인:1,유럽:0,영국:0,미국:-8,캐나다:-5,호주:10,뉴질랜드:12,괌:10,사이판:10};
 function resetInfo(){
   try{
     var code = (order && order.sku) || PLAN;
@@ -1806,7 +1806,16 @@ function resetInfo(){
     if(!m) return { txt: R.data };                      // '사용시점부터 24시간' 등 — 문구만 표시
     var off = TZ_OFF[m[1]]; if(off==null) return { txt: R.data };
     if(/서부/.test(R.data)) off = -8;
-    return { txt: R.data, off: off, hh: +m[2], mm: +m[3] };
+    if(/\(UTC\+0\)/.test(R.data)) off = 0;
+    var out = { txt: R.data, off: off, hh: +m[2], mm: +m[3] };
+    // 표시용: 여행국 현지시각으로 환산 (2026-07-20 사장님 지시) — 카운트다운 계산(off)은 기준시간 유지
+    var dst = TZ_OFF[(order && order.country) || ''];
+    if (dst != null) {
+      var t = (out.hh*60 + out.mm + Math.round((dst - off)*60)) % 1440; if (t < 0) t += 1440;
+      var h2 = ('0'+Math.floor(t/60)).slice(-2), m2 = ('0'+(t%60)).slice(-2);
+      out.txtLocal = '현지시간 ' + h2 + ':' + m2 + ' 기준 변경';
+    }
+    return out;
   }catch(e){ return null; }
 }
 function quotaFromText(){
@@ -1859,7 +1868,7 @@ function renderUsage(d){
       pbHtml = '<div class="rs-bar"><i id="usPb" style="width:' + Math.min(100, Math.max(2, (1 - (nx - shifted) / 86400e3) * 100)) + '%"></i></div>';
     }
     resetCard = '<div class="rs-card" style="margin-top:9px;padding:10px 13px;">' +
-      '<div style="font-weight:900;font-size:0.8rem;color:#0f766e;">⏱ 매일 데이터 리셋' + (ri && ri.txt ? ' — ' + esc(ri.txt) : '') + '</div>' +
+      '<div style="font-weight:900;font-size:0.8rem;color:#0f766e;">⏱ 매일 데이터 리셋' + (ri && (ri.txtLocal || ri.txt) ? ' — ' + esc(ri.txtLocal || ri.txt) : '') + '</div>' +
       '<div style="font-size:0.75rem;font-weight:600;color:#475569;margin-top:3px;line-height:1.55;">리셋되면 다시 <b>' + fmtData(qi.mb) + '</b>를 쓸 수 있어요' + cd + '</div>' + pbHtml +
       (qi.fup ? '<div style="font-size:0.73rem;font-weight:600;color:#64748b;margin-top:5px;">오늘 용량을 다 써도 저속으로는 계속 이용할 수 있어요</div>' : '') + '</div>';
   }

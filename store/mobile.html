@@ -3635,9 +3635,27 @@
       '가볍게': { ic: '💬', t: '가볍게', s: '메신저·지도 정도 — 최소 요금' },
       '전체':   { ic: '🗂', t: '전체 상품 보기', s: '모든 상품을 직접 비교' }
     };
+    // 리셋 기준시각(공급사 타임존) → 여행국 현지시각 환산 (2026-07-20 사장님 지시: "홍콩 00:00 리셋은 각 나라별 시간으로")
+    const RESET_BASIS_TZ = { '몰디브': 'Indian/Maldives', '홍콩': 'Asia/Hong_Kong', '몽골': 'Asia/Ulaanbaatar', '베트남': 'Asia/Ho_Chi_Minh', '일본': 'Asia/Tokyo', '중국': 'Asia/Shanghai', '태국': 'Asia/Bangkok', '스페인': 'Europe/Madrid', '미국': 'America/Los_Angeles', '캐나다': 'America/Toronto', '호주': 'Australia/Sydney', '유럽': 'UTC', '괌': 'Pacific/Guam' };
+    function tzOffMin(tz) {
+      try { const now = new Date(); return (new Date(now.toLocaleString('en-US', { timeZone: tz })) - new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }))) / 60000; } catch (e) { return null; }
+    }
+    function resetLocalHM(txt, country) {
+      const m = /([가-힣]+)\s*(?:서부\s*)?시간\s*(\d{1,2}):(\d{2})/.exec(String(txt || ''));
+      if (!m) return null;
+      const basis = /\(UTC\+0\)/.test(txt) ? 'UTC' : RESET_BASIS_TZ[m[1]];
+      const dest = (typeof COUNTRY_TZ !== 'undefined' && COUNTRY_TZ[country]) ? COUNTRY_TZ[country][0] : null;
+      if (!basis || !dest) return null;
+      const ob = tzOffMin(basis), od = tzOffMin(dest);
+      if (ob == null || od == null) return null;
+      let t = ((+m[2]) * 60 + (+m[3]) + (od - ob)) % 1440; if (t < 0) t += 1440;
+      return { hm: String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0') };
+    }
     function shortReset(code) {
       try { const r = window.JD_RESETS && window.JD_RESETS.get(code);
         if (!r || !r.data) return '';
+        const loc = resetLocalHM(r.data, currentSelectedCountry);
+        if (loc) return '현지 ' + loc.hm + ' 리셋';
         const m = /([가-힣]+)\s*(?:서부\s*)?시간\s*(\d{1,2}:\d{2})/.exec(r.data);
         return m ? m[1] + ' ' + m[2] + ' 리셋' : (/총 사용량/.test(r.data) ? '' : '');
       } catch (e) { return ''; }
@@ -4105,10 +4123,12 @@
       const isDaily = planIsDailyGroup(p);
       const capLbl = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : cap;
       const dataTile = (cap === '무제한' && window.JD_UNL) ? window.JD_UNL.label(p.product_code) : ((isDaily ? '매일 ' : '총 ') + cap);
-      // 리셋 정본 (원가표 사용일리셋·데이터리셋 열 — jd-resets.js)
+      // 리셋 정본 (원가표 사용일리셋·데이터리셋 열 — jd-resets.js) — 표시는 여행국 현지시각 환산 (2026-07-20)
       const resets = (window.JD_RESETS && window.JD_RESETS.get(p.product_code)) || null;
-      const dayResetTile = (resets && resets.day) || '개통 시점부터 연속';
-      const resetTile = (resets && resets.data) || (selectedProductType === '무제한' ? '제한 없음' : (isDaily ? '매일 리셋 (현지 기준)' : '리셋 없음 · 자유 분배'));
+      const locDay = resets && resetLocalHM(resets.day, currentSelectedCountry);
+      const locData = resets && resetLocalHM(resets.data, currentSelectedCountry);
+      const dayResetTile = locDay ? ('현지시간 ' + locDay.hm + ' 기준 변경') : ((resets && resets.day) || '개통 시점부터 연속');
+      const resetTile = locData ? ('현지시간 ' + locData.hm + ' 기준 변경') : ((resets && resets.data) || (selectedProductType === '무제한' ? '제한 없음' : (isDaily ? '매일 리셋 (현지 기준)' : '리셋 없음 · 자유 분배')));
       // 단색 라인 아이콘 (lucide, 색은 CSS .pv-tile .ic 한 곳에서 관리 — 2026-07-15 지시)
       const tile = (ic, k, v) => `<div class="pv-tile"><span class="ic"><i data-lucide="${ic}"></i></span><div class="k">${k}</div><div class="v">${v || '-'}</div></div>`;
       const an = document.getElementById('activationNotice');
