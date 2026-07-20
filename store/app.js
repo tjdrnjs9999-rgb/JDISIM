@@ -1138,7 +1138,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       exact.sort((a, b) => (pcCapMB(a.pl) - pcCapMB(b.pl)) || (a.pl.final_price - b.pl.final_price));
       const bestIdx = exact.reduce((bi, x, i) => x.pl.final_price < exact[bi].pl.final_price ? i : bi, 0);
       window.__pcwList = exact;
-      body = `<div class="config-section-title" style="margin-top:14px;">딱 맞는 상품을 골라드렸어요 <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">— 모든 통신사 비교 완료</span></div>` + note +
+      body = `<div class="config-section-title" style="margin-top:14px;">딱 맞는 상품 ${exact.length}개를 골라드렸어요 <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">— 모든 통신사 비교 완료 · 아래로 스크롤</span></div>` + note +
+        `<div class="pcw-scroll" style="margin-top:2px;max-height:430px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px;">` +
         (exact.map((x, i) => {
           const cap = pcPlanCap(x.pl);
           const capLbl = cap === '무제한' ? ((window.JD_UNL && window.JD_UNL.isTrue(x.pl.product_code)) ? '완전 무제한' : '무제한(속도정책 확인)') : ((x.pl.service_type === '데일리' || x.pl.service_type === '무제한') ? '매일 ' + cap : '전체 ' + cap);
@@ -1147,7 +1148,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           const best = i === bestIdx ? ' <span style="font-size:0.65rem;font-weight:900;color:#fff;background:var(--accent);border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : '';
           return rowBtn(`class="pcw-item" data-i="${i}"`, `${window.cleanCarrierName(x.g.carrier)} · ${capLbl}${best}`, sub,
             `${net}<span style="flex-shrink:0;font-size:1.05rem;font-weight:900;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.72rem;font-weight:700;">원</span></span>`);
-        }).join('') || '<div style="font-size:0.82rem;color:var(--text-muted);font-weight:700;padding:10px 2px;">이 조합의 상품이 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>');
+        }).join('') || '<div style="font-size:0.82rem;color:var(--text-muted);font-weight:700;padding:10px 2px;">이 조합의 상품이 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>') +
+        `</div>`;
     }
     modalContent.innerHTML = `<div style="grid-column:1/-1;">
       <div class="modal-header" style="margin-bottom:4px;">
@@ -1295,6 +1297,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="font-weight:900;font-size:1rem;">${window.cleanCarrierName(p.carrier)} · ${summaryDataLabel}</div>
             <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;margin-top:4px;">${p.network_type === '로컬망' ? '🏠 로컬망' : '🌐 로밍망'} · ${p.network_speed || ''} · ${activePlan.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋'} · ${activeDuration}일</div>
           </div>
+        </div>
+
+        <!-- 상품 안내 (2026-07-20): 모바일 상세와 동일 정보 위계 — PC는 텍스트 여유 있게 -->
+        <div class="config-group">
+          <div class="config-section-title">상품 안내</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;">
+            ${[['📶', '데이터', summaryDataLabel], ['📅', '사용 기간', activeDuration + '일'], [isDaily ? '↻' : '🎒', '사용 방식', isDaily ? '매일 새로 충전' : '기간 내 자유 분배'], [p.network_type === '로컬망' ? '🏠' : '🌐', '통신망', p.network_type === '로컬망' ? '현지 로컬망' : '로밍망'], ['⚡', '속도', p.network_speed || '5G/LTE'], ['🎫', '수령 방식', 'QR 즉시 발급']].map(t =>
+              `<div style="background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 10px;text-align:center;"><div style="font-size:1.05rem;">${t[0]}</div><div style="font-size:0.68rem;font-weight:700;color:var(--text-muted);margin-top:3px;">${t[1]}</div><div style="font-size:0.82rem;font-weight:800;margin-top:2px;">${t[2]}</div></div>`).join('')}
+          </div>
+          <p style="font-size:0.85rem;line-height:1.7;color:var(--text-main);font-weight:600;margin:12px 2px 0;">
+            ${isDaily
+              ? (cleanActiveData === '무제한'
+                ? '용량 걱정 없이 마음껏 쓰는 상품이에요. 지도·유튜브·핫스팟까지 자유롭게 사용하세요.'
+                : '오늘 데이터를 다 써도 내일이면 다시 꽉 차는 데일리 상품이에요. 여행 내내 같은 리듬으로 안심하고 쓸 수 있어요.')
+              : '기간 안에서 아껴 쓰는 날, 몰아 쓰는 날을 자유롭게 조절하는 총용량 상품이에요. 사용량을 스스로 관리하는 분께 잘 맞아요.'}
+            ${/\+/.test(cleanActiveData) ? ' 고속 용량 소진 후에도 저속으로 계속 연결돼 지도·메신저는 이용할 수 있어요.' : ''}
+            사용일은 현지에서 통신망에 연결되는 순간부터 시작되니, 미리 사서 설치해 두어도 손해가 없어요.
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:0.72rem;font-weight:800;color:#10b981;">
+            <span style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:999px;padding:5px 11px;">발급 전 100% 환불</span>
+            <span style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:999px;padding:5px 11px;">미개통 100% 환불 보장</span>
+            <span style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:999px;padding:5px 11px;">24시간 카톡 케어</span>
+          </div>
+          <details style="margin-top:12px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 14px;">
+            <summary style="list-style:none;cursor:pointer;font-size:0.82rem;font-weight:800;">📂 구매 전 꼭 확인 <span style="color:var(--text-muted);font-weight:700;font-size:0.72rem;">펼쳐 보기</span></summary>
+            <div style="margin-top:8px;font-size:0.78rem;line-height:1.75;color:var(--text-muted);font-weight:600;">
+              · 다이얼 *#06# 입력 시 <b style="color:var(--text-main);">EID가 표시되는 eSIM 지원 기종</b>에서만 사용할 수 있어요<br>
+              · <b style="color:var(--text-main);">발급(QR 생성) 후에는 취소·환불이 불가</b>해요 — 발급 전에는 100% 환불<br>
+              · 설치한 eSIM 프로필은 <b style="color:var(--text-main);">절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요<br>
+              · 사용 기간은 현지 도착 후 통신망 연결 시점부터 시작돼요 (유효기간 내 활성화 필요)
+            </div>
+          </details>
         </div>
       </div>
       </div>
