@@ -3828,12 +3828,8 @@ select.checkout-input option {
 .modal-overlay.anchored .modal-content::-webkit-scrollbar { width: 8px; }
 .modal-overlay.anchored .modal-content::-webkit-scrollbar-thumb { background: rgba(242,117,31,0.5); border-radius: 8px; }
 
-/* (2026-07-20) 지역 탭: PC는 줄바꿈으로 전부 노출 — 가로 스크롤 의존 제거. 좁은 화면은 얇은 스크롤바 표시 */
-@media (min-width: 1024px) {
-  .tabs-scroll { flex-wrap: wrap; overflow-x: visible; }
-}
-@media (max-width: 1023.98px) {
-  .tabs-scroll::-webkit-scrollbar { display: block; height: 5px; }
-  .tabs-scroll::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 6px; }
-  .tabs-scroll { scrollbar-width: thin; }
-}
+/* (2026-07-20 사장님 확정) 지역 탭: 한 줄 가로 스크롤 + 스크롤바 상시 노출 (기존 숨김 해제) */
+.tabs-scroll::-webkit-scrollbar { display: block; height: 6px; }
+.tabs-scroll::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 6px; }
+.tabs-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+.tabs-scroll { scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-tertiary); }

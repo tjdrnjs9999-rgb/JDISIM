@@ -92,7 +92,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260720c">
+  <link rel="stylesheet" href="styles.css?v=20260720d">
   <link rel="stylesheet" href="premium.css?v=20260719b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
@@ -220,10 +220,8 @@
 
 
     /* 지역 탭 가로 스크롤 (스크롤 불가 수정) */
-    /* (2026-07-20) 가로 스크롤 강제는 좁은 화면 전용 — PC(≥1024px)는 styles.css의 줄바꿈(flex-wrap)이 적용돼 탭 전부 노출 */
-    @media (max-width: 1023.98px) {
-      .tabs-scroll { display: flex !important; flex-wrap: nowrap !important; gap: 8px; overflow-x: auto !important; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
-    }
+    /* (2026-07-20 사장님 확정) 지역 탭 = 한 줄 가로 스크롤 유지 + 스크롤바 상시 노출 */
+    .tabs-scroll { display: flex !important; flex-wrap: nowrap !important; gap: 8px; overflow-x: auto !important; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
     .tabs-scroll .tab-btn { flex-shrink: 0; white-space: nowrap; }
 
 </style>
@@ -472,6 +470,11 @@
     /* ===== 전역: 스크롤바 전면 숨김 (페이지·탭바·시트 등 모든 스크롤 영역) ===== */
     * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
     *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+    /* 예외 (2026-07-20 사장님 지시): 지역 탭·위저드 상품 리스트는 스크롤바 노출 */
+    .tabs-scroll, .pcw-scroll { scrollbar-width: thin !important; scrollbar-color: var(--accent) var(--bg-tertiary) !important; }
+    .tabs-scroll::-webkit-scrollbar, .pcw-scroll::-webkit-scrollbar { display: block !important; height: 6px !important; width: 8px !important; }
+    .tabs-scroll::-webkit-scrollbar-thumb, .pcw-scroll::-webkit-scrollbar-thumb { background: var(--accent) !important; border-radius: 6px !important; }
+    .tabs-scroll::-webkit-scrollbar-track, .pcw-scroll::-webkit-scrollbar-track { background: var(--bg-tertiary) !important; border-radius: 6px !important; }
     /* ===== 전역: 한글 의미단위 줄바꿈 · 말줄임(...) 금지 ===== */
     body { word-break: keep-all; overflow-wrap: break-word; }
     /* ===== 상품 카드: 호버 리프트 + 이미지 줌 ===== */
