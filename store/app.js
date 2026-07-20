@@ -1044,17 +1044,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     activeCarrier = prod;
     ensurePlans(activeCarrier);   // 병합 누락분 plans 복구
 
-    // PC 위저드 초기화 (2026-07-20): 저장된 여행 날짜가 유효하면 일수 자동 계산 → 스타일 스텝부터
+    // PC 위저드 초기화 (2026-07-20 사장님 지시): 저장된 여행 날짜가 있어도 건너뛰지 않음 — 매 구매마다 캘린더부터
     window.__pcwStep = 1; window.__pcwDays = null; window.__pcwStyle = null; window.__pcwPlan = null;
-    try {
-      const t = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null');
-      if (t && t.dep && t.ret && new Date(t.dep + 'T00:00:00') >= new Date(new Date().toDateString())) {
-        const uni = pcwDursUnion(sameCountryProducts);
-        const trip = Math.round((new Date(t.ret) - new Date(t.dep)) / 86400e3) + 1;
-        const pick = uni.find(d => d >= trip) || uni[uni.length - 1];
-        if (pick) { window.__pcwDays = pick; window.__pcwStep = 2; }
-      }
-    } catch (e) {}
 
     // 데이터 및 기간 초기화
     const firstPlan = activeCarrier.plans && activeCarrier.plans[0];
@@ -1182,8 +1173,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }));
     if (step === 1 && window.JDTripCal) {
       const calBox = modalContent.querySelector('#pcwCal'), msg = modalContent.querySelector('#pcwMsg');
-      let saved = null; try { saved = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null'); } catch (e) {}
-      window.JDTripCal.mount(calBox, { dep: saved && saved.dep, ret: saved && saved.ret, onRange: (depIso, retIso) => {
+      // (2026-07-20 사장님 지시) 이전 날짜 캐시 프리필 없음 — 매 구매마다 새로 선택
+      window.JDTripCal.mount(calBox, { onRange: (depIso, retIso) => {
         const trip = Math.round((new Date(retIso) - new Date(depIso)) / 86400e3) + 1;
         const uni = pcwDursUnion(carrierOptions);
         if (!uni.length) return;

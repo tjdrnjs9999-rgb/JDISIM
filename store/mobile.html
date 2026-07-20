@@ -3895,11 +3895,8 @@
         const calBox = document.getElementById('tripCalBox'), msg = document.getElementById('tripDateMsg');
         if (!calBox || calBox._bound || !window.JDTripCal) return;
         calBox._bound = true;
-        let saved = null;
-        try { saved = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null'); } catch (e) {}
-        const todayIso = new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
-        if (saved && saved.dep < todayIso) saved = null;
-        window.JDTripCal.mount(calBox, { dep: saved && saved.dep, ret: saved && saved.ret, onRange: (depIso, retIso) => {
+        // (2026-07-20 사장님 지시) 이전 여행 날짜 캐시는 캘린더에 프리필하지 않음 — 매 구매마다 날짜를 새로 고르게 (저장은 티켓 D-Day용으로만 유지)
+        window.JDTripCal.mount(calBox, { onRange: (depIso, retIso) => {
           const trip = Math.round((new Date(retIso) - new Date(depIso)) / 86400e3) + 1; // 출발일 포함
           const avail = [];
           allCarrierOptions.forEach(g => (g.plans || []).forEach(pl => { const d = parseInt(pl.duration, 10); if (d && avail.indexOf(d) < 0) avail.push(d); }));
