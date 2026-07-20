@@ -3206,6 +3206,7 @@
           </div>`;
       }).join('')}</div>`;
       layer.innerHTML = `
+        <button id="tcCloseBtn" aria-label="닫기" style="position:fixed;top:14px;right:14px;z-index:1;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);color:#fff;font-size:1.0625rem;font-weight:800;display:flex;align-items:center;justify-content:center;">✕</button>
         <div style="margin-top:auto;"></div>
         <div style="color:#fbbf24;font-size:0.75rem;font-weight:900;letter-spacing:3px;font-family:'SF Mono','Courier New',monospace;margin-bottom:8px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.15s both;'}">✓ 결제 완료</div>
         <div style="color:rgba(255,255,255,0.82);font-size:0.8125rem;font-weight:700;margin-bottom:16px;text-align:center;line-height:1.5;${reduced ? '' : 'animation:tcFade 0.5s ease 0.25s both;'}">eSIM은 아직 발급 전이에요 — 준비되면 아래 버튼으로 발급하세요</div>
@@ -3241,6 +3242,8 @@
         }
       }
       document.getElementById('tcDoneBtn').onclick = () => { layer.remove(); if (onDone) onDone(); };
+      const closeBtn = document.getElementById('tcCloseBtn');
+      if (closeBtn) closeBtn.onclick = () => { layer.remove(); if (onDone) onDone(); };
     }
 
     // ===== 📡 실시간 사용량 조회 (JDISIM 케어 프록시) =====
