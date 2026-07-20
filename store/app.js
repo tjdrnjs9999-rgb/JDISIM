@@ -2030,7 +2030,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             sku: checkoutItems[0].plan.product_code,
             qty: checkoutItems[0].qty || 1,
             items: checkoutItems.map(it => ({ sku: it.plan.product_code, qty: it.qty || 1 })).slice(0, 10),
-            name: buyerName, phone: phone, amount: priceVal
+            name: buyerName, phone: phone, email: email, amount: priceVal
           })
         }).then(function (rsp) {
           if (rsp.code != null) {
