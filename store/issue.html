@@ -1384,12 +1384,13 @@ function loadCare(){
     .then(function(d){
       var e = (d && d.esim) || {};
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
+      var preIssue = !e.qrCodeContent; // 발주됨·QR 미발급 — 발급하기 버튼이 도매 API를 호출 (2026-07-20)
       var cty = countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
       order = {
         orderCode: e.orderCode || Q_ORDER || '', buyerName: Q_NAME || e.buyerName || d.buyerName || '', productName: e.prodName || '',
         option: e.option || e.Option || '', sku: PLAN, buyDate: Q_BUYDT || '',
         quantity: parseInt(e.count||'1',10)||1, country: cty,
-        validity: validityOf(cty, Q_BUYDT), status: 'ISSUED', iccid: e.iccid || CARE,
+        validity: validityOf(cty, Q_BUYDT), status: preIssue ? 'PAID' : 'ISSUED', iccid: e.iccid || CARE,
         lpa: e.qrCodeContent || '', storeId: d.storeId
       };
       setModeChip('care');
@@ -1403,6 +1404,7 @@ function loadCare(){
           orderCode: order.orderCode || '', at: new Date().toISOString().slice(0, 10)
         }));
       } catch (e) {}
+      if (preIssue) return renderPreIssue();
       renderIssued(order.lpa, true);
       var tk = document.querySelector('#app .tkt');
       if (tk) tk.insertAdjacentHTML('beforebegin',
@@ -1529,10 +1531,39 @@ function doIssue(){
     return;
   }
   if (DEMO){ setTimeout(function(){ order.status='ISSUED'; seqFinish(function(){ renderIssued('LPA:1$rsp.example.com$DEMO0000DEMO0000DEMO0000DEMO0000', false); }); },1400); return; }
+  if (CARE){
+    // 케어 모드 발급 (2026-07-20): 발급하기 → 프록시 action=issue → 도매(도도매) issue-esim API 호출 → info 폴링으로 QR 수신
+    var iq = CX ? ('action=issue&t=' + encodeURIComponent(CX)) : ('action=issue&iccid=' + encodeURIComponent(CARE));
+    fetch(window.CARE_API + '?' + iq, { method:'POST' })
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(d){
+        if (d && d.error) throw d;
+        pollCareIssue(0); // ISSUED(already)든 PENDING이든 info 폴링이 QR을 가져와 마무리
+      })
+      .catch(function(e){
+        renderError('발급 요청이 접수되지 않았어요','결제와 주문은 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.');
+      });
+    return;
+  }
   fetch(CONFIG.ISSUE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,agreedNoRefund:true,agreedDevice:true,agreedAt:new Date().toISOString()})})
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(d){ if(d.lpa) seqFinish(function(){ renderIssued(d.lpa,false); }); else if(d.status==='PENDING') pollIssue(0); else throw 0; })
     .catch(function(){ renderError('발급 중 문제가 생겼어요','결제는 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.'); });
+}
+
+function pollCareIssue(n){
+  if(n>40) return renderError('발급이 지연되고 있어요','통신사 응답 대기 중이에요. 이 페이지를 다시 열면 이어서 확인돼요 — 결제는 안전하게 보존됩니다.');
+  setTimeout(function(){
+    careGet(CX ? ('t=' + encodeURIComponent(CX)) : ('iccid=' + encodeURIComponent(CARE)))
+      .then(function(d){
+        var e = (d && d.esim) || {};
+        if (e.qrCodeContent){
+          order.status='ISSUED'; order.lpa=e.qrCodeContent;
+          seqFinish(function(){ renderIssued(e.qrCodeContent, false); });
+        } else pollCareIssue(n+1);
+      })
+      .catch(function(){ pollCareIssue(n+1); });
+  }, 3000);
 }
 
 function pollIssue(n){
