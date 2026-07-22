@@ -1472,6 +1472,13 @@ function renderCanceledTok(){
       '<div class="muted" style="margin-top:9px;font-size:.83rem;line-height:1.7;">이 주문은 취소되어 발급할 수 없어요.<br>문의가 있으시면 카톡 상담을 눌러주세요.</div>' +
     '</div>');
 }
+function renderTestTok(){
+  h('<div class="card center" style="padding:34px 22px;max-width:440px;margin:18px auto;">' +
+      '<div style="font-size:46px;">🧪</div>' +
+      '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">테스트 주문입니다</div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.83rem;line-height:1.7;">현재 테스트 운영 중이라 실제 발급은 진행되지 않아요.<br>정식 오픈 후 안내드리겠습니다. 문의는 카톡 상담을 눌러주세요.</div>' +
+    '</div>');
+}
 function renderIssueReadyTok(d){
   var plan = (d && d.plan) || '';
   h('<div class="card" style="padding:34px 22px;max-width:440px;margin:18px auto;display:flex;flex-direction:column;align-items:center;text-align:center;">' +
@@ -1497,6 +1504,7 @@ function doIssueTok(){
   careGet('action=issue&it=' + encodeURIComponent(ISSUE))
     .then(function(d){
       if (d && d.status === 'CANCELED') return renderCanceledTok();
+      if (d && d.status === 'TEST') return renderTestTok(); // 테스트 모드 — 실발급 안 함
       if (d && d.error) return renderError('발급 요청 실패', '잠시 후 다시 시도하시거나 카톡 상담으로 문의해 주세요.');
       pollIssueTok();
     })
