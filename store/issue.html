@@ -1484,8 +1484,8 @@ function renderIssuing(){
 }
 function doIssue(){
   renderIssuing();
-  fetch(window.CARE_API + '?action=issue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ it: ISSUE }) })
-    .then(function(r){ return r.json(); })
+  // GET 방식 (CORS preflight 없음 — 모바일·카톡 인앱 브라우저 호환). 서버 멱등이라 중복발주 안 됨.
+  careGet('action=issue&it=' + encodeURIComponent(ISSUE))
     .then(function(d){ if (d && d.error) return renderError('발급 요청 실패', '잠시 후 다시 시도하시거나 카톡 상담으로 문의해 주세요.'); pollIssue(); })
     .catch(function(){ pollIssue(); });
 }
