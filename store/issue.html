@@ -463,6 +463,7 @@ var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CX = new URLSearchParams(location.search).get('cx') || ''; // 케어 토큰 (2026-07-15: URL에 ICCID 비노출 신형 링크)
 var CARE = new URLSearchParams(location.search).get('care') || (CX ? '__cx__' : ''); // 구형 care= 링크 호환 유지
+var ISSUE = new URLSearchParams(location.search).get('issue') || ''; // 발급하기 토큰 (도매 상품 발급 전 — 버튼 누르면 Joytel 발주)
 var RV = new URLSearchParams(location.search).get('rv') === '1';
 var _q = new URLSearchParams(location.search);
 var PLAN = _q.get('plan') || '';   // 브리지가 동봉: 구매상품 SKU
@@ -1449,7 +1450,56 @@ function loadCare(){
     });
 }
 
+// ── 발급하기 모드 (도매 상품, 2026-07-22): ?issue=<토큰> → 발급하기 버튼 → Joytel 발주 → QR 폴링 → 케어링크 ──
+function loadIssue(){
+  if (!window.CARE_API) return renderError('발급 시스템 준비 중이에요', '잠시 후 다시 시도해 주세요.');
+  careGet('action=issue_status&it=' + encodeURIComponent(ISSUE))
+    .then(function(d){
+      if (!d || d.error) return renderError('발급 링크를 찾지 못했어요', '링크가 만료되었거나 잘못되었어요. 카톡 상담으로 문의해 주세요.');
+      if (d.status === 'ISSUED' && d.care_token) { location.replace('issue.html?cx=' + encodeURIComponent(d.care_token)); return; }
+      if (d.status === 'PENDING') { renderIssuing(); pollIssue(); return; }
+      renderIssueReady(d); // READY
+    })
+    .catch(function(){ renderError('연결이 지연되고 있어요', '잠시 후 다시 시도해 주세요.'); });
+}
+function renderIssueReady(d){
+  var plan = (d && d.plan) || '';
+  h('<div class="card center" style="padding:32px 22px;">' +
+      '<img src="images/fox-qr.png" alt="" style="width:96px;" onerror="this.style.display=\'none\'">' +
+      '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">eSIM 발급하기</div>' +
+      (plan ? '<div class="muted" style="margin-top:5px;font-size:.86rem;">' + esc(plan) + '</div>' : '') +
+      '<div class="muted" style="margin-top:10px;font-size:.8rem;line-height:1.7;">아래 버튼을 누르면 통신사에서 QR을 생성합니다.<br>생성되면 이 화면에서 바로 확인·설치할 수 있어요.</div>' +
+      '<button class="btn btn-primary" style="margin-top:20px;width:100%;max-width:300px;" onclick="doIssue()">🎫 발급하기</button>' +
+      '<div class="muted" style="margin-top:9px;font-size:.72rem;">설치는 와이파이 환경에서 진행하세요</div>' +
+    '</div>');
+}
+function renderIssuing(){
+  h('<div class="card center" style="padding:40px 22px;">' +
+      '<div style="font-size:44px;">⏳</div>' +
+      '<div style="font-weight:900;font-size:1.1rem;margin-top:14px;">eSIM 발급 중…</div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.82rem;line-height:1.7;">통신사에서 QR을 생성하고 있어요.<br>보통 1~2분이면 완료됩니다. 이 화면을 유지해 주세요.</div>' +
+    '</div>');
+}
+function doIssue(){
+  renderIssuing();
+  fetch(window.CARE_API + '?action=issue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ it: ISSUE }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if (d && d.error) return renderError('발급 요청 실패', '잠시 후 다시 시도하시거나 카톡 상담으로 문의해 주세요.'); pollIssue(); })
+    .catch(function(){ pollIssue(); });
+}
+var _issuePollN = 0;
+function pollIssue(){
+  _issuePollN++;
+  careGet('action=issue_status&it=' + encodeURIComponent(ISSUE))
+    .then(function(d){
+      if (d && d.status === 'ISSUED' && d.care_token) { location.replace('issue.html?cx=' + encodeURIComponent(d.care_token)); return; }
+      if (_issuePollN > 40) { renderError('발급이 지연되고 있어요', '통신사 응답을 기다리는 중이에요. 잠시 후 이 링크를 다시 열어주세요 — 결제·주문은 안전하게 보존됩니다.'); return; }
+      setTimeout(pollIssue, 3000);
+    })
+    .catch(function(){ if (_issuePollN <= 40) setTimeout(pollIssue, 3000); });
+}
 function loadOrder(){
+  if (ISSUE) return loadIssue();
   if (CARE) return loadCare();
   if (LOCAL) return loadLocal();
   if (DEMO) {
