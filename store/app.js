@@ -2264,21 +2264,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // [PlayAuto Sync] Vercel Serverless Webhook Trigger
   function triggerVercelWebhook(orderData) {
-    const payload = {
-      imp_uid: window.lastImpUid || ('imp_mock_' + Date.now()),
-      merchant_uid: orderData.orderCode,
-      status: 'paid',
-      order_details: orderData
-    };
-
-    fetch('/api/payment-complete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => console.log('[플레이오토 웹훅 전송 결과]', data))
-    .catch(err => console.warn('[플레이오토 웹훅 전송 불가]', err.message));
+    // 🧪 사이트(jdisim.co.kr) 주문은 서버에 '테스트 수집'만 한다 — 실제 발주(Joytel/깡심) API는 호출하지 않는다.
+    //    관리자 EMP 화면에 🧪 테스트로 표시됨. (실제 발급은 네이버 스마트스토어 주문만 — collector→Joytel)
+    try {
+      fetch('https://jdisim-proxy.vercel.app/api/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ siteorder: {
+          orderCode: orderData.orderCode,
+          buyerName: orderData.buyerName,
+          phone: orderData.phone,
+          email: orderData.email,
+          totalPrice: orderData.totalPrice,
+          items: (orderData.items || []).map(function (it) {
+            return { optionName: it.optionName, productName: (it.country || '') + ' ' + (it.carrier || ''),
+              productCode: it.productCode, country: it.country, quantity: it.quantity };
+          })
+        } })
+      })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { console.log('[사이트 테스트 주문 수집]', data); })
+      .catch(function (err) { console.warn('[사이트 테스트 주문 수집 실패]', err.message); });
+    } catch (e) {}
   }
 
 
