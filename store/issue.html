@@ -497,11 +497,15 @@ function timeDiffText(tz){
     return diff > 0 ? '한국보다 ' + hs + ' 빨라요' : '한국보다 ' + hs + ' 느려요';
   } catch(e){ return ''; }
 }
-function depKey(){ return 'jd_dep_' + ((order && order.orderCode) || 'x'); }
+// 출국일 저장 키: 티켓별 고유(주문번호 > 케어토큰 > 구형 care). 익명 케어링크도 티켓끼리 안 섞임 (2026-07-22)
+function depKey(){ return 'jd_dep_' + ((order && order.orderCode) || CX || CARE || 'x'); }
 function getDep(){ try { return localStorage.getItem(depKey()) || ''; } catch(e){ return ''; } }
 // 출국일 자동 등록 (2026-07-20 사장님 지시) — 구매 때 고른 여행 날짜(jd_trip_dates)가 있으면 그대로 D-Day
 function seedDep(){
   try {
+    // ⚠️ 주문번호 있는 '내 구매 티켓'에서만 자동복사. 익명 케어링크(주문번호 없음)는 이 브라우저의
+    //    남의/이전 jd_trip_dates가 잘못 붙지 않도록 자동복사 금지 — 사용자가 직접 등록만 허용.
+    if (!(order && order.orderCode)) return;
     if (getDep()) return;
     var td = JSON.parse(localStorage.getItem('jd_trip_dates') || 'null');
     if (td && td.dep && new Date(td.dep + 'T00:00:00') >= new Date(new Date().toDateString())) localStorage.setItem(depKey(), td.dep);
@@ -1406,7 +1410,7 @@ function loadCare(){
       var e = (d && d.esim) || {};
       if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
       var preIssue = !e.qrCodeContent; // 발주됨·QR 미발급 — 발급하기 버튼이 도매 API를 호출 (2026-07-20)
-      var cty = countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
+      var cty = e.country || countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
       order = {
         orderCode: e.orderCode || Q_ORDER || '', buyerName: Q_NAME || e.buyerName || d.buyerName || '', productName: e.prodName || '',
         option: e.option || e.Option || '', sku: PLAN, buyDate: Q_BUYDT || '',
