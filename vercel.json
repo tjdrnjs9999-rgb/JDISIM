@@ -18,6 +18,15 @@
       "dest": "/store/mobile.html"
     },
     {
+      "src": "/issue.html",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff"
+      },
+      "dest": "/store/issue.html"
+    },
+    {
       "src": "/(.*)",
       "headers": {
         "x-robots-tag": "index, follow",
