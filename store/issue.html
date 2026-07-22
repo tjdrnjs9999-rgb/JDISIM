@@ -53,6 +53,7 @@
   .shd .ct { margin-top:2px; }
   .muted { color:#8B94A7; font-size:0.8rem; font-weight:600; line-height:1.65; }
   .center { text-align:center; }
+  @keyframes issbar { 0%{ margin-left:-40%; } 100%{ margin-left:100%; } }
 
   /* ── 티켓: 크래프티드 히어로 ── */
   .tkt { position:relative; background:#fff; border-radius:24px; box-shadow:0 2px 4px rgba(16,22,35,0.06), 0 26px 54px rgba(16,22,35,0.16); margin-bottom:12px; overflow:hidden; animation:rise 0.55s cubic-bezier(0.16,1,0.3,1) both; }
@@ -1464,20 +1465,21 @@ function loadIssue(){
 }
 function renderIssueReady(d){
   var plan = (d && d.plan) || '';
-  h('<div class="card center" style="padding:32px 22px;">' +
-      '<img src="images/fox-qr.png" alt="" style="width:96px;" onerror="this.style.display=\'none\'">' +
-      '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">eSIM 발급하기</div>' +
-      (plan ? '<div class="muted" style="margin-top:5px;font-size:.86rem;">' + esc(plan) + '</div>' : '') +
-      '<div class="muted" style="margin-top:10px;font-size:.8rem;line-height:1.7;">아래 버튼을 누르면 통신사에서 QR을 생성합니다.<br>생성되면 이 화면에서 바로 확인·설치할 수 있어요.</div>' +
-      '<button class="btn btn-primary" style="margin-top:20px;width:100%;max-width:300px;" onclick="doIssue()">🎫 발급하기</button>' +
-      '<div class="muted" style="margin-top:9px;font-size:.72rem;">설치는 와이파이 환경에서 진행하세요</div>' +
+  h('<div class="card" style="padding:34px 22px;max-width:440px;margin:18px auto;display:flex;flex-direction:column;align-items:center;text-align:center;">' +
+      '<img src="images/fox-qr.png" alt="" style="width:104px;height:auto;" onerror="this.style.display=\'none\'">' +
+      '<div style="font-weight:900;font-size:1.2rem;margin-top:14px;">eSIM 발급하기</div>' +
+      (plan ? '<div class="muted" style="margin-top:6px;font-size:.85rem;line-height:1.5;">' + esc(plan) + '</div>' : '') +
+      '<div class="muted" style="margin-top:12px;font-size:.82rem;line-height:1.75;">아래 버튼을 누르면 통신사에서 QR을 생성합니다.<br>생성되면 이 화면에서 바로 확인·설치할 수 있어요.</div>' +
+      '<button class="btn btn-primary" style="margin:22px auto 0;display:block;width:100%;max-width:300px;height:52px;font-size:1rem;font-weight:900;" onclick="doIssue()">🎫 발급하기</button>' +
+      '<div class="muted" style="margin-top:11px;font-size:.72rem;">설치는 와이파이 환경에서 진행하세요</div>' +
     '</div>');
 }
 function renderIssuing(){
-  h('<div class="card center" style="padding:40px 22px;">' +
-      '<div style="font-size:44px;">⏳</div>' +
-      '<div style="font-weight:900;font-size:1.1rem;margin-top:14px;">eSIM 발급 중…</div>' +
-      '<div class="muted" style="margin-top:9px;font-size:.82rem;line-height:1.7;">통신사에서 QR을 생성하고 있어요.<br>보통 1~2분이면 완료됩니다. 이 화면을 유지해 주세요.</div>' +
+  h('<div class="card" style="padding:44px 22px;max-width:440px;margin:18px auto;display:flex;flex-direction:column;align-items:center;text-align:center;">' +
+      '<div style="font-size:46px;line-height:1;">⏳</div>' +
+      '<div style="font-weight:900;font-size:1.12rem;margin-top:16px;">eSIM 발급 중…</div>' +
+      '<div class="muted" style="margin-top:10px;font-size:.84rem;line-height:1.75;">통신사에서 QR을 생성하고 있어요.<br>보통 1~2분이면 완료됩니다.<br>이 화면을 유지해 주세요.</div>' +
+      '<div style="margin-top:16px;width:100%;max-width:220px;height:4px;border-radius:99px;background:rgba(241,105,13,.15);overflow:hidden;"><div style="width:40%;height:100%;background:#F1690D;border-radius:99px;animation:issbar 1.1s ease-in-out infinite;"></div></div>' +
     '</div>');
 }
 function doIssue(){
