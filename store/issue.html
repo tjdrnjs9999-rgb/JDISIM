@@ -1322,6 +1322,7 @@ function bpassHTML(o, opts){
   var cells = '';
   if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : (p.unlimited ? '' : '<small>총</small> ')) + esc(p.data) + '</div>' + (p.throttle ? '<div class="s2">소진 후 무제한</div>' : '') + '</div>';
   if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + p.days + '<small>일</small></div></div>';
+  if (o.carrier) cells += '<div><div class="sk">NET · 통신사</div><div class="sv" style="font-size:0.86rem;">' + esc(o.carrier) + '</div></div>';
   var ri = resetInfo(o.country);
   if (p.daily && ri) cells += '<div><div class="sk">RESET</div><div class="sv" style="font-size:0.9rem;">↻ ' + esc(ri.t) + '</div></div>';
   if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(o.productName || '—') + '</div></div>';
@@ -1389,7 +1390,7 @@ function loadLocal(){
     quantity: it.quantity || 1, country: cty,
     validity: '구매일로부터 30일', status: it.lpa ? 'ISSUED' : 'PAID',
     autoIssueAt: new Date(created.getTime() + 7 * 86400000).toISOString(),
-    iccid: it.iccid || '', lpa: it.lpa || ''
+    iccid: it.iccid || '', lpa: it.lpa || '', carrier: it.carrier || ''
   };
   setModeChip('test');
   if (order.status === 'ISSUED') renderIssued(order.lpa, true);
@@ -1416,7 +1417,7 @@ function loadCare(){
         option: e.option || e.Option || '', sku: PLAN, buyDate: Q_BUYDT || '',
         quantity: parseInt(e.count||'1',10)||1, country: cty,
         validity: validityOf(cty, Q_BUYDT), status: preIssue ? 'PAID' : 'ISSUED', iccid: e.iccid || CARE,
-        lpa: e.qrCodeContent || '', storeId: d.storeId
+        lpa: e.qrCodeContent || '', storeId: d.storeId, carrier: e.carrier || d.carrier || ''
       };
       setModeChip('care');
       // 실주문 케어링크 기억 (이 브라우저 한정) — 스토어 '내 여행' 카드가 최우선으로 사용.
