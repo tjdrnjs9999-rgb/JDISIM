@@ -1278,15 +1278,18 @@ function renderJourney(){
   } else {
     // ── 완료: 잔여일 게이지
     var used = Math.floor((Date.now() - new Date(st.activatedAt).getTime()) / 86400000) + 1;
-    var left = days ? Math.max(0, days - used) : 0;
+    var rawLeft = days ? (days - used) : null;                 // 음수면 만료 지남
+    var expiredCard = rawLeft !== null && rawLeft < 0;
     var pct = days ? Math.min(100, Math.round(used / days * 100)) : 0;
-    var barColor = !days ? '#17B55E' : (left <= 1 ? '#DC3C3C' : left <= 2 ? '#F59E0B' : '#17B55E');
+    // 만료 지남=회색 / 오늘·D-1=레드 / D-2=앰버 / 그외=그린 (2026-07-24)
+    var barColor = !days ? '#17B55E' : (expiredCard ? '#8B94A7' : rawLeft <= 1 ? '#DC3C3C' : rawLeft <= 2 ? '#F59E0B' : '#17B55E');
+    var ddayLabel = !days ? '사용 중' : (rawLeft > 0 ? '남은 ' + rawLeft + '일' : rawLeft === 0 ? '오늘 만료' : '만료된 주문');
     body = '<div class="ct" style="margin-top:2px;">여행 ' + used + '일차 <span>' + new Date(st.activatedAt).toLocaleDateString('ko-KR') + ' 개통</span></div>' +
       '<div class="gauge-top"><span class="muted">' + esc(order.productName || '') + '</span>' +
-      (days ? '<span class="dday" style="color:' + barColor + ';">' + (left > 0 ? '남은 ' + left + '일' : '오늘 만료') + '</span>' : '<span class="dday" style="color:#17B55E;">사용 중</span>') + '</div>' +
+      '<span class="dday" style="color:' + barColor + ';">' + ddayLabel + '</span></div>' +
       (days ? '<div class="gauge"><i style="width:' + pct + '%;background:' + barColor + ';"></i></div>' : '') +
-      '<div class="muted" style="margin-top:9px;">' + (resetInfo(order.country) ? '매일 <strong>현지 ' + resetInfo(order.country).t + '</strong>에 오늘의 고속 데이터가 새로 채워져요 ↻' : '일 용량 상품은 매일 정해진 시간에 데이터가 새로 채워져요') + '</div>' +
-      (days && left <= 2 ? '<a class="btn btn-primary" style="margin-top:12px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">여행이 길어졌나요? 연장 eSIM 주문</a>' : '');
+      '<div class="muted" style="margin-top:9px;">' + (expiredCard ? '이 상품은 사용 기간이 끝났어요 — 아래에서 새 eSIM을 주문할 수 있어요' : resetInfo(order.country) ? '매일 <strong>현지 ' + resetInfo(order.country).t + '</strong>에 오늘의 고속 데이터가 새로 채워져요 ↻' : '일 용량 상품은 매일 정해진 시간에 데이터가 새로 채워져요') + '</div>' +
+      (days && rawLeft <= 2 ? '<a class="btn btn-primary" style="margin-top:12px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">' + (expiredCard ? '새 eSIM 주문하기' : '여행이 길어졌나요? 연장 eSIM 주문') + '</a>' : '');
   }
   box.innerHTML = secHd('plane', 'JOURNEY', '발급부터 개통까지') + strip + '<div class="stp-body">' + body + '</div>';
   if (st.activatedAt && !window._usageAuto && $('usageBody')) { window._usageAuto = 1; setTimeout(loadUsage, 450); }
@@ -2012,10 +2015,12 @@ function renderUsage(d){
     : ((qi || total) ? '<span class="us-pct' + (pct >= 90 ? ' hot' : pct >= 70 ? ' warn' : '') + '">' + (qi ? '오늘 ' : '') + pctTxt + ' 사용</span>' : '');
   var todayKey = (ri && ri.off != null) ? tzToday(ri.off) : tzToday(9);
   function fmtDay(iso){ try { var dt = new Date(iso + 'T00:00:00'); if (isNaN(dt)) return iso; var w = ['일','월','화','수','목','금','토']; return (dt.getMonth()+1) + '/' + dt.getDate() + ' (' + w[dt.getDay()] + ')'; } catch(e){ return iso; } }
-  var maxDay = Math.max.apply(null, (d.daily||[{mb:1}]).map(function(x){ return x.mb || 1; }));
+  // 실제로 사용한 날(제품)만 — 0MB(미사용) 기록은 측정일수·일별내역에서 제외 (2026-07-24 사장님 지시)
+  var dailyUsed = (d.daily || []).filter(function(x){ return Number(x.mb) > 0; });
+  var maxDay = Math.max.apply(null, (dailyUsed.length ? dailyUsed : [{mb:1}]).map(function(x){ return x.mb || 1; }));
   var dayRows = '';
-  if (d.daily && d.daily.length) {
-    var srt2 = d.daily.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1; }); // 최신이 위
+  if (dailyUsed.length) {
+    var srt2 = dailyUsed.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1; }); // 최신이 위
     dayRows = '<div style="font-weight:800;font-size:0.8rem;margin:14px 0 4px;">일별 사용 내역 <span class="muted" style="font-weight:700;">총 ' + srt2.length + '일</span></div>' +
       srt2.map(function(x){
         var isToday = x.date === todayKey;
@@ -2034,7 +2039,7 @@ function renderUsage(d){
     ? kv('오늘 사용', fmtData(todayMb)) + kv('오늘 남음', fmtData(remain, true), true) + kv('여행 전체', fmtData(used))
     : total
     ? kv('사용한 데이터', fmtData(used)) + kv('남은 데이터', fmtData(remain, true), true)
-    : kv('여행 전체 사용', fmtData(used)) + ((d.daily && d.daily.length) ? kv('측정일수', d.daily.length + '일') : '');
+    : kv('여행 전체 사용', fmtData(used)) + (dailyUsed.length ? kv('측정일수', dailyUsed.length + '일') : '');
   box.style.textAlign='inherit';
   box.innerHTML =
     '<div class="us-top">' +
