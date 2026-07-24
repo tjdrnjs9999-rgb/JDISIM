@@ -300,8 +300,10 @@
   .daybar .mb { flex-shrink:0; color:#101623; min-width:58px; text-align:right; font-variant-numeric:tabular-nums; }
   /* 사용량 v3 — 컴팩트 (2026-07-18) */
   .donut-fg.lv2 { stroke:#D97706; } .donut-fg.lv3 { stroke:#DC2626; }
+  .donut-fg.unl { stroke:#14B8A6; }   /* 무제한: 비율 대신 꽉 찬 청록 링 */
   .us-pct { font-size:0.64rem; font-weight:800; color:#8B94A7; background:#F5F7FA; padding:3px 9px; border-radius:999px; font-variant-numeric:tabular-nums; }
   .us-pct.warn { color:#B45309; background:rgba(217,119,6,0.1); } .us-pct.hot { color:#B91C1C; background:rgba(220,38,38,0.09); }
+  .us-pct.unl { color:#0F766E; background:rgba(20,184,166,0.12); }
   .us-top { display:flex; align-items:center; gap:13px; margin-top:4px; }
   .donut-wrap.sm { width:124px; height:124px; margin:0; flex-shrink:0; }
   .donut-wrap.sm .donut-bg, .donut-wrap.sm .donut-fg { stroke-width:10; }
@@ -1970,6 +1972,10 @@ function renderUsage(d){
   var pct= total? Math.min(100, used/total*100) : 0;
   // 데일리 상품: '오늘' = 리셋 타임존의 오늘 날짜 — 리셋 시각이 지나면 자동으로 0부터 (기록 자체가 새 날짜로 쌓임)
   var qi = quotaFromText(), ri = resetPlanInfo();
+  // 무제한 상품(2026-07-24 사장님 지시): 일일정량(qi)·총량(total)이 없고 상품명에 '무제한'
+  //   → 도넛을 비율 대신 '무제한'으로, 사용량만 측정·표시
+  var _plTxt = [(window._planOption || ''), (order && order.option) || '', (order && order.productName) || ''].join(' ');
+  var isUnlim = !qi && !total && /무제한/.test(_plTxt);
   var todayMb = 0;
   if (qi && d.daily && d.daily.length) {
     var srt = d.daily.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
@@ -1999,9 +2005,11 @@ function renderUsage(d){
   }
   var C=2*Math.PI*56; // r=56 (컴팩트 도넛)
   if (window._usTimer) { clearInterval(window._usTimer); window._usTimer = null; }
-  var lvCls = pct >= 90 ? ' lv3' : pct >= 70 ? ' lv2' : '';          // 게이지 경고색: 70% 앰버 · 90% 레드
+  var lvCls = isUnlim ? ' unl' : (pct >= 90 ? ' lv3' : pct >= 70 ? ' lv2' : '');   // 무제한=청록 꽉 / 경고색: 70% 앰버 · 90% 레드
   var pctTxt = (pct > 0 && pct < 1) ? '1% 미만' : Math.round(pct) + '%';  // 2MB 써도 '0%'로 보이지 않게
-  var pctChip = (qi || total) ? '<span class="us-pct' + (pct >= 90 ? ' hot' : pct >= 70 ? ' warn' : '') + '">' + (qi ? '오늘 ' : '') + pctTxt + ' 사용</span>' : '';
+  var pctChip = isUnlim
+    ? '<span class="us-pct unl">∞ 무제한</span>'
+    : ((qi || total) ? '<span class="us-pct' + (pct >= 90 ? ' hot' : pct >= 70 ? ' warn' : '') + '">' + (qi ? '오늘 ' : '') + pctTxt + ' 사용</span>' : '');
   var todayKey = (ri && ri.off != null) ? tzToday(ri.off) : tzToday(9);
   function fmtDay(iso){ try { var dt = new Date(iso + 'T00:00:00'); if (isNaN(dt)) return iso; var w = ['일','월','화','수','목','금','토']; return (dt.getMonth()+1) + '/' + dt.getDate() + ' (' + w[dt.getDay()] + ')'; } catch(e){ return iso; } }
   var maxDay = Math.max.apply(null, (d.daily||[{mb:1}]).map(function(x){ return x.mb || 1; }));
@@ -2033,8 +2041,8 @@ function renderUsage(d){
     '<div class="donut-wrap sm"><svg width="124" height="124" viewBox="0 0 124 124">' +
     '<defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1690D"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>' +
     '<circle class="donut-bg" cx="62" cy="62" r="56"></circle>' +
-    '<circle class="donut-fg' + lvCls + '" id="dfg" cx="62" cy="62" r="56" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"></circle></svg>' +
-    '<div class="donut-center"><span class="muted">'+(qi?'오늘 남은':total?'남은 데이터':'전체 사용')+'</span><span class="big">'+(qi? fmtData(remain,true) : total? fmtData(remain,true) : (used? fmtData(used) : '0 GB'))+'</span></div></div>' +
+    '<circle class="donut-fg' + lvCls + '" id="dfg" cx="62" cy="62" r="56" stroke-dasharray="'+C+'" stroke-dashoffset="'+(isUnlim?0:C)+'"></circle></svg>' +
+    '<div class="donut-center"><span class="muted">'+(isUnlim?'무제한':qi?'오늘 남은':total?'남은 데이터':'전체 사용')+'</span><span class="big">'+(isUnlim? (used? fmtData(used) : '0 GB') : qi? fmtData(remain,true) : total? fmtData(remain,true) : (used? fmtData(used) : '0 GB'))+'</span></div></div>' +
     '<div class="us-stats"><div class="us-chips">' + badge + pctChip + '</div>' + statsHtml + '</div></div>' +
     ((d.country && d.status!=='expired')? '<div style="margin-top:9px;"><span style="display:inline-block;font-size:0.74rem;font-weight:800;color:#1B8E82;background:rgba(43,179,163,0.1);padding:5px 12px;border-radius:999px;">📍 '+esc(d.country)+' 현지망 접속 확인 ✓</span></div>' : '') +
     (function(){ var dg=diagHistory(d.listHistory); if(!dg) return ''; var col=dg.t==='bad'?['#b91c1c','rgba(239,68,68,0.08)','#fecaca']:dg.t==='warn'?['#9a5b16','rgba(241,105,13,0.08)','#fed7aa']:['#15803d','rgba(34,197,94,0.08)','#bbf7d0']; var ic=dg.t==='bad'?'⚠️':dg.t==='warn'?'🔧':'✅'; return '<div style="margin-top:9px;background:'+col[1]+';border:1px solid '+col[2]+';border-radius:12px;padding:10px 13px;text-align:left;"><div style="font-weight:900;font-size:0.8rem;color:'+col[0]+';">'+ic+' '+esc(dg.title)+'</div><div style="font-size:0.74rem;font-weight:600;color:#475569;margin-top:2px;line-height:1.5;">'+esc(dg.msg)+'</div></div>'; })() +
@@ -2043,7 +2051,7 @@ function renderUsage(d){
     '<div class="us-note">' +
     '<button class="btn btn-ghost" style="width:100%;" onclick="loadUsage()">↻ 새로고침</button>' +
     '<span class="cap">공급사 집계 기준 · 반영까지 시간이 걸릴 수 있어요 · 조회 ' + updAt + '</span></div>';
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ var el=$('dfg'); if(el) el.style.strokeDashoffset = String(C*(1-pct/100)); }); });
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ var el=$('dfg'); if(el) el.style.strokeDashoffset = String(isUnlim ? 0 : C*(1-pct/100)); }); });
   // 라이브 카운트다운 (30초 갱신) — 리셋 시각 도달 시 자동 재조회 = "리셋마다 초기화"가 화면에서도 실시간
   if (window._usResetAt) {
     window._usTimer = setInterval(function(){
