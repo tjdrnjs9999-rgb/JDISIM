@@ -1,59 +1,42 @@
 {
-  "version": 2,
-  "routes": [
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/store/index.html" },
+    { "source": "/mobile", "destination": "/store/mobile.html" },
+    { "source": "/:path((?!api/|store/|images/).*)", "destination": "/store/:path" }
+  ],
+  "headers": [
     {
-      "src": "/api/payment-complete",
-      "dest": "/api/payment-complete.js"
+      "source": "/issue",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
     },
     {
-      "src": "/api/emp-orders",
-      "dest": "/api/emp-orders.js"
+      "source": "/issue.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
     },
     {
-      "src": "/",
-      "dest": "/store/index.html"
+      "source": "/:all*(png|jpg|jpeg|webp|gif|svg|ico|mp4|webm|woff|woff2|ttf|otf)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000" }
+      ]
     },
     {
-      "src": "/mobile",
-      "dest": "/store/mobile.html"
+      "source": "/:all*(js|css)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
     },
     {
-      "src": "/issue.html",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff"
-      },
-      "dest": "/store/issue.html"
-    },
-    {
-      "src": "/(?!api/)(.*)\\.(png|jpg|jpeg|webp|gif|svg|ico|mp4|webm|woff|woff2|ttf|otf)",
-      "headers": {
-        "Cache-Control": "public, max-age=2592000",
-        "x-robots-tag": "index, follow",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff"
-      },
-      "dest": "/store/$1.$2"
-    },
-    {
-      "src": "/(?!api/)(.*)\\.(js|css)",
-      "headers": {
-        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
-        "x-robots-tag": "index, follow",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff"
-      },
-      "dest": "/store/$1.$2"
-    },
-    {
-      "src": "/(.*)",
-      "headers": {
-        "x-robots-tag": "index, follow",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff"
-      },
-      "dest": "/store/$1"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "index, follow" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
     }
   ]
 }
