@@ -83,6 +83,7 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="tab on" data-t="issue" onclick="tab('issue')">🎫 발급하기</div>
       <div class="tab" data-t="orders" onclick="tab('orders')">📦 주문 내역</div>
       <div class="tab" data-t="ledger" onclick="tab('ledger')">🧾 정산</div>
+      <div class="tab" data-t="market" onclick="tab('market')">🔌 마켓 연동</div>
     </div>
 
     <!-- 발급하기 -->
@@ -166,6 +167,23 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="hint">최근 300건까지 표시됩니다. 이전 내역 정산서가 필요하면 문의해 주세요.</div>
     </div>
 
+    <!-- 마켓 연동 -->
+    <div class="card" id="pane-market" style="display:none">
+      <h2>🔌 오픈마켓 주문 자동 수집</h2>
+      <div class="hint" style="margin:0 0 12px">내 스토어의 API 키를 등록하면 <b>주문 수집 → 발급링크 생성 → 고객 알림톡(내 채널)</b>까지 5분 주기로 자동 처리됩니다.<br>상품 등록 시 옵션의 <b>판매자 관리코드(sellerManagerCode)에 JD 상품코드</b>를 넣어야 자동 발급 대상이 됩니다 — 그 외 상품은 건드리지 않습니다.</div>
+      <div id="mk-state" class="quote" style="display:block;margin-bottom:12px">상태 확인 중…</div>
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px">네이버 스마트스토어 <span class="hint" style="margin:0">(커머스API센터 → 애플리케이션 등록에서 발급)</span></div>
+      <div class="grid2">
+        <input id="mk-naver-client_id" placeholder="Client ID" autocomplete="off">
+        <input id="mk-naver-client_secret" type="password" placeholder="Client Secret" autocomplete="off">
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" onclick="saveMarket(this)">저장</button>
+        <button class="btn gray" onclick="clearMarket()">연동 해제</button>
+      </div>
+      <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 다른 마켓(쿠팡트래블·11번가 등)은 순차 지원 예정입니다.</div>
+    </div>
+
   </div>
 
   <div class="foot">© JDISIM · 파트너 전용 페이지 — 외부 공유 금지</div>
@@ -190,12 +208,44 @@ function fetchMe(k){
   }).catch(function(){err.textContent='네트워크 오류 — 잠시 후 다시 시도해 주세요.';err.style.display='block'});
 }
 function tab(t){
-  ['issue','orders','ledger'].forEach(function(x){
+  ['issue','orders','ledger','market'].forEach(function(x){
     document.getElementById('pane-'+x).style.display=(x===t?'':'none');
     var el=document.querySelector('.tab[data-t="'+x+'"]');
     if(el)el.className='tab'+(x===t?' on':'');
   });
   if(t==='orders')loadOrders();
+  if(t==='market')marketState();
+}
+function marketState(){
+  post('partner_markets').then(function(j){
+    var el=document.getElementById('mk-state');
+    if(!j.ok){el.textContent='상태 조회 실패';return}
+    var nv=(j.status&&j.status.naver)||[];
+    el.innerHTML=(nv.length===2)
+      ? '🟢 <b>네이버 연동 완료</b> — 5분 주기로 주문을 수집해 자동 발급합니다. (입력됨: '+nv.join(', ')+')'
+      : (nv.length? '🟡 일부만 입력됨 ('+nv.join(', ')+') — 두 값을 모두 저장해야 수집이 시작됩니다.'
+                  : '⚪ 미연동 — Client ID/Secret을 등록하면 자동 수집이 시작됩니다.');
+  });
+}
+function saveMarket(btn){
+  var payload={naver:{}},any=false;
+  ['client_id','client_secret'].forEach(function(f){
+    var v=(document.getElementById('mk-naver-'+f)||{}).value||'';
+    if(v.trim()){payload.naver[f]=v.trim();any=true}
+  });
+  if(!any){alert('입력된 값이 없어요');return}
+  if(btn){btn.disabled=true;btn.textContent='저장 중…'}
+  post('partner_markets',{markets:payload}).then(function(j){
+    if(btn){btn.disabled=false;btn.textContent='저장'}
+    if(!j.ok){alert('저장 실패: '+(j.error||''));return}
+    ['client_id','client_secret'].forEach(function(f){var el=document.getElementById('mk-naver-'+f);if(el)el.value=''});
+    marketState();
+    alert(((j.status&&j.status.naver)||[]).length===2?'연동 완료 — 5분 내 첫 수집을 시작합니다':'저장됐어요 — 남은 값을 마저 입력해 주세요');
+  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='저장'}alert('요청 실패')});
+}
+function clearMarket(){
+  if(!confirm('네이버 연동을 해제할까요? (자동 수집 중단)'))return;
+  post('partner_markets',{markets:{naver:{client_id:'__CLEAR__',client_secret:'__CLEAR__'}}}).then(function(){marketState()});
 }
 function applyAligoGate(){
   var cb=document.getElementById('i-kakao'),lb=document.getElementById('i-kakao-label');
