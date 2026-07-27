@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>JDISIM 파트너 스타트 가이드</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:#F6F3EE;color:#1F2530;line-height:1.75;letter-spacing:-.2px;font-size:15px}
+.wrap{max-width:760px;margin:0 auto;padding:36px 18px 90px}
+.logo{font-size:20px;font-weight:800;color:#F97316;margin-bottom:4px}
+h1{font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+.sub{color:#8A94A3;font-size:13.5px;margin-bottom:24px}
+.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 1px 3px rgba(31,37,48,.06);margin-bottom:16px}
+h2{font-size:17px;font-weight:800;margin-bottom:12px;color:#C2571E}
+h3{font-size:15px;font-weight:800;margin:14px 0 6px}
+ol,ul{padding-left:22px}
+li{margin:5px 0}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}
+.n{flex:none;width:26px;height:26px;border-radius:50%;background:#F97316;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.tip{background:#FFF7EF;border:1px solid #FFE4C8;border-radius:12px;padding:12px 15px;font-size:14px;margin:12px 0}
+.warn{background:#FCEDED;border:1px solid #F3C8C8;border-radius:12px;padding:12px 15px;font-size:14px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+th{background:#1F3864;color:#fff;padding:7px 10px;text-align:left;font-size:12.5px}
+td{border-bottom:1px solid #F0F2F6;padding:7px 10px}
+code{background:#F1F2F5;border-radius:6px;padding:1px 7px;font-size:13px}
+.toc a{color:#C2571E;font-weight:700;text-decoration:none}
+.foot{text-align:center;color:#9AA4B2;font-size:12px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">JDISIM PARTNER</div>
+  <h1>파트너 스타트 가이드</h1>
+  <div class="sub">처음 오신 파트너를 위한 운영 매뉴얼 — 15분이면 전부 읽습니다 · 문의: 카카오톡 채널 [제이디아이심]</div>
+
+  <div class="card toc">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#s1">시작 전 준비물</a></li>
+      <li><a href="#s2">이 사업의 구조 — 돈이 도는 방식</a></li>
+      <li><a href="#s3">포털 사용법 (발급 · 주문 · 정산)</a></li>
+      <li><a href="#s4">발급·취소 규칙 (중요)</a></li>
+      <li><a href="#s5">고객 CS는 이렇게</a></li>
+      <li><a href="#s6">금지·유의사항</a></li>
+      <li><a href="#s7">자주 묻는 질문</a></li>
+    </ol>
+  </div>
+
+  <div class="card" id="s1">
+    <h2>1. 시작 전 준비물</h2>
+    <table>
+      <tr><th>항목</th><th>필수</th><th>비고</th></tr>
+      <tr><td>사업자등록</td><td>필수</td><td>홈택스에서 무료 발급 (통신판매업 함께)</td></tr>
+      <tr><td>통신판매업 신고</td><td>필수</td><td>정부24 — 마켓 입점에 필요</td></tr>
+      <tr><td>오픈마켓 셀러 계정</td><td>필수</td><td>스마트스토어 등 — 개설은 파트너 직접</td></tr>
+      <tr><td>선불 충전</td><td>필수</td><td>충전 후 발급 가능 (카카오톡으로 요청)</td></tr>
+      <tr><td>카카오 채널·알리고</td><td>선택</td><td>기본은 JDISIM 채널로 고객 알림톡 발송 — 자기 브랜드 발송 원할 때만</td></tr>
+      <tr><td>도메인</td><td>선택</td><td>기본 서브도메인 무료 제공</td></tr>
+    </table>
+  </div>
+
+  <div class="card" id="s2">
+    <h2>2. 이 사업의 구조 — 돈이 도는 방식</h2>
+    <div class="step"><div class="n">1</div><div><b>충전</b> — 선불금을 충전합니다. 이 돈은 전부 상품(eSIM) 매입에 쓰입니다.</div></div>
+    <div class="step"><div class="n">2</div><div><b>판매</b> — 내 스토어에서 고객이 eSIM을 구매합니다. 판매가는 파트너가 정합니다(권장가표 제공).</div></div>
+    <div class="step"><div class="n">3</div><div><b>발급</b> — 포털에서 고객 이름·전화만 입력하면(또는 API 연동 시 자동) 고객에게 발급 알림톡이 나갑니다.</div></div>
+    <div class="step"><div class="n">4</div><div><b>차감</b> — 고객이 알림톡의 "발급하기" 버튼을 누르는 순간 eSIM이 발급되고, 그때 공급가가 잔액에서 차감됩니다.</div></div>
+    <div class="step"><div class="n">5</div><div><b>수익</b> — (내 판매가) − (공급가) − (마켓 수수료) = 내 마진. 정산은 포털에서 실시간 확인.</div></div>
+    <div class="tip">💡 핵심: <b>고객이 버튼을 누르기 전엔 돈이 안 나갑니다.</b> 재고·선매입 부담이 없는 이유입니다.</div>
+  </div>
+
+  <div class="card" id="s3">
+    <h2>3. 포털 사용법</h2>
+    <h3>🎫 발급하기</h3>
+    <ol>
+      <li>상품코드 입력 → <b>상품 조회</b> (상품명·공급가·잔액 확인)</li>
+      <li>고객 <b>이름 + 휴대폰 번호</b> 입력 (이메일은 선택)</li>
+      <li><b>발급하기</b> 클릭 → 고객에게 <b>카카오 알림톡이 1분 내 자동 발송</b>됩니다</li>
+      <li>알림톡을 끄면 발급링크가 생성되고, 직접 카톡·문자로 전달하면 됩니다</li>
+    </ol>
+    <h3>📦 주문 내역</h3>
+    <ul>
+      <li><b>발급대기</b> — 고객이 아직 버튼을 안 누름 (차감 전, 취소 가능)</li>
+      <li><b>발급완료</b> — eSIM 발급·차감 완료 (취소 불가)</li>
+      <li>링크 <b>복사</b> 버튼으로 고객에게 재전달 가능</li>
+    </ul>
+    <h3>🧾 정산</h3>
+    <ul>
+      <li>월별 발급·충전 내역 확인, <b>정산서 CSV</b> 다운로드</li>
+      <li>잔액이 부족하면 발급이 거절됩니다 — 미리 충전해 두세요</li>
+    </ul>
+  </div>
+
+  <div class="card" id="s4">
+    <h2>4. 발급·취소 규칙 (중요)</h2>
+    <table>
+      <tr><th>상황</th><th>취소</th><th>비고</th></tr>
+      <tr><td>고객이 발급 버튼을 <b>누르기 전</b></td><td>✅ 가능</td><td>주문 내역에서 [취소] — 차감 없음</td></tr>
+      <tr><td>고객이 발급 버튼을 <b>누른 후</b></td><td>❌ 불가</td><td>eSIM이 이미 발급됨 (통신사 정책)</td></tr>
+    </table>
+    <div class="warn">⚠️ 고객 변심 환불은 <b>발급 전</b>에만 안전합니다. 스토어 상품 페이지에 "QR 발급 후 교환·환불 불가" 문구를 반드시 넣으세요 (제공되는 상세페이지에는 포함돼 있습니다).</div>
+  </div>
+
+  <div class="card" id="s5">
+    <h2>5. 고객 CS는 이렇게</h2>
+    <ul>
+      <li>고객이 받는 알림톡에는 <b>발급 버튼 + 사용량 조회(케어링크)</b>가 들어 있습니다 — 설치 안내·잔여량 확인은 그 페이지가 대신합니다</li>
+      <li>"설치가 안 돼요" → 케어링크 안의 설치 가이드(아이폰/갤럭시)로 안내</li>
+      <li>"데이터가 안 터져요" → ① 데이터 로밍 ON ② 기존 유심 데이터 OFF ③ 재부팅 — 이 3가지로 대부분 해결</li>
+      <li>해결이 안 되는 기술 문제는 파트너 카톡방으로 — 본사가 함께 봅니다</li>
+    </ul>
+  </div>
+
+  <div class="card" id="s6">
+    <h2>6. 금지·유의사항</h2>
+    <ul>
+      <li>공급 원가·공급처 정보를 외부에 공개하지 마세요 (계약 위반)</li>
+      <li>API 키는 비밀번호입니다 — 유출 시 즉시 재발급 요청</li>
+      <li>고객 개인정보(이름·전화)는 발급 목적 외 사용 금지</li>
+      <li>"무제한" 등 상품 표기는 제공된 상세페이지 문구를 그대로 사용하세요 (과장 광고 방지)</li>
+    </ul>
+  </div>
+
+  <div class="card" id="s7">
+    <h2>7. 자주 묻는 질문</h2>
+    <h3>Q. 고객이 알림톡을 못 받았대요</h3>
+    <p>주문 내역에서 링크를 <b>복사</b>해 카톡·문자로 직접 보내주세요. 같은 링크입니다.</p>
+    <h3>Q. 잔액이 부족하면?</h3>
+    <p>발급이 거절됩니다(고객에게 아무것도 안 나감). 충전 후 다시 발급하면 됩니다.</p>
+    <h3>Q. 어떤 상품부터 팔까요?</h3>
+    <p>일본·베트남·유럽이 3대 볼륨입니다. 제공되는 국가별 상세페이지 순서대로 올리는 걸 권합니다.</p>
+    <h3>Q. 가격은 어떻게 정하나요?</h3>
+    <p>권장판매가표(공급가표와 함께 제공)를 기준으로, 마켓 수수료를 감안해 조정하세요.</p>
+  </div>
+
+  <div class="foot">© JDISIM · 파트너 전용 문서 — 외부 공유 금지 · 문의: 카카오톡 [제이디아이심] / 010-9969-3248</div>
+</div>
+</body>
+</html>
