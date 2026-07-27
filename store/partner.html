@@ -83,14 +83,27 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="tab on" data-t="issue" onclick="tab('issue')">🎫 발급하기</div>
       <div class="tab" data-t="orders" onclick="tab('orders')">📦 주문 내역</div>
       <div class="tab" data-t="ledger" onclick="tab('ledger')">🧾 정산</div>
-      <div class="tab" data-t="config" onclick="tab('config')">⚙️ 설정</div>
     </div>
 
     <!-- 발급하기 -->
     <div class="card" id="pane-issue">
       <h2>eSIM 발급</h2>
+      <div style="background:#F8FAF6;border:1.5px solid #E2EAE2;border-radius:14px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-weight:800;font-size:14px;margin-bottom:8px">🔍 상품 검색</div>
+        <div class="rowbar" style="margin-bottom:8px">
+          <select id="s-ct" onchange="loadCatalog()" style="min-width:160px"><option value="">국가 선택…</option></select>
+          <select id="s-cr" onchange="renderSearch()" style="min-width:130px"><option value="">통신사 전체</option></select>
+          <select id="s-net" onchange="renderSearch()" style="min-width:110px"><option value="">망 전체</option><option value="로컬">로컬</option><option value="로밍">로밍</option></select>
+          <select id="s-sp" onchange="renderSearch()" style="min-width:120px"><option value="">사용량 전체</option></select>
+          <select id="s-dd" onchange="renderSearch()" style="min-width:100px"><option value="">기간 전체</option></select>
+        </div>
+        <div class="tbl-wrap" style="max-height:260px"><table>
+          <thead><tr><th>상품</th><th style="text-align:right">기간</th><th style="text-align:right">공급가</th><th></th></tr></thead>
+          <tbody id="s-rows"><tr><td colspan="4" style="text-align:center;color:#8A94A3">국가를 선택하면 상품이 표시됩니다</td></tr></tbody>
+        </table></div>
+      </div>
       <div class="rowbar">
-        <input id="q-code" placeholder="상품코드 (예: JD-JPSB10G-05)" style="flex:1;min-width:220px;text-transform:uppercase">
+        <input id="q-code" placeholder="상품코드 직접 입력 (예: JD-JPSB10G-05)" style="flex:1;min-width:220px;text-transform:uppercase">
         <button class="btn gray" onclick="quote()">상품 조회</button>
       </div>
       <div class="quote" id="quote-box"></div>
@@ -104,13 +117,32 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       </label>
       <div style="margin-top:12px"><button class="btn" id="issue-btn" onclick="doIssue()" disabled>발급하기</button></div>
       <div class="iss-done" id="issue-done"></div>
-      <div class="hint">발급링크를 고객에게 전달하면, 고객이 버튼을 누르는 순간 eSIM이 발급되고 잔액이 차감됩니다.<br>가격표(전체 상품코드)는 <a class="gd" href="/partner-guide#codes" target="_blank">가이드 문서</a>를 참고하세요.</div>
+      <div class="hint">고객이 발급 버튼을 누르는 순간 eSIM이 발급되고 잔액이 차감됩니다 (누르기 전엔 차감 없음·취소 가능).</div>
+
+      <div style="border-top:1.5px dashed #E2E6EE;margin-top:18px;padding-top:16px">
+        <div style="font-weight:800;font-size:14px;margin-bottom:8px">📑 엑셀 일괄 발급</div>
+        <div class="rowbar">
+          <button class="btn gray" onclick="bulkForm()">양식 다운로드</button>
+          <label class="btn gray" style="cursor:pointer">파일 업로드<input type="file" id="bulk-file" accept=".csv" style="display:none" onchange="bulkLoad(this)"></label>
+          <button class="btn" id="bulk-run" style="display:none" onclick="bulkRun(this)">일괄 발급 실행</button>
+        </div>
+        <div class="tbl-wrap" id="bulk-wrap" style="display:none;max-height:300px;margin-top:10px"><table>
+          <thead><tr><th>#</th><th>상품코드</th><th>고객명</th><th>휴대폰</th><th>이메일</th><th>상태</th></tr></thead>
+          <tbody id="bulk-rows"></tbody>
+        </table></div>
+        <div class="hint">양식(CSV)을 받아 상품코드·고객명·휴대폰·이메일(선택)을 채운 뒤 업로드하세요. 실행 시 한 건씩 발급되며 알림톡 설정을 따릅니다.</div>
+      </div>
     </div>
 
     <!-- 주문 내역 -->
     <div class="card" id="pane-orders" style="display:none">
       <div class="rowbar">
         <h2 style="margin:0;flex:1">주문 내역 <span class="hint" style="margin:0">최근 100건</span></h2>
+        <input id="o-q" placeholder="검색: 고객명·전화 뒤4자리·상품" oninput="renderOrders()" style="min-width:200px">
+        <select id="o-st" onchange="renderOrders()">
+          <option value="">상태 전체</option><option value="pending">발급대기</option>
+          <option value="issued">발급완료</option><option value="canceled">취소</option><option value="expired">만료</option>
+        </select>
         <button class="btn gray" onclick="loadOrders()">새로고침</button>
       </div>
       <div class="tbl-wrap"><table>
@@ -134,23 +166,6 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="hint">최근 300건까지 표시됩니다. 이전 내역 정산서가 필요하면 문의해 주세요.</div>
     </div>
 
-    <!-- 설정: 알리고 연동 -->
-    <div class="card" id="pane-config" style="display:none">
-      <h2>⚙️ 카카오 알림톡 연동 (내 채널로 발송)</h2>
-      <div class="hint" style="margin:0 0 12px">고객에게 나가는 발급 알림톡을 <b>파트너님의 카카오 채널</b>로 발송합니다. 채널 개설·알리고 가입·템플릿 승인 절차는 <a class="gd" href="/partner-guide#s8" target="_blank">가이드 8장</a>을 따라 주세요. 입력값은 서버에만 저장됩니다.</div>
-      <div id="aligo-state" class="quote" style="display:block;margin-bottom:12px"></div>
-      <div class="grid2">
-        <input id="al-api_key" type="password" placeholder="알리고 API Key" autocomplete="off">
-        <input id="al-user_id" placeholder="알리고 아이디(user_id)" autocomplete="off">
-        <input id="al-sender_key" type="password" placeholder="카카오 발신프로필 키(senderkey)" autocomplete="off">
-        <input id="al-sender" placeholder="발신번호 (알리고에 등록된 번호)" inputmode="numeric">
-      </div>
-      <input id="al-tpl_issue" placeholder="발급 템플릿 코드 (예: UB_1234 — 가이드 문안으로 승인받은 코드)" style="width:100%;margin-top:10px">
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn" onclick="saveAligo(this)">저장</button>
-        <button class="btn gray" onclick="clearAligo()">연동 해제</button>
-      </div>
-    </div>
   </div>
 
   <div class="foot">© JDISIM · 파트너 전용 페이지 — 외부 공유 금지</div>
@@ -175,49 +190,18 @@ function fetchMe(k){
   }).catch(function(){err.textContent='네트워크 오류 — 잠시 후 다시 시도해 주세요.';err.style.display='block'});
 }
 function tab(t){
-  ['issue','orders','ledger','config'].forEach(function(x){
+  ['issue','orders','ledger'].forEach(function(x){
     document.getElementById('pane-'+x).style.display=(x===t?'':'none');
     var el=document.querySelector('.tab[data-t="'+x+'"]');
     if(el)el.className='tab'+(x===t?' on':'');
   });
   if(t==='orders')loadOrders();
-  if(t==='config')aligoState();
-}
-function aligoState(){
-  var el=document.getElementById('aligo-state');
-  if(DATA&&DATA.aligo_ready){el.innerHTML='🟢 <b>연동 완료</b> — 발급 알림톡이 파트너님 채널로 발송됩니다.'}
-  else{
-    var have=(DATA&&DATA.aligo_fields)||[];
-    el.innerHTML='⚪ <b>미연동</b> — 5개 항목을 모두 입력하면 자동 발송이 켜집니다.'+(have.length?' (입력됨: '+have.join(', ')+')':'');
-  }
-}
-function saveAligo(btn){
-  var payload={},any=false;
-  ['api_key','user_id','sender_key','sender','tpl_issue'].forEach(function(f){
-    var v=(document.getElementById('al-'+f)||{}).value||'';
-    if(v.trim()){payload[f]=v.trim();any=true}
-  });
-  if(!any){alert('입력된 값이 없어요');return}
-  if(btn){btn.disabled=true;btn.textContent='저장 중…'}
-  post('partner_config',{aligo:payload}).then(function(j){
-    if(btn){btn.disabled=false;btn.textContent='저장'}
-    if(!j.ok){alert('저장 실패: '+(j.error||''));return}
-    ['api_key','user_id','sender_key','sender','tpl_issue'].forEach(function(f){var el=document.getElementById('al-'+f);if(el)el.value=''});
-    DATA.aligo_ready=j.aligo_ready;DATA.aligo_fields=j.fields;
-    aligoState();applyAligoGate();
-    alert(j.aligo_ready?'연동 완료! 이제 발급 알림톡이 내 채널로 나갑니다.':'저장됐어요 — 남은 항목을 마저 입력해 주세요.');
-  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='저장'}alert('요청 실패')});
-}
-function clearAligo(){
-  if(!confirm('알리고 연동을 해제할까요? (자동 발송이 꺼집니다)'))return;
-  var payload={};['api_key','user_id','sender_key','sender','tpl_issue'].forEach(function(f){payload[f]='__CLEAR__'});
-  post('partner_config',{aligo:payload}).then(function(j){DATA.aligo_ready=false;DATA.aligo_fields=[];aligoState();applyAligoGate()});
 }
 function applyAligoGate(){
   var cb=document.getElementById('i-kakao'),lb=document.getElementById('i-kakao-label');
   if(!cb)return;
-  if(DATA&&DATA.aligo_ready){cb.disabled=false;cb.checked=true;if(lb)lb.innerHTML='고객에게 카카오 알림톡 자동 발송 <b>(내 채널)</b>'}
-  else{cb.disabled=true;cb.checked=false;if(lb)lb.innerHTML='알림톡 자동 발송 — <a class="gd" href="#" onclick="tab(\'config\');return false">⚙️ 설정에서 알리고 연동</a> 후 사용 가능 (지금은 발급링크를 직접 전달)'}
+  if(DATA&&DATA.aligo_ready){cb.disabled=false;cb.checked=true;if(lb)lb.innerHTML='고객에게 카카오 알림톡 자동 발송 <b>(내 채널)</b> — 발급하기·발급완료 2종'}
+  else{cb.disabled=true;cb.checked=false;if(lb)lb.innerHTML='알림톡 자동 발송 — <b>본사에서 연동해 드립니다</b>. <a class="gd" href="/partner-guide#s8" target="_blank">가이드 8장</a>대로 준비 후 키를 본사에 전달하세요 (연동 전엔 발급링크 직접 전달)'}
 }
 function show(){
   document.getElementById('login-card').style.display='none';
@@ -235,6 +219,123 @@ function show(){
   sel.value=now in mons?now:(sel.options[0]&&sel.options[0].value);
   render();
   applyAligoGate();
+  loadCountries();
+}
+/* ── 상품 검색 ── */
+var CAT=[];
+function loadCountries(){
+  post('partner_countries').then(function(j){
+    if(!j.ok)return;
+    var sel=document.getElementById('s-ct');
+    (j.countries||[]).forEach(function(c){
+      var o=document.createElement('option');o.value=c.ct;o.textContent=c.ct+' ('+c.n+')';sel.appendChild(o);
+    });
+  });
+}
+function loadCatalog(){
+  var ct=document.getElementById('s-ct').value;
+  var tb=document.getElementById('s-rows');
+  CAT=[];
+  if(!ct){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">국가를 선택하면 상품이 표시됩니다</td></tr>';return}
+  tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">불러오는 중…</td></tr>';
+  post('partner_search',{ct:ct}).then(function(j){
+    if(!j.ok){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#C23A3A">조회 실패</td></tr>';return}
+    CAT=j.items||[];
+    var crs={},sps={},dds={};
+    CAT.forEach(function(it){
+      var cr=(it.carrier||'').replace(/\(.*?\)/g,'').trim();if(cr)crs[cr]=1;
+      if(it.spec)sps[it.spec]=1;
+      dds[it.days]=1;
+    });
+    fillSel('s-cr','통신사 전체',Object.keys(crs).sort());
+    fillSel('s-sp','사용량 전체',Object.keys(sps).sort());
+    fillSel('s-dd','기간 전체',Object.keys(dds).map(Number).sort(function(a,b){return a-b}).map(function(d){return d+'일'}));
+    renderSearch();
+  });
+}
+function fillSel(id,first,vals){
+  var sel=document.getElementById(id);var cur=sel.value;
+  sel.innerHTML='<option value="">'+first+'</option>';
+  vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
+  sel.value=cur||'';
+}
+function renderSearch(){
+  var cr=document.getElementById('s-cr').value,net=document.getElementById('s-net').value;
+  var sp=document.getElementById('s-sp').value,dd=document.getElementById('s-dd').value;
+  var tb=document.getElementById('s-rows');
+  var rows=CAT.filter(function(it){
+    if(cr&&(it.carrier||'').indexOf(cr)===-1)return false;
+    if(net&&(it.carrier||'').indexOf(net)===-1)return false;
+    if(sp&&it.spec!==sp)return false;
+    if(dd&&(it.days+'일')!==dd)return false;
+    return true;
+  });
+  if(!rows.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">조건에 맞는 상품이 없습니다</td></tr>';return}
+  tb.innerHTML=rows.slice(0,120).map(function(it){
+    return '<tr><td>'+esc(it.name)+(it.unlimited?' <span class="badge b-ok">무제한</span>':'')+'</td>'+
+      '<td style="text-align:right">'+it.days+'일</td>'+
+      '<td style="text-align:right;font-weight:800;color:#C2571E">'+fmt(it.price)+'원</td>'+
+      '<td><button class="copy" onclick="pickItem(\''+esc(it.code)+'\','+it.price+',\''+esc(it.name).replace(/'/g,'')+'\')">선택</button></td></tr>';
+  }).join('')+(rows.length>120?'<tr><td colspan="4" style="text-align:center;color:#8A94A3">외 '+(rows.length-120)+'개 — 필터를 좁혀보세요</td></tr>':'');
+}
+function pickItem(code,price,name){
+  document.getElementById('q-code').value=code;
+  QUOTE={ok:true,code:code,price:price,name:name,balance:(DATA&&DATA.balance)||0};
+  var box=document.getElementById('quote-box');box.style.display='';
+  box.innerHTML='<b>'+esc(name)+'</b><br>공급가 <b style="color:#C2571E">'+fmt(price)+'원</b> · 현재 잔액 '+fmt(QUOTE.balance)+'원'+(QUOTE.balance<price?' <b style="color:#C23A3A">— 잔액 부족(충전 필요)</b>':'');
+  document.getElementById('issue-btn').disabled=(QUOTE.balance<price);
+  window.scrollTo({top:document.getElementById('q-code').offsetTop-80,behavior:'smooth'});
+}
+/* ── 엑셀 일괄 발급 ── */
+var BULK=[];
+function bulkForm(){
+  var lines=['상품코드,고객명,휴대폰,이메일','JD-JPSB10G-05,홍길동,01012345678,guest@example.com'];
+  var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='JDISIM_일괄발급_양식.csv';a.click();
+}
+function bulkLoad(inp){
+  var f=inp.files&&inp.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    var txt=String(rd.result||'').replace(/^﻿/,'');
+    var rows=txt.split(/\r?\n/).map(function(l){return l.trim()}).filter(Boolean);
+    if(rows.length&&/상품코드/.test(rows[0]))rows.shift();
+    BULK=rows.map(function(l,i){
+      var c=l.split(',').map(function(x){return x.replace(/^"|"$/g,'').trim()});
+      var ph=(c[2]||'').replace(/[^0-9]/g,'');
+      var err='';
+      if(!c[0]||c[0].toUpperCase().indexOf('JD-')!==0)err='상품코드 오류';
+      else if(ph.length<10)err='휴대폰 오류';
+      return {i:i+1,code:(c[0]||'').toUpperCase(),buyer:c[1]||'',phone:ph,email:c[3]||'',status:err?('❌ '+err):'대기',err:!!err};
+    });
+    renderBulk();
+    document.getElementById('bulk-wrap').style.display='';
+    document.getElementById('bulk-run').style.display=BULK.some(function(r){return !r.err})?'':'none';
+  };
+  rd.readAsText(f,'utf-8');
+  inp.value='';
+}
+function renderBulk(){
+  document.getElementById('bulk-rows').innerHTML=BULK.map(function(r){
+    return '<tr><td>'+r.i+'</td><td>'+esc(r.code)+'</td><td>'+esc(r.buyer)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>'+r.status+'</td></tr>';
+  }).join('');
+}
+function bulkRun(btn){
+  var todo=BULK.filter(function(r){return !r.err&&r.status.indexOf('✅')===-1});
+  if(!todo.length)return;
+  if(!confirm(todo.length+'건을 일괄 발급할까요?\n(알림톡 설정에 따라 고객에게 자동 발송됩니다)'))return;
+  btn.disabled=true;
+  var notify=document.getElementById('i-kakao').checked?'kakao':'none';
+  var k=0;
+  function next(){
+    if(k>=todo.length){btn.disabled=false;btn.textContent='일괄 발급 실행';loadOrders(true);fetchMe(KEY);return}
+    var r=todo[k];btn.textContent='발급 중… '+(k+1)+'/'+todo.length;
+    post('partner_issue',{code:r.code,phone:r.phone,buyer:r.buyer,email:r.email||undefined,notify:notify}).then(function(j){
+      r.status=j.ok?'✅ 완료 ('+fmt(j.price)+'원)':('❌ '+(j.error==='INSUFFICIENT_BALANCE'?'잔액부족':j.error==='unknown_code'?'없는코드':(j.error||'실패')));
+      renderBulk();k++;setTimeout(next,350);
+    }).catch(function(){r.status='❌ 네트워크';renderBulk();k++;setTimeout(next,350)});
+  }
+  next();
 }
 /* ── 발급 ── */
 function quote(){
@@ -279,13 +380,30 @@ function cp(t,btn){
 }
 /* ── 주문 ── */
 var ST={pending:['발급대기','b-pend'],issued:['발급완료','b-ok'],canceled:['취소','b-cxl'],expired:['만료','b-exp']};
+var ORDERS=[];
 function loadOrders(silent){
   var tb=document.getElementById('ord-rows');
   if(!silent)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#8A94A3">불러오는 중…</td></tr>';
   post('partner_orders').then(function(j){
     if(!j.ok){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#C23A3A">조회 실패</td></tr>';return}
-    if(!(j.orders||[]).length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#8A94A3">주문이 없습니다 — 발급하기 탭에서 첫 발급을 시작하세요</td></tr>';return}
-    tb.innerHTML=j.orders.map(function(o){
+    ORDERS=j.orders||[];
+    renderOrders();
+  });
+}
+function renderOrders(){
+  var tb=document.getElementById('ord-rows');
+  var q=(document.getElementById('o-q').value||'').trim().toLowerCase();
+  var st=document.getElementById('o-st').value;
+  var rows=ORDERS.filter(function(o){
+    if(st&&o.status!==st)return false;
+    if(q){
+      var hay=((o.buyer||'')+' '+(o.ph4||'')+' '+(o.plan||'')+' '+(o.code||'')).toLowerCase();
+      if(hay.indexOf(q)===-1)return false;
+    }
+    return true;
+  });
+  if(!rows.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#8A94A3">'+(ORDERS.length?'조건에 맞는 주문이 없습니다':'주문이 없습니다 — 발급하기 탭에서 첫 발급을 시작하세요')+'</td></tr>';return}
+  tb.innerHTML=rows.map(function(o){
       var st=ST[o.status]||[o.status,'b-cxl'];
       return '<tr><td>'+esc((o.at||'').replace('T',' '))+'</td><td>'+esc(o.plan||o.code)+'</td>'+
         '<td>'+esc(o.buyer||'-')+'<br><span style="color:#8A94A3;font-size:12px">****'+esc(o.ph4||'')+'</span></td>'+
@@ -295,7 +413,6 @@ function loadOrders(silent){
         (o.status==='pending'?' <button class="copy" style="color:#C23A3A" onclick="cancelOrder(\''+esc((o.issue_url.split('issue=')[1]||''))+'\',this)">취소</button>':'')+
         '</td></tr>';
     }).join('');
-  });
 }
 function cancelOrder(tok,btn){
   if(!confirm('이 발급 요청을 취소할까요?\n(고객이 아직 발급 버튼을 누르지 않은 건만 취소됩니다)'))return;

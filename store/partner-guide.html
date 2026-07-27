@@ -145,10 +145,11 @@ code{background:#F1F2F5;border-radius:6px;padding:1px 7px;font-size:13px}
     <div class="step"><div class="n">1</div><div><b>카카오톡 채널 개설</b> — <code>business.kakao.com</code>에서 채널 만들기 → <b>비즈니스 인증</b> 신청(사업자등록증 필요, 1~2일 소요)</div></div>
     <div class="step"><div class="n">2</div><div><b>알리고 가입</b> — <code>smartsms.aligo.in</code> 회원가입(비즈니스 이메일 사용) → 발신번호 등록(통신서비스 이용증명원)</div></div>
     <div class="step"><div class="n">3</div><div><b>카카오 발신프로필 연동</b> — 알리고 [카카오알림톡] 메뉴에서 내 채널 검색 → 발신프로필 키(senderkey) 발급</div></div>
-    <div class="step"><div class="n">4</div><div><b>템플릿 등록</b> — 아래 문안을 <b>글자 하나 바꾸지 말고 그대로</b> 등록해 심사받으세요(버튼 포함). 승인되면 템플릿 코드(예: UB_1234)가 나옵니다</div></div>
-    <div class="step"><div class="n">5</div><div><b>포털 연동</b> — 파트너 포털 ⚙️설정 탭에 API Key · 아이디 · senderkey · 발신번호 · 템플릿 코드 5가지 입력 → 저장. 끝!</div></div>
-    <h3>📋 등록할 템플릿 문안 (복사해서 그대로 제출)</h3>
-    <div class="tip" style="white-space:pre-wrap;font-size:13.5px">#{이름} 고객님, 여행 eSIM 주문이 확인되었습니다.
+    <div class="step"><div class="n">4</div><div><b>템플릿 2종 등록</b> — 아래 두 문안을 <b>글자 하나 바꾸지 말고 그대로</b> 각각 등록해 심사받으세요(버튼 포함). 승인되면 템플릿 코드 2개(예: UB_1234, UB_1235)가 나옵니다</div></div>
+    <div class="step"><div class="n">5</div><div><b>본사에 전달</b> — ①알리고 API Key ②알리고 아이디 ③발신프로필 키(senderkey) ④발신번호 ⑤발급 템플릿 코드 ⑥발급완료 템플릿 코드 — 6가지를 본사 카톡으로 보내주시면 <b>본사가 연동해 드립니다</b>. 연동 완료 시 포털 발급 화면에 자동 발송이 켜집니다</div></div>
+    <div class="tip">✅ <b>영업 시작 조건</b>: 템플릿 2종 승인 + 본사 연동 완료 시점부터 판매를 시작합니다. 그 전에는 고객 알림톡이 나가지 않습니다.</div>
+    <h3>📋 템플릿 ① 발급하기 링크 (복사해서 그대로 제출)</h3>
+    <div class="tip" style="white-space:pre-wrap;font-size:13.5px">#{고객명} 고객님, 여행 eSIM 주문이 확인되었습니다.
 
 출발 준비는 딱 한 번, 아래 발급하기로 끝납니다.
 원하는 시점에 eSIM을 발급받으세요.
@@ -161,8 +162,24 @@ code{background:#F1F2F5;border-radius:6px;padding:1px 7px;font-size:13px}
 ● 사용 기간은 현지 도착 후 통신망 연결 시점부터 시작됩니다.
 ● 본 메시지는 eSIM 구매 고객님께 발송되는 안내 메시지입니다.</div>
     <ul>
-      <li><b>버튼 설정</b>: 버튼명 <code>발급하기</code> · 유형 <code>웹링크(WL)</code> · 링크 <code>#{링크}</code> (모바일/PC 동일)</li>
-      <li>변수는 <code>#{이름}</code>, <code>#{링크}</code> 두 개입니다 — 심사 신청 시 변수로 지정하세요</li>
+      <li><b>버튼</b>: 버튼명 <code>발급하기</code> · 유형 <code>웹링크(WL)</code> · 링크(모바일/PC 동일) <code>https://jdisim.co.kr/issue.html?#{티켓정보}</code></li>
+      <li>변수: <code>#{고객명}</code>, <code>#{티켓정보}</code></li>
+    </ul>
+    <h3>📋 템플릿 ② 발급 완료 안내 (복사해서 그대로 제출)</h3>
+    <div class="tip" style="white-space:pre-wrap;font-size:13.5px">#{고객명} 고객님, 구매하신 여행 eSIM 발급이 완료되었습니다.
+
+아래 내 여행 티켓에서 QR 확인, 설치, 데이터 사용량 조회를 한 번에 이용하실 수 있습니다.
+
+[이용 안내]
+- 설치는 티켓에서 원클릭, QR 스캔, 수동 입력 중 선택하실 수 있습니다.
+- 사용 기간은 현지 도착 후 통신망 연결 시점부터 시작됩니다.
+- 설치된 eSIM 프로필을 삭제하시면 재발급이 불가하니 주의해 주세요.
+- 문제가 생기면 삭제하지 마시고 티켓 안 상담 버튼으로 연락 주세요.
+
+본 메시지는 eSIM 구매 고객님께 발송되는 안내 메시지입니다.</div>
+    <ul>
+      <li><b>버튼</b>: 버튼명 <code>내 티켓 열기</code> · 유형 <code>웹링크(WL)</code> · 링크(모바일/PC 동일) <code>https://jdisim.co.kr/issue.html?#{티켓정보}</code></li>
+      <li>변수: <code>#{고객명}</code>, <code>#{티켓정보}</code></li>
       <li>심사는 보통 1~2영업일. 반려되면 반려 사유와 함께 카톡방으로 문의 주세요</li>
     </ul>
     <div class="warn">⚠️ 연동 전까지는 알림톡 자동 발송이 꺼져 있습니다 — 발급링크를 직접 고객에게 전달하는 방식으로 판매는 가능하지만, 연동을 최우선으로 끝내는 걸 권합니다.</div>
