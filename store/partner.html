@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>JDISIM 파트너 포털</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:#F6F3EE;color:#1F2530;line-height:1.6;letter-spacing:-.2px}
+.wrap{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.logo{font-size:20px;font-weight:800;color:#F97316}
+.logo small{color:#8A94A3;font-weight:600;font-size:12px;margin-left:8px}
+.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 1px 3px rgba(31,37,48,.06);margin-bottom:14px}
+h2{font-size:16px;font-weight:800;margin-bottom:12px}
+input,select,button{font:inherit}
+.key-in{display:flex;gap:8px}
+.key-in input{flex:1;border:1.5px solid #E2E6EE;border-radius:12px;padding:12px 14px}
+.btn{background:#F97316;color:#fff;border:0;border-radius:12px;padding:12px 20px;font-weight:800;cursor:pointer}
+.btn.gray{background:#EEF1F5;color:#4A5260}
+.hint{font-size:12.5px;color:#8A94A3;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#FFF7EF;border:1px solid #FFE4C8;border-radius:14px;padding:14px;text-align:center}
+.stat b{display:block;font-size:20px;color:#C2571E;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:#8A94A3;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{background:#1F3864;color:#fff;padding:8px 10px;text-align:left;font-size:12px;position:sticky;top:0}
+td{border-bottom:1px solid #F0F2F6;padding:8px 10px;font-variant-numeric:tabular-nums}
+tr.minus td.amt{color:#C23A3A}
+tr.plus td.amt{color:#1E7A3C;font-weight:700}
+.tbl-wrap{max-height:480px;overflow:auto;border-radius:12px;border:1px solid #EEF1F5}
+.rowbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.rowbar select{border:1.5px solid #E2E6EE;border-radius:10px;padding:8px 10px}
+#err{color:#C23A3A;font-weight:700;margin-top:10px;display:none}
+.foot{text-align:center;color:#9AA4B2;font-size:12px;margin-top:28px}
+@media(max-width:560px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">JDISIM <small>PARTNER PORTAL</small></div>
+    <button class="btn gray" id="logout" style="display:none" onclick="logout()">로그아웃</button>
+  </div>
+
+  <div class="card" id="login-card">
+    <h2>파트너 로그인</h2>
+    <div class="key-in">
+      <input id="pkey" type="password" placeholder="파트너 API 키를 입력하세요" autocomplete="off">
+      <button class="btn" onclick="login()">접속</button>
+    </div>
+    <div class="hint">API 키는 가입 시 1회 발급됩니다. 분실 시 카카오톡 <b>제이디아이심</b>으로 문의해 주세요.</div>
+    <div id="err"></div>
+  </div>
+
+  <div id="dash" style="display:none">
+    <div class="card">
+      <h2 id="pname">-</h2>
+      <div class="stats">
+        <div class="stat"><span>잔액</span><b id="bal">-</b></div>
+        <div class="stat"><span>이번 달 발급</span><b id="mcnt">-</b></div>
+        <div class="stat"><span>이번 달 사용액</span><b id="mamt">-</b></div>
+      </div>
+      <div class="hint">충전은 카카오톡 <b>제이디아이심</b>(010-9969-3248)으로 요청해 주세요. 입금 확인 즉시 잔액에 반영됩니다.</div>
+    </div>
+    <div class="card">
+      <div class="rowbar">
+        <h2 style="margin:0;flex:1">발급·충전 내역</h2>
+        <select id="mon" onchange="render()"></select>
+        <button class="btn gray" onclick="csv()">정산서 CSV</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>일시</th><th>구분</th><th style="text-align:right">금액</th><th>내용</th><th style="text-align:right">잔액</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="hint">최근 300건까지 표시됩니다. 이전 내역 정산서가 필요하면 문의해 주세요.</div>
+    </div>
+  </div>
+
+  <div class="foot">© JDISIM · 파트너 전용 페이지 — 외부 공유 금지</div>
+</div>
+<script>
+var API='https://jdisim-proxy.vercel.app/api/esim';
+var DATA=null;
+function fmt(n){return (n==null?'-':Number(n).toLocaleString('ko-KR'))}
+function login(){
+  var k=document.getElementById('pkey').value.trim();
+  if(!k)return;
+  fetchMe(k);
+}
+function logout(){localStorage.removeItem('jd_pkey');location.reload()}
+function fetchMe(k){
+  var err=document.getElementById('err');err.style.display='none';
+  fetch(API+'?action=partner_me',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pkey:k})})
+  .then(function(r){return r.json()})
+  .then(function(j){
+    if(!j.ok){err.textContent=(j.error==='invalid_partner_key')?'유효하지 않은 API 키입니다.':'조회 실패: '+(j.error||'');err.style.display='block';return}
+    localStorage.setItem('jd_pkey',k);
+    DATA=j;show();
+  })
+  .catch(function(){err.textContent='네트워크 오류 — 잠시 후 다시 시도해 주세요.';err.style.display='block'});
+}
+function show(){
+  document.getElementById('login-card').style.display='none';
+  document.getElementById('dash').style.display='';
+  document.getElementById('logout').style.display='';
+  document.getElementById('pname').textContent=DATA.name+' 님';
+  document.getElementById('bal').textContent=fmt(DATA.balance)+'원';
+  var mons={},now=new Date().toISOString().slice(0,7);
+  (DATA.ledger||[]).forEach(function(l){mons[(l.at||'').slice(0,7)]=1});
+  mons[now]=1;
+  var sel=document.getElementById('mon');sel.innerHTML='';
+  Object.keys(mons).sort().reverse().forEach(function(m){
+    var o=document.createElement('option');o.value=m;o.textContent=m.replace('-','년 ')+'월';sel.appendChild(o);
+  });
+  sel.value=now in mons?now:sel.options[0]&&sel.options[0].value;
+  render();
+}
+function rowsFor(m){return (DATA.ledger||[]).filter(function(l){return (l.at||'').slice(0,7)===m})}
+function render(){
+  var m=document.getElementById('mon').value;
+  var rs=rowsFor(m),tb=document.getElementById('rows');tb.innerHTML='';
+  var cnt=0,amt=0;
+  rs.forEach(function(l){
+    var tr=document.createElement('tr');
+    tr.className=(l.amount<0?'minus':'plus');
+    var ty=l.type==='issue'?'발급':(l.type==='charge'?'충전':(l.type||''));
+    if(l.type==='issue'){cnt++;amt+=-l.amount}
+    tr.innerHTML='<td>'+(l.at||'').replace('T',' ')+'</td><td>'+ty+'</td><td class="amt" style="text-align:right">'+fmt(l.amount)+'</td><td>'+(l.memo||'')+'</td><td style="text-align:right">'+fmt(l.balance)+'</td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('mcnt').textContent=fmt(cnt)+'건';
+  document.getElementById('mamt').textContent=fmt(amt)+'원';
+}
+function csv(){
+  var m=document.getElementById('mon').value;
+  var rs=rowsFor(m);
+  var lines=['일시,구분,금액,내용,잔액'];
+  rs.forEach(function(l){lines.push('"'+(l.at||'')+'","'+(l.type==='issue'?'발급':l.type==='charge'?'충전':l.type)+'",'+l.amount+',"'+String(l.memo||'').replace(/"/g,'""')+'",'+l.balance)});
+  var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='JDISIM_정산서_'+m+'.csv';a.click();
+}
+(function(){var k=localStorage.getItem('jd_pkey');if(k)fetchMe(k)})();
+</script>
+</body>
+</html>
