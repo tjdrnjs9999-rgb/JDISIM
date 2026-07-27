@@ -27,6 +27,26 @@
       "dest": "/store/issue.html"
     },
     {
+      "src": "/(?!api/)(.*)\\.(png|jpg|jpeg|webp|gif|svg|ico|mp4|webm|woff|woff2|ttf|otf)",
+      "headers": {
+        "Cache-Control": "public, max-age=2592000",
+        "x-robots-tag": "index, follow",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff"
+      },
+      "dest": "/store/$1.$2"
+    },
+    {
+      "src": "/(?!api/)(.*)\\.(js|css)",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+        "x-robots-tag": "index, follow",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff"
+      },
+      "dest": "/store/$1.$2"
+    },
+    {
       "src": "/(.*)",
       "headers": {
         "x-robots-tag": "index, follow",
