@@ -83,6 +83,7 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="tab on" data-t="issue" onclick="tab('issue')">🎫 발급하기</div>
       <div class="tab" data-t="orders" onclick="tab('orders')">📦 주문 내역</div>
       <div class="tab" data-t="ledger" onclick="tab('ledger')">🧾 정산</div>
+      <div class="tab" data-t="config" onclick="tab('config')">⚙️ 설정</div>
     </div>
 
     <!-- 발급하기 -->
@@ -99,7 +100,7 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       </div>
       <input id="i-email" placeholder="고객 이메일 (선택 — 입력 시 발급 안내 메일도 발송)" style="width:100%;margin-top:10px">
       <label style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px;font-weight:700">
-        <input type="checkbox" id="i-kakao" checked style="width:18px;height:18px"> 고객에게 카카오 알림톡 자동 발송 (이름·전화만 입력하면 끝)
+        <input type="checkbox" id="i-kakao" checked style="width:18px;height:18px"> <span id="i-kakao-label">고객에게 카카오 알림톡 자동 발송</span>
       </label>
       <div style="margin-top:12px"><button class="btn" id="issue-btn" onclick="doIssue()" disabled>발급하기</button></div>
       <div class="iss-done" id="issue-done"></div>
@@ -132,6 +133,24 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       </table></div>
       <div class="hint">최근 300건까지 표시됩니다. 이전 내역 정산서가 필요하면 문의해 주세요.</div>
     </div>
+
+    <!-- 설정: 알리고 연동 -->
+    <div class="card" id="pane-config" style="display:none">
+      <h2>⚙️ 카카오 알림톡 연동 (내 채널로 발송)</h2>
+      <div class="hint" style="margin:0 0 12px">고객에게 나가는 발급 알림톡을 <b>파트너님의 카카오 채널</b>로 발송합니다. 채널 개설·알리고 가입·템플릿 승인 절차는 <a class="gd" href="/partner-guide#s8" target="_blank">가이드 8장</a>을 따라 주세요. 입력값은 서버에만 저장됩니다.</div>
+      <div id="aligo-state" class="quote" style="display:block;margin-bottom:12px"></div>
+      <div class="grid2">
+        <input id="al-api_key" type="password" placeholder="알리고 API Key" autocomplete="off">
+        <input id="al-user_id" placeholder="알리고 아이디(user_id)" autocomplete="off">
+        <input id="al-sender_key" type="password" placeholder="카카오 발신프로필 키(senderkey)" autocomplete="off">
+        <input id="al-sender" placeholder="발신번호 (알리고에 등록된 번호)" inputmode="numeric">
+      </div>
+      <input id="al-tpl_issue" placeholder="발급 템플릿 코드 (예: UB_1234 — 가이드 문안으로 승인받은 코드)" style="width:100%;margin-top:10px">
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" onclick="saveAligo(this)">저장</button>
+        <button class="btn gray" onclick="clearAligo()">연동 해제</button>
+      </div>
+    </div>
   </div>
 
   <div class="foot">© JDISIM · 파트너 전용 페이지 — 외부 공유 금지</div>
@@ -156,12 +175,49 @@ function fetchMe(k){
   }).catch(function(){err.textContent='네트워크 오류 — 잠시 후 다시 시도해 주세요.';err.style.display='block'});
 }
 function tab(t){
-  ['issue','orders','ledger'].forEach(function(x){
+  ['issue','orders','ledger','config'].forEach(function(x){
     document.getElementById('pane-'+x).style.display=(x===t?'':'none');
     var el=document.querySelector('.tab[data-t="'+x+'"]');
     if(el)el.className='tab'+(x===t?' on':'');
   });
   if(t==='orders')loadOrders();
+  if(t==='config')aligoState();
+}
+function aligoState(){
+  var el=document.getElementById('aligo-state');
+  if(DATA&&DATA.aligo_ready){el.innerHTML='🟢 <b>연동 완료</b> — 발급 알림톡이 파트너님 채널로 발송됩니다.'}
+  else{
+    var have=(DATA&&DATA.aligo_fields)||[];
+    el.innerHTML='⚪ <b>미연동</b> — 5개 항목을 모두 입력하면 자동 발송이 켜집니다.'+(have.length?' (입력됨: '+have.join(', ')+')':'');
+  }
+}
+function saveAligo(btn){
+  var payload={},any=false;
+  ['api_key','user_id','sender_key','sender','tpl_issue'].forEach(function(f){
+    var v=(document.getElementById('al-'+f)||{}).value||'';
+    if(v.trim()){payload[f]=v.trim();any=true}
+  });
+  if(!any){alert('입력된 값이 없어요');return}
+  if(btn){btn.disabled=true;btn.textContent='저장 중…'}
+  post('partner_config',{aligo:payload}).then(function(j){
+    if(btn){btn.disabled=false;btn.textContent='저장'}
+    if(!j.ok){alert('저장 실패: '+(j.error||''));return}
+    ['api_key','user_id','sender_key','sender','tpl_issue'].forEach(function(f){var el=document.getElementById('al-'+f);if(el)el.value=''});
+    DATA.aligo_ready=j.aligo_ready;DATA.aligo_fields=j.fields;
+    aligoState();applyAligoGate();
+    alert(j.aligo_ready?'연동 완료! 이제 발급 알림톡이 내 채널로 나갑니다.':'저장됐어요 — 남은 항목을 마저 입력해 주세요.');
+  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='저장'}alert('요청 실패')});
+}
+function clearAligo(){
+  if(!confirm('알리고 연동을 해제할까요? (자동 발송이 꺼집니다)'))return;
+  var payload={};['api_key','user_id','sender_key','sender','tpl_issue'].forEach(function(f){payload[f]='__CLEAR__'});
+  post('partner_config',{aligo:payload}).then(function(j){DATA.aligo_ready=false;DATA.aligo_fields=[];aligoState();applyAligoGate()});
+}
+function applyAligoGate(){
+  var cb=document.getElementById('i-kakao'),lb=document.getElementById('i-kakao-label');
+  if(!cb)return;
+  if(DATA&&DATA.aligo_ready){cb.disabled=false;cb.checked=true;if(lb)lb.innerHTML='고객에게 카카오 알림톡 자동 발송 <b>(내 채널)</b>'}
+  else{cb.disabled=true;cb.checked=false;if(lb)lb.innerHTML='알림톡 자동 발송 — <a class="gd" href="#" onclick="tab(\'config\');return false">⚙️ 설정에서 알리고 연동</a> 후 사용 가능 (지금은 발급링크를 직접 전달)'}
 }
 function show(){
   document.getElementById('login-card').style.display='none';
@@ -178,6 +234,7 @@ function show(){
   });
   sel.value=now in mons?now:(sel.options[0]&&sel.options[0].value);
   render();
+  applyAligoGate();
 }
 /* ── 발급 ── */
 function quote(){
