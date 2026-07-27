@@ -172,7 +172,7 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div style="font-weight:800;font-size:14px;margin-bottom:6px">입점한 오픈마켓을 선택하세요 <span class="hint" style="margin:0">(선택한 마켓의 키 입력칸만 표시됩니다)</span></div>
       <div id="mk-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
       <div id="mk-forms"></div>
-      <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 자동 수집은 현재 <b>네이버</b>부터 가동 중이며, 다른 마켓은 키를 등록해 두시면 지원되는 대로 자동 적용됩니다.</div>
+      <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 6개 마켓 모두 수집기가 연결되어 있어, 키를 저장하면 5분 주기로 자동 수집됩니다.</div>
     </div>
 
   </div>
@@ -211,12 +211,18 @@ var MKTS=[
   {id:'naver',n:'네이버 스마트스토어',guide:'커머스API센터 → 애플리케이션 등록에서 발급',fields:[{k:'client_id',l:'Client ID'},{k:'client_secret',l:'Client Secret',pw:1}]},
   {id:'coupang',n:'쿠팡',guide:'쿠팡윙 → 판매자API 키 발급',fields:[{k:'access_key',l:'Access Key'},{k:'secret_key',l:'Secret Key',pw:1},{k:'vendor_id',l:'업체코드(Vendor ID)'}]},
   {id:'st11',n:'11번가',guide:'셀러오피스 → 오픈API 키 신청',fields:[{k:'api_key',l:'API Key',pw:1}]},
-  {id:'esm',n:'G마켓·옥션 (ESM+)',guide:'ESM PLUS → API 키 발급',fields:[{k:'app_key',l:'App Key'},{k:'secret_key',l:'Secret Key',pw:1}]},
-  {id:'ssg',n:'SSG닷컴',guide:'파트너오피스 → API 인증키',fields:[{k:'auth_key',l:'인증키(Auth Key)',pw:1},{k:'vendor_id',l:'업체 ID'}]},
-  {id:'lotteon',n:'롯데온',guide:'셀러오피스 → API 키',fields:[{k:'api_key',l:'API Key',pw:1}]}
+  {id:'esm',n:'G마켓·옥션 (ESM+)',guide:'ESM PLUS → API 키 발급',req:['master_id','secret_key'],oneof:['gmarket_id','auction_id'],fields:[{k:'master_id',l:'ESM 마스터 ID'},{k:'secret_key',l:'Secret Key',pw:1},{k:'gmarket_id',l:'G마켓 셀러 ID (해당 시)'},{k:'auction_id',l:'옥션 셀러 ID (해당 시)'}]},
+  {id:'ssg',n:'SSG닷컴',guide:'파트너오피스 → API 인증키 신청 (승인 메일의 인증키·API 주소)',fields:[{k:'auth_key',l:'인증키(Auth Key)',pw:1},{k:'host',l:'API 주소(Host)'}]},
+  {id:'lotteon',n:'롯데온',guide:'셀러오피스 → API 키',req:['api_key'],fields:[{k:'api_key',l:'API Key',pw:1},{k:'vendor_id',l:'업체번호 (선택)'}]}
 ];
 var MKSEL={},MKST={};
 function mkDef(id){for(var i=0;i<MKTS.length;i++)if(MKTS[i].id===id)return MKTS[i];return null}
+function mkDone(m,st){
+  var req=m.req||m.fields.map(function(f){return f.k});
+  if(!req.every(function(k){return st.indexOf(k)>-1}))return false;
+  if(m.oneof&&!m.oneof.some(function(k){return st.indexOf(k)>-1}))return false;
+  return true;
+}
 function marketState(){
   post('partner_markets').then(function(j){
     var el=document.getElementById('mk-state');
@@ -226,7 +232,7 @@ function marketState(){
     MKTS.forEach(function(m){
       var st=MKST[m.id]||[];
       if(st.length)MKSEL[m.id]=true;
-      if(st.length===m.fields.length)done.push(m.n);
+      if(mkDone(m,st))done.push(m.n);
     });
     el.innerHTML=done.length
       ? '🟢 <b>연동 완료: '+esc(done.join(', '))+'</b> — 5분 주기로 주문을 수집해 자동 발급합니다.'
@@ -238,14 +244,14 @@ function mkToggle(id){MKSEL[id]=!MKSEL[id];mkRender()}
 function mkRender(){
   document.getElementById('mk-chips').innerHTML=MKTS.map(function(m){
     var st=MKST[m.id]||[],on=!!MKSEL[m.id];
-    var dot=st.length===m.fields.length?' 🟢':(st.length?' 🟡':'');
+    var dot=mkDone(m,st)?' 🟢':(st.length?' 🟡':'');
     return '<button class="copy" style="padding:8px 14px;font-size:13px;border-radius:20px;'+(on?'background:#2E4B33;color:#fff;border-color:#2E4B33':'')+'" onclick="mkToggle(\''+m.id+'\')">'+esc(m.n)+dot+'</button>';
   }).join('');
   document.getElementById('mk-forms').innerHTML=MKTS.filter(function(m){return MKSEL[m.id]}).map(function(m){
     var st=MKST[m.id]||[];
     return '<div style="background:#F8FAF6;border:1.5px solid #E2EAE2;border-radius:14px;padding:14px 16px;margin-bottom:10px">'+
       '<div style="font-weight:800;font-size:14px;margin-bottom:6px">'+esc(m.n)+' <span class="hint" style="margin:0">('+esc(m.guide)+')</span>'+
-      (st.length===m.fields.length?' <span class="badge b-ok">연동됨</span>':(st.length?' <span class="badge">일부 입력됨: '+esc(st.join(', '))+'</span>':''))+'</div>'+
+      (mkDone(m,st)?' <span class="badge b-ok">연동됨</span>':(st.length?' <span class="badge">일부 입력됨: '+esc(st.join(', '))+'</span>':''))+'</div>'+
       '<div class="grid2">'+m.fields.map(function(f){
         return '<input id="mk-'+m.id+'-'+f.k+'"'+(f.pw?' type="password"':'')+' placeholder="'+esc(f.l)+'" autocomplete="off">';
       }).join('')+'</div>'+
@@ -270,7 +276,7 @@ function saveMarket(id,btn){
     if(!j.ok){alert('저장 실패: '+(j.error||''));return}
     var st=(j.status&&j.status[id])||[];
     MKST=j.status||MKST;mkRender();
-    alert(st.length===m.fields.length?m.n+' 연동 완료!':'저장됐어요 — 남은 값을 마저 입력해 주세요 ('+st.join(', ')+' 입력됨)');
+    alert(mkDone(m,st)?m.n+' 연동 완료! 5분 주기 자동 수집이 시작됩니다':'저장됐어요 — 필수 값을 마저 입력해 주세요 ('+st.join(', ')+' 입력됨)');
   }).catch(function(){if(btn){btn.disabled=false;btn.textContent='저장'}alert('요청 실패')});
 }
 function clearMarket(id){
