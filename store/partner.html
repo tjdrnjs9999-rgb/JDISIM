@@ -84,6 +84,7 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="tab" data-t="orders" onclick="tab('orders')">📦 주문 내역</div>
       <div class="tab" data-t="ledger" onclick="tab('ledger')">🧾 정산</div>
       <div class="tab" data-t="market" onclick="tab('market')">🔌 마켓 연동</div>
+      <div class="tab" data-t="detail" onclick="tab('detail')">🎨 상세페이지</div>
     </div>
 
     <!-- 발급하기 -->
@@ -175,6 +176,25 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 6개 마켓 모두 수집기가 연결되어 있어, 키를 저장하면 5분 주기로 자동 수집됩니다.</div>
     </div>
 
+    <!-- 상세페이지 만들기 -->
+    <div class="card" id="pane-detail" style="display:none">
+      <h2>🎨 상세페이지 만들기</h2>
+      <div class="hint" style="margin:0 0 12px">내 브랜드명과 색상으로 상세페이지 이미지를 만들어 바로 다운로드합니다. 상품 데이터(통신사·용량·기간)는 카탈로그에서 자동으로 채워집니다.</div>
+      <div class="grid2">
+        <input id="dp-brand" placeholder="브랜드명 (예: OO텔레콤)" maxlength="20">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#5A6474">포인트 색상</span><input id="dp-color" type="color" value="#2563EB" style="width:56px;height:38px;border:none;background:none;padding:0;cursor:pointer"></div>
+      </div>
+      <div class="rowbar" style="margin-top:10px">
+        <select id="dp-ct" style="min-width:170px"><option value="">국가 선택…</option></select>
+        <button class="btn gray" onclick="dpPreview(this)">미리보기</button>
+        <button class="btn" onclick="dpDownload(this)">PNG 다운로드</button>
+      </div>
+      <div id="dp-note" class="hint" style="margin-top:8px"></div>
+      <div style="margin-top:12px;border:1.5px solid #E2EAE2;border-radius:14px;overflow:auto;max-height:540px;background:#F2F4F7">
+        <iframe id="dp-frame" style="border:0;width:430px;height:80px;display:block;margin:0 auto;background:#fff"></iframe>
+      </div>
+    </div>
+
   </div>
 
   <div class="foot">© JDISIM · 파트너 전용 페이지 — 외부 공유 금지</div>
@@ -199,13 +219,14 @@ function fetchMe(k){
   }).catch(function(){err.textContent='네트워크 오류 — 잠시 후 다시 시도해 주세요.';err.style.display='block'});
 }
 function tab(t){
-  ['issue','orders','ledger','market'].forEach(function(x){
+  ['issue','orders','ledger','market','detail'].forEach(function(x){
     document.getElementById('pane-'+x).style.display=(x===t?'':'none');
     var el=document.querySelector('.tab[data-t="'+x+'"]');
     if(el)el.className='tab'+(x===t?' on':'');
   });
   if(t==='orders')loadOrders();
   if(t==='market')marketState();
+  if(t==='detail')dpInit();
 }
 var MKTS=[
   {id:'naver',n:'네이버 스마트스토어',guide:'커머스API센터 → 애플리케이션 등록에서 발급',fields:[{k:'client_id',l:'Client ID'},{k:'client_secret',l:'Client Secret',pw:1}]},
@@ -284,6 +305,153 @@ function clearMarket(id){
   if(!confirm(m.n+' 연동을 해제할까요? (자동 수집 중단)'))return;
   var payload={},mk={};m.fields.forEach(function(f){mk[f.k]='__CLEAR__'});payload[id]=mk;
   post('partner_markets',{markets:payload}).then(function(j){if(j.ok)MKST=j.status||{};mkRender();marketState()});
+}
+/* ── 상세페이지 만들기 (화이트라벨 — 브라우저에서 즉석 PNG 생성) ── */
+function dpNote(t){document.getElementById('dp-note').textContent=t||''}
+function dpInit(){
+  var sel=document.getElementById('dp-ct');
+  if(sel.options.length>1)return;
+  if(!COUNTRIES.length){setTimeout(dpInit,700);return}
+  COUNTRIES.forEach(function(c){var o=document.createElement('option');o.value=c.ct;o.textContent=c.ct;sel.appendChild(o)});
+}
+function dpTint(hex,r){
+  var h=hex.replace('#',''),v=[0,2,4].map(function(i){return parseInt(h.substr(i,2),16)});
+  var o=v.map(function(x){return r>=0?Math.round(x+(255-x)*r):Math.round(x*(1+r))});
+  return '#'+o.map(function(x){return ('0'+x.toString(16)).slice(-2)}).join('');
+}
+function dpDays(arr){
+  var a=arr.slice().sort(function(x,y){return x-y}),out=[],i=0;
+  while(i<a.length){
+    var j=i;while(j+1<a.length&&a[j+1]===a[j]+1)j++;
+    out.push(j-i>=2?a[i]+'~'+a[j]:(j>i?a[i]+'·'+a[j]:''+a[i]));
+    i=j+1;
+  }
+  return out.join(' · ')+'일';
+}
+function dpBlocks(items){
+  var g={},order=[];
+  items.forEach(function(it){
+    var cr=(it.carrier||'통신사');
+    if(!g[cr]){g[cr]={};order.push(cr)}
+    var sp=it.unlimited?'무제한':(it.spec||'데이터');
+    (g[cr][sp]=g[cr][sp]||[]).push(it.days);
+  });
+  return order.map(function(cr){
+    var net=/로밍/.test(cr)?'로밍망':(/로컬/.test(cr)?'로컬망':'');
+    var name=cr.replace(/\(.*?\)/g,'').trim()||'통신사';
+    var sps=Object.keys(g[cr]).sort(function(a,b){
+      if(a==='무제한')return 1;if(b==='무제한')return -1;
+      return (parseFloat(a)||0)-(parseFloat(b)||0);
+    });
+    return {name:name,net:net,rows:sps.map(function(sp){
+      var ds=[];g[cr][sp].forEach(function(d){if(ds.indexOf(d)<0)ds.push(d)});
+      return {sp:sp,days:dpDays(ds)};
+    })};
+  });
+}
+function dpHtml(brand,color,ct,blocks){
+  var c=color,cd=dpTint(c,-0.25),cs=dpTint(c,0.9),cl=dpTint(c,0.72);
+  var tels=blocks.map(function(b){
+    var rows=b.rows.map(function(r){return '<tr><td>'+esc(r.sp)+'</td><td class="dd">'+esc(r.days)+'</td></tr>'}).join('');
+    return '<div class="tel"><div class="telhd"><b>'+esc(b.name)+'</b>'+(b.net?'<span class="net">'+b.net+'</span>':'')+'</div>'+
+      '<table class="pt"><thead><tr><th>데이터</th><th>지원 기간</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }).join('');
+  var css=
+    '.pg{margin:0;width:430px;font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif;background:#fff;color:#1A2233;letter-spacing:-0.2px}'+
+    '.hero{background:linear-gradient(160deg,'+c+','+cd+');color:#fff;padding:54px 26px 46px;text-align:center}'+
+    '.hero .bd{display:inline-block;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:20px;padding:5px 16px;font-size:13px;font-weight:700;margin-bottom:16px}'+
+    '.hero h1{margin:0;font-size:34px;line-height:1.25;font-weight:900}'+
+    '.hero p{margin:10px 0 0;font-size:15px;opacity:0.92}'+
+    '.tri{display:flex;gap:10px;padding:20px 18px;background:'+cs+'}'+
+    '.tri div{flex:1;background:#fff;border:1px solid '+cl+';border-radius:14px;padding:14px 8px;text-align:center;font-size:12px;color:#4A5568}'+
+    '.tri b{display:block;font-size:14px;color:#1A2233;margin-bottom:4px}'+
+    '.sec{padding:34px 22px 8px}.sec h2{margin:0 0 6px;font-size:21px;font-weight:900}.sec p{margin:0 0 14px;font-size:13px;color:#7A8494}'+
+    '.tel{border:1.5px solid '+cl+';border-radius:16px;margin:0 22px 14px;overflow:hidden}'+
+    '.telhd{background:'+cs+';padding:12px 16px;font-size:15px;display:flex;align-items:center;gap:8px}'+
+    '.net{font-size:11px;font-weight:700;color:'+c+';background:#fff;border:1px solid '+cl+';border-radius:10px;padding:2px 8px}'+
+    '.pt{width:100%;border-collapse:collapse;font-size:13.5px}'+
+    '.pt th{background:#FAFBFC;color:#7A8494;font-size:12px;padding:8px;border-bottom:1px solid #EEF1F4;font-weight:700}'+
+    '.pt td{padding:9px 10px;text-align:center;border-bottom:1px solid #F3F5F8}.pt .dd{color:#4A5568}'+
+    '.steps{margin:0 22px 8px}'+
+    '.st{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid #F0F2F5;align-items:flex-start}'+
+    '.st .n{width:28px;height:28px;border-radius:50%;background:'+cs+';color:'+c+';font-weight:900;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}'+
+    '.st b{display:block;font-size:14.5px;margin-bottom:2px}.st span{font-size:12.5px;color:#7A8494}'+
+    '.notes{margin:16px 22px 0;background:#FAFBFC;border:1px solid #EEF1F4;border-radius:14px;padding:16px 18px}'+
+    '.notes li{font-size:12.5px;color:#5A6474;margin:6px 0 6px 14px;line-height:1.55}'+
+    '.foot{margin-top:36px;padding:26px;text-align:center;background:#F7F8FA;color:#9AA3B0;font-size:12px}.foot b{color:#5A6474}';
+  var body='<div class="pg">'+
+    '<div class="hero"><div class="bd">'+esc(brand)+'</div><h1>'+esc(ct)+' eSIM</h1><p>여행 데이터 eSIM · QR 즉시 발급</p></div>'+
+    '<div class="tri"><div><b>QR 설치</b>유심 교체 없이<br/>QR 스캔으로 끝</div><div><b>즉시 발급</b>구매 후 문자로<br/>발급 링크 도착</div><div><b>수령 불필요</b>공항 픽업·배송<br/>기다림 없음</div></div>'+
+    '<div class="sec"><h2>상품 안내</h2><p>통신사·용량·기간을 옵션에서 선택하세요</p></div>'+tels+
+    '<div class="sec"><h2>이용 방법</h2><p>구매부터 개통까지 4단계</p></div>'+
+    '<div class="steps">'+
+    '<div class="st"><div class="n">1</div><div><b>옵션 선택 후 구매</b><span>통신사·데이터·기간을 골라 주문해요</span></div></div>'+
+    '<div class="st"><div class="n">2</div><div><b>발급 링크 수신</b><span>주문 확인 후 문자/알림톡으로 발급 링크가 도착해요</span></div></div>'+
+    '<div class="st"><div class="n">3</div><div><b>QR 코드로 설치</b><span>와이파이 연결 상태에서 QR을 스캔해 eSIM을 추가해요</span></div></div>'+
+    '<div class="st"><div class="n">4</div><div><b>현지 도착 후 사용</b><span>데이터 로밍을 켜면 자동으로 연결돼요</span></div></div>'+
+    '</div>'+
+    '<div class="notes"><ul>'+
+    '<li>구매 전 내 기기가 eSIM을 지원하는지 확인해 주세요 (최근 3~4년 내 출시 스마트폰 대부분 지원).</li>'+
+    '<li>설치는 인터넷(와이파이) 연결 상태에서 진행해 주세요.</li>'+
+    '<li>eSIM 특성상 발급(설치) 이후에는 취소·환불이 어렵습니다.</li>'+
+    '</ul></div>'+
+    '<div class="foot"><b>'+esc(brand)+'</b><br/>구매 관련 문의는 스토어 문의하기를 이용해 주세요</div>'+
+    '</div>';
+  return {css:css,body:body};
+}
+var DP={html:'',h:0};
+function dpBuild(cb){
+  var brand=(document.getElementById('dp-brand').value||'').trim();
+  var color=document.getElementById('dp-color').value||'#2563EB';
+  var ct=document.getElementById('dp-ct').value;
+  if(!brand){dpNote('브랜드명을 입력해 주세요');return}
+  if(!ct){dpNote('국가를 선택해 주세요');return}
+  var go=function(items){
+    if(!items.length){dpNote('이 국가의 카탈로그가 비어 있어요');return}
+    var t=dpHtml(brand,color,ct,dpBlocks(items));
+    var doc='<html><head><meta charset="utf-8"><style>'+t.css+'</style></head><body style="margin:0;background:#fff">'+t.body+'</body></html>';
+    var fr=document.getElementById('dp-frame');
+    fr.onload=function(){
+      fr.onload=null;
+      var h=fr.contentDocument.body.scrollHeight+4;
+      fr.style.height=h+'px';DP={css:t.css,body:t.body,h:h};
+      if(cb)cb(t,h,brand,ct);
+    };
+    fr.srcdoc=doc;
+  };
+  if(ct===CATCT&&CAT.length)go(CAT);
+  else{dpNote('카탈로그 불러오는 중…');post('partner_search',{ct:ct}).then(function(j){
+    if(!j.ok){dpNote('카탈로그 조회 실패');return}
+    CAT=j.items||[];CATCT=ct;dpNote('');go(CAT);
+  })}
+}
+function dpPreview(){dpBuild(function(){dpNote('미리보기 완료 — 아래에서 확인 후 PNG 다운로드를 누르세요')})}
+function dpDownload(btn){
+  dpBuild(function(t,h,brand,ct){
+    dpNote('이미지 생성 중…');
+    var SC=2;
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(430*SC)+'" height="'+(h*SC)+'">'+
+      '<foreignObject width="'+(430*SC)+'" height="'+(h*SC)+'">'+
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="transform:scale('+SC+');transform-origin:0 0;width:430px;background:#fff"><style>'+t.css+'</style>'+t.body+'</div>'+
+      '</foreignObject></svg>';
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var slice=1150,n=Math.ceil(h/slice);
+        for(var i=0;i<n;i++){
+          var hh=Math.min(slice,h-i*slice);
+          var cv=document.createElement('canvas');cv.width=430*SC;cv.height=hh*SC;
+          var cx=cv.getContext('2d');cx.fillStyle='#ffffff';cx.fillRect(0,0,cv.width,cv.height);
+          cx.drawImage(img,0,i*slice*SC,430*SC,hh*SC,0,0,430*SC,hh*SC);
+          var a=document.createElement('a');
+          a.download=brand+'_'+ct+'_상세_'+(i+1)+'.png';a.href=cv.toDataURL('image/png');a.click();
+        }
+        dpNote('완료 — PNG '+n+'장이 다운로드됐어요. 마켓 상세페이지 편집기에 순서대로 올리면 됩니다.');
+      }catch(e){dpNote('이 브라우저에서는 저장이 막혀 있어요 — PC 크롬으로 이용해 주세요')}
+    };
+    img.onerror=function(){dpNote('이미지 변환 실패 — 미리보기를 먼저 확인해 주세요')};
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  });
 }
 function applyAligoGate(){
   var cb=document.getElementById('i-kakao'),lb=document.getElementById('i-kakao-label');
