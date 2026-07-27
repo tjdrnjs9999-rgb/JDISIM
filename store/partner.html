@@ -92,15 +92,12 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <div style="background:#F8FAF6;border:1.5px solid #E2EAE2;border-radius:14px;padding:14px 16px;margin-bottom:14px">
         <div style="font-weight:800;font-size:14px;margin-bottom:8px">🔍 상품 검색</div>
         <div class="rowbar" style="margin-bottom:8px">
-          <select id="s-ct" onchange="loadCatalog()" style="min-width:160px"><option value="">국가 선택…</option></select>
-          <select id="s-cr" onchange="renderSearch()" style="min-width:130px"><option value="">통신사 전체</option></select>
-          <select id="s-net" onchange="renderSearch()" style="min-width:110px"><option value="">망 전체</option><option value="로컬">로컬</option><option value="로밍">로밍</option></select>
-          <select id="s-sp" onchange="renderSearch()" style="min-width:120px"><option value="">사용량 전체</option></select>
-          <select id="s-dd" onchange="renderSearch()" style="min-width:100px"><option value="">기간 전체</option></select>
+          <input id="s-q" placeholder="직접 입력 — 예: 일본 10기가 5일 · 베트남 무제한 · 미국 로밍" style="flex:1;min-width:240px" oninput="searchInput()" onkeydown="if(event.key==='Enter')doSearch()">
+          <button class="btn gray" onclick="doSearch()">검색</button>
         </div>
         <div class="tbl-wrap" style="max-height:260px"><table>
           <thead><tr><th>상품</th><th style="text-align:right">기간</th><th style="text-align:right">공급가</th><th></th></tr></thead>
-          <tbody id="s-rows"><tr><td colspan="4" style="text-align:center;color:#8A94A3">국가를 선택하면 상품이 표시됩니다</td></tr></tbody>
+          <tbody id="s-rows"><tr><td colspan="4" style="text-align:center;color:#8A94A3">국가명과 조건을 띄어쓰기로 입력하세요 (예: 일본 10기가 5일)</td></tr></tbody>
         </table></div>
       </div>
       <div class="rowbar">
@@ -172,16 +169,10 @@ a.gd{color:#C2571E;font-weight:800;text-decoration:none}
       <h2>🔌 오픈마켓 주문 자동 수집</h2>
       <div class="hint" style="margin:0 0 12px">내 스토어의 API 키를 등록하면 <b>주문 수집 → 발급링크 생성 → 고객 알림톡(내 채널)</b>까지 5분 주기로 자동 처리됩니다.<br>상품 등록 시 옵션의 <b>판매자 관리코드(sellerManagerCode)에 JD 상품코드</b>를 넣어야 자동 발급 대상이 됩니다 — 그 외 상품은 건드리지 않습니다.</div>
       <div id="mk-state" class="quote" style="display:block;margin-bottom:12px">상태 확인 중…</div>
-      <div style="font-weight:800;font-size:14px;margin-bottom:6px">네이버 스마트스토어 <span class="hint" style="margin:0">(커머스API센터 → 애플리케이션 등록에서 발급)</span></div>
-      <div class="grid2">
-        <input id="mk-naver-client_id" placeholder="Client ID" autocomplete="off">
-        <input id="mk-naver-client_secret" type="password" placeholder="Client Secret" autocomplete="off">
-      </div>
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn" onclick="saveMarket(this)">저장</button>
-        <button class="btn gray" onclick="clearMarket()">연동 해제</button>
-      </div>
-      <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 다른 마켓(쿠팡트래블·11번가 등)은 순차 지원 예정입니다.</div>
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px">입점한 오픈마켓을 선택하세요 <span class="hint" style="margin:0">(선택한 마켓의 키 입력칸만 표시됩니다)</span></div>
+      <div id="mk-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
+      <div id="mk-forms"></div>
+      <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 자동 수집은 현재 <b>네이버</b>부터 가동 중이며, 다른 마켓은 키를 등록해 두시면 지원되는 대로 자동 적용됩니다.</div>
     </div>
 
   </div>
@@ -216,36 +207,77 @@ function tab(t){
   if(t==='orders')loadOrders();
   if(t==='market')marketState();
 }
+var MKTS=[
+  {id:'naver',n:'네이버 스마트스토어',guide:'커머스API센터 → 애플리케이션 등록에서 발급',fields:[{k:'client_id',l:'Client ID'},{k:'client_secret',l:'Client Secret',pw:1}]},
+  {id:'coupang',n:'쿠팡',guide:'쿠팡윙 → 판매자API 키 발급',fields:[{k:'access_key',l:'Access Key'},{k:'secret_key',l:'Secret Key',pw:1},{k:'vendor_id',l:'업체코드(Vendor ID)'}]},
+  {id:'st11',n:'11번가',guide:'셀러오피스 → 오픈API 키 신청',fields:[{k:'api_key',l:'API Key',pw:1}]},
+  {id:'esm',n:'G마켓·옥션 (ESM+)',guide:'ESM PLUS → API 키 발급',fields:[{k:'app_key',l:'App Key'},{k:'secret_key',l:'Secret Key',pw:1}]},
+  {id:'ssg',n:'SSG닷컴',guide:'파트너오피스 → API 인증키',fields:[{k:'auth_key',l:'인증키(Auth Key)',pw:1},{k:'vendor_id',l:'업체 ID'}]},
+  {id:'lotteon',n:'롯데온',guide:'셀러오피스 → API 키',fields:[{k:'api_key',l:'API Key',pw:1}]}
+];
+var MKSEL={},MKST={};
+function mkDef(id){for(var i=0;i<MKTS.length;i++)if(MKTS[i].id===id)return MKTS[i];return null}
 function marketState(){
   post('partner_markets').then(function(j){
     var el=document.getElementById('mk-state');
     if(!j.ok){el.textContent='상태 조회 실패';return}
-    var nv=(j.status&&j.status.naver)||[];
-    el.innerHTML=(nv.length===2)
-      ? '🟢 <b>네이버 연동 완료</b> — 5분 주기로 주문을 수집해 자동 발급합니다. (입력됨: '+nv.join(', ')+')'
-      : (nv.length? '🟡 일부만 입력됨 ('+nv.join(', ')+') — 두 값을 모두 저장해야 수집이 시작됩니다.'
-                  : '⚪ 미연동 — Client ID/Secret을 등록하면 자동 수집이 시작됩니다.');
+    MKST=j.status||{};
+    var done=[];
+    MKTS.forEach(function(m){
+      var st=MKST[m.id]||[];
+      if(st.length)MKSEL[m.id]=true;
+      if(st.length===m.fields.length)done.push(m.n);
+    });
+    el.innerHTML=done.length
+      ? '🟢 <b>연동 완료: '+esc(done.join(', '))+'</b> — 5분 주기로 주문을 수집해 자동 발급합니다.'
+      : '⚪ 아직 연동된 마켓이 없습니다 — 아래에서 입점 마켓을 선택하고 키를 등록하세요.';
+    mkRender();
   });
 }
-function saveMarket(btn){
-  var payload={naver:{}},any=false;
-  ['client_id','client_secret'].forEach(function(f){
-    var v=(document.getElementById('mk-naver-'+f)||{}).value||'';
-    if(v.trim()){payload.naver[f]=v.trim();any=true}
+function mkToggle(id){MKSEL[id]=!MKSEL[id];mkRender()}
+function mkRender(){
+  document.getElementById('mk-chips').innerHTML=MKTS.map(function(m){
+    var st=MKST[m.id]||[],on=!!MKSEL[m.id];
+    var dot=st.length===m.fields.length?' 🟢':(st.length?' 🟡':'');
+    return '<button class="copy" style="padding:8px 14px;font-size:13px;border-radius:20px;'+(on?'background:#2E4B33;color:#fff;border-color:#2E4B33':'')+'" onclick="mkToggle(\''+m.id+'\')">'+esc(m.n)+dot+'</button>';
+  }).join('');
+  document.getElementById('mk-forms').innerHTML=MKTS.filter(function(m){return MKSEL[m.id]}).map(function(m){
+    var st=MKST[m.id]||[];
+    return '<div style="background:#F8FAF6;border:1.5px solid #E2EAE2;border-radius:14px;padding:14px 16px;margin-bottom:10px">'+
+      '<div style="font-weight:800;font-size:14px;margin-bottom:6px">'+esc(m.n)+' <span class="hint" style="margin:0">('+esc(m.guide)+')</span>'+
+      (st.length===m.fields.length?' <span class="badge b-ok">연동됨</span>':(st.length?' <span class="badge">일부 입력됨: '+esc(st.join(', '))+'</span>':''))+'</div>'+
+      '<div class="grid2">'+m.fields.map(function(f){
+        return '<input id="mk-'+m.id+'-'+f.k+'"'+(f.pw?' type="password"':'')+' placeholder="'+esc(f.l)+'" autocomplete="off">';
+      }).join('')+'</div>'+
+      '<div style="margin-top:10px;display:flex;gap:8px">'+
+      '<button class="btn" onclick="saveMarket(\''+m.id+'\',this)">저장</button>'+
+      (st.length?'<button class="btn gray" onclick="clearMarket(\''+m.id+'\')">연동 해제</button>':'')+
+      '</div></div>';
+  }).join('')||'<div class="hint" style="margin:0 0 10px">위에서 입점한 마켓을 선택하면 키 입력칸이 나타납니다.</div>';
+}
+function saveMarket(id,btn){
+  var m=mkDef(id);if(!m)return;
+  var payload={},mk={},any=false;
+  m.fields.forEach(function(f){
+    var v=(document.getElementById('mk-'+id+'-'+f.k)||{}).value||'';
+    if(v.trim()){mk[f.k]=v.trim();any=true}
   });
   if(!any){alert('입력된 값이 없어요');return}
+  payload[id]=mk;
   if(btn){btn.disabled=true;btn.textContent='저장 중…'}
   post('partner_markets',{markets:payload}).then(function(j){
     if(btn){btn.disabled=false;btn.textContent='저장'}
     if(!j.ok){alert('저장 실패: '+(j.error||''));return}
-    ['client_id','client_secret'].forEach(function(f){var el=document.getElementById('mk-naver-'+f);if(el)el.value=''});
-    marketState();
-    alert(((j.status&&j.status.naver)||[]).length===2?'연동 완료 — 5분 내 첫 수집을 시작합니다':'저장됐어요 — 남은 값을 마저 입력해 주세요');
+    var st=(j.status&&j.status[id])||[];
+    MKST=j.status||MKST;mkRender();
+    alert(st.length===m.fields.length?m.n+' 연동 완료!':'저장됐어요 — 남은 값을 마저 입력해 주세요 ('+st.join(', ')+' 입력됨)');
   }).catch(function(){if(btn){btn.disabled=false;btn.textContent='저장'}alert('요청 실패')});
 }
-function clearMarket(){
-  if(!confirm('네이버 연동을 해제할까요? (자동 수집 중단)'))return;
-  post('partner_markets',{markets:{naver:{client_id:'__CLEAR__',client_secret:'__CLEAR__'}}}).then(function(){marketState()});
+function clearMarket(id){
+  var m=mkDef(id);if(!m)return;
+  if(!confirm(m.n+' 연동을 해제할까요? (자동 수집 중단)'))return;
+  var payload={},mk={};m.fields.forEach(function(f){mk[f.k]='__CLEAR__'});payload[id]=mk;
+  post('partner_markets',{markets:payload}).then(function(j){if(j.ok)MKST=j.status||{};mkRender();marketState()});
 }
 function applyAligoGate(){
   var cb=document.getElementById('i-kakao'),lb=document.getElementById('i-kakao-label');
@@ -271,62 +303,68 @@ function show(){
   applyAligoGate();
   loadCountries();
 }
-/* ── 상품 검색 ── */
-var CAT=[];
+/* ── 상품 검색 (직접 입력) ── */
+var CAT=[],CATCT='',COUNTRIES=[],S_TIMER=null;
 function loadCountries(){
-  post('partner_countries').then(function(j){
-    if(!j.ok)return;
-    var sel=document.getElementById('s-ct');
-    (j.countries||[]).forEach(function(c){
-      var o=document.createElement('option');o.value=c.ct;o.textContent=c.ct+' ('+c.n+')';sel.appendChild(o);
-    });
-  });
+  post('partner_countries').then(function(j){if(j.ok)COUNTRIES=j.countries||[]});
 }
-function loadCatalog(){
-  var ct=document.getElementById('s-ct').value;
+function searchInput(){clearTimeout(S_TIMER);S_TIMER=setTimeout(doSearch,350)}
+function setCt(ct){
+  var el=document.getElementById('s-q');
+  var t=el.value.trim().split(/\s+/);t[0]=ct;
+  el.value=t.join(' ');el.focus();doSearch();
+}
+function doSearch(){
+  var q=document.getElementById('s-q').value.trim();
   var tb=document.getElementById('s-rows');
-  CAT=[];
-  if(!ct){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">국가를 선택하면 상품이 표시됩니다</td></tr>';return}
+  if(!q){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">국가명과 조건을 띄어쓰기로 입력하세요 (예: 일본 10기가 5일)</td></tr>';return}
+  var toks=q.split(/\s+/),ct=null,rest=[];
+  toks.forEach(function(t){
+    if(!ct){
+      var hit=null;
+      for(var i=0;i<COUNTRIES.length;i++){var c=COUNTRIES[i].ct;
+        if(c===t){hit=c;break}
+        if(!hit&&(c.indexOf(t)===0||t.indexOf(c)===0))hit=c;
+      }
+      if(hit){ct=hit;return}
+    }
+    rest.push(t);
+  });
+  if(!ct){
+    var sug=COUNTRIES.filter(function(c){return c.ct.indexOf(toks[0])>-1}).slice(0,12);
+    tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">국가명을 포함해 주세요'+
+      (sug.length?'<br>'+sug.map(function(c){return '<button class="copy" style="margin:3px" onclick="setCt(\''+esc(c.ct)+'\')">'+esc(c.ct)+'</button>'}).join(''):' (예: 일본 10기가 5일)')+'</td></tr>';
+    return;
+  }
+  if(ct===CATCT&&CAT.length){renderRows(filterCat(rest));return}
   tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">불러오는 중…</td></tr>';
   post('partner_search',{ct:ct}).then(function(j){
     if(!j.ok){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#C23A3A">조회 실패</td></tr>';return}
-    CAT=j.items||[];
-    var crs={},sps={},dds={};
-    CAT.forEach(function(it){
-      var cr=(it.carrier||'').replace(/\(.*?\)/g,'').trim();if(cr)crs[cr]=1;
-      if(it.spec)sps[it.spec]=1;
-      dds[it.days]=1;
+    CAT=j.items||[];CATCT=ct;
+    renderRows(filterCat(rest));
+  });
+}
+function filterCat(toks){
+  if(!toks.length)return CAT.slice();
+  return CAT.filter(function(it){
+    var hay=((it.name||'')+' '+(it.carrier||'')+' '+(it.spec||'')+' '+it.days+'일 '+(it.unlimited?'무제한 ':'')+(it.code||'')).toUpperCase();
+    return toks.every(function(t){
+      t=t.toUpperCase().replace(/기가$/,'GB').replace(/메가$/,'MB');
+      var m=/^(\d+)일$/.exec(t);if(m)return String(it.days)===m[1];
+      if(t==='무제한')return !!it.unlimited;
+      return hay.indexOf(t)>-1;
     });
-    fillSel('s-cr','통신사 전체',Object.keys(crs).sort());
-    fillSel('s-sp','사용량 전체',Object.keys(sps).sort());
-    fillSel('s-dd','기간 전체',Object.keys(dds).map(Number).sort(function(a,b){return a-b}).map(function(d){return d+'일'}));
-    renderSearch();
   });
 }
-function fillSel(id,first,vals){
-  var sel=document.getElementById(id);var cur=sel.value;
-  sel.innerHTML='<option value="">'+first+'</option>';
-  vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
-  sel.value=cur||'';
-}
-function renderSearch(){
-  var cr=document.getElementById('s-cr').value,net=document.getElementById('s-net').value;
-  var sp=document.getElementById('s-sp').value,dd=document.getElementById('s-dd').value;
+function renderRows(rows){
   var tb=document.getElementById('s-rows');
-  var rows=CAT.filter(function(it){
-    if(cr&&(it.carrier||'').indexOf(cr)===-1)return false;
-    if(net&&(it.carrier||'').indexOf(net)===-1)return false;
-    if(sp&&it.spec!==sp)return false;
-    if(dd&&(it.days+'일')!==dd)return false;
-    return true;
-  });
-  if(!rows.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">조건에 맞는 상품이 없습니다</td></tr>';return}
+  if(!rows.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">조건에 맞는 상품이 없습니다 — 예: 일본 10기가 5일</td></tr>';return}
   tb.innerHTML=rows.slice(0,120).map(function(it){
     return '<tr><td>'+esc(it.name)+(it.unlimited?' <span class="badge b-ok">무제한</span>':'')+'</td>'+
       '<td style="text-align:right">'+it.days+'일</td>'+
       '<td style="text-align:right;font-weight:800;color:#C2571E">'+fmt(it.price)+'원</td>'+
       '<td><button class="copy" onclick="pickItem(\''+esc(it.code)+'\','+it.price+',\''+esc(it.name).replace(/'/g,'')+'\')">선택</button></td></tr>';
-  }).join('')+(rows.length>120?'<tr><td colspan="4" style="text-align:center;color:#8A94A3">외 '+(rows.length-120)+'개 — 필터를 좁혀보세요</td></tr>':'');
+  }).join('')+(rows.length>120?'<tr><td colspan="4" style="text-align:center;color:#8A94A3">외 '+(rows.length-120)+'개 — 검색어를 더 구체적으로 (예: 일본 10기가 5일)</td></tr>':'');
 }
 function pickItem(code,price,name){
   document.getElementById('q-code').value=code;
