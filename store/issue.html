@@ -1513,8 +1513,8 @@ function giftOpenTok(tok){
       '<input id="gf-name" placeholder="받는 분 이름" style="width:100%;margin-top:9px;padding:11px;border:1px solid #E5DDD2;border-radius:10px;font-size:.9rem;">' +
       '<input id="gf-phone" placeholder="받는 분 휴대폰 (숫자만)" inputmode="numeric" style="width:100%;margin-top:7px;padding:11px;border:1px solid #E5DDD2;border-radius:10px;font-size:.9rem;">' +
       '<input id="gf-email" placeholder="받는 분 이메일 (선택)" style="width:100%;margin-top:7px;padding:11px;border:1px solid #E5DDD2;border-radius:10px;font-size:.9rem;">' +
-      '<button class="btn btn-primary" style="width:100%;margin-top:11px;min-height:46px;font-weight:900;" onclick="giftSendTok(\'' + esc(tok) + '\',this)">선물 링크 보내기</button>' +
-      '<div class="muted" style="margin-top:7px;font-size:.72rem;line-height:1.6;">받는 분이 직접 발급 버튼을 눌러 설치해요. 보내고 나면 이 링크의 발급 권한도 받는 분 기준으로 바뀝니다.</div>' +
+      '<button class="btn btn-primary" style="width:100%;margin-top:11px;min-height:46px;font-weight:900;" onclick="giftSendTok(\'' + esc(tok) + '\',this)">🎁 바로 발급해서 선물하기</button>' +
+      '<div class="muted" style="margin-top:7px;font-size:.72rem;line-height:1.6;">지금 바로 eSIM이 발급되고, 받는 분께 설치 QR이 담긴 여행 티켓이 문자로 전달돼요.<br><b>발급 후에는 취소·환불이 어려워요.</b></div>' +
     '</div>';
 }
 function giftSendTok(tok, btn){
@@ -1526,11 +1526,34 @@ function giftSendTok(tok, btn){
   if (btn) { btn.disabled = true; btn.textContent = '보내는 중…'; }
   careGet('action=issue_gift&it=' + encodeURIComponent(tok) + '&name=' + encodeURIComponent(nm.trim()) + '&phone=' + encodeURIComponent(ph) + '&email=' + encodeURIComponent(em.trim()))
     .then(function(d){
-      if (!d || d.error) { if (btn){btn.disabled=false;btn.textContent='선물 링크 보내기';} return alert(d && d.error === 'ALREADY_ISSUED' ? '이미 발급된 eSIM은 선물할 수 없어요' : '전송에 실패했어요. 잠시 후 다시 시도해 주세요.'); }
-      var box = document.getElementById('gift-box');
-      if (box) box.innerHTML = '<div style="margin-top:14px;padding:13px;border-radius:12px;background:#EFF7EF;color:#2E5B33;font-weight:800;font-size:.88rem;">🎁 선물 완료! ' + esc(nm) + ' 님께 발급 링크를 보냈어요.</div>';
+      if (!d || d.error) { if (btn){btn.disabled=false;btn.textContent='🎁 바로 발급해서 선물하기';} return alert(d && d.error === 'ALREADY_ISSUED' ? '이미 발급된 eSIM은 선물할 수 없어요' : '요청에 실패했어요. 잠시 후 다시 시도해 주세요.'); }
+      giftIssueRun(tok, nm.trim());
     })
-    .catch(function(){ if (btn){btn.disabled=false;btn.textContent='선물 링크 보내기';} alert('전송에 실패했어요.'); });
+    .catch(function(){ if (btn){btn.disabled=false;btn.textContent='🎁 바로 발급해서 선물하기';} alert('요청에 실패했어요.'); });
+}
+function _giftBoxMsg(html_){
+  var box = document.getElementById('gift-box');
+  if (box) box.innerHTML = '<div style="margin-top:14px;padding:13px;border-radius:12px;background:#FFF8F2;border:1.5px solid #F5DCC2;font-weight:800;font-size:.88rem;">' + html_ + '</div>';
+}
+function giftIssueRun(tok, nm){
+  _giftBoxMsg('⏳ eSIM 발급 중… 완료되면 ' + esc(nm) + ' 님께 여행 티켓이 자동 발송돼요. 이 화면을 잠시 유지해 주세요.');
+  careGet('action=issue&it=' + encodeURIComponent(tok))
+    .then(function(d){
+      if (d && d.status === 'TEST') return _giftBoxMsg('🧪 테스트 모드라 실제 발급은 되지 않았어요.');
+      if (d && d.status === 'CANCELED') return _giftBoxMsg('취소된 주문이라 발급할 수 없어요.');
+      if (d && d.error) return _giftBoxMsg('발급 요청에 실패했어요 — 잠시 후 다시 시도해 주세요.');
+      window._giftPollN = 0; giftPoll(tok, nm);
+    })
+    .catch(function(){ window._giftPollN = 0; giftPoll(tok, nm); });
+}
+function giftPoll(tok, nm){
+  careGet('action=issue_status&it=' + encodeURIComponent(tok))
+    .then(function(d){
+      if (d && d.status === 'ISSUED') return _giftBoxMsg('🎁 <span style="color:#2E5B33;">선물 완료!</span> ' + esc(nm) + ' 님께 설치 QR이 담긴 여행 티켓을 보냈어요.');
+      if (++window._giftPollN > 40) return _giftBoxMsg('발급이 진행 중이에요 — 완료되는 대로 ' + esc(nm) + ' 님께 자동 발송됩니다. 화면을 닫으셔도 돼요.');
+      setTimeout(function(){ giftPoll(tok, nm); }, 3000);
+    })
+    .catch(function(){ if (++window._giftPollN <= 40) setTimeout(function(){ giftPoll(tok, nm); }, 3000); });
 }
 function renderSlotsTok(slots){
   var rows = '';
