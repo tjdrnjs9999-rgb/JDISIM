@@ -1466,6 +1466,13 @@ function loadIssue(){
       if (d.status === 'CANCELED') return renderCanceledTok();
       if (d.status === 'ISSUED' && d.care_token) { location.replace('issue.html?cx=' + encodeURIComponent(d.care_token)); return; }
       if (d.status === 'PENDING') { renderIssuingTok(); pollIssueTok(); return; }
+      if (d.status === 'SPLIT') { renderSlotsTok(d.slots || []); return; }
+      if (d.status === 'READY' && (d.qty || 1) > 1) {
+        careGet('action=issue_slots&it=' + encodeURIComponent(ISSUE))
+          .then(function(s){ if (s && s.slots && s.slots.length > 1) renderSlotsTok(s.slots); else renderIssueReadyTok(d); })
+          .catch(function(){ renderIssueReadyTok(d); });
+        return;
+      }
       renderIssueReadyTok(d); // READY
     })
     .catch(function(){ renderError('연결이 지연되고 있어요', '잠시 후 다시 시도해 주세요.'); });
@@ -1492,8 +1499,71 @@ function renderIssueReadyTok(d){
       (plan ? '<div class="muted" style="margin-top:6px;font-size:.85rem;line-height:1.5;">' + esc(plan) + '</div>' : '') +
       '<div class="muted" style="margin-top:12px;font-size:.82rem;line-height:1.75;">아래 버튼을 누르면 통신사에서 QR을 생성합니다.<br>생성되면 이 화면에서 바로 확인·설치할 수 있어요.</div>' +
       '<button class="btn btn-primary" style="margin:22px auto 0;display:flex;align-items:center;justify-content:center;width:100%;max-width:300px;min-height:54px;padding:0 16px;font-size:1.02rem;font-weight:900;line-height:1;" onclick="doIssueTok()">🎫 발급하기</button>' +
-      '<div class="muted" style="margin-top:11px;font-size:.72rem;">설치는 와이파이 환경에서 진행하세요</div>' +
+      '<button class="btn" style="margin:10px auto 0;display:flex;align-items:center;justify-content:center;width:100%;max-width:300px;min-height:46px;padding:0 16px;font-size:.92rem;font-weight:800;border:1.5px solid #F1690D;color:#F1690D;background:#fff;border-radius:12px;" onclick="giftOpenTok(\'' + esc(ISSUE) + '\')">🎁 선물하기</button>' +
+      '<div id="gift-box"></div>' +
+      '<div class="muted" style="margin-top:11px;font-size:.72rem;">설치는 와이파이 환경에서 진행하세요 · 선물하면 받는 분께 발급 링크가 문자로 가요</div>' +
     '</div>');
+}
+function giftOpenTok(tok){
+  var box = document.getElementById('gift-box');
+  if (!box) return;
+  box.innerHTML =
+    '<div style="margin-top:16px;padding:14px;border:1.5px solid #F5DCC2;border-radius:14px;background:#FFF8F2;text-align:left;">' +
+      '<div style="font-weight:900;font-size:.92rem;">🎁 받는 분 정보</div>' +
+      '<input id="gf-name" placeholder="받는 분 이름" style="width:100%;margin-top:9px;padding:11px;border:1px solid #E5DDD2;border-radius:10px;font-size:.9rem;">' +
+      '<input id="gf-phone" placeholder="받는 분 휴대폰 (숫자만)" inputmode="numeric" style="width:100%;margin-top:7px;padding:11px;border:1px solid #E5DDD2;border-radius:10px;font-size:.9rem;">' +
+      '<input id="gf-email" placeholder="받는 분 이메일 (선택)" style="width:100%;margin-top:7px;padding:11px;border:1px solid #E5DDD2;border-radius:10px;font-size:.9rem;">' +
+      '<button class="btn btn-primary" style="width:100%;margin-top:11px;min-height:46px;font-weight:900;" onclick="giftSendTok(\'' + esc(tok) + '\',this)">선물 링크 보내기</button>' +
+      '<div class="muted" style="margin-top:7px;font-size:.72rem;line-height:1.6;">받는 분이 직접 발급 버튼을 눌러 설치해요. 보내고 나면 이 링크의 발급 권한도 받는 분 기준으로 바뀝니다.</div>' +
+    '</div>';
+}
+function giftSendTok(tok, btn){
+  var nm = (document.getElementById('gf-name')||{}).value || '';
+  var ph = ((document.getElementById('gf-phone')||{}).value || '').replace(/[^0-9]/g,'');
+  var em = (document.getElementById('gf-email')||{}).value || '';
+  if (!nm.trim()) return alert('받는 분 이름을 입력해 주세요');
+  if (ph.length < 10) return alert('받는 분 휴대폰 번호를 확인해 주세요');
+  if (btn) { btn.disabled = true; btn.textContent = '보내는 중…'; }
+  careGet('action=issue_gift&it=' + encodeURIComponent(tok) + '&name=' + encodeURIComponent(nm.trim()) + '&phone=' + encodeURIComponent(ph) + '&email=' + encodeURIComponent(em.trim()))
+    .then(function(d){
+      if (!d || d.error) { if (btn){btn.disabled=false;btn.textContent='선물 링크 보내기';} return alert(d && d.error === 'ALREADY_ISSUED' ? '이미 발급된 eSIM은 선물할 수 없어요' : '전송에 실패했어요. 잠시 후 다시 시도해 주세요.'); }
+      var box = document.getElementById('gift-box');
+      if (box) box.innerHTML = '<div style="margin-top:14px;padding:13px;border-radius:12px;background:#EFF7EF;color:#2E5B33;font-weight:800;font-size:.88rem;">🎁 선물 완료! ' + esc(nm) + ' 님께 발급 링크를 보냈어요.</div>';
+    })
+    .catch(function(){ if (btn){btn.disabled=false;btn.textContent='선물 링크 보내기';} alert('전송에 실패했어요.'); });
+}
+function renderSlotsTok(slots){
+  var rows = '';
+  for (var i = 0; i < slots.length; i++) {
+    rows += '<div id="slot-' + i + '" style="display:flex;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #F0EAE0;">' +
+      '<div style="flex:1;text-align:left;"><b style="font-size:.95rem;">eSIM ' + (i+1) + '번</b><div class="muted" id="slot-st-' + i + '" style="font-size:.74rem;margin-top:2px;">확인 중…</div></div>' +
+      '<a class="btn btn-primary" style="min-height:40px;display:flex;align-items:center;padding:0 14px;font-size:.85rem;font-weight:900;text-decoration:none;" href="issue.html?issue=' + encodeURIComponent(slots[i]) + '">🎫 발급하기</a>' +
+      '<button class="btn" style="min-height:40px;padding:0 12px;font-size:.85rem;font-weight:800;border:1.5px solid #F1690D;color:#F1690D;background:#fff;border-radius:10px;" onclick="giftOpenSlot(\'' + esc(slots[i]) + '\',' + i + ')">🎁</button>' +
+    '</div>';
+  }
+  h('<div class="card" style="padding:28px 20px;max-width:460px;margin:18px auto;text-align:center;">' +
+      '<img src="images/fox-qr.png" alt="" style="width:88px;" onerror="this.style.display=\'none\'">' +
+      '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">eSIM ' + slots.length + '개 주문</div>' +
+      '<div class="muted" style="margin-top:6px;font-size:.8rem;line-height:1.7;">각 eSIM을 따로 발급하거나 선물할 수 있어요.<br>🎁 버튼으로 받는 분께 발급 링크를 보내드립니다.</div>' +
+      '<div style="margin-top:14px;">' + rows + '</div>' +
+      '<div id="gift-box"></div>' +
+    '</div>');
+  slots.forEach(function(tok, i){
+    careGet('action=issue_status&it=' + encodeURIComponent(tok)).then(function(d){
+      var el = document.getElementById('slot-st-' + i);
+      if (!el || !d) return;
+      if (d.status === 'ISSUED') el.textContent = '발급 완료';
+      else if (d.status === 'PENDING') el.textContent = '발급 진행 중';
+      else if (d.status === 'CANCELED') el.textContent = '취소됨';
+      else el.textContent = d.gifted ? ('선물됨 → ' + (d.buyer || '')) : '발급 대기';
+    }).catch(function(){});
+  });
+}
+function giftOpenSlot(tok, i){
+  giftOpenTok(tok);
+  var box = document.getElementById('gift-box');
+  var row = document.getElementById('slot-' + i);
+  if (box && row && row.parentNode) row.parentNode.insertBefore(box, row.nextSibling);
 }
 function renderIssuingTok(){
   h('<div class="card" style="padding:44px 22px;max-width:440px;margin:18px auto;display:flex;flex-direction:column;align-items:center;text-align:center;">' +
