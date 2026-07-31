@@ -168,17 +168,17 @@
       if (ph.length < 10) { bot('전화번호를 확인해 주세요! (예: 01012345678)'); return; }
       me((nm ? nm + ' · ' : '') + ph.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-****-$3'));
       var w = typing();
-      fetch(CARE + '?action=history&phone=' + encodeURIComponent(ph))
+      fetch(CARE + '?action=history&phone=' + encodeURIComponent(ph) + '&name=' + encodeURIComponent(nm || ''))
         .then(function(r){ if (!r.ok) throw 0; return r.json(); })
         .then(function(d){
           var list = d && (d.esims || []);
           var pick = null;
-          for (var i = 0; i < list.length; i++) { if (list[i] && (list[i].iccid || list[i].ICCID)) { pick = list[i]; break; } }
+          for (var i = 0; i < list.length; i++) { if (list[i] && (list[i].cx || list[i].iccid)) { pick = list[i]; break; } }
           if (!pick) throw 1;
           USERINFO = { nm: nm, ph: ph };
-          var iccid = String(pick.iccid || pick.ICCID);
           var prod = pick.prodName || pick.option || '';
-          var care = 'https://jdisim.co.kr/issue.html?care=' + encodeURIComponent(iccid) + (pick.option ? '&plan=' + encodeURIComponent(pick.option) : '') + (nm ? '&n=' + encodeURIComponent(nm) : '');
+          // 🔐 2026-07-31: ICCID 원문 대신 케어토큰(cx) 링크 — 응답만 가로채도 프로필을 훔칠 수 없음
+          var care = 'https://jdisim.co.kr/issue.html?cx=' + encodeURIComponent(String(pick.cx || '')) + (pick.option ? '&plan=' + encodeURIComponent(pick.option) : '') + (nm ? '&n=' + encodeURIComponent(nm) : '');
           w.innerHTML = '✅ 찾았어요! ' + (nm ? nm + ' 님의 ' : '') + (prod ? '<strong>' + esc0(prod) + '</strong>' : 'eSIM') + '\n\n<a href="' + care + '" target="_blank" rel="noopener">🎫 내 티켓 열기 (QR·설치·사용량) →</a>\n\n이 링크를 <strong>즐겨찾기</strong>해두시면 여행 내내 편해요!';
           homeChips();
         })

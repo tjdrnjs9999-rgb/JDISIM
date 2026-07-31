@@ -16,6 +16,12 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method Not Allowed' });
 
   try {
+    // 🔐 2026-07-31 감사 H-2: 무인증 POST로 위조 주문이 어드민 원장에 적재되던 경로 차단.
+    //   INGEST 키가 설정된 환경에서는 키 일치 필수(미설정 환경은 종전대로 통과 — 로컬/개발 호환).
+    if (INGEST) {
+      const k = (req.body && req.body.key) || (req.headers && req.headers['x-jdi-key']) || '';
+      if (k !== INGEST) return res.status(403).json({ success: false, error: 'unauthorized' });
+    }
     const { merchant_uid, status } = req.body || {};
     if (status !== 'paid') return res.status(200).json({ success: false, message: '결제 미완료 건 — 수집 제외' });
     const orderData = req.body.order_details;

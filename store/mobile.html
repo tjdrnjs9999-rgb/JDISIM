@@ -3258,18 +3258,19 @@
       if (ph.length < 10) { box.style.display='block'; box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px 12px;">전화번호를 확인해 주세요 (예: 01012345678)</div>'; return; }
       box.style.display='block';
       box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">🦊 ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾고 있어요…</div>';
-      fetch(window.CARE_API + '?action=history&phone=' + encodeURIComponent(ph))
+      // 🔐 2026-07-31: 조회에 이름 동반(본인확인) · 응답은 케어토큰(cx)만 — ICCID/LPA 원문 미수신
+      fetch(window.CARE_API + '?action=history&phone=' + encodeURIComponent(ph) + '&name=' + encodeURIComponent(nm || ''))
         .then(function(r){ if(!r.ok) throw 0; return r.json(); })
         .then(function(d){
           var list = d && (d.esims || d.list || d.orders || d.history || (Array.isArray(d) ? d : []));
           if (!list || !list.length) throw 1;
           var pick = null;
-          for (var i = list.length - 1; i >= 0; i--) { var it = list[i]; if (it && (it.iccid || it.ICCID)) { pick = it; break; } }
+          for (var i = list.length - 1; i >= 0; i--) { var it = list[i]; if (it && (it.cx || it.iccid)) { pick = it; break; } }
           if (!pick) throw 1;
-          var iccid = String(pick.iccid || pick.ICCID);
-          var inp = document.getElementById('usageIccid'); if (inp) inp.value = iccid;
+          var cx = String(pick.cx || '');
+          var inp = document.getElementById('usageIccid'); if (inp) inp.value = pick.iccid_masked || '';
           box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">✅ ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾았어요 — 사용량 불러오는 중…</div>';
-          return fetch(window.CARE_API + '?action=usage&iccid=' + encodeURIComponent(iccid))
+          return fetch(window.CARE_API + '?action=usage&t=' + encodeURIComponent(cx))
             .then(function(r){ if(!r.ok) throw 0; return r.json(); })
             .then(function(u){ renderUsageFlexible(u, pick, nm); });
         })
