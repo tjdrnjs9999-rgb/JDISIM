@@ -193,7 +193,7 @@
 var API = 'https://jdisim-proxy.vercel.app/api/esim';
 var S = null;                    // { sess, name, exp }
 function won(n){ return (Number(n)||0).toLocaleString('ko-KR'); }
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(function(){t.style.display='none';},2600); }
 function $(id){ return document.getElementById(id); }
 
@@ -320,19 +320,26 @@ function renderProds(){
 }
 function selProd(code){ window._sel = code; renderProds(); updateConfirm(); }
 function selItem(){ return (window._prods||[]).filter(function(p){ return p.code===window._sel; })[0] || null; }
+// 잔액 캐시(60초) + 입력 디바운스 — 키 입력마다 API를 때리지 않는다 (2026-08-01 검수 후속)
+function getBalance(force){
+  if (!force && window._balAt && Date.now() - window._balAt < 60e3) return Promise.resolve(window._bal);
+  return api('partner_me').then(function(j){ window._bal = j.balance||0; window._balAt = Date.now(); return window._bal; });
+}
 function updateConfirm(){
-  var it = selItem();
-  var nm = $('isName').value.trim();
-  var ph = $('isPhone').value.replace(/[^0-9]/g,'');
-  if (!it) { $('isConfirm').innerHTML = '상품과 수령인을 입력하면 차감 내역이 표시됩니다.'; $('isGo').disabled = true; return; }
-  var ok = nm && ph.length >= 10;
-  api('partner_me').then(function(j){
-    var bal = j.balance||0;
-    $('isConfirm').innerHTML = '발급 시 잔액 <b>' + won(bal) + '원 → ' + won(bal - it.price) + '원</b> (−' + won(it.price) + '원)<br>' +
-      '<span class="muted">' + esc(it.name) + (nm ? ' · ' + esc(nm) + (ph? ' (' + ph.slice(-4) + ')':'') : ' · 수령인 미입력') + '</span>' +
-      (bal < it.price ? '<br><span style="color:#DC2626">잔액이 부족합니다 — 정산 탭에서 충전 요청 후 발급해 주세요</span>' : '');
-    $('isGo').disabled = !(ok && bal >= it.price);
-  });
+  clearTimeout(window._ucT);
+  window._ucT = setTimeout(function(){
+    var it = selItem();
+    var nm = $('isName').value.trim();
+    var ph = $('isPhone').value.replace(/[^0-9]/g,'');
+    if (!it) { $('isConfirm').innerHTML = '상품과 수령인을 입력하면 차감 내역이 표시됩니다.'; $('isGo').disabled = true; return; }
+    var ok = nm && ph.length >= 10;
+    getBalance().then(function(bal){
+      $('isConfirm').innerHTML = '발급 시 잔액 <b>' + won(bal) + '원 → ' + won(bal - it.price) + '원</b> (−' + won(it.price) + '원)<br>' +
+        '<span class="muted">' + esc(it.name) + (nm ? ' · ' + esc(nm) + (ph? ' (' + ph.slice(-4) + ')':'') : ' · 수령인 미입력') + '</span>' +
+        (bal < it.price ? '<br><span style="color:#DC2626">잔액이 부족합니다 — 정산 탭에서 충전 요청 후 발급해 주세요</span>' : '');
+      $('isGo').disabled = !(ok && bal >= it.price);
+    });
+  }, 300);
 }
 function doIssue(){
   var it = selItem(); if (!it) return;
@@ -347,8 +354,10 @@ function doIssue(){
       $('isOut').innerHTML = '<div class="note">✅ 발급 링크가 생성됐습니다<br><b>' + esc(j.issue_url) + '</b><br>알림톡: ' + (j.notify!=='none' ? '자동 발송됨' : '미연동 — 링크를 직접 전달해 주세요') + '</div>' +
         '<button class="btn btn-g btn-sm" style="margin-top:6px" onclick="copyLink(\'' + esc(tok) + '\')">링크 복사</button>';
       toast('발급 링크 생성 완료');
+      window._balAt = 0;   // 잔액 캐시 무효화
       updateConfirm();
-    });
+    })
+    .catch(function(){ $('isOut').innerHTML = '<div class="banner">네트워크 오류 — 발급 여부는 내역 탭에서 확인 후 재시도하세요</div>'; $('isGo').disabled = false; });
 }
 
 // ── ③ 내역 ──
@@ -522,10 +531,12 @@ function saveMkts(){
   });
 }
 function rekey(){
-  if (!confirm('API 키를 재발급할까요?\n기존 키는 즉시 사용할 수 없게 됩니다 (자동수집·자체연동에 새 키 재등록 필요).')) return;
-  api('partner_rekey').then(function(j){
-    if (!j.ok) { toast('재발급 실패'); return; }
-    $('cfRekey').innerHTML = '<div class="banner">🔑 새 API 키 (지금 1회만 표시 — 안전한 곳에 보관):<br><b style="word-break:break-all">' + esc(j.pkey) + '</b></div>';
+  if (!confirm('API 키를 재발급할까요?\n기존 키·로그인 세션이 즉시 무효화됩니다 (자동수집·자체연동에 새 키 재등록 필요).')) return;
+  var cur = prompt('본인 확인 — 현재 API 키(jdp_…)를 입력하세요:');   // 세션 탈취만으로 재발급 불가 (2026-08-01 검수 후속)
+  if (!cur) return;
+  api('partner_rekey', { pkey: cur.trim() }).then(function(j){
+    if (!j.ok) { toast(j.error === 'pkey_confirm_required' ? '현재 키가 일치하지 않습니다' : '재발급 실패'); return; }
+    $('cfRekey').innerHTML = '<div class="banner">🔑 새 API 키 (지금 1회만 표시 — 안전한 곳에 보관):<br><b style="word-break:break-all">' + esc(j.pkey) + '</b><br>기존 세션이 무효화됐어요 — 새 키로 다시 로그인해 주세요.</div>';
   });
 }
 
