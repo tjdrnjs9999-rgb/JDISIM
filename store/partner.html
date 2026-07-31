@@ -1,715 +1,537 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>JDISIM 파트너 포털</title>
+<!-- 파트너 포털 v2 (2026-08-01, docs/PARTNER_PORTAL_DESIGN.md)
+     · 인증: pkey → partner_login → 12h 세션. pkey는 브라우저에 저장하지 않는다(세션 토큰만 localStorage).
+     · 6화면: 홈/발급/내역/정산·충전/가격표/설정. v1 백업: _보관_감사백업/partner_v1_20260801.html
+     · 원가·도매코드 미노출은 서버(esim.js partner_*)가 보장 — 프런트는 표시만. -->
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:#F6F3EE;color:#1F2530;line-height:1.6;letter-spacing:-.2px}
-.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.logo{font-size:20px;font-weight:800;color:#F97316}
-.logo small{color:#8A94A3;font-weight:600;font-size:12px;margin-left:8px}
-.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 1px 3px rgba(31,37,48,.06);margin-bottom:14px}
-h2{font-size:16px;font-weight:800;margin-bottom:12px}
-input,select,button{font:inherit}
-input,select{border:1.5px solid #E2E6EE;border-radius:12px;padding:11px 13px}
-.btn{background:#F97316;color:#fff;border:0;border-radius:12px;padding:11px 20px;font-weight:800;cursor:pointer}
-.btn.gray{background:#EEF1F5;color:#4A5260}
-.btn:disabled{opacity:.5;cursor:default}
-.hint{font-size:12.5px;color:#8A94A3;margin-top:8px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{background:#FFF7EF;border:1px solid #FFE4C8;border-radius:14px;padding:14px;text-align:center}
-.stat b{display:block;font-size:20px;color:#C2571E;margin-top:2px;font-variant-numeric:tabular-nums}
-.stat span{font-size:12px;color:#8A94A3;font-weight:700}
-.tabs{display:flex;gap:6px;margin:16px 0 12px;flex-wrap:wrap}
-.tab{padding:10px 18px;border-radius:12px;background:#fff;border:1.5px solid #E2E6EE;font-weight:800;font-size:14px;cursor:pointer;color:#6B7482}
-.tab.on{background:#1F2530;color:#fff;border-color:#1F2530}
-table{width:100%;border-collapse:collapse;font-size:13.5px}
-th{background:#1F3864;color:#fff;padding:8px 10px;text-align:left;font-size:12px;position:sticky;top:0}
-td{border-bottom:1px solid #F0F2F6;padding:8px 10px;font-variant-numeric:tabular-nums;vertical-align:top}
-tr.minus td.amt{color:#C23A3A}
-tr.plus td.amt{color:#1E7A3C;font-weight:700}
-.tbl-wrap{max-height:520px;overflow:auto;border-radius:12px;border:1px solid #EEF1F5}
-.rowbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-#err{color:#C23A3A;font-weight:700;margin-top:10px;display:none}
-.badge{display:inline-block;padding:3px 9px;border-radius:8px;font-size:11.5px;font-weight:800}
-.b-pend{background:#FFF3D6;color:#9A6B00}.b-ok{background:#E4F0E4;color:#1E7A3C}
-.b-cxl{background:#F1F2F5;color:#8A94A3}.b-exp{background:#FCE4E4;color:#C23A3A}
-.quote{background:#F8FAF6;border:1.5px dashed #CFE0CF;border-radius:12px;padding:13px 15px;margin-top:10px;display:none;font-size:14px}
-.iss-done{background:#EAF7EE;border:1.5px solid #BDE3C8;border-radius:12px;padding:14px 16px;margin-top:12px;display:none;font-size:14px;word-break:break-all}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.copy{background:#EEF1F5;border:0;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;color:#4A5260}
-.foot{text-align:center;color:#9AA4B2;font-size:12px;margin-top:28px}
-a.gd{color:#C2571E;font-weight:800;text-decoration:none}
-@media(max-width:620px){.stats{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+  :root{--o:#F1690D;--o2:#C2410C;--bg:#F5F7FA;--ink:#101623;--sub:#5D6B85;--mut:#98A3B8;--line:#E4E8EF;--ok:#0E9F6E}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Pretendard,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;letter-spacing:-.2px}
+  .wrap{display:flex;min-height:100vh}
+  aside{width:206px;background:#101623;color:#C6CFE6;padding:18px 12px;flex-shrink:0}
+  aside .logo{font-weight:900;color:#fff;font-size:1.05rem;padding:6px 10px 16px}
+  aside .logo span{color:var(--o)}
+  aside button{display:flex;gap:9px;align-items:center;width:100%;text-align:left;background:none;border:0;color:#8FA3D9;font:inherit;font-weight:700;padding:11px 12px;border-radius:10px;cursor:pointer}
+  aside button.on{background:rgba(241,105,13,.16);color:#fff}
+  aside .foot{margin-top:24px;padding:12px;font-size:.72rem;color:#5B6B94;border-top:1px solid #232E48;line-height:1.7}
+  aside .foot a{color:#8FA3D9;cursor:pointer;text-decoration:underline}
+  main{flex:1;padding:22px 26px;max-width:1080px;width:100%}
+  .scr{display:none}.scr.on{display:block}
+  h1{font-size:1.12rem;font-weight:900;margin-bottom:14px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:14px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}
+  .card .k{font-size:.73rem;font-weight:800;color:var(--mut)}
+  .card .v{font-size:1.42rem;font-weight:900;margin-top:4px;font-variant-numeric:tabular-nums}
+  .card .s{font-size:.73rem;color:var(--sub);margin-top:4px;font-weight:600}
+  .banner{background:#FEF3C7;border:1px solid #FCD34D;color:#92400E;border-radius:12px;padding:11px 14px;font-weight:700;font-size:.82rem;margin-bottom:14px;line-height:1.7;word-break:break-all}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+  .panel h2{font-size:.9rem;font-weight:900;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;font-size:.79rem}
+  th{color:var(--mut);font-weight:800;text-align:left;padding:7px 8px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+  td{padding:8px;border-bottom:1px solid #F0F2F6;font-weight:600;color:#334155}
+  .chip{display:inline-block;border-radius:20px;padding:3px 10px;font-size:.71rem;font-weight:800;white-space:nowrap}
+  .c-ok{background:#DEF7EC;color:#046C4E}.c-wait{background:#FEF3C7;color:#92400E}.c-bad{background:#FDE8E8;color:#9B1C1C}.c-mut{background:#EDF0F5;color:#64748B}
+  .btn{display:inline-block;border:0;border-radius:11px;padding:10px 16px;font:inherit;font-weight:800;cursor:pointer}
+  .btn-p{background:var(--o);color:#fff}.btn-g{background:#fff;border:1.5px solid var(--line);color:var(--sub)}
+  .btn-sm{padding:5px 10px;font-size:.71rem;border-radius:8px}
+  .btn:disabled{opacity:.5;cursor:default}
+  input,select{font:inherit;font-weight:600;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;outline:none;width:100%;background:#fff}
+  .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+  .prod{border:1.5px solid var(--line);border-radius:13px;padding:12px;cursor:pointer;background:#fff}
+  .prod.sel{border-color:var(--o);background:rgba(241,105,13,.05)}
+  .prod b{display:block;font-size:.86rem}.prod .p{color:var(--o2);font-weight:900;margin-top:4px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;max-height:340px;overflow-y:auto}
+  .confirm{background:#FFF7ED;border:1.5px dashed var(--o);border-radius:13px;padding:14px;font-weight:700;line-height:1.7}
+  .muted{color:var(--mut);font-size:.74rem;font-weight:600}
+  .tl{border-left:2.5px solid var(--line);margin-left:8px;padding-left:16px}
+  .tl .it{position:relative;padding:6px 0;font-size:.8rem;font-weight:600;color:#334155}
+  .tl .it:before{content:'';position:absolute;left:-22.5px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--mut)}
+  .tl .it.plus:before{background:var(--ok)}.tl .it.minus:before{background:var(--o)}
+  .note{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:11px;padding:10px 13px;font-size:.75rem;font-weight:700;margin-top:10px;line-height:1.7;word-break:break-all}
+  code{background:#101623;color:#A5F3FC;border-radius:8px;padding:10px 12px;display:block;font-size:.72rem;overflow-x:auto;margin-top:8px;white-space:pre}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#101623;color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-size:.8rem;display:none;z-index:50}
+  #login{max-width:400px;margin:9vh auto;padding:0 16px}
+  .amt-p{color:var(--ok);font-weight:900}.amt-m{color:var(--o2);font-weight:900}
+  @media(max-width:760px){.wrap{flex-direction:column}aside{width:100%;display:flex;overflow-x:auto;padding:8px;gap:2px}aside .logo,aside .foot{display:none}aside button{white-space:nowrap;width:auto;padding:9px 11px}main{padding:16px 12px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="logo">JDISIM <small>PARTNER PORTAL</small></div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <a class="gd" href="/partner-guide" target="_blank">📖 이용 가이드</a>
-      <button class="btn gray" id="logout" style="display:none" onclick="logout()">로그아웃</button>
-    </div>
-  </div>
 
-  <div class="card" id="login-card">
+<!-- 로그인 -->
+<div id="login">
+  <div style="text-align:center;margin:20px 0 24px;font-weight:900;font-size:1.3rem">JD<span style="color:var(--o)">ISIM</span> 파트너</div>
+  <div class="panel">
     <h2>파트너 로그인</h2>
-    <div style="display:flex;gap:8px">
-      <input id="pkey" type="password" placeholder="파트너 API 키를 입력하세요" autocomplete="off" style="flex:1">
-      <button class="btn" onclick="login()">접속</button>
-    </div>
-    <div class="hint">API 키는 가입 시 1회 발급됩니다. 분실 시 카카오톡 <b>제이디아이심</b>으로 문의해 주세요.</div>
-    <div id="err"></div>
+    <input id="lgKey" type="password" placeholder="파트너 API 키 (jdp_…)" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn btn-p" style="width:100%;margin-top:10px" onclick="login()">로그인</button>
+    <div id="lgMsg" class="muted" style="margin-top:8px"></div>
+    <div class="note">로그인하면 12시간 유효한 세션이 발급됩니다. API 키는 이 브라우저에 저장되지 않아요.<br>키 분실 시 본사 카톡 채널로 문의해 주세요.</div>
   </div>
-
-  <div id="dash" style="display:none">
-    <div class="card">
-      <h2 id="pname">-</h2>
-      <div class="stats">
-        <div class="stat"><span>잔액</span><b id="bal">-</b></div>
-        <div class="stat"><span>이번 달 발급</span><b id="mcnt">-</b></div>
-        <div class="stat"><span>이번 달 사용액</span><b id="mamt">-</b></div>
-      </div>
-      <div class="hint">충전은 카카오톡 <b>제이디아이심</b>(010-9969-3248)으로 요청해 주세요. 입금 확인 즉시 잔액에 반영됩니다.</div>
-    </div>
-
-    <div class="tabs">
-      <div class="tab on" data-t="issue" onclick="tab('issue')">🎫 발급하기</div>
-      <div class="tab" data-t="orders" onclick="tab('orders')">📦 주문 내역</div>
-      <div class="tab" data-t="ledger" onclick="tab('ledger')">🧾 정산</div>
-      <div class="tab" data-t="market" onclick="tab('market')">🔌 마켓 연동</div>
-      <div class="tab" data-t="detail" onclick="tab('detail')">🎨 상세페이지</div>
-    </div>
-
-    <!-- 발급하기 -->
-    <div class="card" id="pane-issue">
-      <h2>eSIM 발급</h2>
-      <div style="background:#F8FAF6;border:1.5px solid #E2EAE2;border-radius:14px;padding:14px 16px;margin-bottom:14px">
-        <div style="font-weight:800;font-size:14px;margin-bottom:8px">🔍 상품 검색</div>
-        <div class="rowbar" style="margin-bottom:8px">
-          <input id="s-q" placeholder="직접 입력 — 예: 일본 10기가 5일 · 베트남 무제한 · 미국 로밍" style="flex:1;min-width:240px" oninput="searchInput()" onkeydown="if(event.key==='Enter')doSearch()">
-          <button class="btn gray" onclick="doSearch()">검색</button>
-        </div>
-        <div class="tbl-wrap" style="max-height:260px"><table>
-          <thead><tr><th>상품</th><th style="text-align:right">기간</th><th style="text-align:right">공급가</th><th></th></tr></thead>
-          <tbody id="s-rows"><tr><td colspan="4" style="text-align:center;color:#8A94A3">국가명과 조건을 띄어쓰기로 입력하세요 (예: 일본 10기가 5일)</td></tr></tbody>
-        </table></div>
-      </div>
-      <div class="rowbar">
-        <input id="q-code" placeholder="상품코드 직접 입력 (예: JD-JPSB10G-05)" style="flex:1;min-width:220px;text-transform:uppercase">
-        <button class="btn gray" onclick="quote()">상품 조회</button>
-      </div>
-      <div class="quote" id="quote-box"></div>
-      <div class="grid2" style="margin-top:12px">
-        <input id="i-buyer" placeholder="고객 이름">
-        <input id="i-phone" placeholder="고객 휴대폰 (숫자만)" inputmode="numeric">
-      </div>
-      <input id="i-email" placeholder="고객 이메일 (선택 — 입력 시 발급 안내 메일도 발송)" style="width:100%;margin-top:10px">
-      <label style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px;font-weight:700">
-        <input type="checkbox" id="i-kakao" checked style="width:18px;height:18px"> <span id="i-kakao-label">고객에게 카카오 알림톡 자동 발송</span>
-      </label>
-      <div style="margin-top:12px"><button class="btn" id="issue-btn" onclick="doIssue()" disabled>발급하기</button></div>
-      <div class="iss-done" id="issue-done"></div>
-      <div class="hint">고객이 발급 버튼을 누르는 순간 eSIM이 발급되고 잔액이 차감됩니다 (누르기 전엔 차감 없음·취소 가능).</div>
-
-      <div style="border-top:1.5px dashed #E2E6EE;margin-top:18px;padding-top:16px">
-        <div style="font-weight:800;font-size:14px;margin-bottom:8px">📑 엑셀 일괄 발급</div>
-        <div class="rowbar">
-          <button class="btn gray" onclick="bulkForm()">양식 다운로드</button>
-          <label class="btn gray" style="cursor:pointer">파일 업로드<input type="file" id="bulk-file" accept=".csv" style="display:none" onchange="bulkLoad(this)"></label>
-          <button class="btn" id="bulk-run" style="display:none" onclick="bulkRun(this)">일괄 발급 실행</button>
-        </div>
-        <div class="tbl-wrap" id="bulk-wrap" style="display:none;max-height:300px;margin-top:10px"><table>
-          <thead><tr><th>#</th><th>상품코드</th><th>고객명</th><th>휴대폰</th><th>이메일</th><th>상태</th></tr></thead>
-          <tbody id="bulk-rows"></tbody>
-        </table></div>
-        <div class="hint">양식(CSV)을 받아 상품코드·고객명·휴대폰·이메일(선택)을 채운 뒤 업로드하세요. 실행 시 한 건씩 발급되며 알림톡 설정을 따릅니다.</div>
-      </div>
-    </div>
-
-    <!-- 주문 내역 -->
-    <div class="card" id="pane-orders" style="display:none">
-      <div class="rowbar">
-        <h2 style="margin:0;flex:1">주문 내역 <span class="hint" style="margin:0">최근 100건</span></h2>
-        <input id="o-q" placeholder="검색: 고객명·전화 뒤4자리·상품" oninput="renderOrders()" style="min-width:200px">
-        <select id="o-st" onchange="renderOrders()">
-          <option value="">상태 전체</option><option value="pending">발급대기</option>
-          <option value="issued">발급완료</option><option value="canceled">취소</option><option value="expired">만료</option>
-        </select>
-        <button class="btn gray" onclick="loadOrders()">새로고침</button>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>일시</th><th>상품</th><th>고객</th><th style="text-align:right">공급가</th><th>상태</th><th>발급링크</th></tr></thead>
-        <tbody id="ord-rows"><tr><td colspan="6" style="text-align:center;color:#8A94A3">불러오는 중…</td></tr></tbody>
-      </table></div>
-      <div class="hint">발급대기 = 고객이 아직 링크를 누르지 않음(차감 전, <b>취소 가능</b>) · 발급완료 = eSIM 발급·차감됨(<b>취소 불가</b>) · 링크는 복사해 재전달할 수 있습니다.</div>
-    </div>
-
-    <!-- 정산 -->
-    <div class="card" id="pane-ledger" style="display:none">
-      <div class="rowbar">
-        <h2 style="margin:0;flex:1">발급·충전 내역</h2>
-        <select id="mon" onchange="render()"></select>
-        <button class="btn gray" onclick="csv()">정산서 CSV</button>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>일시</th><th>구분</th><th style="text-align:right">금액</th><th>내용</th><th style="text-align:right">잔액</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table></div>
-      <div class="hint">최근 300건까지 표시됩니다. 이전 내역 정산서가 필요하면 문의해 주세요.</div>
-    </div>
-
-    <!-- 마켓 연동 -->
-    <div class="card" id="pane-market" style="display:none">
-      <h2>🔌 오픈마켓 주문 자동 수집</h2>
-      <div class="hint" style="margin:0 0 12px">내 스토어의 API 키를 등록하면 <b>주문 수집 → 발급링크 생성 → 고객 알림톡(내 채널)</b>까지 5분 주기로 자동 처리됩니다.<br>상품 등록 시 옵션의 <b>판매자 관리코드(sellerManagerCode)에 JD 상품코드</b>를 넣어야 자동 발급 대상이 됩니다 — 그 외 상품은 건드리지 않습니다.</div>
-      <div id="mk-state" class="quote" style="display:block;margin-bottom:12px">상태 확인 중…</div>
-      <div style="font-weight:800;font-size:14px;margin-bottom:6px">입점한 오픈마켓을 선택하세요 <span class="hint" style="margin:0">(선택한 마켓의 키 입력칸만 표시됩니다)</span></div>
-      <div id="mk-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
-      <div id="mk-forms"></div>
-      <div class="hint">키는 서버에만 저장되며 주문 수집 용도로만 사용됩니다. 6개 마켓 모두 수집기가 연결되어 있어, 키를 저장하면 5분 주기로 자동 수집됩니다.</div>
-    </div>
-
-    <!-- 상세페이지 만들기 -->
-    <div class="card" id="pane-detail" style="display:none">
-      <h2>🎨 상세페이지 만들기</h2>
-      <div class="hint" style="margin:0 0 12px">내 브랜드명과 색상으로 상세페이지 이미지를 만들어 바로 다운로드합니다. 상품 데이터(통신사·용량·기간)는 카탈로그에서 자동으로 채워집니다.</div>
-      <div class="grid2">
-        <input id="dp-brand" placeholder="브랜드명 (예: OO텔레콤)" maxlength="20">
-        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#5A6474">포인트 색상</span><input id="dp-color" type="color" value="#2563EB" style="width:56px;height:38px;border:none;background:none;padding:0;cursor:pointer"></div>
-      </div>
-      <div class="rowbar" style="margin-top:10px">
-        <select id="dp-ct" style="min-width:170px"><option value="">국가 선택…</option></select>
-        <button class="btn gray" onclick="dpPreview(this)">미리보기</button>
-        <button class="btn" onclick="dpDownload(this)">PNG 다운로드</button>
-      </div>
-      <div id="dp-note" class="hint" style="margin-top:8px"></div>
-      <div style="margin-top:12px;border:1.5px solid #E2EAE2;border-radius:14px;overflow:auto;max-height:540px;background:#F2F4F7">
-        <iframe id="dp-frame" style="border:0;width:430px;height:80px;display:block;margin:0 auto;background:#fff"></iframe>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="foot">© JDISIM · 파트너 전용 페이지 — 외부 공유 금지</div>
 </div>
+
+<!-- 포털 -->
+<div class="wrap" id="portal" style="display:none">
+<aside>
+  <div class="logo">JD<span>ISIM</span> 파트너</div>
+  <button class="on" data-s="home" onclick="go('home',this)">🏠 홈</button>
+  <button data-s="issue" onclick="go('issue',this)">⚡ 발급</button>
+  <button data-s="orders" onclick="go('orders',this)">📋 내역</button>
+  <button data-s="ledger" onclick="go('ledger',this)">💰 정산·충전</button>
+  <button data-s="price" onclick="go('price',this)">🏷️ 가격표</button>
+  <button data-s="conf" onclick="go('conf',this)">⚙️ 설정</button>
+  <div class="foot"><b id="ftName"></b><br><a onclick="logout()">로그아웃</a></div>
+</aside>
+<main>
+
+<section id="home" class="scr on">
+  <h1>🏠 홈</h1>
+  <div id="hmBanner"></div>
+  <div class="cards" id="hmCards"></div>
+  <div class="panel"><h2>대기 중인 발급 링크 <span class="muted">— 고객이 아직 발급 버튼을 안 눌렀어요</span></h2><div id="hmPending" class="muted">불러오는 중…</div></div>
+  <div class="panel"><h2>최근 실패·환급</h2><div id="hmRefunds" class="muted">불러오는 중…</div>
+    <div class="note">발급이 실패하면 차감액은 <b>자동으로 환급</b>됩니다. 상세는 정산 탭에서 확인하세요.</div></div>
+</section>
+
+<section id="issue" class="scr">
+  <h1>⚡ eSIM 발급</h1>
+  <div class="panel"><h2>1. 상품 선택</h2>
+    <div class="row" style="margin-bottom:10px">
+      <select id="isCt" onchange="loadProds()"><option value="">국가 선택…</option></select>
+      <input id="isQ" placeholder="검색 (용량·일수)" oninput="renderProds()">
+    </div>
+    <div class="grid3" id="isProds"><div class="muted">국가를 먼저 선택하세요</div></div>
+  </div>
+  <div class="panel"><h2>2. 수령인</h2>
+    <div class="row">
+      <input id="isName" placeholder="이름" oninput="updateConfirm()">
+      <input id="isPhone" placeholder="휴대폰 번호 (숫자만)" inputmode="numeric" oninput="updateConfirm()">
+      <input id="isEmail" placeholder="이메일 (선택 — 발급링크 메일 병행)">
+    </div>
+    <div class="muted" style="margin-top:6px">여러 명에게 보내려면 한 명씩 발급해 주세요.</div>
+  </div>
+  <div class="panel"><h2>3. 확인</h2>
+    <div id="isConfirm" class="confirm">상품과 수령인을 입력하면 차감 내역이 표시됩니다.</div>
+    <div style="margin-top:12px"><button id="isGo" class="btn btn-p" onclick="doIssue()" disabled>발급 확정</button></div>
+    <div id="isOut" style="margin-top:10px"></div>
+    <div class="note">발급 확정 시 수령인에게 발급 링크가 전달됩니다(알림톡 연동 시 자동). 잔액 차감은 고객이 발급을 누르는 시점에 확정돼요.<br>고객이 발급 버튼을 누르기 <b>전까지만</b> 취소 가능 — 발주 후 취소·환불 불가.</div>
+  </div>
+</section>
+
+<section id="orders" class="scr">
+  <h1>📋 발급 내역</h1>
+  <div class="panel">
+    <div class="row" style="margin-bottom:10px;align-items:center">
+      <div id="odChips" style="flex:2;min-width:220px"></div>
+      <input id="odQ" placeholder="이름·전화 뒷4자리 검색" oninput="renderOrders()" style="max-width:200px">
+      <button class="btn btn-g" onclick="ordersCsv()">CSV 다운로드</button>
+    </div>
+    <div style="overflow-x:auto"><table id="odTbl"></table></div>
+  </div>
+</section>
+
+<section id="ledger" class="scr">
+  <h1>💰 정산·충전</h1>
+  <div class="cards" id="ldCards"></div>
+  <div class="panel"><h2>충전 요청</h2>
+    <div class="row" style="align-items:center">
+      <input id="chAmt" placeholder="충전 금액 (원, 1만~500만)" inputmode="numeric" style="max-width:220px">
+      <button class="btn btn-p" onclick="chargeReq()">충전 요청</button>
+    </div>
+    <div id="chOut" style="margin-top:8px"></div>
+  </div>
+  <div class="panel"><h2>원장 <button class="btn btn-g btn-sm" style="float:right" onclick="ledgerCsv()">CSV</button></h2>
+    <div class="tl" id="ldTl"><div class="muted">불러오는 중…</div></div>
+  </div>
+</section>
+
+<section id="price" class="scr">
+  <h1>🏷️ 공급 가격표 <span class="muted" id="prMeta"></span></h1>
+  <div class="panel">
+    <div class="row" style="margin-bottom:10px">
+      <select id="prCt" onchange="renderPrice()"><option value="">전체 국가</option></select>
+      <input id="prQ" placeholder="검색" oninput="renderPrice()">
+      <button class="btn btn-p" onclick="priceCsv()">엑셀(CSV) 다운로드</button>
+    </div>
+    <div style="overflow-x:auto"><table id="prTbl"></table></div>
+    <div class="note">이 가격은 <b>파트너님 전용 공급가</b>입니다. 다운로드 파일에 파트너명·기준일이 표기됩니다.</div>
+  </div>
+</section>
+
+<section id="conf" class="scr">
+  <h1>⚙️ 설정·연동</h1>
+  <div class="panel"><h2>💬 알림톡 (내 채널) <span id="cfAligo" class="chip c-mut">확인 중</span></h2>
+    <div class="muted">발급 링크가 파트너님 알리고 채널로 자동 발송됩니다. 연동 등록은 본사에서 처리해 드려요(카톡 문의).</div></div>
+  <div class="panel"><h2>🔌 오픈마켓 주문 자동 수집</h2>
+    <div class="muted" style="margin-bottom:8px">내 스토어 API 키를 등록하면 주문이 자동으로 발급 링크로 이어집니다.</div>
+    <div id="cfMkts" class="muted">불러오는 중…</div></div>
+  <div class="panel"><h2>🔑 API (자체 시스템 연동)</h2>
+    <div class="muted">키는 반드시 <b>헤더(x-jd-pkey)</b>로 전송하세요. URL에 키를 넣지 마세요.</div>
+    <code>curl -X POST "https://jdisim-proxy.vercel.app/api/esim?action=partner_issue" \
+  -H "Content-Type: application/json" -H "x-jd-pkey: 발급받은키" \
+  -d '{"code":"JD-JPSB2G-05","phone":"01012345678","buyer":"김여행"}'
+
+# 목록: action=partner_orders  /  견적: partner_quote {code}
+# 취소: partner_cancel {tok}   /  가격표: partner_pricelist</code>
+    <div style="margin-top:10px"><button class="btn btn-g" onclick="rekey()">키 재발급 (구키 즉시 무효)</button></div>
+    <div id="cfRekey" style="margin-top:8px"></div></div>
+  <div class="panel"><h2>📄 정책</h2>
+    <div class="muted" style="line-height:1.9">· 발주(고객 발급 클릭) 후에는 취소·환불이 불가합니다 — 대기 상태만 취소 가능<br>· 발급 후 고객 케어(설치·사용량 조회·문의)는 본사 케어링크가 담당합니다<br>· 발급 실패 시 차감액은 자동 환급됩니다 (정산 탭에서 확인)</div></div>
+</section>
+
+</main>
+</div>
+<div id="toast"></div>
+
 <script>
-var API='https://jdisim-proxy.vercel.app/api/esim';
-var DATA=null,KEY='',QUOTE=null;
-function fmt(n){return (n==null?'-':Number(n).toLocaleString('ko-KR'))}
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function post(action,body){
-  body=body||{};body.pkey=KEY;
-  return fetch(API+'?action='+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json()});
-}
-function login(){var k=document.getElementById('pkey').value.trim();if(k)fetchMe(k)}
-function logout(){localStorage.removeItem('jd_pkey');location.reload()}
-function fetchMe(k){
-  var err=document.getElementById('err');err.style.display='none';
-  KEY=k;
-  post('partner_me').then(function(j){
-    if(!j.ok){err.textContent=(j.error==='invalid_partner_key')?'유효하지 않은 API 키입니다.':'조회 실패: '+(j.error||'');err.style.display='block';return}
-    localStorage.setItem('jd_pkey',k);DATA=j;show();
-  }).catch(function(){err.textContent='네트워크 오류 — 잠시 후 다시 시도해 주세요.';err.style.display='block'});
-}
-function tab(t){
-  ['issue','orders','ledger','market','detail'].forEach(function(x){
-    document.getElementById('pane-'+x).style.display=(x===t?'':'none');
-    var el=document.querySelector('.tab[data-t="'+x+'"]');
-    if(el)el.className='tab'+(x===t?' on':'');
-  });
-  if(t==='orders')loadOrders();
-  if(t==='market')marketState();
-  if(t==='detail')dpInit();
-}
-var MKTS=[
-  {id:'naver',n:'네이버 스마트스토어',guide:'커머스API센터 → 애플리케이션 등록에서 발급',fields:[{k:'client_id',l:'Client ID'},{k:'client_secret',l:'Client Secret',pw:1}]},
-  {id:'coupang',n:'쿠팡',guide:'쿠팡윙 → 판매자API 키 발급',fields:[{k:'access_key',l:'Access Key'},{k:'secret_key',l:'Secret Key',pw:1},{k:'vendor_id',l:'업체코드(Vendor ID)'}]},
-  {id:'st11',n:'11번가',guide:'셀러오피스 → 오픈API 키 신청',fields:[{k:'api_key',l:'API Key',pw:1}]},
-  {id:'esm',n:'G마켓·옥션 (ESM+)',guide:'ESM PLUS → API 키 발급',req:['master_id','secret_key'],oneof:['gmarket_id','auction_id'],fields:[{k:'master_id',l:'ESM 마스터 ID'},{k:'secret_key',l:'Secret Key',pw:1},{k:'gmarket_id',l:'G마켓 셀러 ID (해당 시)'},{k:'auction_id',l:'옥션 셀러 ID (해당 시)'}]},
-  {id:'ssg',n:'SSG닷컴',guide:'파트너오피스 → API 인증키 신청 (승인 메일의 인증키·API 주소)',fields:[{k:'auth_key',l:'인증키(Auth Key)',pw:1},{k:'host',l:'API 주소(Host)'}]},
-  {id:'lotteon',n:'롯데온',guide:'셀러오피스 → API 키',req:['api_key'],fields:[{k:'api_key',l:'API Key',pw:1},{k:'vendor_id',l:'업체번호 (선택)'}]}
-];
-var MKSEL={},MKST={};
-function mkDef(id){for(var i=0;i<MKTS.length;i++)if(MKTS[i].id===id)return MKTS[i];return null}
-function mkDone(m,st){
-  var req=m.req||m.fields.map(function(f){return f.k});
-  if(!req.every(function(k){return st.indexOf(k)>-1}))return false;
-  if(m.oneof&&!m.oneof.some(function(k){return st.indexOf(k)>-1}))return false;
-  return true;
-}
-function marketState(){
-  post('partner_markets').then(function(j){
-    var el=document.getElementById('mk-state');
-    if(!j.ok){el.textContent='상태 조회 실패';return}
-    MKST=j.status||{};
-    var done=[];
-    MKTS.forEach(function(m){
-      var st=MKST[m.id]||[];
-      if(st.length)MKSEL[m.id]=true;
-      if(mkDone(m,st))done.push(m.n);
-    });
-    el.innerHTML=done.length
-      ? '🟢 <b>연동 완료: '+esc(done.join(', '))+'</b> — 5분 주기로 주문을 수집해 자동 발급합니다.'
-      : '⚪ 아직 연동된 마켓이 없습니다 — 아래에서 입점 마켓을 선택하고 키를 등록하세요.';
-    mkRender();
+var API = 'https://jdisim-proxy.vercel.app/api/esim';
+var S = null;                    // { sess, name, exp }
+function won(n){ return (Number(n)||0).toLocaleString('ko-KR'); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(function(){t.style.display='none';},2600); }
+function $(id){ return document.getElementById(id); }
+
+// ── 세션 (pkey는 저장하지 않는다 — 세션 토큰만) ──
+function saveSess(o){ try{ localStorage.setItem('jdp_sess', JSON.stringify(o)); }catch(e){} S=o; }
+function loadSess(){ try{ var o=JSON.parse(localStorage.getItem('jdp_sess')||'null'); if(o&&o.exp>Date.now()) return o; }catch(e){} return null; }
+function logout(){ try{ localStorage.removeItem('jdp_sess'); }catch(e){} location.reload(); }
+
+// ── API 헬퍼: 세션 헤더, 만료 시 재로그인 ──
+function api(action, body){
+  return fetch(API + '?action=' + action, {
+    method:'POST', headers:{ 'Content-Type':'application/json', 'x-jd-sess': (S&&S.sess)||'' },
+    body: JSON.stringify(body||{})
+  }).then(function(r){ return r.json(); }).then(function(j){
+    if (j && j.error === 'invalid_partner_key' && S) { toast('세션이 만료됐어요 — 다시 로그인해 주세요'); setTimeout(logout, 1200); throw j; }
+    return j;
   });
 }
-function mkToggle(id){MKSEL[id]=!MKSEL[id];mkRender()}
-function mkRender(){
-  document.getElementById('mk-chips').innerHTML=MKTS.map(function(m){
-    var st=MKST[m.id]||[],on=!!MKSEL[m.id];
-    var dot=mkDone(m,st)?' 🟢':(st.length?' 🟡':'');
-    return '<button class="copy" style="padding:8px 14px;font-size:13px;border-radius:20px;'+(on?'background:#2E4B33;color:#fff;border-color:#2E4B33':'')+'" onclick="mkToggle(\''+m.id+'\')">'+esc(m.n)+dot+'</button>';
-  }).join('');
-  document.getElementById('mk-forms').innerHTML=MKTS.filter(function(m){return MKSEL[m.id]}).map(function(m){
-    var st=MKST[m.id]||[];
-    return '<div style="background:#F8FAF6;border:1.5px solid #E2EAE2;border-radius:14px;padding:14px 16px;margin-bottom:10px">'+
-      '<div style="font-weight:800;font-size:14px;margin-bottom:6px">'+esc(m.n)+' <span class="hint" style="margin:0">('+esc(m.guide)+')</span>'+
-      (mkDone(m,st)?' <span class="badge b-ok">연동됨</span>':(st.length?' <span class="badge">일부 입력됨: '+esc(st.join(', '))+'</span>':''))+'</div>'+
-      '<div class="grid2">'+m.fields.map(function(f){
-        return '<input id="mk-'+m.id+'-'+f.k+'"'+(f.pw?' type="password"':'')+' placeholder="'+esc(f.l)+'" autocomplete="off">';
-      }).join('')+'</div>'+
-      '<div style="margin-top:10px;display:flex;gap:8px">'+
-      '<button class="btn" onclick="saveMarket(\''+m.id+'\',this)">저장</button>'+
-      (st.length?'<button class="btn gray" onclick="clearMarket(\''+m.id+'\')">연동 해제</button>':'')+
-      '</div></div>';
-  }).join('')||'<div class="hint" style="margin:0 0 10px">위에서 입점한 마켓을 선택하면 키 입력칸이 나타납니다.</div>';
+
+function login(){
+  var k = $('lgKey').value.trim();
+  if (!k) { $('lgMsg').textContent = 'API 키를 입력해 주세요'; return; }
+  $('lgMsg').textContent = '확인 중…';
+  fetch(API + '?action=partner_login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ pkey:k }) })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j.ok) { $('lgMsg').textContent = '키가 올바르지 않습니다'; return; }
+      saveSess({ sess:j.sess, name:j.name, exp: Date.now() + ((j.ttl_h||12)*3600e3) - 60e3 });
+      $('lgKey').value = '';
+      boot();
+    }).catch(function(){ $('lgMsg').textContent = '네트워크 오류 — 잠시 후 다시'; });
 }
-function saveMarket(id,btn){
-  var m=mkDef(id);if(!m)return;
-  var payload={},mk={},any=false;
-  m.fields.forEach(function(f){
-    var v=(document.getElementById('mk-'+id+'-'+f.k)||{}).value||'';
-    if(v.trim()){mk[f.k]=v.trim();any=true}
-  });
-  if(!any){alert('입력된 값이 없어요');return}
-  payload[id]=mk;
-  if(btn){btn.disabled=true;btn.textContent='저장 중…'}
-  post('partner_markets',{markets:payload}).then(function(j){
-    if(btn){btn.disabled=false;btn.textContent='저장'}
-    if(!j.ok){alert('저장 실패: '+(j.error||''));return}
-    var st=(j.status&&j.status[id])||[];
-    MKST=j.status||MKST;mkRender();
-    alert(mkDone(m,st)?m.n+' 연동 완료! 5분 주기 자동 수집이 시작됩니다':'저장됐어요 — 필수 값을 마저 입력해 주세요 ('+st.join(', ')+' 입력됨)');
-  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='저장'}alert('요청 실패')});
+
+function go(id, btn){
+  document.querySelectorAll('.scr').forEach(function(s){ s.classList.remove('on'); });
+  $(id).classList.add('on');
+  document.querySelectorAll('aside button').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  if (id==='home') loadHome();
+  if (id==='issue' && !window._cts) loadCountries();
+  if (id==='orders') loadOrders();
+  if (id==='ledger') loadLedger();
+  if (id==='price' && !window._pl) loadPrice();
+  if (id==='conf') loadConf();
 }
-function clearMarket(id){
-  var m=mkDef(id);if(!m)return;
-  if(!confirm(m.n+' 연동을 해제할까요? (자동 수집 중단)'))return;
-  var payload={},mk={};m.fields.forEach(function(f){mk[f.k]='__CLEAR__'});payload[id]=mk;
-  post('partner_markets',{markets:payload}).then(function(j){if(j.ok)MKST=j.status||{};mkRender();marketState()});
+
+function boot(){
+  $('login').style.display = 'none';
+  $('portal').style.display = 'flex';
+  $('ftName').textContent = (S && S.name) || '파트너';
+  loadHome();
 }
-/* ── 상세페이지 만들기 (화이트라벨 — 브라우저에서 즉석 PNG 생성) ── */
-function dpNote(t){document.getElementById('dp-note').textContent=t||''}
-function dpInit(){
-  var sel=document.getElementById('dp-ct');
-  if(sel.options.length>1)return;
-  if(!COUNTRIES.length){setTimeout(dpInit,700);return}
-  COUNTRIES.forEach(function(c){var o=document.createElement('option');o.value=c.ct;o.textContent=c.ct;sel.appendChild(o)});
-}
-function dpTint(hex,r){
-  var h=hex.replace('#',''),v=[0,2,4].map(function(i){return parseInt(h.substr(i,2),16)});
-  var o=v.map(function(x){return r>=0?Math.round(x+(255-x)*r):Math.round(x*(1+r))});
-  return '#'+o.map(function(x){return ('0'+x.toString(16)).slice(-2)}).join('');
-}
-function dpDays(arr){
-  var a=arr.slice().sort(function(x,y){return x-y}),out=[],i=0;
-  while(i<a.length){
-    var j=i;while(j+1<a.length&&a[j+1]===a[j]+1)j++;
-    out.push(j-i>=2?a[i]+'~'+a[j]:(j>i?a[i]+'·'+a[j]:''+a[i]));
-    i=j+1;
-  }
-  return out.join(' · ')+'일';
-}
-function dpBlocks(items){
-  var g={},order=[];
-  items.forEach(function(it){
-    var cr=(it.carrier||'통신사');
-    if(!g[cr]){g[cr]={};order.push(cr)}
-    var sp=it.unlimited?'무제한':(it.spec||'데이터');
-    (g[cr][sp]=g[cr][sp]||[]).push(it.days);
-  });
-  return order.map(function(cr){
-    var net=/로밍/.test(cr)?'로밍망':(/로컬/.test(cr)?'로컬망':'');
-    var name=cr.replace(/\(.*?\)/g,'').trim()||'통신사';
-    var sps=Object.keys(g[cr]).sort(function(a,b){
-      if(a==='무제한')return 1;if(b==='무제한')return -1;
-      return (parseFloat(a)||0)-(parseFloat(b)||0);
-    });
-    return {name:name,net:net,rows:sps.map(function(sp){
-      var ds=[];g[cr][sp].forEach(function(d){if(ds.indexOf(d)<0)ds.push(d)});
-      return {sp:sp,days:dpDays(ds)};
-    })};
+
+// ── ① 홈 ──
+function loadHome(){
+  api('partner_stats').then(function(j){
+    if (!j.ok) return;
+    var run = (j.runway_days==null) ? '7일 발주 없음' : ('소진 예상 ' + j.runway_days + '일');
+    $('hmCards').innerHTML =
+      '<div class="card"><div class="k">잔액</div><div class="v">' + won(j.balance) + '원</div><div class="s">' + run + '</div></div>' +
+      '<div class="card"><div class="k">최근 24시간</div><div class="v">' + j.c24 + '건</div><div class="s">' + won(j.a24) + '원</div></div>' +
+      '<div class="card"><div class="k">최근 7일</div><div class="v">' + j.c7 + '건</div><div class="s">' + won(j.a7) + '원</div></div>' +
+      '<div class="card"><div class="k">대기 링크</div><div class="v">' + j.pending.length + '건</div><div class="s">고객 미클릭</div></div>';
+    $('hmBanner').innerHTML = (j.runway_days!=null && j.runway_days <= 7)
+      ? '<div class="banner">⚠️ 이 속도면 잔액이 약 ' + j.runway_days + '일 후 소진됩니다 — <a style="cursor:pointer;text-decoration:underline" onclick="go(\'ledger\',document.querySelector(\'[data-s=ledger]\'))">충전 요청 →</a></div>' : '';
+    $('hmPending').innerHTML = j.pending.length
+      ? '<table><tr><th>요청일</th><th>상품</th><th>수령인</th><th></th></tr>' + j.pending.map(function(p){
+          return '<tr><td>' + esc(String(p.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(p.plan) + '</td><td>' + esc(p.buyer) + ' (' + esc(p.ph4) + ')</td>' +
+            '<td><button class="btn btn-g btn-sm" onclick="copyLink(\'' + esc(p.tok) + '\')">링크 복사</button> ' +
+            '<button class="btn btn-g btn-sm" onclick="resend(\'' + esc(p.tok) + '\')">재발송</button></td></tr>';
+        }).join('') + '</table>'
+      : '<span class="muted">대기 중인 링크가 없습니다 ✅</span>';
+    $('hmRefunds').innerHTML = j.refunds.length
+      ? '<table><tr><th>일시</th><th>내용</th><th>환급</th></tr>' + j.refunds.map(function(r){
+          return '<tr><td>' + esc(String(r.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(r.memo||'발주 실패') + '</td><td><span class="chip c-ok">+' + won(r.amount) + '원 자동환급</span></td></tr>';
+        }).join('') + '</table>'
+      : '<span class="muted">최근 실패 건이 없습니다 ✅</span>';
   });
 }
-function dpHtml(brand,color,ct,blocks){
-  var c=color,cd=dpTint(c,-0.25),cs=dpTint(c,0.9),cl=dpTint(c,0.72);
-  var tels=blocks.map(function(b){
-    var rows=b.rows.map(function(r){return '<tr><td>'+esc(r.sp)+'</td><td class="dd">'+esc(r.days)+'</td></tr>'}).join('');
-    return '<div class="tel"><div class="telhd"><b>'+esc(b.name)+'</b>'+(b.net?'<span class="net">'+b.net+'</span>':'')+'</div>'+
-      '<table class="pt"><thead><tr><th>데이터</th><th>지원 기간</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
-  }).join('');
-  var css=
-    '.pg{margin:0;width:430px;font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif;background:#fff;color:#1A2233;letter-spacing:-0.2px}'+
-    '.hero{background:linear-gradient(160deg,'+c+','+cd+');color:#fff;padding:54px 26px 46px;text-align:center}'+
-    '.hero .bd{display:inline-block;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:20px;padding:5px 16px;font-size:13px;font-weight:700;margin-bottom:16px}'+
-    '.hero h1{margin:0;font-size:34px;line-height:1.25;font-weight:900}'+
-    '.hero p{margin:10px 0 0;font-size:15px;opacity:0.92}'+
-    '.tri{display:flex;gap:10px;padding:20px 18px;background:'+cs+'}'+
-    '.tri div{flex:1;background:#fff;border:1px solid '+cl+';border-radius:14px;padding:14px 8px;text-align:center;font-size:12px;color:#4A5568}'+
-    '.tri b{display:block;font-size:14px;color:#1A2233;margin-bottom:4px}'+
-    '.sec{padding:34px 22px 8px}.sec h2{margin:0 0 6px;font-size:21px;font-weight:900}.sec p{margin:0 0 14px;font-size:13px;color:#7A8494}'+
-    '.tel{border:1.5px solid '+cl+';border-radius:16px;margin:0 22px 14px;overflow:hidden}'+
-    '.telhd{background:'+cs+';padding:12px 16px;font-size:15px;display:flex;align-items:center;gap:8px}'+
-    '.net{font-size:11px;font-weight:700;color:'+c+';background:#fff;border:1px solid '+cl+';border-radius:10px;padding:2px 8px}'+
-    '.pt{width:100%;border-collapse:collapse;font-size:13.5px}'+
-    '.pt th{background:#FAFBFC;color:#7A8494;font-size:12px;padding:8px;border-bottom:1px solid #EEF1F4;font-weight:700}'+
-    '.pt td{padding:9px 10px;text-align:center;border-bottom:1px solid #F3F5F8}.pt .dd{color:#4A5568}'+
-    '.steps{margin:0 22px 8px}'+
-    '.st{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid #F0F2F5;align-items:flex-start}'+
-    '.st .n{width:28px;height:28px;border-radius:50%;background:'+cs+';color:'+c+';font-weight:900;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}'+
-    '.st b{display:block;font-size:14.5px;margin-bottom:2px}.st span{font-size:12.5px;color:#7A8494}'+
-    '.notes{margin:16px 22px 0;background:#FAFBFC;border:1px solid #EEF1F4;border-radius:14px;padding:16px 18px}'+
-    '.notes li{font-size:12.5px;color:#5A6474;margin:6px 0 6px 14px;line-height:1.55}'+
-    '.foot{margin-top:36px;padding:26px;text-align:center;background:#F7F8FA;color:#9AA3B0;font-size:12px}.foot b{color:#5A6474}';
-  var body='<div class="pg">'+
-    '<div class="hero"><div class="bd">'+esc(brand)+'</div><h1>'+esc(ct)+' eSIM</h1><p>여행 데이터 eSIM · QR 즉시 발급</p></div>'+
-    '<div class="tri"><div><b>QR 설치</b>유심 교체 없이<br/>QR 스캔으로 끝</div><div><b>즉시 발급</b>구매 후 문자로<br/>발급 링크 도착</div><div><b>수령 불필요</b>공항 픽업·배송<br/>기다림 없음</div></div>'+
-    '<div class="sec"><h2>상품 안내</h2><p>통신사·용량·기간을 옵션에서 선택하세요</p></div>'+tels+
-    '<div class="sec"><h2>이용 방법</h2><p>구매부터 개통까지 4단계</p></div>'+
-    '<div class="steps">'+
-    '<div class="st"><div class="n">1</div><div><b>옵션 선택 후 구매</b><span>통신사·데이터·기간을 골라 주문해요</span></div></div>'+
-    '<div class="st"><div class="n">2</div><div><b>발급 링크 수신</b><span>주문 확인 후 문자/알림톡으로 발급 링크가 도착해요</span></div></div>'+
-    '<div class="st"><div class="n">3</div><div><b>QR 코드로 설치</b><span>와이파이 연결 상태에서 QR을 스캔해 eSIM을 추가해요</span></div></div>'+
-    '<div class="st"><div class="n">4</div><div><b>현지 도착 후 사용</b><span>데이터 로밍을 켜면 자동으로 연결돼요</span></div></div>'+
-    '</div>'+
-    '<div class="notes"><ul>'+
-    '<li>구매 전 내 기기가 eSIM을 지원하는지 확인해 주세요 (최근 3~4년 내 출시 스마트폰 대부분 지원).</li>'+
-    '<li>설치는 인터넷(와이파이) 연결 상태에서 진행해 주세요.</li>'+
-    '<li>eSIM 특성상 발급(설치) 이후에는 취소·환불이 어렵습니다.</li>'+
-    '</ul></div>'+
-    '<div class="foot"><b>'+esc(brand)+'</b><br/>구매 관련 문의는 스토어 문의하기를 이용해 주세요</div>'+
-    '</div>';
-  return {css:css,body:body};
+function copyLink(tok){
+  var u = 'https://jdisim.co.kr/issue?issue=' + tok;
+  var p = (navigator.clipboard && navigator.clipboard.writeText) ? navigator.clipboard.writeText(u) : Promise.reject();
+  p.then(function(){ toast('링크를 복사했어요'); }, function(){ prompt('링크를 복사하세요', u); });
 }
-var DP={html:'',h:0};
-function dpBuild(cb){
-  var brand=(document.getElementById('dp-brand').value||'').trim();
-  var color=document.getElementById('dp-color').value||'#2563EB';
-  var ct=document.getElementById('dp-ct').value;
-  if(!brand){dpNote('브랜드명을 입력해 주세요');return}
-  if(!ct){dpNote('국가를 선택해 주세요');return}
-  var go=function(items){
-    if(!items.length){dpNote('이 국가의 카탈로그가 비어 있어요');return}
-    var t=dpHtml(brand,color,ct,dpBlocks(items));
-    var doc='<html><head><meta charset="utf-8"><style>'+t.css+'</style></head><body style="margin:0;background:#fff">'+t.body+'</body></html>';
-    var fr=document.getElementById('dp-frame');
-    fr.onload=function(){
-      fr.onload=null;
-      var h=fr.contentDocument.body.scrollHeight+4;
-      fr.style.height=h+'px';DP={css:t.css,body:t.body,h:h};
-      if(cb)cb(t,h,brand,ct);
-    };
-    fr.srcdoc=doc;
-  };
-  if(ct===CATCT&&CAT.length)go(CAT);
-  else{dpNote('카탈로그 불러오는 중…');post('partner_search',{ct:ct}).then(function(j){
-    if(!j.ok){dpNote('카탈로그 조회 실패');return}
-    CAT=j.items||[];CATCT=ct;dpNote('');go(CAT);
-  })}
-}
-function dpPreview(){dpBuild(function(){dpNote('미리보기 완료 — 아래에서 확인 후 PNG 다운로드를 누르세요')})}
-function dpDownload(btn){
-  dpBuild(function(t,h,brand,ct){
-    dpNote('이미지 생성 중…');
-    var SC=2;
-    var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(430*SC)+'" height="'+(h*SC)+'">'+
-      '<foreignObject width="'+(430*SC)+'" height="'+(h*SC)+'">'+
-      '<div xmlns="http://www.w3.org/1999/xhtml" style="transform:scale('+SC+');transform-origin:0 0;width:430px;background:#fff"><style>'+t.css+'</style>'+t.body+'</div>'+
-      '</foreignObject></svg>';
-    var img=new Image();
-    img.onload=function(){
-      try{
-        var slice=1150,n=Math.ceil(h/slice);
-        for(var i=0;i<n;i++){
-          var hh=Math.min(slice,h-i*slice);
-          var cv=document.createElement('canvas');cv.width=430*SC;cv.height=hh*SC;
-          var cx=cv.getContext('2d');cx.fillStyle='#ffffff';cx.fillRect(0,0,cv.width,cv.height);
-          cx.drawImage(img,0,i*slice*SC,430*SC,hh*SC,0,0,430*SC,hh*SC);
-          var a=document.createElement('a');
-          a.download=brand+'_'+ct+'_상세_'+(i+1)+'.png';a.href=cv.toDataURL('image/png');a.click();
-        }
-        dpNote('완료 — PNG '+n+'장이 다운로드됐어요. 마켓 상세페이지 편집기에 순서대로 올리면 됩니다.');
-      }catch(e){dpNote('이 브라우저에서는 저장이 막혀 있어요 — PC 크롬으로 이용해 주세요')}
-    };
-    img.onerror=function(){dpNote('이미지 변환 실패 — 미리보기를 먼저 확인해 주세요')};
-    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+function resend(tok){
+  api('partner_resend', { tok: tok }).then(function(j){
+    if (j.ok) toast('알림톡 재발송을 요청했어요');
+    else if (j.error==='aligo_not_ready') toast('알림톡 채널 미연동 — 링크 복사로 직접 전달해 주세요');
+    else toast('재발송 불가: ' + (j.error||''));
   });
 }
-function applyAligoGate(){
-  var cb=document.getElementById('i-kakao'),lb=document.getElementById('i-kakao-label');
-  if(!cb)return;
-  if(DATA&&DATA.aligo_ready){cb.disabled=false;cb.checked=true;if(lb)lb.innerHTML='고객에게 카카오 알림톡 자동 발송 <b>(내 채널)</b> — 발급하기·발급완료 2종'}
-  else{cb.disabled=true;cb.checked=false;if(lb)lb.innerHTML='알림톡 자동 발송 — <b>본사에서 연동해 드립니다</b>. <a class="gd" href="/partner-guide#s8" target="_blank">가이드 8장</a>대로 준비 후 키를 본사에 전달하세요 (연동 전엔 발급링크 직접 전달)'}
-}
-function show(){
-  document.getElementById('login-card').style.display='none';
-  document.getElementById('dash').style.display='';
-  document.getElementById('logout').style.display='';
-  document.getElementById('pname').textContent=DATA.name+' 님';
-  document.getElementById('bal').textContent=fmt(DATA.balance)+'원';
-  var mons={},now=new Date().toISOString().slice(0,7);
-  (DATA.ledger||[]).forEach(function(l){mons[(l.at||'').slice(0,7)]=1});
-  mons[now]=1;
-  var sel=document.getElementById('mon');sel.innerHTML='';
-  Object.keys(mons).sort().reverse().forEach(function(m){
-    var o=document.createElement('option');o.value=m;o.textContent=m.replace('-','년 ')+'월';sel.appendChild(o);
-  });
-  sel.value=now in mons?now:(sel.options[0]&&sel.options[0].value);
-  render();
-  applyAligoGate();
-  loadCountries();
-}
-/* ── 상품 검색 (직접 입력) ── */
-var CAT=[],CATCT='',COUNTRIES=[],S_TIMER=null;
+
+// ── ② 발급 ──
 function loadCountries(){
-  post('partner_countries').then(function(j){if(j.ok)COUNTRIES=j.countries||[]});
-}
-function searchInput(){clearTimeout(S_TIMER);S_TIMER=setTimeout(doSearch,350)}
-function setCt(ct){
-  var el=document.getElementById('s-q');
-  var t=el.value.trim().split(/\s+/);t[0]=ct;
-  el.value=t.join(' ');el.focus();doSearch();
-}
-function doSearch(){
-  var q=document.getElementById('s-q').value.trim();
-  var tb=document.getElementById('s-rows');
-  if(!q){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">국가명과 조건을 띄어쓰기로 입력하세요 (예: 일본 10기가 5일)</td></tr>';return}
-  var toks=q.split(/\s+/),ct=null,rest=[];
-  toks.forEach(function(t){
-    if(!ct){
-      var hit=null;
-      for(var i=0;i<COUNTRIES.length;i++){var c=COUNTRIES[i].ct;
-        if(c===t){hit=c;break}
-        if(!hit&&(c.indexOf(t)===0||t.indexOf(c)===0))hit=c;
-      }
-      if(hit){ct=hit;return}
-    }
-    rest.push(t);
-  });
-  if(!ct){
-    var sug=COUNTRIES.filter(function(c){return c.ct.indexOf(toks[0])>-1}).slice(0,12);
-    tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">국가명을 포함해 주세요'+
-      (sug.length?'<br>'+sug.map(function(c){return '<button class="copy" style="margin:3px" onclick="setCt(\''+esc(c.ct)+'\')">'+esc(c.ct)+'</button>'}).join(''):' (예: 일본 10기가 5일)')+'</td></tr>';
-    return;
-  }
-  if(ct===CATCT&&CAT.length){renderRows(filterCat(rest));return}
-  tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">불러오는 중…</td></tr>';
-  post('partner_search',{ct:ct}).then(function(j){
-    if(!j.ok){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#C23A3A">조회 실패</td></tr>';return}
-    CAT=j.items||[];CATCT=ct;
-    renderRows(filterCat(rest));
+  api('partner_countries').then(function(j){
+    if (!j.ok) return;
+    window._cts = j.countries || [];
+    $('isCt').innerHTML = '<option value="">국가 선택…</option>' + window._cts.map(function(c){
+      var ct = (typeof c==='string') ? c : (c && c.ct) || '';
+      return '<option>' + esc(ct) + '</option>';
+    }).join('');
   });
 }
-function filterCat(toks){
-  if(!toks.length)return CAT.slice();
-  return CAT.filter(function(it){
-    var hay=((it.name||'')+' '+(it.carrier||'')+' '+(it.spec||'')+' '+it.days+'일 '+(it.unlimited?'무제한 ':'')+(it.code||'')).toUpperCase();
-    return toks.every(function(t){
-      t=t.toUpperCase().replace(/기가$/,'GB').replace(/메가$/,'MB');
-      var m=/^(\d+)일$/.exec(t);if(m)return String(it.days)===m[1];
-      if(t==='무제한')return !!it.unlimited;
-      return hay.indexOf(t)>-1;
-    });
+function loadProds(){
+  var ct = $('isCt').value;
+  window._prods = []; window._sel = null; updateConfirm();
+  if (!ct) { $('isProds').innerHTML = '<div class="muted">국가를 먼저 선택하세요</div>'; return; }
+  $('isProds').innerHTML = '<div class="muted">불러오는 중…</div>';
+  api('partner_search', { ct: ct }).then(function(j){
+    window._prods = (j.items||[]);
+    renderProds();
   });
 }
-function renderRows(rows){
-  var tb=document.getElementById('s-rows');
-  if(!rows.length){tb.innerHTML='<tr><td colspan="4" style="text-align:center;color:#8A94A3">조건에 맞는 상품이 없습니다 — 예: 일본 10기가 5일</td></tr>';return}
-  tb.innerHTML=rows.slice(0,120).map(function(it){
-    return '<tr><td>'+esc(it.name)+(it.unlimited?' <span class="badge b-ok">무제한</span>':'')+'</td>'+
-      '<td style="text-align:right">'+it.days+'일</td>'+
-      '<td style="text-align:right;font-weight:800;color:#C2571E">'+fmt(it.price)+'원</td>'+
-      '<td><button class="copy" onclick="pickItem(\''+esc(it.code)+'\','+it.price+',\''+esc(it.name).replace(/'/g,'')+'\')">선택</button></td></tr>';
-  }).join('')+(rows.length>120?'<tr><td colspan="4" style="text-align:center;color:#8A94A3">외 '+(rows.length-120)+'개 — 검색어를 더 구체적으로 (예: 일본 10기가 5일)</td></tr>':'');
+function renderProds(){
+  var q = ($('isQ').value||'').replace(/\s/g,'').toLowerCase();
+  var list = (window._prods||[]).filter(function(p){
+    return !q || (String(p.name)+String(p.spec)+String(p.days)).replace(/\s/g,'').toLowerCase().indexOf(q) >= 0;
+  });
+  $('isProds').innerHTML = list.length ? list.map(function(p){
+    return '<div class="prod' + (window._sel===p.code?' sel':'') + '" onclick="selProd(\'' + esc(p.code) + '\')">' +
+      '<b>' + esc(p.name) + '</b><span class="muted">' + esc(p.carrier||'') + (p.carrier?' · ':'') + p.days + '일</span>' +
+      '<div class="p">' + won(p.price) + '원</div></div>';
+  }).join('') : '<div class="muted">상품이 없습니다</div>';
 }
-function pickItem(code,price,name){
-  document.getElementById('q-code').value=code;
-  QUOTE={ok:true,code:code,price:price,name:name,balance:(DATA&&DATA.balance)||0};
-  var box=document.getElementById('quote-box');box.style.display='';
-  box.innerHTML='<b>'+esc(name)+'</b><br>공급가 <b style="color:#C2571E">'+fmt(price)+'원</b> · 현재 잔액 '+fmt(QUOTE.balance)+'원'+(QUOTE.balance<price?' <b style="color:#C23A3A">— 잔액 부족(충전 필요)</b>':'');
-  document.getElementById('issue-btn').disabled=(QUOTE.balance<price);
-  window.scrollTo({top:document.getElementById('q-code').offsetTop-80,behavior:'smooth'});
-}
-/* ── 엑셀 일괄 발급 ── */
-var BULK=[];
-function bulkForm(){
-  var lines=['상품코드,고객명,휴대폰,이메일','JD-JPSB10G-05,홍길동,01012345678,guest@example.com'];
-  var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='JDISIM_일괄발급_양식.csv';a.click();
-}
-function bulkLoad(inp){
-  var f=inp.files&&inp.files[0];if(!f)return;
-  var rd=new FileReader();
-  rd.onload=function(){
-    var txt=String(rd.result||'').replace(/^﻿/,'');
-    var rows=txt.split(/\r?\n/).map(function(l){return l.trim()}).filter(Boolean);
-    if(rows.length&&/상품코드/.test(rows[0]))rows.shift();
-    BULK=rows.map(function(l,i){
-      var c=l.split(',').map(function(x){return x.replace(/^"|"$/g,'').trim()});
-      var ph=(c[2]||'').replace(/[^0-9]/g,'');
-      var err='';
-      if(!c[0]||c[0].toUpperCase().indexOf('JD-')!==0)err='상품코드 오류';
-      else if(ph.length<10)err='휴대폰 오류';
-      return {i:i+1,code:(c[0]||'').toUpperCase(),buyer:c[1]||'',phone:ph,email:c[3]||'',status:err?('❌ '+err):'대기',err:!!err};
-    });
-    renderBulk();
-    document.getElementById('bulk-wrap').style.display='';
-    document.getElementById('bulk-run').style.display=BULK.some(function(r){return !r.err})?'':'none';
-  };
-  rd.readAsText(f,'utf-8');
-  inp.value='';
-}
-function renderBulk(){
-  document.getElementById('bulk-rows').innerHTML=BULK.map(function(r){
-    return '<tr><td>'+r.i+'</td><td>'+esc(r.code)+'</td><td>'+esc(r.buyer)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>'+r.status+'</td></tr>';
-  }).join('');
-}
-function bulkRun(btn){
-  var todo=BULK.filter(function(r){return !r.err&&r.status.indexOf('✅')===-1});
-  if(!todo.length)return;
-  if(!confirm(todo.length+'건을 일괄 발급할까요?\n(알림톡 설정에 따라 고객에게 자동 발송됩니다)'))return;
-  btn.disabled=true;
-  var notify=document.getElementById('i-kakao').checked?'kakao':'none';
-  var k=0;
-  function next(){
-    if(k>=todo.length){btn.disabled=false;btn.textContent='일괄 발급 실행';loadOrders(true);fetchMe(KEY);return}
-    var r=todo[k];btn.textContent='발급 중… '+(k+1)+'/'+todo.length;
-    post('partner_issue',{code:r.code,phone:r.phone,buyer:r.buyer,email:r.email||undefined,notify:notify}).then(function(j){
-      r.status=j.ok?'✅ 완료 ('+fmt(j.price)+'원)':('❌ '+(j.error==='INSUFFICIENT_BALANCE'?'잔액부족':j.error==='unknown_code'?'없는코드':(j.error||'실패')));
-      renderBulk();k++;setTimeout(next,350);
-    }).catch(function(){r.status='❌ 네트워크';renderBulk();k++;setTimeout(next,350)});
-  }
-  next();
-}
-/* ── 발급 ── */
-function quote(){
-  var c=document.getElementById('q-code').value.trim().toUpperCase();
-  var box=document.getElementById('quote-box');
-  if(!c){box.style.display='none';return}
-  box.style.display='';box.textContent='조회 중…';QUOTE=null;
-  document.getElementById('issue-btn').disabled=true;
-  post('partner_quote',{code:c}).then(function(j){
-    if(!j.ok){box.innerHTML='<b style="color:#C23A3A">'+(j.error==='unknown_code'?'없는 상품코드입니다':'조회 실패')+'</b> — 코드를 확인해 주세요';return}
-    QUOTE=j;
-    box.innerHTML='<b>'+esc(j.name)+'</b><br>공급가 <b style="color:#C2571E">'+fmt(j.price)+'원</b> · 현재 잔액 '+fmt(j.balance)+'원'+(j.balance<j.price?' <b style="color:#C23A3A">— 잔액 부족(충전 필요)</b>':'');
-    document.getElementById('issue-btn').disabled=(j.balance<j.price);
-  }).catch(function(){box.textContent='네트워크 오류'});
+function selProd(code){ window._sel = code; renderProds(); updateConfirm(); }
+function selItem(){ return (window._prods||[]).filter(function(p){ return p.code===window._sel; })[0] || null; }
+function updateConfirm(){
+  var it = selItem();
+  var nm = $('isName').value.trim();
+  var ph = $('isPhone').value.replace(/[^0-9]/g,'');
+  if (!it) { $('isConfirm').innerHTML = '상품과 수령인을 입력하면 차감 내역이 표시됩니다.'; $('isGo').disabled = true; return; }
+  var ok = nm && ph.length >= 10;
+  api('partner_me').then(function(j){
+    var bal = j.balance||0;
+    $('isConfirm').innerHTML = '발급 시 잔액 <b>' + won(bal) + '원 → ' + won(bal - it.price) + '원</b> (−' + won(it.price) + '원)<br>' +
+      '<span class="muted">' + esc(it.name) + (nm ? ' · ' + esc(nm) + (ph? ' (' + ph.slice(-4) + ')':'') : ' · 수령인 미입력') + '</span>' +
+      (bal < it.price ? '<br><span style="color:#DC2626">잔액이 부족합니다 — 정산 탭에서 충전 요청 후 발급해 주세요</span>' : '');
+    $('isGo').disabled = !(ok && bal >= it.price);
+  });
 }
 function doIssue(){
-  if(!QUOTE)return;
-  var ph=(document.getElementById('i-phone').value||'').replace(/[^0-9]/g,'');
-  var nm=document.getElementById('i-buyer').value.trim();
-  var em=document.getElementById('i-email').value.trim();
-  if(ph.length<10){alert('고객 휴대폰 번호를 확인해 주세요');return}
-  var btn=document.getElementById('issue-btn');btn.disabled=true;btn.textContent='생성 중…';
-  var notify=document.getElementById('i-kakao').checked?'kakao':'none';
-  post('partner_issue',{code:QUOTE.code,phone:ph,buyer:nm,email:em||undefined,notify:notify}).then(function(j){
-    btn.disabled=false;btn.textContent='발급링크 생성';
-    var d=document.getElementById('issue-done');
-    if(!j.ok){
-      d.style.display='';d.innerHTML='<b style="color:#C23A3A">실패:</b> '+esc(j.error==='INSUFFICIENT_BALANCE'?('잔액 부족 (필요 '+fmt(j.need)+'원 / 잔액 '+fmt(j.balance)+'원)'):(j.error||''));
-      return;
-    }
-    d.style.display='';
-    d.innerHTML='✅ <b>발급링크가 생성됐습니다</b> (차감 예정 '+fmt(j.price)+'원 — 고객이 발급 버튼을 누르면 차감)<br>'+
-      '<div style="margin-top:8px"><input id="link-out" readonly value="'+esc(j.issue_url)+'" style="width:70%;font-size:12.5px"> '+
-      '<button class="copy" onclick="cp(document.getElementById(&quot;link-out&quot;).value,this)">복사</button></div>'+
-      ((notify==='kakao')?'<div class="hint">📨 고객에게 카카오 알림톡이 1분 내 자동 발송됩니다.'+(em?' (이메일도 발송)':'')+'</div>':(em?'<div class="hint">고객 이메일로 발급 안내가 발송됐습니다.</div>':'<div class="hint">이 링크를 고객에게 카톡·문자로 직접 전달하세요.</div>'));
-    loadOrders(true);
-  }).catch(function(){btn.disabled=false;btn.textContent='발급링크 생성';alert('요청 실패')});
+  var it = selItem(); if (!it) return;
+  $('isGo').disabled = true;
+  api('partner_issue', { code: it.code, phone: $('isPhone').value.replace(/[^0-9]/g,''), buyer: $('isName').value.trim(), email: $('isEmail').value.trim() })
+    .then(function(j){
+      if (!j.ok) {
+        $('isOut').innerHTML = '<div class="banner">발급 실패: ' + esc(j.error==='INSUFFICIENT_BALANCE' ? '잔액 부족 (필요 ' + won(j.need) + '원)' : (j.error||'')) + '</div>';
+        $('isGo').disabled = false; return;
+      }
+      var tok = String(j.issue_url||'').split('issue=')[1] || '';
+      $('isOut').innerHTML = '<div class="note">✅ 발급 링크가 생성됐습니다<br><b>' + esc(j.issue_url) + '</b><br>알림톡: ' + (j.notify!=='none' ? '자동 발송됨' : '미연동 — 링크를 직접 전달해 주세요') + '</div>' +
+        '<button class="btn btn-g btn-sm" style="margin-top:6px" onclick="copyLink(\'' + esc(tok) + '\')">링크 복사</button>';
+      toast('발급 링크 생성 완료');
+      updateConfirm();
+    });
 }
-function cp(t,btn){
-  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){if(btn){btn.textContent='복사됨✓';setTimeout(function(){btn.textContent='복사'},1500)}})
-  .catch(function(){prompt('복사하세요:',t)});
-}
-/* ── 주문 ── */
-var ST={pending:['발급대기','b-pend'],issued:['발급완료','b-ok'],canceled:['취소','b-cxl'],expired:['만료','b-exp']};
-var ORDERS=[];
-function loadOrders(silent){
-  var tb=document.getElementById('ord-rows');
-  if(!silent)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#8A94A3">불러오는 중…</td></tr>';
-  post('partner_orders').then(function(j){
-    if(!j.ok){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#C23A3A">조회 실패</td></tr>';return}
-    ORDERS=j.orders||[];
+
+// ── ③ 내역 ──
+var ST_LABEL = { pending:['대기','c-wait'], issued:['발급완료','c-ok'], canceled:['취소','c-mut'], expired:['만료','c-bad'] };
+function loadOrders(){
+  $('odTbl').innerHTML = '<tr><td class="muted">불러오는 중…</td></tr>';
+  api('partner_orders').then(function(j){
+    window._orders = j.orders || [];
+    if (window._odF === undefined) window._odF = '';
     renderOrders();
   });
 }
 function renderOrders(){
-  var tb=document.getElementById('ord-rows');
-  var q=(document.getElementById('o-q').value||'').trim().toLowerCase();
-  var st=document.getElementById('o-st').value;
-  var rows=ORDERS.filter(function(o){
-    if(st&&o.status!==st)return false;
-    if(q){
-      var hay=((o.buyer||'')+' '+(o.ph4||'')+' '+(o.plan||'')+' '+(o.code||'')).toLowerCase();
-      if(hay.indexOf(q)===-1)return false;
-    }
+  var os = window._orders || [];
+  var counts = { all: os.length };
+  os.forEach(function(o){ counts[o.status] = (counts[o.status]||0) + 1; });
+  $('odChips').innerHTML = ['all','pending','issued','canceled','expired'].map(function(s){
+    var lb = s==='all' ? '전체' : (ST_LABEL[s]||[s])[0];
+    var on = (window._odF||'') === (s==='all'?'':s);
+    return '<span class="chip ' + (on?'c-ok':'c-mut') + '" style="cursor:pointer;margin-right:5px" onclick="window._odF=\'' + (s==='all'?'':s) + '\';renderOrders()">' + lb + ' ' + (counts[s==='all'?'all':s]||0) + '</span>';
+  }).join('');
+  var q = ($('odQ').value||'').replace(/\s/g,'');
+  var list = os.filter(function(o){
+    if (window._odF && o.status !== window._odF) return false;
+    if (q && (String(o.buyer)+String(o.ph4)).indexOf(q) < 0) return false;
     return true;
   });
-  if(!rows.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#8A94A3">'+(ORDERS.length?'조건에 맞는 주문이 없습니다':'주문이 없습니다 — 발급하기 탭에서 첫 발급을 시작하세요')+'</td></tr>';return}
-  tb.innerHTML=rows.map(function(o){
-      var st=ST[o.status]||[o.status,'b-cxl'];
-      return '<tr><td>'+esc((o.at||'').replace('T',' '))+'</td><td>'+esc(o.plan||o.code)+'</td>'+
-        '<td>'+esc(o.buyer||'-')+'<br><span style="color:#8A94A3;font-size:12px">****'+esc(o.ph4||'')+'</span></td>'+
-        '<td style="text-align:right">'+fmt(o.price)+'</td>'+
-        '<td><span class="badge '+st[1]+'">'+st[0]+'</span></td>'+
-        '<td><button class="copy" onclick="cp(\''+esc(o.issue_url)+'\',this)">복사</button>'+
-        (o.status==='pending'?' <button class="copy" style="color:#C23A3A" onclick="cancelOrder(\''+esc((o.issue_url.split('issue=')[1]||''))+'\',this)">취소</button>':'')+
-        '</td></tr>';
-    }).join('');
+  $('odTbl').innerHTML = '<tr><th>일시</th><th>상품</th><th>수령인</th><th>공급가</th><th>상태</th><th></th></tr>' +
+    (list.length ? list.map(function(o){
+      var st = ST_LABEL[o.status] || [o.status,'c-mut'];
+      var tok = String(o.issue_url||'').split('issue=')[1] || '';
+      var act = '';
+      if (o.status === 'pending') act = '<button class="btn btn-g btn-sm" onclick="copyLink(\'' + esc(tok) + '\')">링크</button> ' +
+        '<button class="btn btn-g btn-sm" onclick="resend(\'' + esc(tok) + '\')">재발송</button> ' +
+        '<button class="btn btn-g btn-sm" onclick="cancelOrder(\'' + esc(tok) + '\')">취소</button>';
+      if (o.status === 'issued') act = '<button class="btn btn-g btn-sm" onclick="copyLink(\'' + esc(tok) + '\')">케어링크</button>';
+      return '<tr><td>' + esc(String(o.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(o.plan) + '</td><td>' + esc(o.buyer) + ' (' + esc(o.ph4) + ')</td>' +
+        '<td>' + won(o.price) + '</td><td><span class="chip ' + st[1] + '">' + st[0] + '</span></td><td>' + act + '</td></tr>';
+    }).join('') : '<tr><td colspan="6" class="muted">내역이 없습니다</td></tr>');
 }
-function cancelOrder(tok,btn){
-  if(!confirm('이 발급 요청을 취소할까요?\n(고객이 아직 발급 버튼을 누르지 않은 건만 취소됩니다)'))return;
-  if(btn){btn.disabled=true}
-  post('partner_cancel',{tok:tok}).then(function(j){
-    if(!j.ok){alert(j.error==='ALREADY_ISSUED'?'이미 발급 완료된 주문은 취소할 수 없습니다.':'취소 실패: '+(j.error||''));if(btn)btn.disabled=false;return}
+function cancelOrder(tok){
+  if (!confirm('이 발급 링크를 취소할까요? (고객이 이미 발급했다면 취소되지 않습니다)')) return;
+  api('partner_cancel', { tok: tok }).then(function(j){
+    toast(j.ok ? '취소됐어요' : (j.error==='ALREADY_ISSUED' ? '이미 발급 완료 — 취소 불가' : '취소 실패'));
     loadOrders();
-  }).catch(function(){alert('요청 실패');if(btn)btn.disabled=false});
-}
-/* ── 정산 ── */
-function rowsFor(m){return (DATA.ledger||[]).filter(function(l){return (l.at||'').slice(0,7)===m})}
-function render(){
-  var m=document.getElementById('mon').value;
-  var rs=rowsFor(m),tb=document.getElementById('rows');tb.innerHTML='';
-  var cnt=0,amt=0;
-  rs.forEach(function(l){
-    var tr=document.createElement('tr');
-    tr.className=(l.amount<0?'minus':'plus');
-    var ty=l.type==='issue'?'발급':(l.type==='charge'?'충전':(l.type||''));
-    if(l.type==='issue'){cnt++;amt+=-l.amount}
-    tr.innerHTML='<td>'+esc((l.at||'').replace('T',' '))+'</td><td>'+esc(ty)+'</td><td class="amt" style="text-align:right">'+fmt(l.amount)+'</td><td>'+esc(l.memo||'')+'</td><td style="text-align:right">'+fmt(l.balance)+'</td>';
-    tb.appendChild(tr);
   });
-  document.getElementById('mcnt').textContent=fmt(cnt)+'건';
-  document.getElementById('mamt').textContent=fmt(amt)+'원';
 }
-function csv(){
-  var m=document.getElementById('mon').value;
-  var rs=rowsFor(m);
-  var lines=['일시,구분,금액,내용,잔액'];
-  rs.forEach(function(l){lines.push('"'+(l.at||'')+'","'+(l.type==='issue'?'발급':l.type==='charge'?'충전':l.type)+'",'+l.amount+',"'+String(l.memo||'').replace(/"/g,'""')+'",'+l.balance)});
-  var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='JDISIM_정산서_'+m+'.csv';a.click();
+function csvDown(name, rows){
+  var csv = '﻿' + rows.map(function(r){ return r.map(function(c){ return '"' + String(c==null?'':c).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+  a.download = name; a.click();
 }
-(function(){var k=localStorage.getItem('jd_pkey');if(k)fetchMe(k)})();
+function ordersCsv(){
+  var rows = [['일시','상품','수령인','전화뒷4','공급가','상태']].concat((window._orders||[]).map(function(o){
+    return [o.at, o.plan, o.buyer, o.ph4, o.price, (ST_LABEL[o.status]||[o.status])[0]];
+  }));
+  csvDown('JDISIM_발급내역_' + new Date().toISOString().slice(0,10) + '.csv', rows);
+}
+
+// ── ④ 정산·충전 ──
+function loadLedger(){
+  api('partner_me').then(function(j){
+    if (!j.ok) return;
+    window._ledger = j.ledger || [];
+    var mon = {};
+    window._ledger.forEach(function(l){
+      var m = String(l.at||'').slice(0,7); if (!m) return;
+      mon[m] = mon[m] || { chg:0, use:0, ref:0, n:0 };
+      if (l.type==='charge'||l.type==='adjust') mon[m].chg += l.amount||0;
+      else if (l.type==='refund') mon[m].ref += l.amount||0;
+      else { mon[m].use += Math.abs(l.amount||0); mon[m].n++; }
+    });
+    var cm = new Date().toISOString().slice(0,7);
+    var M = mon[cm] || { chg:0, use:0, ref:0, n:0 };
+    $('ldCards').innerHTML =
+      '<div class="card"><div class="k">잔액</div><div class="v">' + won(j.balance) + '원</div></div>' +
+      '<div class="card"><div class="k">' + cm.slice(5) + '월 충전</div><div class="v amt-p">+' + won(M.chg) + '</div></div>' +
+      '<div class="card"><div class="k">' + cm.slice(5) + '월 사용</div><div class="v amt-m">−' + won(M.use) + '</div><div class="s">' + M.n + '건</div></div>' +
+      '<div class="card"><div class="k">' + cm.slice(5) + '월 환급</div><div class="v amt-p">+' + won(M.ref) + '</div></div>';
+    $('ldTl').innerHTML = window._ledger.length ? window._ledger.slice(0,80).map(function(l){
+      var plus = (l.amount||0) > 0;
+      var lb = { charge:'충전', adjust:'조정', issue:'발급', refund:'환급' }[l.type] || l.type;
+      return '<div class="it ' + (plus?'plus':'minus') + '"><b>' + (plus?'+':'') + won(l.amount) + '</b> ' + esc(lb) +
+        (l.memo ? ' · ' + esc(l.memo) : '') + ' <span class="muted">' + esc(String(l.at).replace('T',' ').slice(2,16)) + ' · 잔액 ' + won(l.balance) + '</span></div>';
+    }).join('') : '<div class="muted">기록이 없습니다</div>';
+  });
+}
+function ledgerCsv(){
+  var rows = [['일시','구분','금액','메모','잔액']].concat((window._ledger||[]).map(function(l){
+    return [l.at, l.type, l.amount, l.memo||'', l.balance];
+  }));
+  csvDown('JDISIM_정산원장_' + new Date().toISOString().slice(0,10) + '.csv', rows);
+}
+function chargeReq(){
+  var amt = parseInt(($('chAmt').value||'').replace(/[^0-9]/g,''), 10);
+  if (!(amt >= 10000)) { toast('1만원 이상 입력해 주세요'); return; }
+  api('partner_charge_request', { amount: amt }).then(function(j){
+    if (!j.ok) { toast('요청 실패: ' + (j.detail||j.error||'')); return; }
+    $('chOut').innerHTML = '<div class="note">✅ <b>' + won(j.amount) + '원</b> 충전 요청이 접수됐습니다.<br>' + esc(j.bank) + '<br>입금 확인 후 잔액에 반영돼요 (영업시간 기준).</div>';
+    $('chAmt').value = '';
+  });
+}
+
+// ── ⑤ 가격표 ──
+function loadPrice(){
+  $('prTbl').innerHTML = '<tr><td class="muted">전체 가격표 불러오는 중… (수천 개 상품)</td></tr>';
+  api('partner_pricelist').then(function(j){
+    if (!j.ok) return;
+    window._pl = j;
+    $('prMeta').textContent = '· ' + j.count + '개 상품 · ' + j.at + ' 기준';
+    var cts = {};
+    j.rows.forEach(function(r){ cts[r.ct] = 1; });
+    $('prCt').innerHTML = '<option value="">전체 국가</option>' + Object.keys(cts).map(function(c){ return '<option>' + esc(c) + '</option>'; }).join('');
+    renderPrice();
+  });
+}
+function renderPrice(){
+  if (!window._pl) return;
+  var ct = $('prCt').value, q = ($('prQ').value||'').replace(/\s/g,'').toLowerCase();
+  var list = window._pl.rows.filter(function(r){
+    if (ct && r.ct !== ct) return false;
+    if (q && (String(r.name)+String(r.carrier)+String(r.code)).replace(/\s/g,'').toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  var shown = list.slice(0, 500);
+  $('prTbl').innerHTML = '<tr><th>국가</th><th>상품</th><th>통신사</th><th>일수</th><th>코드</th><th>공급가</th></tr>' +
+    shown.map(function(r){
+      return '<tr><td>' + esc(r.ct) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.carrier) + '</td><td>' + r.days + '</td><td class="muted">' + esc(r.code) + '</td><td><b>' + won(r.price) + '</b></td></tr>';
+    }).join('') + (list.length > shown.length ? '<tr><td colspan="6" class="muted">500개까지만 표시 — 검색·필터를 쓰거나 CSV로 받으세요</td></tr>' : '');
+}
+function priceCsv(){
+  if (!window._pl) return;
+  var rows = [['국가','상품','통신사','일수','스펙','코드','공급가 (' + (window._pl.name||'') + ' 전용 · ' + window._pl.at + ' 기준)']]
+    .concat(window._pl.rows.map(function(r){ return [r.ct, r.name, r.carrier, r.days, r.spec, r.code, r.price]; }));
+  csvDown('JDISIM_공급가격표_' + window._pl.at + '.csv', rows);
+}
+
+// ── ⑥ 설정 ──
+var MKT_FIELDS = { naver:['client_id','client_secret'], coupang:['access_key','secret_key','vendor_id'], st11:['api_key'], esm:['master_id','secret_key','gmarket_id','auction_id'], ssg:['auth_key','host'], lotteon:['api_key','vendor_id'] };
+var MKT_LABEL = { naver:'네이버 스마트스토어', coupang:'쿠팡', st11:'11번가', esm:'G마켓·옥션(ESM)', ssg:'SSG', lotteon:'롯데온' };
+function loadConf(){
+  api('partner_me').then(function(j){
+    $('cfAligo').className = 'chip ' + (j.aligo_ready ? 'c-ok' : 'c-mut');
+    $('cfAligo').textContent = j.aligo_ready ? '연동됨' : '미연동';
+  });
+  api('partner_markets').then(function(j){
+    if (!j.ok) return;
+    $('cfMkts').innerHTML = Object.keys(MKT_FIELDS).map(function(mk){
+      var have = (j.status && j.status[mk]) || [];
+      var full = have.length === MKT_FIELDS[mk].length;
+      return '<div style="border:1px solid var(--line);border-radius:11px;padding:11px;margin-bottom:8px">' +
+        '<b>' + MKT_LABEL[mk] + '</b> <span class="chip ' + (full?'c-ok':(have.length?'c-wait':'c-mut')) + '">' + (full?'연결됨':(have.length?'일부 입력':'미연결')) + '</span>' +
+        '<div class="row" style="margin-top:8px">' + MKT_FIELDS[mk].map(function(f){
+          return '<input data-mk="' + mk + '" data-f="' + f + '" placeholder="' + f + (have.indexOf(f)>=0?' (저장됨 — 변경 시만 입력)':'') + '">';
+        }).join('') + '</div></div>';
+    }).join('') + '<button class="btn btn-p" onclick="saveMkts()">마켓 키 저장</button>';
+  });
+}
+function saveMkts(){
+  var out = {};
+  document.querySelectorAll('#cfMkts input').forEach(function(i){
+    var v = i.value.trim(); if (!v) return;
+    var mk = i.getAttribute('data-mk');
+    (out[mk] = out[mk] || {})[i.getAttribute('data-f')] = v;
+  });
+  if (!Object.keys(out).length) { toast('입력된 키가 없어요'); return; }
+  api('partner_markets', { markets: out }).then(function(j){
+    toast(j.ok ? '저장됐어요 — 다음 수집 사이클부터 반영' : '저장 실패');
+    loadConf();
+  });
+}
+function rekey(){
+  if (!confirm('API 키를 재발급할까요?\n기존 키는 즉시 사용할 수 없게 됩니다 (자동수집·자체연동에 새 키 재등록 필요).')) return;
+  api('partner_rekey').then(function(j){
+    if (!j.ok) { toast('재발급 실패'); return; }
+    $('cfRekey').innerHTML = '<div class="banner">🔑 새 API 키 (지금 1회만 표시 — 안전한 곳에 보관):<br><b style="word-break:break-all">' + esc(j.pkey) + '</b></div>';
+  });
+}
+
+// ── 시작 ──
+S = loadSess();
+if (S) boot();
 </script>
 </body>
 </html>
