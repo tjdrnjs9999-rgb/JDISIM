@@ -13,7 +13,9 @@
 <style>
   :root{--o:#F1690D;--o2:#C2410C;--bg:#F5F7FA;--ink:#101623;--sub:#5D6B85;--mut:#98A3B8;--line:#E4E8EF;--ok:#0E9F6E}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:Pretendard,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;letter-spacing:-.2px}
+  /* 줄바꿈 의미 단위(2026-08-01 사장님 지적): 한글은 단어 단위로만 개행. 긴 URL·키는 .wrapany로 개별 처리 */
+  body{font-family:Pretendard,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;letter-spacing:-.2px;word-break:keep-all;overflow-wrap:break-word}
+  .wrapany{word-break:break-all;overflow-wrap:anywhere}
   .wrap{display:flex;min-height:100vh}
   aside{width:206px;background:#101623;color:#C6CFE6;padding:18px 12px;flex-shrink:0}
   aside .logo{font-weight:900;color:#fff;font-size:1.05rem;padding:6px 10px 16px}
@@ -30,7 +32,7 @@
   .card .k{font-size:.73rem;font-weight:800;color:var(--mut)}
   .card .v{font-size:1.42rem;font-weight:900;margin-top:4px;font-variant-numeric:tabular-nums}
   .card .s{font-size:.73rem;color:var(--sub);margin-top:4px;font-weight:600}
-  .banner{background:#FEF3C7;border:1px solid #FCD34D;color:#92400E;border-radius:12px;padding:11px 14px;font-weight:700;font-size:.82rem;margin-bottom:14px;line-height:1.7;word-break:break-all}
+  .banner{background:#FEF3C7;border:1px solid #FCD34D;color:#92400E;border-radius:12px;padding:11px 14px;font-weight:700;font-size:.82rem;margin-bottom:14px;line-height:1.7}
   .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
   .panel h2{font-size:.9rem;font-weight:900;margin-bottom:10px}
   table{width:100%;border-collapse:collapse;font-size:.79rem}
@@ -54,9 +56,9 @@
   .tl .it{position:relative;padding:6px 0;font-size:.8rem;font-weight:600;color:#334155}
   .tl .it:before{content:'';position:absolute;left:-22.5px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--mut)}
   .tl .it.plus:before{background:var(--ok)}.tl .it.minus:before{background:var(--o)}
-  .note{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:11px;padding:10px 13px;font-size:.75rem;font-weight:700;margin-top:10px;line-height:1.7;word-break:break-all}
+  .note{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:11px;padding:10px 13px;font-size:.75rem;font-weight:700;margin-top:10px;line-height:1.7}
   code{background:#101623;color:#A5F3FC;border-radius:8px;padding:10px 12px;display:block;font-size:.72rem;overflow-x:auto;margin-top:8px;white-space:pre}
-  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#101623;color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-size:.8rem;display:none;z-index:50}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#101623;color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-size:.8rem;display:none;z-index:50;max-width:88vw;text-align:center}
   #login{max-width:400px;margin:9vh auto;padding:0 16px}
   .amt-p{color:var(--ok);font-weight:900}.amt-m{color:var(--o2);font-weight:900}
   @media(max-width:760px){.wrap{flex-direction:column}aside{width:100%;display:flex;overflow-x:auto;padding:8px;gap:2px}aside .logo,aside .foot{display:none}aside button{white-space:nowrap;width:auto;padding:9px 11px}main{padding:16px 12px}}
@@ -260,16 +262,16 @@ function loadHome(){
     $('hmBanner').innerHTML = (j.runway_days!=null && j.runway_days <= 7)
       ? '<div class="banner">⚠️ 이 속도면 잔액이 약 ' + j.runway_days + '일 후 소진됩니다 — <a style="cursor:pointer;text-decoration:underline" onclick="go(\'ledger\',document.querySelector(\'[data-s=ledger]\'))">충전 요청 →</a></div>' : '';
     $('hmPending').innerHTML = j.pending.length
-      ? '<table><tr><th>요청일</th><th>상품</th><th>수령인</th><th></th></tr>' + j.pending.map(function(p){
-          return '<tr><td>' + esc(String(p.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(p.plan) + '</td><td>' + esc(p.buyer) + ' (' + esc(p.ph4) + ')</td>' +
-            '<td><button class="btn btn-g btn-sm" onclick="copyLink(\'' + esc(p.tok) + '\')">링크 복사</button> ' +
+      ? '<div style="overflow-x:auto"><table><tr><th>요청일</th><th>상품</th><th>수령인</th><th></th></tr>' + j.pending.map(function(p){
+          return '<tr><td>' + esc(String(p.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(p.plan) + '</td><td style="white-space:nowrap">' + esc(p.buyer) + ' (' + esc(p.ph4) + ')</td>' +
+            '<td style="white-space:nowrap"><button class="btn btn-g btn-sm" onclick="copyLink(\'' + esc(p.tok) + '\')">링크 복사</button> ' +
             '<button class="btn btn-g btn-sm" onclick="resend(\'' + esc(p.tok) + '\')">재발송</button></td></tr>';
-        }).join('') + '</table>'
+        }).join('') + '</table></div>'
       : '<span class="muted">대기 중인 링크가 없습니다 ✅</span>';
     $('hmRefunds').innerHTML = j.refunds.length
-      ? '<table><tr><th>일시</th><th>내용</th><th>환급</th></tr>' + j.refunds.map(function(r){
+      ? '<div style="overflow-x:auto"><table><tr><th>일시</th><th>내용</th><th>환급</th></tr>' + j.refunds.map(function(r){
           return '<tr><td>' + esc(String(r.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(r.memo||'발주 실패') + '</td><td><span class="chip c-ok">+' + won(r.amount) + '원 자동환급</span></td></tr>';
-        }).join('') + '</table>'
+        }).join('') + '</table></div>'
       : '<span class="muted">최근 실패 건이 없습니다 ✅</span>';
   });
 }
@@ -355,7 +357,7 @@ function doIssue(){
         $('isGo').disabled = false; return;
       }
       var tok = String(j.issue_url||'').split('issue=')[1] || '';
-      $('isOut').innerHTML = '<div class="note">✅ 발급 링크가 생성됐습니다<br><b>' + esc(j.issue_url) + '</b><br>알림톡: ' + (j.notify!=='none' ? '자동 발송됨' : '미연동 — 링크를 직접 전달해 주세요') + '</div>' +
+      $('isOut').innerHTML = '<div class="note">✅ 발급 링크가 생성됐습니다<br><b class="wrapany">' + esc(j.issue_url) + '</b><br>알림톡: ' + (j.notify!=='none' ? '자동 발송됨' : '미연동 — 링크를 직접 전달해 주세요') + '</div>' +
         '<button class="btn btn-g btn-sm" style="margin-top:6px" onclick="copyLink(\'' + esc(tok) + '\')">링크 복사</button>';
       toast('발급 링크 생성 완료');
       window._balAt = 0;   // 잔액 캐시 무효화
@@ -540,7 +542,7 @@ function rekey(){
   if (!cur) return;
   api('partner_rekey', { pkey: cur.trim() }).then(function(j){
     if (!j.ok) { toast(j.error === 'pkey_confirm_required' ? '현재 키가 일치하지 않습니다' : '재발급 실패'); return; }
-    $('cfRekey').innerHTML = '<div class="banner">🔑 새 API 키 (지금 1회만 표시 — 안전한 곳에 보관):<br><b style="word-break:break-all">' + esc(j.pkey) + '</b><br>기존 세션이 무효화됐어요 — 새 키로 다시 로그인해 주세요.</div>';
+    $('cfRekey').innerHTML = '<div class="banner">🔑 새 API 키 (지금 1회만 표시 — 안전한 곳에 보관):<br><b class="wrapany">' + esc(j.pkey) + '</b><br>기존 세션이 무효화됐어요 — 새 키로 다시 로그인해 주세요.</div>';
   });
 }
 
