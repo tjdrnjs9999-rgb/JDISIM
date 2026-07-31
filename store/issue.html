@@ -703,10 +703,20 @@ function makeReport(stars){
   x.fillStyle = '#5B6B94'; x.font = '700 30px Pretendard, sans-serif';
   x.fillText('jdisim.co.kr', 540, 1295);
   var url = cv.toDataURL('image/png');
+  // 마켓 리뷰 유도 (2026-08-01 CTO 감사 ④) — 만족 고객(4~5점)만 구매 마켓 리뷰로,
+  // 1~3점은 기존 카톡 CS 흡수 유지. 마켓 정보(order.market)는 cname 병합으로 서버가 내려줌.
+  var mkCta = '';
+  try {
+    if (stars >= 4 && order && order.market === 'naver') {
+      mkCta = '<a class="btn btn-primary" style="display:block;margin-top:10px;" target="_blank" rel="noopener" ' +
+        'href="https://shopping.naver.com/my/review">🧡 네이버에도 후기 남기기</a>' +
+        '<div class="center" style="margin-top:4px;"><span class="muted" style="font-size:0.72rem;">네이버쇼핑 → 쇼핑MY → 상품리뷰에서 쓰실 수 있어요</span></div>';
+    }
+  } catch (e) {}
   h('<div class="card" style="text-align:center;">' + secHd('check', 'REPORT', '여행 리포트가 완성됐어요', '소중한 후기 감사합니다 🎁') +
     '<img src="' + url + '" style="width:78%;border-radius:18px;margin:12px 0;box-shadow:0 18px 44px rgba(16,22,35,0.35);">' +
     '<div class="jbtns"><a class="btn btn-primary" download="jdisim-travel-report.png" href="' + url + '">이미지 저장</a>' +
-    '<button type="button" class="btn btn-ghost" onclick="shareReport(\'' + '\')">공유하기</button></div>' +
+    '<button type="button" class="btn btn-ghost" onclick="shareReport(\'' + '\')">공유하기</button></div>' + mkCta +
     '<div class="center" style="margin-top:8px;"><span class="muted">인스타에 올리고 친구에게 여행을 자랑해 보세요 ✈️</span></div></div>' + document.getElementById('app').innerHTML);
   window._reportUrl = url;
   toast('리포트 완성! 후기 감사해요 🦊');
@@ -1424,7 +1434,8 @@ function loadCare(){
         option: e.option || e.Option || '', sku: PLAN, buyDate: Q_BUYDT || '',
         quantity: parseInt(e.count||'1',10)||1, country: cty,
         validity: validityOf(cty, Q_BUYDT), status: preIssue ? 'PAID' : 'ISSUED', iccid: e.iccid || CARE,
-        lpa: e.qrCodeContent || '', storeId: d.storeId, carrier: e.carrier || d.carrier || ''
+        lpa: e.qrCodeContent || '', storeId: d.storeId, carrier: e.carrier || d.carrier || '',
+        market: d.market || ''   // 구매 마켓 (cname 병합, 2026-08-01) — 마켓 리뷰 유도 분기용
       };
       setModeChip('care');
       // 실주문 케어링크 기억 (이 브라우저 한정) — 스토어 '내 여행' 카드가 최우선으로 사용.
