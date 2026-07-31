@@ -310,11 +310,14 @@ function loadProds(){
 function renderProds(){
   var q = ($('isQ').value||'').replace(/\s/g,'').toLowerCase();
   var list = (window._prods||[]).filter(function(p){
-    return !q || (String(p.name)+String(p.spec)+String(p.days)).replace(/\s/g,'').toLowerCase().indexOf(q) >= 0;
+    return !q || (String(p.name)+String(p.spec)+String(p.carrier)+String(p.nt)+String(p.days)).replace(/\s/g,'').toLowerCase().indexOf(q) >= 0;
   });
+  // 컴팩트 표기 (사장님 2026-08-01): 통신사 → 로컬/로밍 → 사용량 → 이용기간
   $('isProds').innerHTML = list.length ? list.map(function(p){
+    var ntb = p.nt ? '<span class="chip ' + (p.nt==='로컬'?'c-ok':'c-mut') + '" style="margin-left:5px;">' + (p.nt==='로컬'?'🏠 로컬':'🌐 로밍') + '</span>' : '';
     return '<div class="prod' + (window._sel===p.code?' sel':'') + '" onclick="selProd(\'' + esc(p.code) + '\')">' +
-      '<b>' + esc(p.name) + '</b><span class="muted">' + esc(p.carrier||'') + (p.carrier?' · ':'') + p.days + '일</span>' +
+      '<b>' + esc(p.carrier || '통신사 확인중') + '</b>' + ntb +
+      '<span class="muted" style="display:block;margin-top:3px;">' + esc(p.spec || '') + ' · ' + p.days + '일</span>' +
       '<div class="p">' + won(p.price) + '원</div></div>';
   }).join('') : '<div class="muted">상품이 없습니다</div>';
 }
@@ -334,8 +337,9 @@ function updateConfirm(){
     if (!it) { $('isConfirm').innerHTML = '상품과 수령인을 입력하면 차감 내역이 표시됩니다.'; $('isGo').disabled = true; return; }
     var ok = nm && ph.length >= 10;
     getBalance().then(function(bal){
+      var pd = esc(it.carrier || '') + (it.nt ? ' · ' + esc(it.nt) : '') + ' · ' + esc(it.spec || '') + ' · ' + it.days + '일';
       $('isConfirm').innerHTML = '발급 시 잔액 <b>' + won(bal) + '원 → ' + won(bal - it.price) + '원</b> (−' + won(it.price) + '원)<br>' +
-        '<span class="muted">' + esc(it.name) + (nm ? ' · ' + esc(nm) + (ph? ' (' + ph.slice(-4) + ')':'') : ' · 수령인 미입력') + '</span>' +
+        '<span class="muted">' + pd + (nm ? ' · ' + esc(nm) + (ph? ' (' + ph.slice(-4) + ')':'') : ' · 수령인 미입력') + '</span>' +
         (bal < it.price ? '<br><span style="color:#DC2626">잔액이 부족합니다 — 정산 탭에서 충전 요청 후 발급해 주세요</span>' : '');
       $('isGo').disabled = !(ok && bal >= it.price);
     });
@@ -484,15 +488,15 @@ function renderPrice(){
     return true;
   });
   var shown = list.slice(0, 500);
-  $('prTbl').innerHTML = '<tr><th>국가</th><th>상품</th><th>통신사</th><th>일수</th><th>코드</th><th>공급가</th></tr>' +
+  $('prTbl').innerHTML = '<tr><th>국가</th><th>통신사</th><th>망</th><th>사용량</th><th>일수</th><th>코드</th><th>공급가</th></tr>' +
     shown.map(function(r){
-      return '<tr><td>' + esc(r.ct) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.carrier) + '</td><td>' + r.days + '</td><td class="muted">' + esc(r.code) + '</td><td><b>' + won(r.price) + '</b></td></tr>';
-    }).join('') + (list.length > shown.length ? '<tr><td colspan="6" class="muted">500개까지만 표시 — 검색·필터를 쓰거나 CSV로 받으세요</td></tr>' : '');
+      return '<tr><td>' + esc(r.ct) + '</td><td>' + esc(r.carrier) + '</td><td>' + esc(r.nt||'') + '</td><td>' + esc(r.spec||'') + '</td><td>' + r.days + '</td><td class="muted">' + esc(r.code) + '</td><td><b>' + won(r.price) + '</b></td></tr>';
+    }).join('') + (list.length > shown.length ? '<tr><td colspan="7" class="muted">500개까지만 표시 — 검색·필터를 쓰거나 CSV로 받으세요</td></tr>' : '');
 }
 function priceCsv(){
   if (!window._pl) return;
-  var rows = [['국가','상품','통신사','일수','스펙','코드','공급가 (' + (window._pl.name||'') + ' 전용 · ' + window._pl.at + ' 기준)']]
-    .concat(window._pl.rows.map(function(r){ return [r.ct, r.name, r.carrier, r.days, r.spec, r.code, r.price]; }));
+  var rows = [['국가','통신사','망','사용량','일수','코드','공급가 (' + (window._pl.name||'') + ' 전용 · ' + window._pl.at + ' 기준)']]
+    .concat(window._pl.rows.map(function(r){ return [r.ct, r.carrier, r.nt||'', r.spec, r.days, r.code, r.price]; }));
   csvDown('JDISIM_공급가격표_' + window._pl.at + '.csv', rows);
 }
 
