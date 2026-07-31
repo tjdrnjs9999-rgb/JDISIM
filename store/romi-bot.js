@@ -336,17 +336,18 @@
       if (ph.length < 10) { bot('전화번호를 확인해 주세요! (예: 01012345678)'); return; }
       me((nm ? nm + ' · ' : '') + ph.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-****-$3'));
       var w = bot('🦊 ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾고 있어요…');
-      fetch(CARE + '?action=history&phone=' + encodeURIComponent(ph))
+      // 🔐 2026-07-31: 조회에 이름 동반(본인확인) · 응답은 케어토큰(cx)만 — ICCID/LPA 원문 미수신
+      fetch(CARE + '?action=history&phone=' + encodeURIComponent(ph) + '&name=' + encodeURIComponent(nm || ''))
         .then(function(r){ if (!r.ok) throw 0; return r.json(); })
         .then(function(dd){
           var list = dd && (dd.esims || dd.list || dd.orders || dd.history || (Array.isArray(dd) ? dd : []));
           if (!list || !list.length) throw 1;
           var pick = null;
-          for (var i = list.length - 1; i >= 0; i--) { if (list[i] && (list[i].iccid || list[i].ICCID)) { pick = list[i]; break; } }
+          for (var i = list.length - 1; i >= 0; i--) { if (list[i] && (list[i].cx || list[i].iccid)) { pick = list[i]; break; } }
           if (!pick) throw 1;
-          var iccid = String(pick.iccid || pick.ICCID);
+          var cx = String(pick.cx || '');
           USERINFO = { nm: nm, ph: ph };
-          return fetch(CARE + '?action=usage&iccid=' + encodeURIComponent(iccid))
+          return fetch(CARE + '?action=usage&t=' + encodeURIComponent(cx))
             .then(function(r){ if (!r.ok) throw 0; return r.json(); })
             .then(function(u){
               var L = (u && (u.usageList || u.daily || u.list)) || [];
