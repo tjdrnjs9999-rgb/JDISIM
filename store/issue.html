@@ -42,7 +42,7 @@
   .fzbtn span { font-size:0.62rem; color:#F1690D; font-weight:900; letter-spacing:1px; min-width:12px; }
 
   /* ── 레이아웃 ── */
-  .wrap { max-width:430px; margin:-36px auto 0; position:relative; padding:0 16px calc(108px + env(safe-area-inset-bottom,0px)); }
+  .wrap { max-width:430px; margin:-36px auto 0; position:relative; padding:0 16px calc(148px + env(safe-area-inset-bottom,0px)); } /* 148px: 하단 고정 CTA(78px)+챗봇 플로팅이 푸터 고지 문구를 가리지 않는 여백 (2026-08-01 QA) */
   .card { background:#fff; border:1px solid #ECE8E0; border-radius:20px; padding:18px; box-shadow:0 1px 2px rgba(16,22,35,0.04), 0 10px 28px rgba(16,22,35,0.05); margin-bottom:12px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
   @keyframes rise { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
   .ey { font-size:0.6rem; font-weight:800; letter-spacing:0.16em; color:#8B94A7; }
@@ -1658,7 +1658,7 @@ function loadOrder(){
 
 // ── 컴팩트 접이식 + 티켓 공유 (2026-07-20 사장님 승인: 유의사항 한곳 집결 · 선물하기) ──
 function foldHTML(title, inner, open){
-  return '<details class="card"' + (open ? ' open' : '') + ' style="padding:13px 15px;"><summary style="list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:7px;font-weight:900;font-size:0.875rem;color:#0f172a;">' + title + '<span class="muted" style="margin-left:auto;font-size:0.72rem;font-weight:700;">펼치기 ▾</span></summary><div style="margin-top:10px;">' + inner + '</div></details>';
+  return '<details class="card"' + (open ? ' open' : '') + ' style="padding:13px 15px;"><summary style="list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:7px;font-weight:900;font-size:0.875rem;color:#0f172a;"><span style="flex:1;min-width:0;">' + title + '</span><span class="muted" style="flex-shrink:0;white-space:nowrap;font-size:0.72rem;font-weight:700;">펼치기 ▾</span></summary><div style="margin-top:10px;">' + inner + '</div></details>';
 }
 function shareTicketHTML(){
   if (LOCAL || DEMO) return '';
