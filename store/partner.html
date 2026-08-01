@@ -71,10 +71,17 @@
   <div style="text-align:center;margin:20px 0 24px;font-weight:900;font-size:1.3rem">JD<span style="color:var(--o)">ISIM</span> 파트너</div>
   <div class="panel">
     <h2>파트너 로그인</h2>
-    <input id="lgKey" type="password" placeholder="파트너 API 키 (jdp_…)" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
+    <div id="lgIdMode">
+      <input id="lgId" placeholder="아이디" autocomplete="username" style="margin-bottom:8px">
+      <input id="lgPw" type="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <div id="lgKeyMode" style="display:none">
+      <input id="lgKey" type="password" placeholder="파트너 API 키 (jdp_…)" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
+    </div>
     <button class="btn btn-p" style="width:100%;margin-top:10px" onclick="login()">로그인</button>
+    <div style="text-align:center;margin-top:9px"><a id="lgModeBtn" class="muted" style="cursor:pointer;text-decoration:underline" onclick="lgToggle()">API 키로 로그인</a></div>
     <div id="lgMsg" class="muted" style="margin-top:8px"></div>
-    <div class="note">로그인하면 12시간 유효한 세션이 발급됩니다. API 키는 이 브라우저에 저장되지 않아요.<br>키 분실 시 본사 카톡 채널로 문의해 주세요.</div>
+    <div class="note">로그인하면 12시간 유효한 세션이 발급됩니다. 비밀번호·API 키는 이 브라우저에 저장되지 않아요.<br>처음이거나 비밀번호를 잊으셨다면 <b>API 키로 로그인</b> 후 설정 탭에서 계정을 만드세요.</div>
   </div>
 </div>
 
@@ -168,6 +175,15 @@
 
 <section id="conf" class="scr">
   <h1>⚙️ 설정·연동</h1>
+  <div class="panel"><h2>👤 로그인 계정 <span id="cfLoginState" class="chip c-mut">확인 중</span></h2>
+    <div class="muted" style="margin-bottom:8px">아이디·비밀번호를 만들면 다음부터 API 키 없이 로그인할 수 있어요.</div>
+    <div class="row">
+      <input id="acId" placeholder="아이디 (영소문자·숫자·._- 3~20자)" autocomplete="username">
+      <input id="acPw" type="password" placeholder="새 비밀번호 (8자 이상)" autocomplete="new-password">
+      <input id="acPwCur" type="password" placeholder="기존 비밀번호 (변경 시에만)" autocomplete="current-password" style="display:none">
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-p" onclick="saveLogin()">계정 저장</button></div>
+    <div id="acOut" style="margin-top:8px"></div></div>
   <div class="panel"><h2>💬 알림톡 (내 채널) <span id="cfAligo" class="chip c-mut">확인 중</span></h2>
     <div class="muted">발급 링크가 파트너님 알리고 채널로 자동 발송됩니다. 연동 등록은 본사에서 처리해 드려요(카톡 문의).</div></div>
   <div class="panel"><h2>🔌 오픈마켓 주문 자동 수집</h2>
@@ -215,16 +231,36 @@ function api(action, body){
   });
 }
 
+function lgToggle(){
+  var keyMode = $('lgKeyMode').style.display === 'none';
+  $('lgKeyMode').style.display = keyMode ? 'block' : 'none';
+  $('lgIdMode').style.display = keyMode ? 'none' : 'block';
+  $('lgModeBtn').textContent = keyMode ? '아이디로 로그인' : 'API 키로 로그인';
+  $('lgMsg').textContent = '';
+}
 function login(){
-  var k = $('lgKey').value.trim();
-  if (!k) { $('lgMsg').textContent = 'API 키를 입력해 주세요'; return; }
+  var keyMode = $('lgKeyMode').style.display !== 'none';
+  var body;
+  if (keyMode) {
+    var k = $('lgKey').value.trim();
+    if (!k) { $('lgMsg').textContent = 'API 키를 입력해 주세요'; return; }
+    body = { pkey: k };
+  } else {
+    var id = $('lgId').value.trim(), pw = $('lgPw').value;
+    if (!id || !pw) { $('lgMsg').textContent = '아이디와 비밀번호를 입력해 주세요'; return; }
+    body = { login_id: id, pw: pw };
+  }
   $('lgMsg').textContent = '확인 중…';
-  fetch(API + '?action=partner_login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ pkey:k }) })
+  fetch(API + '?action=partner_login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
     .then(function(r){ return r.json(); })
     .then(function(j){
-      if (!j.ok) { $('lgMsg').textContent = '키가 올바르지 않습니다'; return; }
+      if (!j.ok) {
+        $('lgMsg').textContent = j.error === 'too_many_attempts' ? '시도가 너무 많아요 — 10분 후 다시' :
+          (keyMode ? '키가 올바르지 않습니다' : '아이디 또는 비밀번호가 올바르지 않습니다');
+        return;
+      }
       saveSess({ sess:j.sess, name:j.name, exp: Date.now() + ((j.ttl_h||12)*3600e3) - 60e3 });
-      $('lgKey').value = '';
+      $('lgKey').value = ''; $('lgPw').value = '';
       boot();
     }).catch(function(){ $('lgMsg').textContent = '네트워크 오류 — 잠시 후 다시'; });
 }
@@ -509,6 +545,12 @@ function loadConf(){
   api('partner_me').then(function(j){
     $('cfAligo').className = 'chip ' + (j.aligo_ready ? 'c-ok' : 'c-mut');
     $('cfAligo').textContent = j.aligo_ready ? '연동됨' : '미연동';
+    // 로그인 계정 상태 (2026-08-01)
+    var has = !!j.login_id;
+    $('cfLoginState').className = 'chip ' + (has ? 'c-ok' : 'c-wait');
+    $('cfLoginState').textContent = has ? ('아이디: ' + j.login_id) : '미설정 — 만들어 두세요';
+    if (has) { $('acId').value = j.login_id; $('acPwCur').style.display = ''; }
+    window._hasLogin = has;
   });
   api('partner_markets').then(function(j){
     if (!j.ok) return;
@@ -533,6 +575,22 @@ function saveMkts(){
   if (!Object.keys(out).length) { toast('입력된 키가 없어요'); return; }
   api('partner_markets', { markets: out }).then(function(j){
     toast(j.ok ? '저장됐어요 — 다음 수집 사이클부터 반영' : '저장 실패');
+    loadConf();
+  });
+}
+function saveLogin(){
+  var id = $('acId').value.trim(), pw = $('acPw').value, cur = $('acPwCur').value;
+  if (!id || !pw) { toast('아이디와 새 비밀번호를 입력해 주세요'); return; }
+  var body = { login_id: id, pw: pw };
+  if (window._hasLogin) body.pw_cur = cur;
+  api('partner_set_login', body).then(function(j){
+    if (!j.ok) {
+      var msg = { bad_login_id: '아이디 형식: 영소문자·숫자·._- 3~20자', bad_pw: '비밀번호는 8자 이상', login_id_taken: '이미 사용 중인 아이디예요', pw_cur_mismatch: '기존 비밀번호가 일치하지 않아요' }[j.error] || ('저장 실패: ' + (j.error || ''));
+      $('acOut').innerHTML = '<div class="banner">' + esc(msg) + '</div>'; return;
+    }
+    $('acOut').innerHTML = '<div class="note">✅ 저장됐어요 — 다음 로그인부터 아이디 <b>' + esc(j.login_id) + '</b>로 들어오시면 됩니다.</div>';
+    $('acPw').value = ''; $('acPwCur').value = '';
+    toast('계정 저장 완료');
     loadConf();
   });
 }
