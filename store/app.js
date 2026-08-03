@@ -1158,7 +1158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const days = window.__pcwDays, style = window.__pcwStyle;
     const rowBtn = (attrs, main, sub, right) =>
       `<button type="button" ${attrs} style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 14px;margin-top:8px;border:1.5px solid var(--border-color);border-radius:12px;background:var(--bg-tertiary);cursor:pointer;text-align:left;font:inherit;color:var(--text-main);">
-        <span style="flex:1;min-width:0;"><span style="display:block;font-weight:800;font-size:0.92rem;">${main}</span>${sub ? `<span style="display:block;font-size:0.75rem;color:var(--text-muted);margin-top:2px;">${sub}</span>` : ''}</span>${right || ''}
+        <span style="flex:1;min-width:0;"><span style="display:block;font-weight:800;font-size:0.98rem;line-height:1.35;">${main}</span>${sub ? `<span style="display:block;font-size:0.73rem;color:var(--text-muted);margin-top:3px;line-height:1.45;">${sub}</span>` : ''}</span>${right || ''}
       </button>`;
     let chips = '';
     if (step > 1 && days) chips += `<button type="button" class="pcw-chip" data-step="1" style="font:inherit;font-size:0.78rem;font-weight:800;color:var(--accent);background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);border-radius:999px;padding:6px 12px;cursor:pointer;margin-right:6px;">📅 ${days}일 ✎</button>`;
@@ -1204,11 +1204,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         (exact.map((x, i) => {
           const cap = pcPlanCap(x.pl);
           const capLbl = cap === '무제한' ? ((window.JD_UNL && window.JD_UNL.isTrue(x.pl.product_code)) ? '완전 무제한' : '무제한(속도정책 확인)') : ((x.pl.service_type === '데일리' || x.pl.service_type === '무제한') ? '매일 ' + cap : '전체 ' + cap);
-          const sub = [(x.pl.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋'), x.g.network_speed || ''].filter(Boolean).join(' · ');
-          const net = x.g.network_type === '로컬망' ? '<span style="flex-shrink:0;font-size:0.7rem;font-weight:900;color:#15803d;background:rgba(21,128,61,0.1);border-radius:999px;padding:3px 9px;">🏠 로컬</span>' : '<span style="flex-shrink:0;font-size:0.7rem;font-weight:900;color:#1d4ed8;background:rgba(29,78,216,0.08);border-radius:999px;padding:3px 9px;">🌐 로밍</span>';
-          const best = i === bestIdx ? ' <span style="font-size:0.65rem;font-weight:900;color:#fff;background:var(--accent);border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : '';
-          return rowBtn(`class="pcw-item" data-i="${i}"`, `${window.cleanCarrierName(x.g.carrier)} · ${capLbl}${best}`, sub,
-            `${net}<span style="flex-shrink:0;font-size:1.05rem;font-weight:900;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.72rem;font-weight:700;">원</span></span>`);
+          // 제목 = 무엇을 사는지(데이터 + 기간). 통신사·망·속도·리셋은 보조로 작게 (2026-08-02 사장님)
+          const best = i === bestIdx ? ' <span style="font-size:0.62rem;font-weight:900;color:#fff;background:var(--accent);border-radius:5px;padding:2px 6px;vertical-align:2px;">최저가</span>' : '';
+          const main = `${capLbl} <span style="font-weight:800;color:var(--text-muted);">· ${x.d}일</span>${best}`;
+          const netTxt = x.g.network_type === '로컬망' ? '🏠 현지망' : '🌐 로밍망';
+          const sub = `<span style="font-weight:700;color:var(--text-main);">${window.cleanCarrierName(x.g.carrier)}</span>`
+            + `<span style="color:var(--border-color);"> | </span>${netTxt}`
+            + `<span style="font-size:0.68rem;opacity:0.75;"> · ${[x.g.network_speed || '', (x.pl.service_type === '총용량' ? '기간 내 자유 사용' : '매일 리셋')].filter(Boolean).join(' · ')}</span>`;
+          return rowBtn(`class="pcw-item" data-i="${i}"`, main, sub,
+            `<span style="flex-shrink:0;font-size:1.08rem;font-weight:900;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.72rem;font-weight:700;">원</span></span>`);
         }).join('') || '<div style="font-size:0.82rem;color:var(--text-muted);font-weight:700;padding:10px 2px;">이 조합의 상품이 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>') +
         `</div>`;
     }
