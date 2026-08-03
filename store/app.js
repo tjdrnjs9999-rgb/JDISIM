@@ -3166,8 +3166,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // 인기 여행지 카드 (2026-08-02: 가로 마퀴 대체) — 실제 판매 최저가를 함께 노출
+    //   ⚠️ 데이터 소스는 window.PRODUCTS_DATA 직참조 (클로저 productsData가 아직 비어 있는
+    //      타이밍에 섹션이 통째로 사라지던 문제 방지). 렌더 실패해도 섹션은 지우지 않는다.
+    window.__jdRenderHotDest = function () {
     const hotGrid = document.getElementById('hotDestGrid');
-    if (hotGrid && productsData.length) {
+    const pdata = (window.PRODUCTS_DATA && window.PRODUCTS_DATA.length) ? window.PRODUCTS_DATA : productsData;
+    if (hotGrid && pdata && pdata.length) {
       const FLAG = { '일본': '🇯🇵', '베트남': '🇻🇳', '태국': '🇹🇭', '중국': '🇨🇳', '대만': '🇹🇼',
         '싱가포르': '🇸🇬', '필리핀': '🇵🇭', '말레이시아': '🇲🇾', '인도네시아': '🇮🇩', '홍콩': '🇭🇰',
         '마카오': '🇲🇴', '미국': '🇺🇸', '괌': '🇬🇺', '사이판': '🇲🇵', '유럽': '🇪🇺', '호주': '🇦🇺',
@@ -3175,7 +3179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const HOT = ['일본', '베트남', '태국', '대만', '중국', '싱가포르', '필리핀', '유럽'];
       const cards = [];
       HOT.forEach(name => {
-        const hit = productsData.filter(p => String(p.country || '').indexOf(name) === 0);
+        const hit = pdata.filter(p => String(p.country || '').indexOf(name) === 0);
         if (!hit.length) return;
         let min = Infinity;
         hit.forEach(p => (p.plans || []).forEach(pl => {
@@ -3191,14 +3195,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       if (cards.length) {
         hotGrid.innerHTML = cards.join('');
-        hotGrid.addEventListener('click', (e) => {
-          const card = e.target.closest('.hotdest-card');
-          if (!card) return;
-          window.jdisimGoCountry(card.getAttribute('data-country'));
-        });
-      } else {
-        hotGrid.closest('.hotdest-section')?.remove();
+        if (!hotGrid.__bound) {
+          hotGrid.__bound = true;
+          hotGrid.addEventListener('click', (e) => {
+            const card = e.target.closest('.hotdest-card');
+            if (!card) return;
+            window.jdisimGoCountry(card.getAttribute('data-country'));
+          });
+        }
+        return true;
       }
+    }
+    return false;
+    };
+    // 즉시 시도 → 실패 시 상품 데이터 도착을 기다려 재시도 (최대 10초)
+    if (!window.__jdRenderHotDest()) {
+      let tries = 0;
+      const t = setInterval(() => {
+        if (window.__jdRenderHotDest() || ++tries > 20) clearInterval(t);
+      }, 500);
     }
 
     // 2. 여우 기종진단 카드
