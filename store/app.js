@@ -13,6 +13,68 @@ let CARD_PG_PROVIDER = "html5_inicis.INIpayTest";
 let SMARTSTORE_URL = "https://smartstore.naver.com/butt_on";
 // =============================================================
 
+// ── 국가 표기 요약 (2026-08-02 사장님: "125개 목적지: 알바니아, …" 나열 대신 카테고리로) ──
+//   3개국 이하는 그대로 나열(일본 / 홍콩·마카오), 4개국 이상은 대륙으로 묶어 "유럽 33개국"·"아시아 4개국".
+//   대륙이 섞이면 "글로벌 N개국". 원문은 검색·상세에서 계속 쓰이므로 표시 전용 함수로만 쓴다.
+window.jdCountryLabel = (function () {
+  var CONT = {
+    아시아: ['일본', '한국', '중국', '대만', '홍콩', '마카오', '베트남', '태국', '싱가포르', '말레이시아',
+      '인도네시아', '필리핀', '캄보디아', '라오스', '미얀마', '몽골', '인도', '스리랑카', '방글라데시',
+      '네팔', '파키스탄', '브루나이', '카자흐스탄', '우즈베키스탄', '키르기스스탄', '조지아', '아르메니아',
+      '아제르바이잔', '마카오', '중국 본토', '몰디브'],
+    유럽: ['영국', '프랑스', '독일', '이탈리아', '스페인', '포르투갈', '네덜란드', '벨기에', '스위스',
+      '오스트리아', '체코', '폴란드', '헝가리', '그리스', '스웨덴', '노르웨이', '덴마크', '핀란드',
+      '아일랜드', '아이슬란드', '크로아티아', '슬로베니아', '슬로바키아', '루마니아', '불가리아', '세르비아',
+      '알바니아', '에스토니아', '라트비아', '리투아니아', '룩셈부르크', '몰타', '키프로스', '모나코',
+      '리히텐슈타인', '산마리노', '바티칸', '안도라', '지브롤터', '몬테네그로', '우크라이나', '몰도바',
+      '러시아', '벨라루스', '터키', '튀르키예', '체코 공화국'],
+    북미: ['미국', '캐나다', '멕시코', '괌', '사이판', '사이판·괌', '푸에르토리코'],
+    남미: ['브라질', '아르헨티나', '칠레', '페루', '콜롬비아', '에콰도르', '우루과이', '파라과이',
+      '볼리비아', '베네수엘라', '프랑스령 기아나', '코스타리카', '파나마', '엘살바도르', '과테말라',
+      '온두라스', '니카라과', '도미니카'],
+    오세아니아: ['호주', '뉴질랜드', '피지', '괌', '사이판'],
+    중동: ['아랍에미리트', 'UAE', '사우디아라비아', '카타르', '쿠웨이트', '바레인', '오만', '이스라엘',
+      '요르단', '이집트'],
+    아프리카: ['남아프리카공화국', '남아공', '모로코', '튀니지', '알제리', '케냐', '나이지리아', '가나',
+      '탄자니아', '이집트', '레위니옹', '모리셔스']
+  };
+  function contOf(name) {
+    var n = String(name || '').trim();
+    for (var k in CONT) if (CONT[k].indexOf(n) >= 0) return k;
+    return null;
+  }
+  return function (raw) {
+    var s = String(raw || '').trim();
+    if (!s) return s;
+    // "125개 목적지: A, B, C" / "유럽 39개국: A, B" / "12개국: A, B" → 접두 숫자 + 목록 분리
+    var m = s.match(/^(.*?)(\d+)\s*개\s*(?:목적지|국)\s*[:：]?\s*(.*)$/);
+    var listPart = m ? m[3] : s;
+    var declared = m ? parseInt(m[2], 10) : 0;
+    var prefix = m ? String(m[1] || '').trim() : '';
+    var items = listPart.split(/[,，、]/).map(function (x) { return x.trim(); }).filter(Boolean);
+    var n = declared || items.length;
+    // 짧은 표기는 손대지 않는다 (일본 / 홍콩,마카오 / 미국,캐나다,멕시코)
+    if (n <= 3 && s.length <= 18) return s.replace(/,\s*/g, '·');
+    if (!items.length) return s;
+    var seen = {}, order = [];
+    items.forEach(function (it) {
+      var c = contOf(it.replace(/[（(].*$/, '').trim());
+      if (c && !seen[c]) { seen[c] = 1; order.push(c); }
+    });
+    if (prefix && /유럽|아시아|글로벌|북미|남미|중동|아프리카/.test(prefix)) {
+      return prefix.replace(/\s+/g, ' ') + ' ' + n + '개국';
+    }
+    // 북미+남미만이면 '미주'로 통합 (미국·캐나다·멕시코·중미 묶음이 흔함)
+    if (order.length === 2 && order.indexOf('북미') >= 0 && order.indexOf('남미') >= 0) {
+      return '미주 ' + n + '개국';
+    }
+    if (order.length === 1) return order[0] + ' ' + n + '개국';
+    if (order.length === 2) return order[0] + '·' + order[1] + ' ' + n + '개국';
+    if (order.length >= 3) return '글로벌 ' + n + '개국';
+    return n + '개국';
+  };
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
   // 1. 상태 변수 정의
   let productsData = [];
@@ -120,7 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="cart-item-info">
           <div>
             <div class="cart-item-title">
-              ${item.product.country} eSIM
+              ${window.jdCountryLabel(item.product.country)} eSIM
               <span class="cart-item-carrier">${item.product.carrier}</span>
             </div>
             <div class="cart-item-desc">
@@ -756,7 +818,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const imgUrl = getCountryImageUrl(g.country);
       const imgHTML = imgUrl 
         ? `<img src="${imgUrl}" class="card-img" alt="${g.country} 여행지 이미지">`
-        : `<div style="font-size: 2rem; font-weight: 900; color: rgba(255, 255, 255, 0.15); text-transform: uppercase; letter-spacing: 2px; text-align: center; pointer-events: none;">${g.country}</div>`;
+        : `<div style="font-size: 2rem; font-weight: 900; color: rgba(255, 255, 255, 0.15); text-transform: uppercase; letter-spacing: 2px; text-align: center; pointer-events: none;">${window.jdCountryLabel(g.country)}</div>`;
 
       const card = document.createElement('article');
       card.className = 'product-card';
@@ -769,7 +831,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         <div class="card-body">
           <div class="card-title">
-            <span>${g.country}</span>
+            <span>${window.jdCountryLabel(g.country)}</span>
             <span class="card-carrier" style="font-size: 0.75rem;">${carriersStr}</span>
           </div>
           <div class="card-specs">
@@ -868,7 +930,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const imgUrl = getCountryImageUrl(g.country);
       const imgHTML = imgUrl 
         ? `<img src="${imgUrl}" class="card-img" alt="${g.country} 여행지 이미지">`
-        : `<div style="font-size: 2.2rem; font-weight: 900; color: rgba(255, 255, 255, 0.15); text-transform: uppercase; letter-spacing: 2px; text-align: center; pointer-events: none; padding: 0 10px;">${g.country}</div>`;
+        : `<div style="font-size: 2.2rem; font-weight: 900; color: rgba(255, 255, 255, 0.15); text-transform: uppercase; letter-spacing: 2px; text-align: center; pointer-events: none; padding: 0 10px;">${window.jdCountryLabel(g.country)}</div>`;
 
       const card = document.createElement('article');
       card.className = 'product-card';
@@ -883,7 +945,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         <div class="card-body">
           <div class="card-title">
-            <span>${g.country}</span>
+            <span>${window.jdCountryLabel(g.country)}</span>
             <span class="card-carrier" style="font-size: 0.75rem;">${carriersStr}</span>
           </div>
           <div class="card-specs">
@@ -1153,7 +1215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     modalContent.innerHTML = `<div style="grid-column:1/-1;">
       <div class="modal-header" style="margin-bottom:4px;">
         <div class="modal-category">${(activeProduct && activeProduct.category) || 'eSIM'}</div>
-        <h2 class="modal-title">${country} eSIM</h2>
+        <h2 class="modal-title">${window.jdCountryLabel(country)} eSIM</h2>
       </div>
       <div style="margin-top:6px;">${chips}</div>
       ${body}
@@ -1279,7 +1341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="modal-header">
           <div class="modal-category">${p.category}</div>
           <h2 class="modal-title">
-            ${p.country} eSIM 
+            ${window.jdCountryLabel(p.country)} eSIM 
             <span class="card-carrier" style="font-size:0.95rem; padding: 4px 12px; margin-top:2px;">${window.cleanCarrierName(p.carrier)}</span>
           </h2>
         </div>
@@ -2052,7 +2114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       row.className = 'checkout-item-row';
       row.innerHTML = `
         <div>
-          <div class="checkout-item-name">${item.product.country} eSIM</div>
+          <div class="checkout-item-name">${window.jdCountryLabel(item.product.country)} eSIM</div>
           <div class="checkout-item-sub">
             ${item.product.carrier} | ${item.plan.data_limit} / ${item.plan.duration}일
           </div>
@@ -2430,7 +2492,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       card.innerHTML = `
         <div class="receipt-item-header">
-          <div class="receipt-item-title">${item.product.country} eSIM</div>
+          <div class="receipt-item-title">${window.jdCountryLabel(item.product.country)} eSIM</div>
           <div class="receipt-item-code">${item.quantity}개 · ${itemPrice.toLocaleString()}원</div>
         </div>
         <div style="font-size:0.8rem;color:var(--text-muted);padding:6px 2px 2px;">${item.plan.data_limit || ''} / ${item.days || item.plan.duration || ''}일</div>
