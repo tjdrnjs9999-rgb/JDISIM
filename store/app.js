@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const cardBg = getCardBackground(g.category, g.country);
       const carriersStr = g.carriers.map(c => c.carrier).join(' / ');
       const speedsStr = Array.from(g.network_speeds).join('/');
-      const callsStr = g.carriers.some(c => c.calls === '가능') ? '통화가능' : '데이터전용';
+      const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화가능' : '데이터전용';
       
       const imgUrl = getCountryImageUrl(g.country);
       const imgHTML = imgUrl 
@@ -924,7 +924,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const cardBg = getCardBackground(g.category, g.country);
       const carriersStr = g.carriers.map(c => c.carrier).join(' / ');
       const speedsStr = Array.from(g.network_speeds).join('/');
-      const callsStr = g.carriers.some(c => c.calls === '가능') ? '통화가능' : '데이터전용';
+      const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화가능' : '데이터전용';
       const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';
       
       const imgUrl = getCountryImageUrl(g.country);
