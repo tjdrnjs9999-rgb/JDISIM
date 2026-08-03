@@ -3165,16 +3165,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderGrid();
     };
 
-    const marquee = document.getElementById('countryMarquee');
-    if (marquee && productsData.length) {
-      const countries = [...new Set(productsData.map(p => p.country))].slice(0, 14);
-      const tagsHtml = countries.map(c => `<div class="marquee-tag" data-country="${c}">#${c}</div>`).join('');
-      marquee.innerHTML = tagsHtml + tagsHtml; // seamless loop
-      marquee.addEventListener('click', (e) => {
-        const tag = e.target.closest('.marquee-tag');
-        if (!tag) return;
-        window.jdisimGoCountry(tag.getAttribute('data-country'));
+    // 인기 여행지 카드 (2026-08-02: 가로 마퀴 대체) — 실제 판매 최저가를 함께 노출
+    const hotGrid = document.getElementById('hotDestGrid');
+    if (hotGrid && productsData.length) {
+      const FLAG = { '일본': '🇯🇵', '베트남': '🇻🇳', '태국': '🇹🇭', '중국': '🇨🇳', '대만': '🇹🇼',
+        '싱가포르': '🇸🇬', '필리핀': '🇵🇭', '말레이시아': '🇲🇾', '인도네시아': '🇮🇩', '홍콩': '🇭🇰',
+        '마카오': '🇲🇴', '미국': '🇺🇸', '괌': '🇬🇺', '사이판': '🇲🇵', '유럽': '🇪🇺', '호주': '🇦🇺',
+        '몽골': '🇲🇳', '캄보디아': '🇰🇭', '라오스': '🇱🇦', '한국': '🇰🇷', '터키': '🇹🇷', '영국': '🇬🇧' };
+      const HOT = ['일본', '베트남', '태국', '대만', '중국', '싱가포르', '필리핀', '유럽'];
+      const cards = [];
+      HOT.forEach(name => {
+        const hit = productsData.filter(p => String(p.country || '').indexOf(name) === 0);
+        if (!hit.length) return;
+        let min = Infinity;
+        hit.forEach(p => (p.plans || []).forEach(pl => {
+          const v = Number(pl.final_price) || 0;
+          if (v > 0 && v < min) min = v;
+        }));
+        if (!isFinite(min)) return;
+        const flag = FLAG[name] || '✈️';
+        cards.push(`<button type="button" class="hotdest-card" data-country="${hit[0].country}">` +
+          `<span class="hotdest-flag">${flag}</span>` +
+          `<span class="hotdest-body"><span class="hotdest-name">${name}</span>` +
+          `<span class="hotdest-price"><b>${min.toLocaleString()}원</b>부터</span></span></button>`);
       });
+      if (cards.length) {
+        hotGrid.innerHTML = cards.join('');
+        hotGrid.addEventListener('click', (e) => {
+          const card = e.target.closest('.hotdest-card');
+          if (!card) return;
+          window.jdisimGoCountry(card.getAttribute('data-country'));
+        });
+      } else {
+        hotGrid.closest('.hotdest-section')?.remove();
+      }
     }
 
     // 2. 여우 기종진단 카드

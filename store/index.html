@@ -93,7 +93,7 @@
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
   <link rel="stylesheet" href="styles.css?v=20260720d">
-  <link rel="stylesheet" href="premium.css?v=20260719b">
+  <link rel="stylesheet" href="premium.css?v=20260802a">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
   <script src="jd-trip-cal.js?v=20260719b" defer></script>
@@ -132,8 +132,11 @@
       /* 노트북(낮은 뷰포트)에서 패널이 한 화면에 들어오도록 밀도 조절 */
       html.pc-snap #view-home .app-info-section { padding: 28px 0 !important; }
       html.pc-snap #view-home .app-info-title { margin-bottom: 24px !important; }
-      html.pc-snap #view-home .globe-section { padding: 40px 24px !important; min-height: 0 !important; }
-      html.pc-snap #view-home #pcGlobe { height: clamp(380px, 62svh, 620px) !important; }
+      /* 지구본 패널: 화면을 꽉 채운다 (2026-08-02 사장님 — 예전 min-height:0 오버라이드가 섹션을
+         콘텐츠 높이로 쪼그라뜨려 상하 여백이 비어 보였음). 패널 100svh 유지 + 지구본 확대. */
+      html.pc-snap #view-home .globe-section { padding: 84px 24px 32px !important; min-height: 100svh !important; }
+      html.pc-snap #view-home #pcGlobe { height: clamp(460px, 74svh, 760px) !important; }
+      html.pc-snap #view-home .globe-section > div { max-width: 1280px !important; gap: 40px !important; }
       html.pc-snap #view-home .pc-tail { scroll-snap-align: start; }
       /* 히어로 프레임은 패널을 꽉 채우게 */
       /* 히어로: 풀블리드 100svh — 라운드 프레임 해제, 영상이 화면을 꽉 채움 */
@@ -504,10 +507,14 @@
         }
       </style>
 
-      <!-- 국가 해시태그 마퀴 (여행지 바로가기) -->
-      <section class="country-marquee-section">
-        <div class="country-marquee-label">어디로 여행을 떠날까요? ✈️</div>
-        <div class="country-marquee" id="countryMarquee"></div>
+      <!-- 인기 여행지 바로가기 (2026-08-02 사장님: 가로 마퀴 제거 → 정돈된 카드 그리드)
+           지구본이 '탐색'이면 여기는 '많이 가는 곳 바로 구매' — 최저가를 함께 보여 결정을 돕는다. -->
+      <section class="hotdest-section">
+        <div class="hotdest-head">
+          <span class="hotdest-eyebrow">POPULAR</span>
+          <h3 class="hotdest-title">많이 찾는 여행지, <em>최저가로 바로</em></h3>
+        </div>
+        <div class="hotdest-grid" id="hotDestGrid"></div>
       </section>
 
       <!-- App Info Section — 로미 프리미엄 카드 -->
@@ -1576,7 +1583,7 @@
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="jd-devices.js?v=20260717b"></script>
-  <script src="app.js?v=20260720j"></script>
+  <script src="app.js?v=20260802a"></script>
   <script src="globe.js?v=20260717a" defer></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
@@ -1638,7 +1645,7 @@
 
       // 섹션 단위 리빌 대상 (히어로/지구본은 자체 연출이 있어 제외)
       if (window.__armReveal) {
-        window.__armReveal('.pc-trust-strip, .country-marquee-section, .app-info-section .container > *, .store-section .container > *, .cta-banner .container > *, .review-track-section .container > *, .guide-image-section .container > *');
+        window.__armReveal('.pc-trust-strip, .hotdest-section, .app-info-section .container > *, .store-section .container > *, .cta-banner .container > *, .review-track-section .container > *, .guide-image-section .container > *');
       }
       // 헤더 유리질감 전환
       (function () {
@@ -1766,9 +1773,9 @@
       strip.style.cssText = 'position:absolute;left:0;right:0;bottom:30px;margin:0 auto;z-index:6;padding:0 32px;max-width:1160px;';
       heroP.appendChild(strip);
     }
-    var marq = document.querySelector('#view-home .country-marquee-section');
+    var hot = document.querySelector('#view-home .hotdest-section');
     var appP = document.querySelector('#view-home .app-info-section');
-    if (marq && appP) { marq.style.margin = '0 0 20px'; appP.insertBefore(marq, appP.firstChild); }
+    if (hot && appP) { hot.style.margin = '0 0 18px'; appP.insertBefore(hot, appP.firstChild); }
     if (!panels.length) return;
     document.documentElement.classList.add('pc-snap');
     document.documentElement.classList.remove('snap-on'); // 구 CSS 스냅 전면 해제 — 이동은 페이저가 전담
