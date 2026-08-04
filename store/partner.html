@@ -310,7 +310,8 @@ function loadHome(){
       '<div class="card"><div class="k">최근 24시간</div><div class="v">' + j.c24 + '건</div><div class="s">' + won(j.a24) + '원</div></div>' +
       '<div class="card"><div class="k">최근 7일</div><div class="v">' + j.c7 + '건</div><div class="s">' + won(j.a7) + '원</div></div>' +
       '<div class="card"><div class="k">대기 링크</div><div class="v">' + j.pending.length + '건</div><div class="s">고객 미클릭</div></div>';
-    $('hmBanner').innerHTML = (j.runway_days!=null && j.runway_days <= 7)
+    if (j.demo) { $('hmBanner').innerHTML = '<div class="banner">🎭 <b>데모 계정</b>입니다 — 포털 화면과 발급 흐름을 자유롭게 둘러보세요. 공급가·실제 발급은 정식 가입 후 열립니다. 가입 문의: 파트너 전용 010-4689-4669</div>'; }
+    else $('hmBanner').innerHTML = (j.runway_days!=null && j.runway_days <= 7)
       ? '<div class="banner">⚠️ 이 속도면 잔액이 약 ' + j.runway_days + '일 후 소진됩니다 — <a style="cursor:pointer;text-decoration:underline" onclick="go(\'ledger\',document.querySelector(\'[data-s=ledger]\'))">충전 요청 →</a></div>' : '';
     $('hmPending').innerHTML = j.pending.length
       ? '<div style="overflow-x:auto"><table><tr><th>요청일</th><th>상품</th><th>수령인</th><th></th></tr>' + j.pending.map(function(p){
@@ -371,7 +372,7 @@ function renderProds(){
     return '<div class="prod' + (window._sel===p.code?' sel':'') + '" onclick="selProd(\'' + esc(p.code) + '\')">' +
       '<b>' + esc(p.carrier || '통신사 확인중') + '</b>' + ntb +
       '<span class="muted" style="display:block;margin-top:3px;">' + esc(specLabel(p)) + ' · ' + p.days + '일</span>' +
-      '<div class="p">' + won(p.price) + '원</div></div>';
+      '<div class="p">' + (p.price==null ? '<span style="color:var(--mut);font-size:.8rem">🔒 가입 후 공개</span>' : won(p.price) + '원') + '</div></div>';
   }).join('') : '<div class="muted">상품이 없습니다</div>';
 }
 // 유형별 사용량 표기 (2026-08-01 사장님: 데일리/총량/무제한 구분) — "매일 2GB" / "총 10GB" / "무제한"
