@@ -187,7 +187,20 @@
     <div style="margin-top:10px"><button class="btn btn-p" onclick="saveLogin()">계정 저장</button></div>
     <div id="acOut" style="margin-top:8px"></div></div>
   <div class="panel"><h2>💬 알림톡 (내 채널) <span id="cfAligo" class="chip c-mut">확인 중</span></h2>
-    <div class="muted">발급 링크가 파트너님 알리고 채널로 자동 발송됩니다. 연동 등록은 본사에서 처리해 드려요(카톡 문의).</div></div>
+    <div class="muted" style="margin-bottom:8px">발급 링크가 <b>파트너님 알리고 채널</b>로 자동 발송됩니다. 알리고 계정·카카오 채널·템플릿 승인을 마친 뒤 아래 6가지를 직접 입력하세요 — 저장 즉시 자동 발송이 켜집니다. 절차는 <a href="/partner-guide.html#s8" target="_blank">가이드 8장</a> 그대로 따라 하시면 됩니다.</div>
+    <div class="row">
+      <input id="alKey" placeholder="알리고 API Key" autocomplete="off">
+      <input id="alUid" placeholder="알리고 아이디" autocomplete="off">
+      <input id="alSkey" placeholder="발신프로필 키 (senderkey)" autocomplete="off">
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="alSender" placeholder="발신번호 (예: 010-1234-5678)" autocomplete="off">
+      <input id="alTplI" placeholder="발급 템플릿 코드 (예: UB_1234)" autocomplete="off">
+      <input id="alTplC" placeholder="발급완료 템플릿 코드 (예: UB_1235)" autocomplete="off">
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-p" onclick="saveAligo()">알림톡 연동 저장</button></div>
+    <div id="alOut" style="margin-top:8px"></div>
+    <div class="note" style="margin-top:8px">입력한 값은 발송에만 사용됩니다. 일부만 저장해도 되고(나머지는 나중에), 6가지가 모두 채워지면 상태가 <b>연동됨</b>으로 바뀝니다.</div></div>
   <div class="panel"><h2>🔌 오픈마켓 주문 자동 수집</h2>
     <div class="muted" style="margin-bottom:8px">내 스토어 API 키를 등록하면 주문이 자동으로 발급 링크로 이어집니다.</div>
     <div id="cfMkts" class="muted">불러오는 중…</div></div>
@@ -603,6 +616,23 @@ function saveLogin(){
     $('acOut').innerHTML = '<div class="note">✅ 저장됐어요 — 다음 로그인부터 아이디 <b>' + esc(j.login_id) + '</b>로 들어오시면 됩니다.</div>';
     $('acPw').value = ''; $('acPwCur').value = '';
     toast('계정 저장 완료');
+    loadConf();
+  });
+}
+function saveAligo(){
+  // 알림톡 셀프 연동 (2026-08-04) — 빈칸은 건드리지 않음(부분 저장). 6개 모두 채워지면 '연동됨'.
+  var body = {};
+  var map = { api_key:'alKey', user_id:'alUid', sender_key:'alSkey', sender:'alSender', tpl_issue:'alTplI', tpl_care:'alTplC' };
+  Object.keys(map).forEach(function(k){ var v = $(map[k]).value.trim(); if (v) body[k] = v; });
+  if (!Object.keys(body).length) { toast('입력된 값이 없어요'); return; }
+  api('partner_aligo_set', body).then(function(j){
+    if (!j.ok) { $('alOut').innerHTML = '<div class="banner">' + esc(j.error || '저장 실패') + '</div>'; return; }
+    var left = 6 - (j.aligo_fields || []).length;
+    $('alOut').innerHTML = j.aligo_ready
+      ? '<div class="note">✅ <b>연동 완료!</b> 지금부터 발급 알림톡이 파트너님 채널로 자동 발송됩니다.</div>'
+      : '<div class="note">저장됐어요 — <b>' + left + '개 항목</b>이 더 필요합니다 (' + (j.aligo_fields||[]).join(', ') + ' 입력됨).</div>';
+    Object.keys(map).forEach(function(k){ $(map[k]).value = ''; });
+    toast('알림톡 정보 저장 완료');
     loadConf();
   });
 }
