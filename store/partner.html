@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>JDISIM 파트너 포털</title>
+<title>eSIM Partners 파트너 포털</title>
 <!-- 파트너 포털 v2 (2026-08-01, docs/PARTNER_PORTAL_DESIGN.md)
      · 인증: pkey → partner_login → 12h 세션. pkey는 브라우저에 저장하지 않는다(세션 토큰만 localStorage).
      · 6화면: 홈/발급/내역/정산·충전/가격표/설정. v1 백업: _보관_감사백업/partner_v1_20260801.html
@@ -68,7 +68,7 @@
 
 <!-- 로그인 -->
 <div id="login">
-  <div style="text-align:center;margin:20px 0 24px;font-weight:900;font-size:1.3rem">JD<span style="color:var(--o)">ISIM</span> 파트너</div>
+  <div style="text-align:center;margin:20px 0 24px;font-weight:900;font-size:1.3rem">eSIM<span style="color:var(--o)">Partners</span></div>
   <div class="panel">
     <h2>파트너 로그인</h2>
     <div id="lgIdMode">
@@ -88,7 +88,7 @@
 <!-- 포털 -->
 <div class="wrap" id="portal" style="display:none">
 <aside>
-  <div class="logo">JD<span>ISIM</span> 파트너</div>
+  <div class="logo" id="wlLogo">eSIM<span>Partners</span></div>
   <button class="on" data-s="home" onclick="go('home',this)">🏠 홈</button>
   <button data-s="issue" onclick="go('issue',this)">⚡ 발급</button>
   <button data-s="orders" onclick="go('orders',this)">📋 내역</button>
@@ -327,7 +327,7 @@ function loadHome(){
   });
 }
 function copyLink(tok){
-  var u = 'https://jdisim.co.kr/issue?issue=' + tok;
+  var u = 'https://esimpartners.co.kr/issue?issue=' + tok;
   var p = (navigator.clipboard && navigator.clipboard.writeText) ? navigator.clipboard.writeText(u) : Promise.reject();
   p.then(function(){ toast('링크를 복사했어요'); }, function(){ prompt('링크를 복사하세요', u); });
 }
@@ -479,7 +479,7 @@ function ordersCsv(){
   var rows = [['일시','상품','수령인','전화뒷4','공급가','상태']].concat((window._orders||[]).map(function(o){
     return [o.at, o.plan, o.buyer, o.ph4, o.price, (ST_LABEL[o.status]||[o.status])[0]];
   }));
-  csvDown('JDISIM_발급내역_' + new Date().toISOString().slice(0,10) + '.csv', rows);
+  csvDown('발급내역_' + new Date().toISOString().slice(0,10) + '.csv', rows);
 }
 
 // ── ④ 정산·충전 ──
@@ -514,7 +514,7 @@ function ledgerCsv(){
   var rows = [['일시','구분','금액','메모','잔액']].concat((window._ledger||[]).map(function(l){
     return [l.at, l.type, l.amount, l.memo||'', l.balance];
   }));
-  csvDown('JDISIM_정산원장_' + new Date().toISOString().slice(0,10) + '.csv', rows);
+  csvDown('정산원장_' + new Date().toISOString().slice(0,10) + '.csv', rows);
 }
 function chargeReq(){
   var amt = parseInt(($('chAmt').value||'').replace(/[^0-9]/g,''), 10);
@@ -560,7 +560,7 @@ function priceCsv(){
   if (!window._pl) return;
   var rows = [['국가','통신사','망','유형','사용량','일수','코드','공급가 (' + (window._pl.name||'') + ' 전용 · ' + window._pl.at + ' 기준)']]
     .concat(window._pl.rows.map(function(r){ return [r.ct, r.carrier, r.nt||'', r.st||'', r.spec, r.days, r.code, r.price]; }));
-  csvDown('JDISIM_공급가격표_' + window._pl.at + '.csv', rows);
+  csvDown('공급가격표_' + window._pl.at + '.csv', rows);
 }
 
 // ── ⑥ 설정 ──

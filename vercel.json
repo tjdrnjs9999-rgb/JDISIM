@@ -11,6 +11,12 @@
     },
     {
       "src": "/",
+      "has": [{ "type": "host", "value": "esimpartners.co.kr" }],
+      "status": 308,
+      "headers": { "Location": "/partner" }
+    },
+    {
+      "src": "/",
       "dest": "/store/index.html"
     },
     {
