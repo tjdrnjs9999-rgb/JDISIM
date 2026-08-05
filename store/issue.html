@@ -1509,16 +1509,24 @@ function renderTestTok(){
 }
 function renderIssueReadyTok(d){
   var plan = (d && d.plan) || '';
-  if (d && d.cap && plan && plan.indexOf('속도') < 0) plan += ' · ' + d.cap + ' 속도로 무제한';   // 상한 무제한 표기 (2026-08-02)
-  h('<div class="card" style="padding:34px 22px;max-width:440px;margin:18px auto;display:flex;flex-direction:column;align-items:center;text-align:center;">' +
-      '<img src="images/fox-qr.png" alt="" style="width:104px;height:auto;" onerror="this.style.display=\'none\'">' +
-      '<div style="font-weight:900;font-size:1.2rem;margin-top:14px;">eSIM 발급하기</div>' +
-      (plan ? '<div class="muted" style="margin-top:6px;font-size:.85rem;line-height:1.5;">' + esc(plan) + '</div>' : '') +
-      '<div class="muted" style="margin-top:12px;font-size:.82rem;line-height:1.75;">아래 버튼을 누르면 통신사에서 QR을 생성합니다.<br>생성되면 이 화면에서 바로 확인·설치할 수 있어요.</div>' +
-      '<button class="btn btn-primary" style="margin:22px auto 0;display:flex;align-items:center;justify-content:center;width:100%;max-width:300px;min-height:54px;padding:0 16px;font-size:1.02rem;font-weight:900;line-height:1;" onclick="doIssueTok()">🎫 발급하기</button>' +
-      '<button class="btn" style="margin:10px auto 0;display:flex;align-items:center;justify-content:center;width:100%;max-width:300px;min-height:46px;padding:0 16px;font-size:.92rem;font-weight:800;border:1.5px solid #F1690D;color:#F1690D;background:#fff;border-radius:12px;" onclick="giftOpenTok(\'' + esc(ISSUE) + '\')">🎁 선물하기</button>' +
+  if (d && d.cap && plan && plan.indexOf('속도') < 0) plan += ' / ' + d.cap + ' 속도로 무제한';
+  var segs = prettyPlan(plan).split(' · ');
+  var carrier = segs[0] || '';
+  var chip = segs.slice(1).join(' · ');
+  var cty = countryFrom('', plan || '', '');
+  var fl = (typeof FLAG_EMOJI !== 'undefined' && FLAG_EMOJI[cty]) || '';
+  var ctxLine = [fl, cty, cty && carrier ? '·' : '', carrier].filter(Boolean).join(' ');
+  var who = (d && d.buyer) ? (d.buyer + ' 님의 ') : '';
+  h('<div class="card" style="padding:26px 20px;max-width:440px;margin:18px auto;text-align:left;">' +
+      (ctxLine ? '<div class="muted" style="font-size:.8rem;">' + esc(mu(ctxLine)) + '</div>' : '') +
+      '<div style="font-weight:900;font-size:1.2rem;margin-top:5px;">' + esc(who) + 'eSIM이 준비됐어요</div>' +
+      (chip ? '<div style="margin-top:9px;"><span style="display:inline-block;background:rgba(241,105,13,.09);color:#C2410C;border-radius:999px;padding:4px 12px;font-size:.76rem;font-weight:800;">' + esc(mu(chip)) + '</span></div>' : '') +
+      '<div class="muted" style="margin-top:13px;font-size:.8rem;line-height:1.7;">버튼을 누르면 통신사에서 QR을 생성하고,<br>이 화면에서 바로 확인·설치할 수 있어요.</div>' +
+      '<button class="btn btn-primary" style="margin-top:18px;min-height:52px;font-size:1rem;font-weight:900;" onclick="doIssueTok()">지금 발급하기</button>' +
       '<div id="gift-box"></div>' +
-      '<div class="muted" style="margin-top:11px;font-size:.72rem;">설치는 와이파이 환경에서 진행하세요 · 선물하면 받는 분께 발급 링크가 문자로 가요</div>' +
+      '<div class="muted" style="margin-top:13px;font-size:.76rem;text-align:center;">동행자 것이라면 <a style="color:#C2410C;font-weight:800;text-decoration:underline;cursor:pointer;" onclick="giftOpenTok('' + esc(ISSUE) + '')">선물로 보내기</a></div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.74rem;text-align:center;">🔒 발급 버튼을 누르기 전까지 비용이 발생하지 않아요</div>' +
+      '<div class="muted" style="margin-top:5px;font-size:.72rem;text-align:center;">설치는 와이파이 환경에서 진행하세요</div>' +
     '</div>');
 }
 function giftOpenTok(tok){
