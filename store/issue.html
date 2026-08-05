@@ -1019,6 +1019,9 @@ function brandFootHTML(){
 }
 function h(html){ $('app').innerHTML = html; }
 function esc(s){ return String(s || '').replace(/[<>&"]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
+// 의미 단위 줄바꿈 (2026-08-05 사장님: "Smart/Globe(" + "로밍)" 처럼 괄호 중간에서 꺾이면 안 됨 — 전 표기 공통 규칙)
+//   괄호묶음은 통짜로 붙이고(⁠ word-joiner + 내부 공백 NBSP), 개행은 괄호 '앞'에서만 허용(​).
+function mu(s){ return String(s || '').replace(/\s*\(([^()]*)\)/g, function(_, g){ return '​(⁠' + g.replace(/ /g, ' ') + '⁠)'; }); }
 function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(15,23,42,0.94);color:#fff;font-size:0.78rem;font-weight:800;padding:11px 19px;border-radius:24px;z-index:710;max-width:86vw;text-align:center;'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
 function copy(v,msg){ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(function(){ toast(msg||'복사됐어요'); }); } }
 function fmtDate(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var w=['일','월','화','수','목','금','토']; return (d.getMonth()+1)+'월 '+d.getDate()+'일('+w[d.getDay()]+')'; }catch(e){ return ''; } }
@@ -1340,10 +1343,10 @@ function bpassHTML(o, opts){
   var capNote = (o.cap && p.unlimited) ? '<div class="s2">' + esc(o.cap) + ' 속도로 데이터 무제한</div>' : (p.throttle ? '<div class="s2">소진 후 무제한</div>' : '');
   if (p.data) cells += '<div><div class="sk">DATA</div><div class="sv">' + (p.daily ? '<small>매일</small> ' : (p.unlimited ? '' : '<small>총</small> ')) + esc(p.data) + '</div>' + capNote + '</div>';
   if (p.days) cells += '<div><div class="sk">DAYS</div><div class="sv">' + p.days + '<small>일</small></div></div>';
-  if (o.carrier) cells += '<div><div class="sk">NET · 통신사</div><div class="sv" style="font-size:0.86rem;">' + esc(o.carrier) + '</div></div>';
+  if (o.carrier) cells += '<div><div class="sk">NET · 통신사</div><div class="sv" style="font-size:0.86rem;">' + esc(mu(o.carrier)) + '</div></div>';
   var ri = resetInfo(o.country);
-  if (p.daily && ri) cells += '<div><div class="sk">RESET</div><div class="sv" style="font-size:0.9rem;">↻ ' + esc(ri.t) + '</div></div>';
-  if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(o.productName || '—') + '</div></div>';
+  if (p.daily && ri) cells += '<div><div class="sk">RESET</div><div class="sv" style="font-size:0.9rem;">↻ ' + esc(mu(ri.t)) + '</div></div>';
+  if (!cells) cells = '<div><div class="sk">PLAN</div><div class="sv" style="font-size:0.88rem;">' + esc(mu(o.productName || '—')) + '</div></div>';
   // (2026-07-18) 케어링크(ICCID 단위 티켓)에서는 수량 표시 제거 — 티켓 1장 = 회선 1개. 발급 전 주문 화면에서만 ×N 유지
   var qty = (o.quantity > 1 && !(typeof CARE !== 'undefined' && CARE)) ? ' <em>× ' + o.quantity + '</em>' : '';
   var acts = opts.issued
@@ -1358,7 +1361,7 @@ function bpassHTML(o, opts){
     '<div class="tkt-detail">' +
       '<div class="dr"><span>주문번호</span><b>' + esc(o.orderCode || '—') + '</b></div>' +
       (o.iccid ? '<div class="dr"><span>ICCID</span><b>' + esc(o.iccid) + '</b></div>' : '') +
-      '<div class="dr"><span>상품 전체명</span><b style="font-family:inherit;font-weight:700;">' + esc(o.productName || '—') + qty + '</b></div>' +
+      '<div class="dr"><span>상품 전체명</span><b style="font-family:inherit;font-weight:700;">' + esc(mu(o.productName || '—')) + qty + '</b></div>' +
     '</div>';
   return (opts.print ? '<div class="print-slot"></div>' : '') +
     '<div class="tkt'+(opts.print?' printing':'')+'">' +
