@@ -1248,13 +1248,13 @@ function tripStep(){
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
   window._reopenInst = false;
-  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
+  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
 }
 function markActivated(){
   var st = tripState();
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
-  saveTrip(st); renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); confetti(); buzz([16,50,16]);
+  saveTrip(st); renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
 }
 // ===== 컴팩트 스테퍼 (진행 + 현재 단계만 크게) =====
 function journeyHTML(){ return '<div class="card" id="jny"></div>'; }
@@ -1329,6 +1329,24 @@ function sosHTML(country){
     '</div></div>';
 }
 
+// ===== 케어 상태 필 (2026-08-05 2차 개편) — 보딩패스 배지를 여정 상태로 =====
+//   설치 전(호박) → 설치 완료(파랑) → 사용 중(초록) → 기간 종료(회색). 사용량 API·설치 이벤트가 갱신.
+function careStatusInfo(kind){
+  if (kind !== 'expired' && kind !== 'active') {
+    var st = tripState();
+    kind = st.activatedAt ? 'active' : (st.installedAt ? 'installed' : 'pre');
+  }
+  return kind === 'expired' ? {t:'기간 종료', c:'#CBD5E1'}
+       : kind === 'active' ? {t:'사용 중', c:'#B7F5CF'}
+       : kind === 'installed' ? {t:'설치 완료', c:'#93C5FD'}
+       : {t:'설치 전', c:'#FDE68A'};
+}
+function setCareStatus(kind){
+  var txt = document.getElementById('careStTxt'), dot = document.getElementById('careStDot');
+  if (!txt || !dot) return;
+  var s = careStatusInfo(kind);
+  txt.textContent = s.t; dot.style.background = s.c;
+}
 // ---------------- 보딩패스 티켓 ----------------
 function bpassHTML(o, opts){
   opts = opts || {};
@@ -1336,7 +1354,9 @@ function bpassHTML(o, opts){
   var cc = CC3[o.country] || '···';
   var p = planOf(o);
   var st = opts.issued
-    ? '<span class="st ok"><i></i>발급 완료</span>'
+    ? ((typeof CARE !== 'undefined' && CARE)
+        ? (function(){ var s = careStatusInfo(null); return '<span class="st ok"><i id="careStDot" style="background:' + s.c + ';"></i><span id="careStTxt">' + s.t + '</span></span>'; })()
+        : '<span class="st ok"><i></i>발급 완료</span>')
     : '<span class="st wait"><i></i>발급 대기</span>';
   // 스펙 셀: 사람들이 실제로 보는 것만 크게
   var cells = '';
@@ -2033,6 +2053,7 @@ function loadUsage(){
       var lst = (d && d.usageList) || [];
       if (!lst.length){
         box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 아직 사용량 기록이 없어요.<br>무제한 요금제이거나 현지에서 아직 개통 전일 수 있어요. 개통 후 다시 눌러보세요!<br><span style="color:#64748b;">정확한 사용량은 설정 → 셀룰러 → 해당 회선에서도 볼 수 있어요.</span></div>';
+        setCareStatus(null);
         return;
       }
       // usageList 표준 변환 — 실측 필드 (2026-07-15 확정): usedDate "20260710" / usedAmount KB 단위
@@ -2049,6 +2070,7 @@ function loadUsage(){
       });
       window._planOption = String(d.planOption || ''); // 일일 용량 파싱 소스 (실측 필드)
       var expired = String(d.status||'')==='2';
+      setCareStatus(expired ? 'expired' : (used > 0 ? 'active' : null));
       var lastCountry = (daily.length && daily[daily.length-1].country) || (lst[0]&&lst[0].country) || '';
       renderUsage({used_mb:used,total_mb:total,status:expired?'expired':'active',daily:daily,country:lastCountry,listHistory:d.listHistory||[]});
     }).catch(function(){ box.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;text-align:left;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
@@ -2076,7 +2098,7 @@ function maybeAutoActivate(d){
     st.installedAt = st.installedAt || startIso;
     st.activatedAt = startIso;
     saveTrip(st);
-    renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState());
+    renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus('active');
     toast('현지 개통이 감지됐어요 — 남은 일수를 세어드릴게요 🛬');
   } catch(e){}
 }
