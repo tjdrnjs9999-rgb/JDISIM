@@ -1664,9 +1664,9 @@ function foldHTML(title, inner, open){
   return '<details class="card"' + (open ? ' open' : '') + ' style="padding:13px 15px;"><summary style="list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:7px;font-weight:900;font-size:0.875rem;color:#0f172a;"><span style="flex:1;min-width:0;">' + title + '</span><span class="muted" style="flex-shrink:0;white-space:nowrap;font-size:0.72rem;font-weight:700;">펼치기 ▾</span></summary><div style="margin-top:10px;">' + inner + '</div></details>';
 }
 function shareTicketHTML(){
+  // 동행자 보내기 버튼 제거 (2026-08-05 사장님) — 선물하기 기능이 동일 역할을 이미 수행. 다건 주문 안내만 유지.
   if (LOCAL || DEMO) return '';
-  var qn = (order && order.quantity > 1) ? '<div class="center" style="margin-top:5px;"><span class="muted" style="font-size:0.72rem;">티켓 ' + order.quantity + '개 주문 — 각 티켓 링크는 알림톡·이메일로 따로 도착했어요. 이 버튼은 지금 이 티켓을 보내요.</span></div>' : '';
-  return '<button type="button" class="btn btn-ghost" style="width:100%;margin:10px 0 0;" onclick="shareTicket()">📤 동행자에게 이 티켓 보내기</button>' + qn;
+  return (order && order.quantity > 1) ? '<div class="center" style="margin-top:5px;"><span class="muted" style="font-size:0.72rem;">티켓 ' + order.quantity + '개 주문 — 각 티켓 링크는 알림톡·이메일로 따로 도착했어요.</span></div>' : '';
 }
 function shareTicket(){
   var url = location.href;
