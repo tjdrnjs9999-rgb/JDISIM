@@ -1455,15 +1455,7 @@ function loadCare(){
       } catch (e) {}
       if (preIssue) return renderPreIssue();
       renderIssued(order.lpa, true);
-      var tk = document.querySelector('#app .tkt');
-      if (tk) tk.insertAdjacentHTML('beforebegin',
-        '<div class="care-hero"><img src="images/fox-phone.webp" alt="로미" onerror="this.style.display=\'none\'">' +
-        '<div class="ch-t"><div class="ey">CARE DESK</div><b>' + (order.buyerName ? esc(order.buyerName) + ' 님의 여행 케어 데스크 🦊' : '로미의 여행 케어 데스크 🦊') + '</b>' +
-        '<p>설치 · 사용량 · 문제 해결까지, 여행 내내 이 티켓 하나면 돼요.</p>' +
-        '<div class="care-chips"><button type="button" onclick="goUsage()">📊 사용량 새로고침</button>' +
-        '<button type="button" onclick="runDiagnose()">🔍 원클릭 진단</button>' +
-        '<button type="button" onclick="openSignalFix()">📶 신호 안 잡혀요</button>' +
-        '<button type="button" onclick="openHelp()">🩺 로미 닥터 상담</button></div></div></div>');
+      // 케어 데스크 히어로 제거 (2026-08-05 사장님 승인) — 기능은 사용량 카드 새로고침·도움 리스트로 이관
       setTimeout(loadUsage, 700);
       if (RV) setTimeout(openReview, 1200);
     })
@@ -1893,8 +1885,14 @@ function renderIssued(lpa, revisit){
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
     '<div class="card" style="padding:11px 15px;display:flex;gap:9px;align-items:flex-start;background:#fef2f2;border:1px solid #fecaca;"><span style="flex-shrink:0;">⚠️</span><span style="font-size:0.78rem;font-weight:800;color:#b91c1c;line-height:1.55;">설치한 eSIM 프로필 <b>절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</span></div>' +
     shareTicketHTML() +
-    '<div class="card rv" id="usageCard">' + secHd('gear', 'DATA', '데이터 사용량') +
+    '<div class="card rv" id="usageCard" style="position:relative;">' + secHd('gear', 'DATA', '데이터 사용량') +
+    '<button type="button" onclick="loadUsage()" aria-label="사용량 새로고침" style="position:absolute;top:14px;right:14px;border:1.5px solid #E4E8EF;background:#fff;border-radius:10px;width:34px;height:34px;font-size:1rem;cursor:pointer;color:#5D6B85;">↻</button>' +
     '<div id="usageBody" class="center" style="margin-top:8px;"><div class="muted" style="padding:4px 0 10px;">현지에서 개통되면 여기에 실시간 사용량이 표시돼요</div><button class="btn btn-ghost" onclick="loadUsage()">사용량 불러오기</button></div></div>' +
+    '<div class="card" style="padding:6px 16px;">' +
+    '<div style="display:flex;align-items:center;gap:10px;padding:13px 2px;border-bottom:1px solid #F0F2F6;cursor:pointer;" onclick="runDiagnose()"><span style="font-size:1rem;">🔍</span><span style="flex:1;font-size:.86rem;font-weight:700;">뭔가 이상해요 — 원클릭 진단</span><span style="color:#98A3B8;">›</span></div>' +
+    '<div style="display:flex;align-items:center;gap:10px;padding:13px 2px;border-bottom:1px solid #F0F2F6;cursor:pointer;" onclick="openSignalFix()"><span style="font-size:1rem;">📶</span><span style="flex:1;font-size:.86rem;font-weight:700;color:#B91C1C;">신호가 안 잡혀요</span><span style="font-size:.72rem;color:#B91C1C;font-weight:800;">바로 해결 ›</span></div>' +
+    '<div style="display:flex;align-items:center;gap:10px;padding:13px 2px;cursor:pointer;" onclick="openHelp()"><span style="font-size:1rem;">🩺</span><span style="flex:1;font-size:.86rem;font-weight:700;">해결이 안 되면 로미 닥터 상담</span><span style="color:#98A3B8;">›</span></div>' +
+    '</div>' +
     journeyHTML() +
     foldHTML('📂 자세한 안내 — 현지 날씨 · 여행 브리핑 · SOS',
       skyWHTML() +
