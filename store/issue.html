@@ -1531,15 +1531,15 @@ function renderIssueReadyTok(d){
   var ctxLine = [fl, cty, cty && carrier ? '·' : '', carrier].filter(Boolean).join(' ');
   var who = (d && d.buyer) ? (d.buyer + ' 님의 ') : '';
   h('<div class="card" style="padding:26px 20px;max-width:440px;margin:18px auto;text-align:left;">' +
-      (ctxLine ? '<div class="muted" style="font-size:.8rem;">' + esc(mu(ctxLine)) + '</div>' : '') +
+      (ctxLine ? '<div class="muted" style="font-size:.8rem;font-weight:500;">' + esc(mu(ctxLine)) + '</div>' : '') +
       '<div style="font-weight:900;font-size:1.2rem;margin-top:5px;">' + esc(who) + 'eSIM이 준비됐어요</div>' +
       (chip ? '<div style="margin-top:9px;"><span style="display:inline-block;background:rgba(241,105,13,.09);color:#C2410C;border-radius:999px;padding:4px 12px;font-size:.76rem;font-weight:800;">' + esc(mu(chip)) + '</span></div>' : '') +
-      '<div class="muted" style="margin-top:13px;font-size:.8rem;line-height:1.7;">버튼을 누르면 통신사에서 QR을 생성하고,<br>이 화면에서 바로 확인·설치할 수 있어요.</div>' +
+      '<div class="muted" style="margin-top:13px;font-size:.8rem;line-height:1.7;font-weight:400;">버튼을 누르면 통신사에서 QR을 생성하고,<br>이 화면에서 바로 확인·설치할 수 있어요.</div>' +
       '<button class="btn btn-primary" style="margin-top:18px;min-height:52px;font-size:1rem;font-weight:900;" onclick="doIssueTok()">지금 발급하기</button>' +
       '<div id="gift-box"></div>' +
-      '<div class="muted" style="margin-top:13px;font-size:.76rem;text-align:center;">동행자 것이라면 <a style="color:#C2410C;font-weight:800;text-decoration:underline;cursor:pointer;" onclick="giftOpenTok(ISSUE)">선물로 보내기</a></div>' +
-      '<div class="muted" style="margin-top:9px;font-size:.74rem;text-align:center;">🔒 발급 버튼을 누르기 전까지 비용이 발생하지 않아요</div>' +
-      '<div class="muted" style="margin-top:5px;font-size:.72rem;text-align:center;">설치는 와이파이 환경에서 진행하세요</div>' +
+      '<div class="muted" style="margin-top:13px;font-size:.76rem;text-align:center;font-weight:400;">동행자 것이라면 <a style="color:#C2410C;font-weight:700;text-decoration:underline;cursor:pointer;" onclick="giftOpenTok(ISSUE)">선물로 보내기</a></div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.74rem;text-align:center;font-weight:400;">🔒 발급 버튼을 누르기 전까지 비용이 발생하지 않아요</div>' +
+      '<div class="muted" style="margin-top:5px;font-size:.72rem;text-align:center;font-weight:400;">설치는 와이파이 환경에서 진행하세요</div>' +
     '</div>');
 }
 function giftOpenTok(tok){
@@ -1617,13 +1617,13 @@ function renderSlotsTok(slots, plan){
     return '<a id="slot-gift-' + i + '" style="color:#C2410C;font-weight:800;text-decoration:underline;cursor:pointer;" onclick="giftOpenSlot(\'' + esc(tok) + '\',' + i + ')">' + (i+1) + '번</a>';
   }).join(' · ');
   h('<div class="card" style="padding:26px 20px;max-width:460px;margin:18px auto;text-align:left;">' +
-      (ctxLine ? '<div class="muted" style="font-size:.8rem;">' + esc(mu(ctxLine)) + '</div>' : '') +
+      (ctxLine ? '<div class="muted" style="font-size:.8rem;font-weight:500;">' + esc(mu(ctxLine)) + '</div>' : '') +
       '<div style="font-weight:900;font-size:1.2rem;margin-top:5px;">eSIM ' + slots.length + '개가 준비됐어요</div>' +
       (chip ? '<div style="margin-top:9px;"><span style="display:inline-block;background:rgba(241,105,13,.09);color:#C2410C;border-radius:999px;padding:4px 12px;font-size:.76rem;font-weight:800;">' + esc(mu(chip)) + '</span></div>' : '') +
       '<div style="margin-top:14px;border-top:1px solid #F0EAE0;">' + rows + '</div>' +
       '<div id="gift-box"></div>' +
-      '<div class="muted" style="margin-top:13px;font-size:.76rem;text-align:center;">동행자 것이라면 선물로 보내기: ' + giftLinks + '</div>' +
-      '<div class="muted" style="margin-top:9px;font-size:.74rem;text-align:center;">🔒 발급 버튼을 누르기 전까지 비용이 발생하지 않아요</div>' +
+      '<div class="muted" style="margin-top:13px;font-size:.76rem;text-align:center;font-weight:400;">동행자 것이라면 선물로 보내기: ' + giftLinks + '</div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.74rem;text-align:center;font-weight:400;">🔒 발급 버튼을 누르기 전까지 비용이 발생하지 않아요</div>' +
     '</div>');
   var states = new Array(slots.length);
   function paint(){
