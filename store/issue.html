@@ -1249,13 +1249,17 @@ function tripStep(){
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
   window._reopenInst = false;
-  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
+  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null);
+  if (document.getElementById('careInstCta')) loadUsage();   // 케어: 설치 CTA 히어로 → 사용량 히어로 전환
+  confetti(); buzz([16,50,16]);
 }
 function markActivated(){
   var st = tripState();
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
-  saveTrip(st); renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
+  saveTrip(st); renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null);
+  if (document.getElementById('careInstCta')) loadUsage();
+  confetti(); buzz([16,50,16]);
 }
 // ===== 컴팩트 스테퍼 (진행 + 현재 단계만 크게) =====
 function journeyHTML(){ return '<div class="card" id="jny"></div>'; }
@@ -1931,9 +1935,9 @@ function renderIssued(lpa, revisit){
 
 // ===== 케어링크 전용 화면 (2026-08-05 사장님 시안 정합) — 여행 티켓 카드 + 사용량 히어로 + 도움 리스트 =====
 //   보딩패스·설치 존은 'QR·설치 정보' 행 아래로 접힘(careTicketWrap). 사용량이 주인공.
-function careToggleTicket(){
+function careToggleTicket(force){
   var w = document.getElementById('careTicketWrap'); if (!w) return;
-  var on = w.style.display === 'none';
+  var on = force === true ? true : (w.style.display === 'none');
   w.style.display = on ? '' : 'none';
   if (on) { try { w.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){} }
 }
@@ -1968,9 +1972,17 @@ function renderCareTok(){
         '</div>' +
         '<span id="careStPill" style="flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:6px 12px;border-radius:999px;font-size:.74rem;font-weight:800;background:' + s0.bg + ';color:' + s0.fg + ';white-space:nowrap;"><i id="careStDot" style="width:6px;height:6px;border-radius:50%;background:' + s0.c + ';"></i><span id="careStTxt" style="white-space:nowrap;">' + s0.t + '</span></span>' +
       '</div>' +
+      // 상태 적응형 히어로 (2026-08-05 사장님 지적): 설치 전 = 설치가 주인공 / 이후 = 사용량이 주인공
       '<div style="background:#F7F8F7;border-radius:16px;padding:15px 16px;margin-top:15px;position:relative;">' +
         '<button type="button" onclick="loadUsage()" aria-label="사용량 새로고침" style="position:absolute;top:11px;right:11px;border:none;background:none;font-size:1rem;cursor:pointer;color:#5D6B85;padding:4px;">↻</button>' +
-        '<div id="usageBody"><div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div></div>' +
+        '<div id="usageBody">' +
+        (s0.t === '설치 전'
+          ? '<div id="careInstCta"><div class="muted" style="font-size:.8rem;font-weight:500;">eSIM 설치</div>' +
+            '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">아직 설치 전이에요</div>' +
+            '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:7px;line-height:1.6;">와이파이에서 3분이면 끝나요 — 아래 티켓의 원클릭·QR·수동 입력 중 편한 방법으로!</div>' +
+            '<button class="btn btn-primary" style="margin-top:13px;width:100%;min-height:48px;font-weight:900;" onclick="careToggleTicket(true)">지금 설치하기</button></div>'
+          : '<div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div>') +
+        '</div>' +
       '</div>' +
       '<div style="margin-top:9px;">' +
         row('📱', 'QR·설치 정보', '›', 'careToggleTicket()') +
@@ -1978,7 +1990,7 @@ function renderCareTok(){
         row('🩺', '해결이 안 되면 상담하기', '›', 'openHelp()', false, true) +
       '</div>' +
     '</div>' +
-    '<div id="careTicketWrap" style="display:none;">' +
+    '<div id="careTicketWrap" style="display:' + (s0.t === '설치 전' ? '' : 'none') + ';">' +
       bpassHTML(order || {}, {issued:true, plainSt:true}) +
       shareTicketHTML() +
     '</div>' +
@@ -2175,6 +2187,10 @@ function loadUsage(){
     fetch(window.CARE_API+'?iccid='+encodeURIComponent(order&&order.iccid||'')+'&action=usage').then(function(r){return r.json();}).then(function(d){
       var lst = (d && d.usageList) || [];
       if (!lst.length){
+        if (document.getElementById('careInstCta') && careStatusInfo(null).t === '설치 전') {
+          setCareStatus(null);   // 설치 전 + 기록 없음 — 설치 CTA 히어로 유지 (덮어쓰기 금지)
+          return;
+        }
         if (document.getElementById('careStPill')) {
           // 케어 히어로 안 — 시안 톤으로 담백하게
           box.innerHTML = '<div class="muted" style="font-size:.8rem;font-weight:500;">데이터 사용량</div>' +
