@@ -1482,10 +1482,10 @@ function loadIssue(){
       if (d.status === 'CANCELED') return renderCanceledTok();
       if (d.status === 'ISSUED' && d.care_token) { location.replace('issue.html?cx=' + encodeURIComponent(d.care_token)); return; }
       if (d.status === 'PENDING') { renderIssuingTok(); pollIssueTok(); return; }
-      if (d.status === 'SPLIT') { renderSlotsTok(d.slots || []); return; }
+      if (d.status === 'SPLIT') { renderSlotsTok(d.slots || [], d.plan); return; }
       if (d.status === 'READY' && (d.qty || 1) > 1) {
         careGet('action=issue_slots&it=' + encodeURIComponent(ISSUE))
-          .then(function(s){ if (s && s.slots && s.slots.length > 1) renderSlotsTok(s.slots); else renderIssueReadyTok(d); })
+          .then(function(s){ if (s && s.slots && s.slots.length > 1) renderSlotsTok(s.slots, d.plan); else renderIssueReadyTok(d); })
           .catch(function(){ renderIssueReadyTok(d); });
         return;
       }
@@ -1572,18 +1572,25 @@ function giftPoll(tok, nm){
     })
     .catch(function(){ if (++window._giftPollN <= 40) setTimeout(function(){ giftPoll(tok, nm); }, 3000); });
 }
-function renderSlotsTok(slots){
+function prettyPlan(pl){
+  // "통신사(로밍/로컬): 소프트뱅크 (로컬심) / 사용량: 매일 2GB / 이용기간: 3일" → "소프트뱅크 (로컬심) · 매일 2GB · 3일"
+  var segs = String(pl || '').split(/\s*\/\s*(?=[^)]*(?:\(|$))/).map(function(x){ return x.replace(/^[^:]{1,14}:\s*/, '').trim(); }).filter(Boolean);
+  return segs.length ? segs.join(' · ') : String(pl || '');
+}
+function renderSlotsTok(slots, plan){
+  var planLine = plan ? '<div style="margin-top:10px;display:inline-block;background:rgba(241,105,13,.09);color:#C2410C;border-radius:999px;padding:5px 13px;font-size:.8rem;font-weight:800;">' + esc(mu(prettyPlan(plan))) + '</div>' : '';
   var rows = '';
   for (var i = 0; i < slots.length; i++) {
     rows += '<div id="slot-' + i + '" style="display:flex;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #F0EAE0;">' +
-      '<div style="flex:1;text-align:left;"><b style="font-size:.95rem;">eSIM ' + (i+1) + '번</b><div class="muted" id="slot-st-' + i + '" style="font-size:.74rem;margin-top:2px;">확인 중…</div></div>' +
+      '<div style="flex:1;text-align:left;"><b style="font-size:.95rem;white-space:nowrap;">eSIM ' + (i+1) + '번</b><div class="muted" id="slot-st-' + i + '" style="font-size:.74rem;margin-top:2px;">확인 중…</div></div>' +
       '<a class="btn btn-primary" style="min-height:40px;display:flex;align-items:center;padding:0 14px;font-size:.85rem;font-weight:900;text-decoration:none;" href="issue.html?issue=' + encodeURIComponent(slots[i]) + '">🎫 발급하기</a>' +
       '<button class="btn" style="min-height:40px;padding:0 12px;font-size:.85rem;font-weight:800;border:1.5px solid #F1690D;color:#F1690D;background:#fff;border-radius:10px;" onclick="giftOpenSlot(\'' + esc(slots[i]) + '\',' + i + ')">🎁</button>' +
     '</div>';
   }
   h('<div class="card" style="padding:28px 20px;max-width:460px;margin:18px auto;text-align:center;">' +
       '<img src="images/fox-qr.png" alt="" style="width:88px;" onerror="this.style.display=\'none\'">' +
-      '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">eSIM ' + slots.length + '개 주문</div>' +
+      planLine +
+      '<div style="font-weight:900;font-size:1.15rem;margin-top:10px;">eSIM ' + slots.length + '개 주문</div>' +
       '<div class="muted" style="margin-top:6px;font-size:.8rem;line-height:1.7;">각 eSIM을 따로 발급하거나 선물할 수 있어요.<br>🎁 버튼으로 받는 분께 발급 링크를 보내드립니다.</div>' +
       '<div style="margin-top:14px;">' + rows + '</div>' +
       '<div id="gift-box"></div>' +
@@ -1592,10 +1599,10 @@ function renderSlotsTok(slots){
     careGet('action=issue_status&it=' + encodeURIComponent(tok)).then(function(d){
       var el = document.getElementById('slot-st-' + i);
       if (!el || !d) return;
-      if (d.status === 'ISSUED') el.textContent = '발급 완료';
-      else if (d.status === 'PENDING') el.textContent = '발급 진행 중';
+      if (d.status === 'ISSUED') el.textContent = '발급 완료';
+      else if (d.status === 'PENDING') el.textContent = '발급 진행 중';
       else if (d.status === 'CANCELED') el.textContent = '취소됨';
-      else el.textContent = d.gifted ? ('선물됨 → ' + (d.buyer || '')) : '발급 대기';
+      else el.textContent = d.gifted ? ('선물됨 → ' + (d.buyer || '')) : '발급 대기';
     }).catch(function(){});
   });
 }
