@@ -1253,10 +1253,10 @@ function tripStep(){
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
   window._reopenInst = false;
-  if (document.getElementById('careInstallPage')) {   // 케어 1페이지 → 설치 확인 즉시 2페이지(사용량)로 전환
+  if (document.getElementById('careInstallPage') || window._careMode) {   // 케어 — 설치 확인 즉시 다음 여정으로
     renderCareTok(); setTimeout(loadUsage, 300);
     try { window.scrollTo({top:0}); } catch(e){}
-    toast('설치 확인! 이제 여기서 사용량을 볼 수 있어요'); confetti(); buzz([16,50,16]);
+    toast('설치 확인! 도착만 하면 저절로 연결돼요'); confetti(); buzz([16,50,16]);
     return;
   }
   renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
@@ -1266,10 +1266,10 @@ function markActivated(){
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
   saveTrip(st);
-  if (document.getElementById('careInstallPage')) {
+  if (document.getElementById('careInstallPage') || window._careMode) {
     renderCareTok(); setTimeout(loadUsage, 300);
     try { window.scrollTo({top:0}); } catch(e){}
-    confetti(); buzz([16,50,16]);
+    toast('현지 개통 완료 — 좋은 여행 되세요 🛬'); confetti(); buzz([16,50,16]);
     return;
   }
   renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
@@ -1350,10 +1350,7 @@ function sosHTML(country){
 // ===== 케어 상태 필 (2026-08-05 2차 개편) — 보딩패스 배지를 여정 상태로 =====
 //   설치 전(호박) → 설치 완료(파랑) → 사용 중(초록) → 기간 종료(회색). 사용량 API·설치 이벤트가 갱신.
 function careStatusInfo(kind){
-  if (kind !== 'expired' && kind !== 'active') {
-    var st = tripState();
-    kind = st.activatedAt ? 'active' : (st.installedAt ? 'installed' : 'pre');
-  }
+  if (kind !== 'expired' && kind !== 'active') kind = careStatusKind();
   return kind === 'expired' ? {t:'기간 종료', c:'#94A3B8', bg:'#F1F5F9', fg:'#64748B'}
        : kind === 'active' ? {t:'사용 중', c:'#16A34A', bg:'#DCFCE7', fg:'#15803D'}
        : kind === 'installed' ? {t:'설치 완료', c:'#3B82F6', bg:'#DBEAFE', fg:'#1D4ED8'}
@@ -1963,45 +1960,73 @@ function careDaysLeft(firstDate, tzOff){
     return (left >= 0 && left <= days) ? left : null;
   } catch(e){ return null; }
 }
-// 페이지 라우팅 (2026-08-05 사장님 지시): 링크는 하나, 화면은 상태가 결정 — 설치 전 = 1페이지(설치) / 이후 = 2페이지(사용량)
-function renderCareTok(){
-  if (careStatusInfo(null).t === '설치 전') renderCareInstall();
-  else renderCareUsage();
+// ═════ 케어링크 v3 — 여정 라우팅 (2026-08-05 전면 리빌딩) ═════
+//   설치 전=설치 페이지 / 설치 후=개통 대기 / 사용 기록=사용량 / 만료=여행 마침.
+//   원칙: 여정의 언어·상태의 기계(careStatusKind가 정본) / 답 먼저 3초 판독 / 불안은 카피가 먼저 지운다.
+function careStatusKind(){
+  var st = tripState();
+  if (st.expired) return 'expired';
+  if (st.activatedAt) return 'active';
+  if (st.installedAt) return 'installed';
+  return 'pre';
 }
-function careHeadHTML(s0){
-  var cc = CC3[(order && order.country) || ''] || '';
-  var carrier = String((order && order.carrier) || '').replace(/\s*\([^)]*\)\s*$/, '');
-  var ctx = [cc, (order && order.country) || '', carrier ? '·' : '', carrier].filter(Boolean).join(' ');
+function renderCareTok(){
+  var k = careStatusKind();
+  if (k === 'pre') renderCareInstall();
+  else renderCareUsage(k === 'installed' ? 'wait' : k === 'expired' ? 'end' : 'live');
+}
+function careRowHTML(ic, label, right, onclick, red, last){
+  return '<div style="display:flex;align-items:center;gap:11px;padding:15px 2px;' + (last ? '' : 'border-bottom:1px solid #F0F2F6;') + 'cursor:pointer;" onclick="' + onclick + '">' +
+    '<span style="font-size:1.05rem;">' + ic + '</span>' +
+    '<span style="flex:1;font-size:.9rem;font-weight:700;' + (red ? 'color:#B91C1C;' : '') + 'white-space:nowrap;">' + label + '</span>' +
+    '<span style="font-size:' + (right === '›' ? '1rem' : '.76rem') + ';color:' + (red ? '#B91C1C' : '#98A3B8') + ';font-weight:800;white-space:nowrap;">' + right + '</span></div>';
+}
+function careHeadHTML(s0, ey, title, sub){
   return '<div style="display:flex;align-items:flex-start;gap:10px;">' +
       '<div style="flex:1;min-width:0;">' +
-        (ctx ? '<div class="muted" style="font-size:.8rem;font-weight:500;">' + esc(mu(ctx)) + '</div>' : '') +
-        '<div style="font-weight:900;font-size:1.2rem;margin-top:4px;">' + esc((order && order.buyerName) ? order.buyerName + ' 님의 여행 티켓' : '내 여행 티켓') + '</div>' +
+        (ey ? '<div class="muted" style="font-size:.78rem;font-weight:500;">' + ey + '</div>' : '') +
+        '<div style="font-weight:900;font-size:1.2rem;margin-top:4px;line-height:1.35;">' + title + '</div>' +
       '</div>' +
       '<span id="careStPill" style="flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:6px 12px;border-radius:999px;font-size:.74rem;font-weight:800;background:' + s0.bg + ';color:' + s0.fg + ';white-space:nowrap;"><i id="careStDot" style="width:6px;height:6px;border-radius:50%;background:' + s0.c + ';"></i><span id="careStTxt" style="white-space:nowrap;">' + s0.t + '</span></span>' +
-    '</div>';
+    '</div>' +
+    (sub ? '<div class="muted" style="margin-top:10px;font-size:.78rem;font-weight:400;line-height:1.65;">' + sub + '</div>' : '');
 }
-// ── 1페이지: 설치 — 티켓·설치 탭이 주인공. 설치 확인·기록 감지 시 자동으로 2페이지 전환 ──
+function careCheckInstalled(){
+  try { var z = document.getElementById('instZone'); if (z) z.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){}
+  checkInstalled((order && order.iccid) || '');
+}
+// ── 상태 A: 설치 페이지 — 설치가 유일한 과업 ──
 function renderCareInstall(){
   setRoute(order && order.country);
   window._lpa = (order && order.lpa) || '';
   seedDep();
+  window._careMode = 'install';
   var s0 = careStatusInfo(null);
+  var cty = (order && order.country) || '';
+  var fl = FLAG_EMOJI[cty] || '';
+  var ey = [fl, cty, cty ? '·' : '', (getDep() ? ddayText() + ' ·' : ''), '여행 준비 STEP 1'].filter(Boolean).join(' ');
+  var nm = (order && order.buyerName) ? esc(order.buyerName) + ' 님, ' : '';
   h('<div class="card" style="padding:24px 20px;max-width:460px;margin:18px auto;text-align:left;">' +
-      careHeadHTML(s0) +
-      '<div class="muted" style="margin-top:11px;font-size:.78rem;font-weight:400;line-height:1.6;">1단계 · eSIM 설치 — 아래 티켓에서 편한 방법으로 설치하세요.<br>설치가 확인되면 <b style="color:#C2410C;">사용량 화면으로 자동 전환</b>돼요.</div>' +
+      careHeadHTML(s0, esc(mu(ey)), nm + '출국 전 마지막 준비예요',
+        'eSIM 설치는 지금, 한국 와이파이에서 하는 게 가장 쉬워요.<br>' +
+        '설치해도 데이터 요금은 <b>현지에서 쓰기 시작할 때부터</b>예요.<br>' +
+        '설치가 확인되면 이 화면이 저절로 바뀌어요.') +
     '</div>' +
     '<div id="careInstallPage">' + bpassHTML(order || {}, {issued:true, plainSt:true}) + '</div>' +
     '<div class="card" style="padding:6px 16px;max-width:460px;margin:12px auto;">' +
-      '<div style="display:flex;align-items:center;gap:11px;padding:14px 2px;border-bottom:1px solid #F0F2F6;cursor:pointer;" onclick="markInstalled()"><span style="font-size:1.05rem;">✅</span><span style="flex:1;font-size:.9rem;font-weight:700;white-space:nowrap;">이미 설치를 마쳤어요</span><span style="font-size:.76rem;color:#98A3B8;font-weight:800;white-space:nowrap;">사용량 보기 ›</span></div>' +
-      '<div style="display:flex;align-items:center;gap:11px;padding:14px 2px;cursor:pointer;" onclick="openHelp(\'설치 중 오류가 떠요\')"><span style="font-size:1.05rem;">🩺</span><span style="flex:1;font-size:.9rem;font-weight:700;white-space:nowrap;">설치가 잘 안 되면 상담하기</span><span style="color:#98A3B8;">›</span></div>' +
+      careRowHTML('✅', '이미 설치를 마쳤어요', '확인하기 ›', 'careCheckInstalled()') +
+      careRowHTML('🩺', '설치가 잘 안 되나요?', '상담하기 ›', 'openHelp(\'설치 중 오류가 떠요\')', false, true) +
     '</div>' +
+    foldHTML('📂 여행 준비 안내 — 여행 브리핑 · SOS',
+      buildBriefHTML(cty) + sosHTML(cty), false) +
     brandFootHTML());
   startTktClock();
   renderInstallCard();
+  if (typeof inKakao === 'function' && inKakao()) pickTab(1);   // 인앱 브라우저 = QR이 가장 확실
   renderRomi(); reveal();
   renderBottomBar(tripBarState());
 }
-// 1페이지 배후 사용량 프로브 — 다른 기기에서 이미 설치·개통했다면 기록 감지로 2페이지 자동 전환
+// 설치 페이지 배후 프로브 — 타 기기에서 이미 설치·개통했다면 기록 감지로 자동 전환
 function careProbeUsage(){
   if (!(CARE && window.CARE_API)) return;
   careGet('iccid=' + encodeURIComponent((order && order.iccid) || '') + '&action=usage').then(function(d){
@@ -2015,51 +2040,117 @@ function careProbeUsage(){
     setTimeout(loadUsage, 200);
   }).catch(function(){});
 }
-// ── 2페이지: 사용량 — 시안 화면. QR 재접근은 접힌 행으로 유지(재설치·기기 변경) ──
-function renderCareUsage(){
+// ── 상태 B·C·D: 개통 대기(wait) / 사용 중(live) / 여행 마침(end) ──
+function renderCareUsage(mode){
+  mode = mode || 'live';
   setRoute(order && order.country);
   window._lpa = (order && order.lpa) || '';
   seedDep();
-  var cc = CC3[(order && order.country) || ''] || '';
-  var carrier = String((order && order.carrier) || '').replace(/\s*\([^)]*\)\s*$/, '');
-  var ctx = [cc, (order && order.country) || '', carrier ? '·' : '', carrier].filter(Boolean).join(' ');
+  window._careMode = mode;
   var s0 = careStatusInfo(null);
-  function row(ic, label, right, onclick, red, last){
-    return '<div style="display:flex;align-items:center;gap:11px;padding:15px 2px;' + (last ? '' : 'border-bottom:1px solid #F0F2F6;') + 'cursor:pointer;" onclick="' + onclick + '">' +
-      '<span style="font-size:1.05rem;">' + ic + '</span>' +
-      '<span style="flex:1;font-size:.9rem;font-weight:700;' + (red ? 'color:#B91C1C;' : '') + 'white-space:nowrap;">' + label + '</span>' +
-      '<span style="font-size:' + (right === '›' ? '1rem' : '.76rem') + ';color:' + (red ? '#B91C1C' : '#98A3B8') + ';font-weight:800;white-space:nowrap;">' + right + '</span></div>';
+  var cty = (order && order.country) || '';
+  var fl = FLAG_EMOJI[cty] || '';
+  var ey, title, sub = '';
+  if (mode === 'wait') {
+    ey = [fl, cty, cty ? '·' : '', (getDep() ? ddayText() : '출국 준비 완료')].filter(Boolean).join(' ');
+    title = '설치 끝. 이제 떠나기만 하면 돼요';
+    sub = '현지에 도착해 데이터가 처음 잡히면 이 화면이 저절로 사용량 화면으로 바뀌어요.<br>지금은 아무것도 안 해도 괜찮아요.';
+  } else if (mode === 'end') {
+    ey = [fl, cty, cty ? '· 여행 마침' : '여행 마침'].filter(Boolean).join(' ');
+    title = '여행, 잘 다녀오셨어요?';
+    var sum = window._careUsageLast;
+    var usedTxt = (sum && sum.used_mb) ? fmtData(sum.used_mb) : '';
+    var dcnt = (sum && sum.daily) ? sum.daily.filter(function(x){ return Number(x.mb) > 0; }).length : 0;
+    sub = '<span id="careEndSub">' + ((usedTxt ? (cty ? esc(cty) + '에서 ' : '') + (dcnt ? dcnt + '일 · ' : '') + '<b>' + usedTxt + '</b>를 함께했어요.' : '함께해 주셔서 고마웠어요.')) + '</span>';
+  } else {
+    var stl = tripState();
+    var dayN = stl.activatedAt ? (Math.floor((Date.now() - new Date(stl.activatedAt).getTime()) / 86400e3) + 1) : null;
+    var offc = TZ_OFF[cty], tl = '';
+    if (offc != null) { var dtc = new Date(Date.now() + offc * 3600e3); tl = '현지 ' + ('0' + dtc.getUTCHours()).slice(-2) + ':' + ('0' + dtc.getUTCMinutes()).slice(-2); }
+    ey = [fl, cty, dayN ? '· 여행 ' + dayN + '일차' : '', tl ? '· ' + tl : ''].filter(Boolean).join(' ');
+    title = '오늘도 잘 터지고 있어요';
+  }
+  var heroInner = mode === 'wait'
+    ? '<div id="careWaitHero"><div class="muted" style="font-size:.8rem;font-weight:500;">개통 대기 중</div>' +
+      '<div style="font-weight:800;font-size:1.05rem;margin-top:6px;line-height:1.5;">도착 후 비행기 모드를 풀면<br>저절로 연결돼요</div>' +
+      '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:9px;">첫 사용이 감지되면 남은 일수 계산이 시작돼요</div></div>'
+    : '<div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div>';
+  var rows;
+  if (mode === 'end') {
+    rows = careRowHTML('🧳', '다음 여행 eSIM 보러 가기', '›', 'window.open(\'https://jdisim.co.kr\',\'_blank\')') +
+           careRowHTML('🎫', '티켓·QR 다시 보기', '›', 'careToggleTicket()') +
+           careRowHTML('🩺', '요금·환불 문의', '›', 'openHelp(\'유효기간·환불 문의\')', false, true);
+  } else if (mode === 'wait') {
+    rows = careRowHTML('📱', 'QR·설치 정보', '›', 'careToggleTicket()') +
+           careRowHTML('📶', '도착했는데 신호가 없어요', '원클릭 진단 ›', 'runDiagnose()', true) +
+           careRowHTML('🩺', '해결이 안 되면 상담하기', '›', 'openHelp(\'현지에서 데이터가 안 터져요\')', false, true);
+  } else {
+    rows = careRowHTML('📱', 'QR·설치 정보', '›', 'careToggleTicket()') +
+           careRowHTML('📶', '신호가 안 잡혀요', '원클릭 진단 ›', 'runDiagnose()', true) +
+           careRowHTML('🩺', '해결이 안 되면 상담하기', '›', 'openHelp()', false, true);
+  }
+  var waitCk = '';
+  if (mode === 'wait') {
+    var isI = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    var steps = isI
+      ? ['설정 → 셀룰러 → 새 eSIM 회선 <strong>켜기</strong>', '그 회선의 <strong>데이터 로밍 ON</strong>', '셀룰러 데이터를 새 회선으로 선택 — 상단에 신호가 뜨면 성공']
+      : ['설정 → 연결 → SIM 관리자 → 새 eSIM <strong>켜기</strong>', '모바일 데이터를 새 eSIM으로 선택', '<strong>데이터 로밍 ON</strong> — 상단에 신호가 뜨면 성공'];
+    waitCk = '<div class="card" style="padding:20px;max-width:460px;margin:12px auto;text-align:left;">' +
+      '<div style="font-weight:900;font-size:.95rem;">🛬 도착 후 30초 세팅</div>' +
+      '<div class="arrchk" id="arrChk" style="margin-top:8px;">' + steps.map(function(t){
+        return '<label class="chk"><input type="checkbox" onchange="arrTick(this)"><span>' + t + '</span></label>';
+      }).join('') + '</div>' +
+      '<button type="button" class="btn btn-primary" id="actBtn" style="margin-top:12px;width:100%;" onclick="markActivated()">도착했어요 — 개통 확인</button></div>';
+  }
+  var report = '';
+  if (mode === 'end') {
+    report = '<div class="card" style="padding:20px;max-width:460px;margin:12px auto;text-align:left;">' +
+      '<div style="font-weight:900;font-size:.95rem;">✍️ 30초 후기</div>' +
+      '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:5px;">이번 여행의 데이터, 어땠나요? 다음 여행자에게 큰 도움이 돼요.</div>' +
+      '<button type="button" class="btn btn-primary" style="margin-top:11px;width:100%;" onclick="openReview()">후기 남기기</button>' +
+      '<div class="muted" style="font-size:.72rem;font-weight:400;margin-top:10px;">휴대폰 설정 → 셀룰러의 이 eSIM 프로필은 이제 지워도 괜찮아요.</div></div>';
   }
   h('<div class="card" style="padding:24px 20px 8px;max-width:460px;margin:18px auto;text-align:left;">' +
-      '<div style="display:flex;align-items:flex-start;gap:10px;">' +
-        '<div style="flex:1;min-width:0;">' +
-          (ctx ? '<div class="muted" style="font-size:.8rem;font-weight:500;">' + esc(mu(ctx)) + '</div>' : '') +
-          '<div style="font-weight:900;font-size:1.2rem;margin-top:4px;">' + esc((order && order.buyerName) ? order.buyerName + ' 님의 여행 티켓' : '내 여행 티켓') + '</div>' +
-        '</div>' +
-        '<span id="careStPill" style="flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:6px 12px;border-radius:999px;font-size:.74rem;font-weight:800;background:' + s0.bg + ';color:' + s0.fg + ';white-space:nowrap;"><i id="careStDot" style="width:6px;height:6px;border-radius:50%;background:' + s0.c + ';"></i><span id="careStTxt" style="white-space:nowrap;">' + s0.t + '</span></span>' +
-      '</div>' +
-      // 상태 적응형 히어로 (2026-08-05 사장님 지적): 설치 전 = 설치가 주인공 / 이후 = 사용량이 주인공
+      careHeadHTML(s0, esc(mu(ey)), esc(title), sub) +
+      (mode === 'end' ? '' :
       '<div style="background:#F7F8F7;border-radius:16px;padding:15px 16px;margin-top:15px;position:relative;">' +
         '<button type="button" onclick="loadUsage()" aria-label="사용량 새로고침" style="position:absolute;top:11px;right:11px;border:none;background:none;font-size:1rem;cursor:pointer;color:#5D6B85;padding:4px;">↻</button>' +
-        '<div id="usageBody"><div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div></div>' +
-      '</div>' +
-      '<div style="margin-top:9px;">' +
-        row('📱', 'QR·설치 정보', '›', 'careToggleTicket()') +
-        row('📶', '신호가 안 잡혀요', '원클릭 진단 ›', 'runDiagnose()', true) +
-        row('🩺', '해결이 안 되면 상담하기', '›', 'openHelp()', false, true) +
-      '</div>' +
+        '<div id="usageBody">' + heroInner + '</div>' +
+      '</div>') +
+      '<div style="margin-top:9px;">' + rows + '</div>' +
     '</div>' +
+    '<div id="careExtra" style="max-width:460px;margin:0 auto;"></div>' +
+    waitCk + report +
     '<div id="careTicketWrap" style="display:none;">' +
       bpassHTML(order || {}, {issued:true, plainSt:true}) +
       shareTicketHTML() +
     '</div>' +
-    foldHTML('📂 자세한 안내 — 현지 날씨 · 여행 브리핑 · SOS',
-      skyWHTML() + buildBriefHTML((order && order.country) || '') + sosHTML((order && order.country) || ''), false) +
+    (mode === 'end' ? '' :
+      foldHTML(mode === 'wait' ? '✈️ 출국 전 브리핑 — 현지 날씨 · 준비물 · SOS' : '📂 자세한 안내 — 현지 날씨 · 여행 브리핑 · SOS',
+        skyWHTML() + buildBriefHTML(cty) + sosHTML(cty), false)) +
     brandFootHTML());
   startTktClock();
   renderInstallCard();
-  paintSkyW(); renderRomi(); reveal(); loadWeather();
+  paintSkyW(); renderRomi(); reveal();
+  if (mode !== 'end') loadWeather();
+  else careEndSummary();
   renderBottomBar(tripBarState());
+}
+// 여행 마침 요약 — 재방문 시 사용량 합산을 배후 조회해 채움
+function careEndSummary(){
+  if (window._careUsageLast || !(CARE && window.CARE_API)) return;
+  careGet('iccid=' + encodeURIComponent((order && order.iccid) || '') + '&action=usage').then(function(d){
+    var lst = (d && d.usageList) || [];
+    if (!lst.length) return;
+    var used = 0, days = 0;
+    lst.forEach(function(r){
+      var raw = Number(r.usedAmount != null ? r.usedAmount : (r.used || 0));
+      var mb = (r.usedAmount != null) ? raw / 1024 : raw;
+      used += mb; if (mb > 0) days++;
+    });
+    var el = document.getElementById('careEndSub');
+    if (el && used) el.innerHTML = (((order && order.country) ? esc(order.country) + '에서 ' : '') + (days ? days + '일 · ' : '') + '<b>' + fmtData(used) + '</b>를 함께했어요.');
+  }).catch(function(){});
 }
 // 케어 사용량 히어로 — 시안: 라벨 / 큰 숫자 '1.2GB / 2GB' / 잔여 바 / '내일 00:00(현지)에 2GB로 다시 시작돼요 · 3일 남음'
 function renderUsageCare(d){
@@ -2098,6 +2189,13 @@ function renderUsageCare(d){
             : ('매일 ' + fmtData(qi.mb) + '씩 새로 시작돼요');
     var dl = careDaysLeft(firstDate, off);
     if (dl != null) cap += ' · ' + dl + '일 남음';
+    if (ri && ri.off != null && ri.hh != null) {
+      var sh = Date.now() + ri.off * 3600e3;
+      var lo2 = new Date(sh);
+      var nx2 = Date.UTC(lo2.getUTCFullYear(), lo2.getUTCMonth(), lo2.getUTCDate(), ri.hh, ri.mm || 0);
+      if (nx2 <= sh) nx2 += 86400e3;
+      cap += ' · 리셋까지 ' + fmtDur(nx2 - sh);
+    }
     if (qi.fup) cap += '\n오늘 용량을 다 써도 저속으로 계속 이용할 수 있어요';
   } else if (!expired && isUnlim) {
     cap = '속도 제한 없이 계속 이용할 수 있어요';
@@ -2119,6 +2217,42 @@ function renderUsageCare(d){
   var dg = diagHistory(d.listHistory);
   if (dg && dg.t !== 'ok') {
     box.innerHTML += '<div style="margin-top:10px;font-size:.76rem;font-weight:700;color:' + (dg.t === 'bad' ? '#B91C1C' : '#9A5B16') + ';">' + (dg.t === 'bad' ? '⚠️ ' : '🔧 ') + esc(dg.title) + ' — 아래 원클릭 진단을 눌러주세요</div>';
+  }
+  var nowU = new Date();
+  box.innerHTML += '<div class="muted" style="margin-top:9px;font-size:.7rem;font-weight:400;">공급사 집계 기준 · 조회 ' + ('0' + nowU.getHours()).slice(-2) + ':' + ('0' + nowU.getMinutes()).slice(-2) + '</div>';
+  // ── 히어로 아래 확장 카드: D-2 연장 배너 + 일별 사용 (careExtra) ──
+  var extra = document.getElementById('careExtra');
+  if (extra) {
+    var exHtml = '';
+    var dlx = careDaysLeft(firstDate, off);
+    if (!expired && dlx != null && dlx <= 2) {
+      exHtml += '<div class="card" style="padding:14px 16px;margin:12px auto;background:#FFF8F2;border:1px solid #F5DCC2;text-align:left;">' +
+        '<div style="font-weight:800;font-size:.85rem;">여행이 ' + (dlx === 0 ? '오늘로 끝나요' : dlx + '일 남았어요') + '</div>' +
+        '<div class="muted" style="font-size:.75rem;font-weight:400;margin-top:3px;">데이터가 더 필요하면 연장 eSIM을 미리 준비해요</div>' +
+        '<a href="https://jdisim.co.kr" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:.8rem;font-weight:800;color:#C2410C;text-decoration:underline;">연장 eSIM 보러 가기 ›</a></div>';
+    }
+    var dailyUsed = (d.daily || []).filter(function(x){ return Number(x.mb) > 0; });
+    if (!expired && dailyUsed.length) {
+      var srt2 = dailyUsed.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1; });
+      var maxD = Math.max.apply(null, srt2.map(function(x){ return x.mb || 1; }));
+      var todayK = tzToday(off);
+      var mk = function(x){
+        var md = x.date.slice(5).replace('-', '/');
+        var isT = x.date === todayK;
+        return '<div class="daybar' + (isT ? ' today' : '') + '"><span class="d">' + md + (isT ? ' <b>오늘</b>' : '') + '</span>' +
+          '<span class="bar"><i style="width:' + Math.max(4, Math.round((x.mb || 0) / maxD * 100)) + '%"></i></span>' +
+          '<span class="mb">' + fmtData(x.mb || 0) + '</span></div>';
+      };
+      var head3 = srt2.slice(0, 3).map(mk).join('');
+      var restD = srt2.slice(3).map(mk).join('');
+      exHtml += '<div class="card" style="padding:16px;margin:12px auto;text-align:left;">' +
+        '<div style="font-weight:900;font-size:.9rem;">일별 사용 <span class="muted" style="font-weight:600;font-size:.74rem;">총 ' + srt2.length + '일</span></div>' +
+        '<div style="margin-top:6px;">' + head3 + '</div>' +
+        (restD ? '<div id="careDailyMore" style="display:none;">' + restD + '</div>' +
+          '<div class="muted" style="margin-top:7px;font-size:.76rem;font-weight:700;cursor:pointer;text-align:center;" onclick="var m=document.getElementById(\'careDailyMore\');var sh2=m.style.display===\'none\';m.style.display=sh2?\'\':\'none\';this.textContent=sh2?\'접기 ↑\':\'전체 보기 ↓\';">전체 보기 ↓</div>' : '') +
+        '</div>';
+    }
+    extra.innerHTML = exHtml;
   }
 }
 // ===== 설치 존 (보딩패스 내장 — 절취선 아래) =====
@@ -2237,8 +2371,8 @@ function checkInstalled(iccid){
 
 function loadUsage(){
   var box=$('usageBody');
-  if (!box) { if (document.getElementById('careInstallPage')) careProbeUsage(); return; }   // 케어 1페이지 — 배후 프로브만
-  box.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 6px;">' +
+  if (!box) { if (document.getElementById('careInstallPage')) careProbeUsage(); return; }   // 설치 페이지 — 배후 프로브만
+  if (!document.getElementById('careWaitHero')) box.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 6px;">' +
     '<div class="us-skel" style="width:150px;height:150px;border-radius:50%;"></div>' +
     '<div style="display:flex;gap:9px;width:100%;">' + '<div class="us-skel" style="flex:1;height:54px;"></div>'.repeat(3) + '</div>' +
     '<div class="us-skel" style="width:100%;height:44px;"></div></div>';
@@ -2247,6 +2381,7 @@ function loadUsage(){
     fetch(window.CARE_API+'?iccid='+encodeURIComponent(order&&order.iccid||'')+'&action=usage').then(function(r){return r.json();}).then(function(d){
       var lst = (d && d.usageList) || [];
       if (!lst.length){
+        if (document.getElementById('careWaitHero')) { setCareStatus(null); return; }   // 개통 대기 카피 유지
         if (document.getElementById('careStPill')) {
           // 케어 히어로 안 — 시안 톤으로 담백하게
           box.innerHTML = '<div class="muted" style="font-size:.8rem;font-weight:500;">데이터 사용량</div>' +
@@ -2272,6 +2407,22 @@ function loadUsage(){
       });
       window._planOption = String(d.planOption || ''); // 일일 용량 파싱 소스 (실측 필드)
       var expired = String(d.status||'')==='2';
+      window._careUsageLast = {used_mb: used, daily: daily};
+      if (expired) {
+        var stx = tripState();
+        if (!stx.expired) { stx.expired = true; saveTrip(stx); }
+        if (window._careMode && window._careMode !== 'end') { renderCareTok(); return; }   // 여행 마침 화면으로
+      }
+      if (!expired && document.getElementById('careWaitHero')) {   // 개통 대기 중 기록 발견 = 현지 개통
+        var stw = tripState();
+        stw.installedAt = stw.installedAt || new Date().toISOString();
+        stw.activatedAt = stw.activatedAt || new Date().toISOString();
+        saveTrip(stw);
+        toast('현지 개통이 감지됐어요 🛬');
+        renderCareTok();
+        setTimeout(loadUsage, 150);
+        return;
+      }
       setCareStatus(expired ? 'expired' : (used > 0 ? 'active' : null));
       var lastCountry = (daily.length && daily[daily.length-1].country) || (lst[0]&&lst[0].country) || '';
       var rdr = document.getElementById('careStPill') ? renderUsageCare : renderUsage;   // 케어 히어로 vs 기존 도넛
