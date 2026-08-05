@@ -1337,16 +1337,18 @@ function careStatusInfo(kind){
     var st = tripState();
     kind = st.activatedAt ? 'active' : (st.installedAt ? 'installed' : 'pre');
   }
-  return kind === 'expired' ? {t:'기간 종료', c:'#CBD5E1'}
-       : kind === 'active' ? {t:'사용 중', c:'#B7F5CF'}
-       : kind === 'installed' ? {t:'설치 완료', c:'#93C5FD'}
-       : {t:'설치 전', c:'#FDE68A'};
+  return kind === 'expired' ? {t:'기간 종료', c:'#94A3B8', bg:'#F1F5F9', fg:'#64748B'}
+       : kind === 'active' ? {t:'사용 중', c:'#16A34A', bg:'#DCFCE7', fg:'#15803D'}
+       : kind === 'installed' ? {t:'설치 완료', c:'#3B82F6', bg:'#DBEAFE', fg:'#1D4ED8'}
+       : {t:'설치 전', c:'#F59E0B', bg:'#FEF3C7', fg:'#92400E'};
 }
 function setCareStatus(kind){
   var txt = document.getElementById('careStTxt'), dot = document.getElementById('careStDot');
   if (!txt || !dot) return;
   var s = careStatusInfo(kind);
   txt.textContent = s.t; dot.style.background = s.c;
+  var pill = document.getElementById('careStPill');
+  if (pill) { pill.style.background = s.bg; pill.style.color = s.fg; }
 }
 // ---------------- 보딩패스 티켓 ----------------
 function bpassHTML(o, opts){
@@ -1355,7 +1357,7 @@ function bpassHTML(o, opts){
   var cc = CC3[o.country] || '···';
   var p = planOf(o);
   var st = opts.issued
-    ? ((typeof CARE !== 'undefined' && CARE)
+    ? ((typeof CARE !== 'undefined' && CARE && !opts.plainSt)
         ? (function(){ var s = careStatusInfo(null); return '<span class="st ok"><i id="careStDot" style="background:' + s.c + ';"></i><span id="careStTxt">' + s.t + '</span></span>'; })()
         : '<span class="st ok"><i></i>발급 완료</span>')
     : '<span class="st wait"><i></i>발급 대기</span>';
@@ -1475,9 +1477,8 @@ function loadCare(){
         }));
       } catch (e) {}
       if (preIssue) return renderPreIssue();
-      renderIssued(order.lpa, true);
-      // 케어 데스크 히어로 제거 (2026-08-05 사장님 승인) — 기능은 사용량 카드 새로고침·도움 리스트로 이관
-      setTimeout(loadUsage, 700);
+      renderCareTok();   // 케어 전용 화면 (2026-08-05 사장님 시안) — 여행 티켓 카드 + 사용량 히어로
+      setTimeout(loadUsage, 400);
       if (RV) setTimeout(openReview, 1200);
     })
     .catch(function(){
@@ -1928,6 +1929,127 @@ function renderIssued(lpa, revisit){
   if (DEMO && !order.iccid) order.iccid='8981200391912865945';
 }
 
+// ===== 케어링크 전용 화면 (2026-08-05 사장님 시안 정합) — 여행 티켓 카드 + 사용량 히어로 + 도움 리스트 =====
+//   보딩패스·설치 존은 'QR·설치 정보' 행 아래로 접힘(careTicketWrap). 사용량이 주인공.
+function careToggleTicket(){
+  var w = document.getElementById('careTicketWrap'); if (!w) return;
+  var on = w.style.display === 'none';
+  w.style.display = on ? '' : 'none';
+  if (on) { try { w.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){} }
+}
+function careDaysLeft(firstDate, tzOff){
+  try {
+    var days = planDays(); if (!days || !firstDate) return null;
+    var today = tzToday(tzOff != null ? tzOff : 9);
+    var el = Math.round((new Date(today + 'T00:00:00Z') - new Date(firstDate + 'T00:00:00Z')) / 86400e3) + 1;
+    var left = days - el;
+    return (left >= 0 && left <= days) ? left : null;
+  } catch(e){ return null; }
+}
+function renderCareTok(){
+  setRoute(order && order.country);
+  window._lpa = (order && order.lpa) || '';
+  seedDep();
+  var cc = CC3[(order && order.country) || ''] || '';
+  var carrier = String((order && order.carrier) || '').replace(/\s*\([^)]*\)\s*$/, '');
+  var ctx = [cc, (order && order.country) || '', carrier ? '·' : '', carrier].filter(Boolean).join(' ');
+  var s0 = careStatusInfo(null);
+  function row(ic, label, right, onclick, red, last){
+    return '<div style="display:flex;align-items:center;gap:11px;padding:15px 2px;' + (last ? '' : 'border-bottom:1px solid #F0F2F6;') + 'cursor:pointer;" onclick="' + onclick + '">' +
+      '<span style="font-size:1.05rem;">' + ic + '</span>' +
+      '<span style="flex:1;font-size:.9rem;font-weight:700;' + (red ? 'color:#B91C1C;' : '') + 'white-space:nowrap;">' + label + '</span>' +
+      '<span style="font-size:' + (right === '›' ? '1rem' : '.76rem') + ';color:' + (red ? '#B91C1C' : '#98A3B8') + ';font-weight:800;white-space:nowrap;">' + right + '</span></div>';
+  }
+  h('<div class="card" style="padding:24px 20px 8px;max-width:460px;margin:18px auto;text-align:left;">' +
+      '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+        '<div style="flex:1;min-width:0;">' +
+          (ctx ? '<div class="muted" style="font-size:.8rem;font-weight:500;">' + esc(mu(ctx)) + '</div>' : '') +
+          '<div style="font-weight:900;font-size:1.2rem;margin-top:4px;">' + esc((order && order.buyerName) ? order.buyerName + ' 님의 여행 티켓' : '내 여행 티켓') + '</div>' +
+        '</div>' +
+        '<span id="careStPill" style="flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:6px 12px;border-radius:999px;font-size:.74rem;font-weight:800;background:' + s0.bg + ';color:' + s0.fg + ';white-space:nowrap;"><i id="careStDot" style="width:6px;height:6px;border-radius:50%;background:' + s0.c + ';"></i><span id="careStTxt" style="white-space:nowrap;">' + s0.t + '</span></span>' +
+      '</div>' +
+      '<div style="background:#F7F8F7;border-radius:16px;padding:15px 16px;margin-top:15px;position:relative;">' +
+        '<button type="button" onclick="loadUsage()" aria-label="사용량 새로고침" style="position:absolute;top:11px;right:11px;border:none;background:none;font-size:1rem;cursor:pointer;color:#5D6B85;padding:4px;">↻</button>' +
+        '<div id="usageBody"><div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div></div>' +
+      '</div>' +
+      '<div style="margin-top:9px;">' +
+        row('📱', 'QR·설치 정보', '›', 'careToggleTicket()') +
+        row('📶', '신호가 안 잡혀요', '원클릭 진단 ›', 'runDiagnose()', true) +
+        row('🩺', '해결이 안 되면 상담하기', '›', 'openHelp()', false, true) +
+      '</div>' +
+    '</div>' +
+    '<div id="careTicketWrap" style="display:none;">' +
+      bpassHTML(order || {}, {issued:true, plainSt:true}) +
+      shareTicketHTML() +
+    '</div>' +
+    foldHTML('📂 자세한 안내 — 현지 날씨 · 여행 브리핑 · SOS',
+      skyWHTML() + buildBriefHTML((order && order.country) || '') + sosHTML((order && order.country) || ''), false) +
+    brandFootHTML());
+  startTktClock();
+  renderInstallCard();
+  paintSkyW(); renderRomi(); reveal(); loadWeather();
+  renderBottomBar(tripBarState());
+}
+// 케어 사용량 히어로 — 시안: 라벨 / 큰 숫자 '1.2GB / 2GB' / 잔여 바 / '내일 00:00(현지)에 2GB로 다시 시작돼요 · 3일 남음'
+function renderUsageCare(d){
+  maybeAutoActivate(d);
+  var box = $('usageBody'); if (!box) return;
+  var used = Number(d.used_mb) || 0, total = Number(d.total_mb) || 0;
+  var qi = quotaFromText(), ri = resetPlanInfo();
+  var _plTxt = [(window._planOption || ''), (order && order.option) || '', (order && order.productName) || ''].join(' ');
+  var isUnlim = !qi && !total && /무제한/.test(_plTxt);
+  var expired = d.status === 'expired';
+  var ctyOff = TZ_OFF[(order && order.country) || ''];
+  var off = (ri && ri.off != null) ? ri.off : (ctyOff != null ? ctyOff : 9);
+  var todayMb = 0, firstDate = null;
+  if (d.daily && d.daily.length) {
+    var srt = d.daily.slice().sort(function(a, b){ return a.date < b.date ? -1 : 1; });
+    firstDate = srt[0].date;
+    var last = srt[srt.length - 1];
+    if (qi && last.date === tzToday(off)) todayMb = Number(last.mb) || 0;
+  }
+  var label, big, sub = '', ratio = null;
+  if (expired) { label = '이용 기간 종료'; big = used ? fmtData(used) : '—'; sub = used ? ' 사용' : ''; }
+  else if (qi) {
+    var remain = Math.max(0, qi.mb - todayMb);
+    label = '오늘 남은 데이터'; big = fmtData(remain, true); sub = ' / ' + fmtData(qi.mb);
+    ratio = qi.mb ? remain / qi.mb : null;
+  } else if (total) {
+    var rem2 = Math.max(0, total - used);
+    label = '남은 데이터'; big = fmtData(rem2, true); sub = ' / ' + fmtData(total);
+    ratio = total ? rem2 / total : null;
+  } else if (isUnlim) { label = '무제한 이용 중'; big = used ? fmtData(used) : '0 MB'; sub = ' 사용'; }
+  else { label = '여행 전체 사용'; big = used ? fmtData(used) : '0 MB'; }
+  var cap = '';
+  if (!expired && qi) {
+    var m = /(\d{2}):(\d{2})/.exec((ri && ri.txtLocal) || '');
+    cap = m ? ('내일 ' + m[1] + ':' + m[2] + '(현지)에 ' + fmtData(qi.mb) + '로 다시 시작돼요')
+            : ('매일 ' + fmtData(qi.mb) + '씩 새로 시작돼요');
+    var dl = careDaysLeft(firstDate, off);
+    if (dl != null) cap += ' · ' + dl + '일 남음';
+    if (qi.fup) cap += '\n오늘 용량을 다 써도 저속으로 계속 이용할 수 있어요';
+  } else if (!expired && isUnlim) {
+    cap = '속도 제한 없이 계속 이용할 수 있어요';
+  } else if (!expired && total) {
+    var dl2 = careDaysLeft(firstDate, off);
+    if (dl2 != null) cap = dl2 + '일 남음';
+  }
+  var bar = '';
+  if (!expired && ratio != null) {
+    var pctW = Math.max(2, Math.min(100, Math.round(ratio * 100)));
+    bar = '<div style="height:8px;border-radius:99px;background:#E8EAE8;margin-top:12px;overflow:hidden;"><i style="display:block;height:100%;width:' + pctW + '%;border-radius:99px;background:' + (ratio < 0.1 ? '#DC2626' : ratio < 0.3 ? '#F59E0B' : '#E05B10') + ';"></i></div>';
+  }
+  box.innerHTML =
+    '<div class="muted" style="font-size:.8rem;font-weight:500;white-space:nowrap;">' + label + '</div>' +
+    '<div style="margin-top:3px;"><span style="font-weight:900;font-size:1.75rem;letter-spacing:-0.02em;">' + big + '</span>' +
+    (sub ? '<span class="muted" style="font-size:1rem;font-weight:600;">' + sub + '</span>' : '') + '</div>' +
+    bar +
+    (cap ? cap.split('\n').map(function(t, i){ return '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:' + (i ? '2px' : '10px') + ';">' + esc(t) + '</div>'; }).join('') : '');
+  var dg = diagHistory(d.listHistory);
+  if (dg && dg.t !== 'ok') {
+    box.innerHTML += '<div style="margin-top:10px;font-size:.76rem;font-weight:700;color:' + (dg.t === 'bad' ? '#B91C1C' : '#9A5B16') + ';">' + (dg.t === 'bad' ? '⚠️ ' : '🔧 ') + esc(dg.title) + ' — 아래 원클릭 진단을 눌러주세요</div>';
+  }
+}
 // ===== 설치 존 (보딩패스 내장 — 절취선 아래) =====
 function renderInstallCard(){
   var box = $('instZone'); if (!box) return;
@@ -2053,7 +2175,14 @@ function loadUsage(){
     fetch(window.CARE_API+'?iccid='+encodeURIComponent(order&&order.iccid||'')+'&action=usage').then(function(r){return r.json();}).then(function(d){
       var lst = (d && d.usageList) || [];
       if (!lst.length){
-        box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 아직 사용량 기록이 없어요.<br>무제한 요금제이거나 현지에서 아직 개통 전일 수 있어요. 개통 후 다시 눌러보세요!<br><span style="color:#64748b;">정확한 사용량은 설정 → 셀룰러 → 해당 회선에서도 볼 수 있어요.</span></div>';
+        if (document.getElementById('careStPill')) {
+          // 케어 히어로 안 — 시안 톤으로 담백하게
+          box.innerHTML = '<div class="muted" style="font-size:.8rem;font-weight:500;">데이터 사용량</div>' +
+            '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">아직 사용 기록이 없어요</div>' +
+            '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:8px;line-height:1.6;">무제한 요금제이거나 현지 개통 전일 수 있어요.<br>개통 후 ↻ 를 눌러 다시 확인해 보세요.</div>';
+        } else {
+          box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 아직 사용량 기록이 없어요.<br>무제한 요금제이거나 현지에서 아직 개통 전일 수 있어요. 개통 후 다시 눌러보세요!<br><span style="color:#64748b;">정확한 사용량은 설정 → 셀룰러 → 해당 회선에서도 볼 수 있어요.</span></div>';
+        }
         setCareStatus(null);
         return;
       }
@@ -2073,7 +2202,8 @@ function loadUsage(){
       var expired = String(d.status||'')==='2';
       setCareStatus(expired ? 'expired' : (used > 0 ? 'active' : null));
       var lastCountry = (daily.length && daily[daily.length-1].country) || (lst[0]&&lst[0].country) || '';
-      renderUsage({used_mb:used,total_mb:total,status:expired?'expired':'active',daily:daily,country:lastCountry,listHistory:d.listHistory||[]});
+      var rdr = document.getElementById('careStPill') ? renderUsageCare : renderUsage;   // 케어 히어로 vs 기존 도넛
+      rdr({used_mb:used,total_mb:total,status:expired?'expired':'active',daily:daily,country:lastCountry,listHistory:d.listHistory||[]});
     }).catch(function(){ box.innerHTML='<div class="notice" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;text-align:left;">조회에 실패했어요 — 잠시 후 다시 시도해 주세요</div>'; });
     return;
   }
