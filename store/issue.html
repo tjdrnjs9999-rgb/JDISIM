@@ -1234,11 +1234,15 @@ function devSelPick(sel){
 function planDays(){
   return (planOf(order) || {}).days || 0;
 }
+function tripKey(){
+  // orderCode 없으면 ICCID로 — 'jd_trip_x' 공유 시 한 기기에서 여러 회선(다건·동행자)의 설치/개통 상태가 섞임 (2026-08-05)
+  return 'jd_trip_' + ((order && (order.orderCode || order.iccid)) || 'x');
+}
 function tripState(){
-  try { return JSON.parse(localStorage.getItem('jd_trip_' + ((order && order.orderCode) || 'x')) || '{}'); } catch (e) { return {}; }
+  try { return JSON.parse(localStorage.getItem(tripKey()) || '{}'); } catch (e) { return {}; }
 }
 function saveTrip(st){
-  try { localStorage.setItem('jd_trip_' + ((order && order.orderCode) || 'x'), JSON.stringify(st)); } catch (e) {}
+  try { localStorage.setItem(tripKey(), JSON.stringify(st)); } catch (e) {}
 }
 function tripStep(){
   var st = tripState();
