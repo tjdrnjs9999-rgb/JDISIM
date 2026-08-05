@@ -1589,7 +1589,7 @@ function renderSlotsTok(slots, plan){
     rows += '<div id="slot-' + i + '" style="display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #F0EAE0;">' +
       '<div style="flex:1;min-width:0;text-align:left;"><b style="font-size:.95rem;white-space:nowrap;">eSIM ' + (i+1) + '번</b>' +
       '<div id="slot-st-' + i + '" style="font-size:.74rem;margin-top:3px;color:#98A3B8;white-space:nowrap;"><span id="slot-dot-' + i + '" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#CBD5E1;margin-right:5px;vertical-align:1px;"></span><span id="slot-txt-' + i + '">확인 중…</span></div></div>' +
-      '<a id="slot-btn-' + i + '" class="btn" style="min-height:40px;display:flex;align-items:center;padding:0 18px;font-size:.85rem;font-weight:900;text-decoration:none;border-radius:12px;border:1.5px solid #E4E8EF;color:#C2410C;background:#fff;" href="issue.html?issue=' + encodeURIComponent(slots[i]) + '">발급하기</a>' +
+      '<a id="slot-btn-' + i + '" class="btn" style="flex:none;width:auto;min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;font-size:.85rem;font-weight:900;text-decoration:none;border-radius:12px;border:1.5px solid #E4E8EF;color:#C2410C;background:#fff;" href="issue.html?issue=' + encodeURIComponent(slots[i]) + '">발급하기</a>' +
     '</div>';
   }
   var giftLinks = slots.map(function(tok, i){
