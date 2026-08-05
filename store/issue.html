@@ -1021,7 +1021,7 @@ function h(html){ $('app').innerHTML = html; }
 function esc(s){ return String(s || '').replace(/[<>&"]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); }
 // 의미 단위 줄바꿈 (2026-08-05 사장님: "Smart/Globe(" + "로밍)" 처럼 괄호 중간에서 꺾이면 안 됨 — 전 표기 공통 규칙)
 //   괄호묶음은 통짜로 붙이고(⁠ word-joiner + 내부 공백 NBSP), 개행은 괄호 '앞'에서만 허용(​).
-function mu(s){ return String(s || '').replace(/\s*\(([^()]*)\)/g, function(_, g){ return '​(⁠' + g.replace(/ /g, ' ') + '⁠)'; }); }
+function mu(s){ return String(s || '').replace(/\s*\(([^()]*)\)/g, function(_, g){ return '​(⁠' + g.replace(/ /g, ' ') + '⁠)'; }).replace(/\/(?=[A-Za-z가-힣])/g, '/​'); }
 function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(15,23,42,0.94);color:#fff;font-size:0.78rem;font-weight:800;padding:11px 19px;border-radius:24px;z-index:710;max-width:86vw;text-align:center;'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
 function copy(v,msg){ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(function(){ toast(msg||'복사됐어요'); }); } }
 function fmtDate(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; var w=['일','월','화','수','목','금','토']; return (d.getMonth()+1)+'월 '+d.getDate()+'일('+w[d.getDay()]+')'; }catch(e){ return ''; } }
