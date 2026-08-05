@@ -1253,17 +1253,26 @@ function tripStep(){
 function markInstalled(){
   var st = tripState(); st.installedAt = st.installedAt || new Date().toISOString(); saveTrip(st);
   window._reopenInst = false;
-  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null);
-  if (document.getElementById('careInstCta')) loadUsage();   // 케어: 설치 CTA 히어로 → 사용량 히어로 전환
-  confetti(); buzz([16,50,16]);
+  if (document.getElementById('careInstallPage')) {   // 케어 1페이지 → 설치 확인 즉시 2페이지(사용량)로 전환
+    renderCareTok(); setTimeout(loadUsage, 300);
+    try { window.scrollTo({top:0}); } catch(e){}
+    toast('설치 확인! 이제 여기서 사용량을 볼 수 있어요'); confetti(); buzz([16,50,16]);
+    return;
+  }
+  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
 }
 function markActivated(){
   var st = tripState();
   st.installedAt = st.installedAt || new Date().toISOString();
   st.activatedAt = st.activatedAt || new Date().toISOString();
-  saveTrip(st); renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null);
-  if (document.getElementById('careInstCta')) loadUsage();
-  confetti(); buzz([16,50,16]);
+  saveTrip(st);
+  if (document.getElementById('careInstallPage')) {
+    renderCareTok(); setTimeout(loadUsage, 300);
+    try { window.scrollTo({top:0}); } catch(e){}
+    confetti(); buzz([16,50,16]);
+    return;
+  }
+  renderInstallCard(); renderJourney(); renderRomi(); renderBottomBar(tripBarState()); setCareStatus(null); confetti(); buzz([16,50,16]);
 }
 // ===== 컴팩트 스테퍼 (진행 + 현재 단계만 크게) =====
 function journeyHTML(){ return '<div class="card" id="jny"></div>'; }
@@ -1954,7 +1963,60 @@ function careDaysLeft(firstDate, tzOff){
     return (left >= 0 && left <= days) ? left : null;
   } catch(e){ return null; }
 }
+// 페이지 라우팅 (2026-08-05 사장님 지시): 링크는 하나, 화면은 상태가 결정 — 설치 전 = 1페이지(설치) / 이후 = 2페이지(사용량)
 function renderCareTok(){
+  if (careStatusInfo(null).t === '설치 전') renderCareInstall();
+  else renderCareUsage();
+}
+function careHeadHTML(s0){
+  var cc = CC3[(order && order.country) || ''] || '';
+  var carrier = String((order && order.carrier) || '').replace(/\s*\([^)]*\)\s*$/, '');
+  var ctx = [cc, (order && order.country) || '', carrier ? '·' : '', carrier].filter(Boolean).join(' ');
+  return '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+      '<div style="flex:1;min-width:0;">' +
+        (ctx ? '<div class="muted" style="font-size:.8rem;font-weight:500;">' + esc(mu(ctx)) + '</div>' : '') +
+        '<div style="font-weight:900;font-size:1.2rem;margin-top:4px;">' + esc((order && order.buyerName) ? order.buyerName + ' 님의 여행 티켓' : '내 여행 티켓') + '</div>' +
+      '</div>' +
+      '<span id="careStPill" style="flex:none;display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:6px 12px;border-radius:999px;font-size:.74rem;font-weight:800;background:' + s0.bg + ';color:' + s0.fg + ';white-space:nowrap;"><i id="careStDot" style="width:6px;height:6px;border-radius:50%;background:' + s0.c + ';"></i><span id="careStTxt" style="white-space:nowrap;">' + s0.t + '</span></span>' +
+    '</div>';
+}
+// ── 1페이지: 설치 — 티켓·설치 탭이 주인공. 설치 확인·기록 감지 시 자동으로 2페이지 전환 ──
+function renderCareInstall(){
+  setRoute(order && order.country);
+  window._lpa = (order && order.lpa) || '';
+  seedDep();
+  var s0 = careStatusInfo(null);
+  h('<div class="card" style="padding:24px 20px;max-width:460px;margin:18px auto;text-align:left;">' +
+      careHeadHTML(s0) +
+      '<div class="muted" style="margin-top:11px;font-size:.78rem;font-weight:400;line-height:1.6;">1단계 · eSIM 설치 — 아래 티켓에서 편한 방법으로 설치하세요.<br>설치가 확인되면 <b style="color:#C2410C;">사용량 화면으로 자동 전환</b>돼요.</div>' +
+    '</div>' +
+    '<div id="careInstallPage">' + bpassHTML(order || {}, {issued:true, plainSt:true}) + '</div>' +
+    '<div class="card" style="padding:6px 16px;max-width:460px;margin:12px auto;">' +
+      '<div style="display:flex;align-items:center;gap:11px;padding:14px 2px;border-bottom:1px solid #F0F2F6;cursor:pointer;" onclick="markInstalled()"><span style="font-size:1.05rem;">✅</span><span style="flex:1;font-size:.9rem;font-weight:700;white-space:nowrap;">이미 설치를 마쳤어요</span><span style="font-size:.76rem;color:#98A3B8;font-weight:800;white-space:nowrap;">사용량 보기 ›</span></div>' +
+      '<div style="display:flex;align-items:center;gap:11px;padding:14px 2px;cursor:pointer;" onclick="openHelp(\'설치 중 오류가 떠요\')"><span style="font-size:1.05rem;">🩺</span><span style="flex:1;font-size:.9rem;font-weight:700;white-space:nowrap;">설치가 잘 안 되면 상담하기</span><span style="color:#98A3B8;">›</span></div>' +
+    '</div>' +
+    brandFootHTML());
+  startTktClock();
+  renderInstallCard();
+  renderRomi(); reveal();
+  renderBottomBar(tripBarState());
+}
+// 1페이지 배후 사용량 프로브 — 다른 기기에서 이미 설치·개통했다면 기록 감지로 2페이지 자동 전환
+function careProbeUsage(){
+  if (!(CARE && window.CARE_API)) return;
+  careGet('iccid=' + encodeURIComponent((order && order.iccid) || '') + '&action=usage').then(function(d){
+    var lst = (d && d.usageList) || [];
+    if (!lst.length) return;
+    var st = tripState();
+    st.installedAt = st.installedAt || new Date().toISOString();
+    st.activatedAt = st.activatedAt || new Date().toISOString();
+    saveTrip(st);
+    renderCareTok();
+    setTimeout(loadUsage, 200);
+  }).catch(function(){});
+}
+// ── 2페이지: 사용량 — 시안 화면. QR 재접근은 접힌 행으로 유지(재설치·기기 변경) ──
+function renderCareUsage(){
   setRoute(order && order.country);
   window._lpa = (order && order.lpa) || '';
   seedDep();
@@ -1979,14 +2041,7 @@ function renderCareTok(){
       // 상태 적응형 히어로 (2026-08-05 사장님 지적): 설치 전 = 설치가 주인공 / 이후 = 사용량이 주인공
       '<div style="background:#F7F8F7;border-radius:16px;padding:15px 16px;margin-top:15px;position:relative;">' +
         '<button type="button" onclick="loadUsage()" aria-label="사용량 새로고침" style="position:absolute;top:11px;right:11px;border:none;background:none;font-size:1rem;cursor:pointer;color:#5D6B85;padding:4px;">↻</button>' +
-        '<div id="usageBody">' +
-        (s0.t === '설치 전'
-          ? '<div id="careInstCta"><div class="muted" style="font-size:.8rem;font-weight:500;">eSIM 설치</div>' +
-            '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">아직 설치 전이에요</div>' +
-            '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:7px;line-height:1.6;">와이파이에서 3분이면 끝나요 — 아래 티켓의 원클릭·QR·수동 입력 중 편한 방법으로!</div>' +
-            '<button class="btn btn-primary" style="margin-top:13px;width:100%;min-height:48px;font-weight:900;" onclick="careToggleTicket(true)">지금 설치하기</button></div>'
-          : '<div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div>') +
-        '</div>' +
+        '<div id="usageBody"><div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div></div>' +
       '</div>' +
       '<div style="margin-top:9px;">' +
         row('📱', 'QR·설치 정보', '›', 'careToggleTicket()') +
@@ -1994,7 +2049,7 @@ function renderCareTok(){
         row('🩺', '해결이 안 되면 상담하기', '›', 'openHelp()', false, true) +
       '</div>' +
     '</div>' +
-    '<div id="careTicketWrap" style="display:' + (s0.t === '설치 전' ? '' : 'none') + ';">' +
+    '<div id="careTicketWrap" style="display:none;">' +
       bpassHTML(order || {}, {issued:true, plainSt:true}) +
       shareTicketHTML() +
     '</div>' +
@@ -2182,9 +2237,8 @@ function checkInstalled(iccid){
 
 function loadUsage(){
   var box=$('usageBody');
-  // 케어 '설치 전' CTA 히어로는 스켈레톤으로 덮지 않음 — 조회는 뒤에서 조용히, 기록 발견 시에만 교체 (2026-08-05)
-  var keepCta = document.getElementById('careInstCta') && careStatusInfo(null).t === '설치 전';
-  if (!keepCta) box.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 6px;">' +
+  if (!box) { if (document.getElementById('careInstallPage')) careProbeUsage(); return; }   // 케어 1페이지 — 배후 프로브만
+  box.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 6px;">' +
     '<div class="us-skel" style="width:150px;height:150px;border-radius:50%;"></div>' +
     '<div style="display:flex;gap:9px;width:100%;">' + '<div class="us-skel" style="flex:1;height:54px;"></div>'.repeat(3) + '</div>' +
     '<div class="us-skel" style="width:100%;height:44px;"></div></div>';
@@ -2193,10 +2247,6 @@ function loadUsage(){
     fetch(window.CARE_API+'?iccid='+encodeURIComponent(order&&order.iccid||'')+'&action=usage').then(function(r){return r.json();}).then(function(d){
       var lst = (d && d.usageList) || [];
       if (!lst.length){
-        if (document.getElementById('careInstCta') && careStatusInfo(null).t === '설치 전') {
-          setCareStatus(null);   // 설치 전 + 기록 없음 — 설치 CTA 히어로 유지 (덮어쓰기 금지)
-          return;
-        }
         if (document.getElementById('careStPill')) {
           // 케어 히어로 안 — 시안 톤으로 담백하게
           box.innerHTML = '<div class="muted" style="font-size:.8rem;font-weight:500;">데이터 사용량</div>' +
