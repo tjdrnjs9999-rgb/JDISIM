@@ -467,12 +467,18 @@ var DEMO = location.hash.indexOf('demo') !== -1;
 var LOCAL = new URLSearchParams(location.search).get('local') || '';
 var CX = new URLSearchParams(location.search).get('cx') || ''; // 케어 토큰 (2026-07-15: URL에 ICCID 비노출 신형 링크)
 var CARE = new URLSearchParams(location.search).get('care') || (CX ? '__cx__' : ''); // 구형 care= 링크 호환 유지
-// 파트너 화이트라벨 도메인 (2026-08-10) — 파트너 고객에게는 본사 브랜드 비노출 (헤더·밴드·푸터·공유 문구)
+// 파트너 화이트라벨 도메인 (2026-08-10) — 파트너 고객에게는 본사 브랜드 비노출 (헤더·밴드·푸터·공유 문구·상담 경로·연장 유도 링크)
 var PFACE = /(^|\.)esimpartners\.co\.kr$/.test(location.hostname);
+var PARTNER_TEL = '010-4689-4669'; // 파트너 문의처 정본 A안 — 본사 카톡 채널 대신 전용 번호
+var CS_LABEL = PFACE ? '고객센터' : '카톡 상담';
+var CS_EUL = CS_LABEL + (PFACE ? '를' : '을');
+var CS_RO = CS_LABEL + (PFACE ? '로' : '으로');
 if (PFACE) {
   document.title = 'eSIM 발급 — eSIM Partners';
   var _wmEl = document.querySelector('.hd .wm');
   if (_wmEl) _wmEl.innerHTML = 'eSIM<i style="font-style:normal;">P</i>artners';
+  var _kkoEl = document.querySelector('.bbar .kko');
+  if (_kkoEl) { _kkoEl.setAttribute('aria-label', '고객센터 문의'); _kkoEl.style.background = '#101623'; _kkoEl.style.color = '#fff'; }
 }
 var ISSUE = new URLSearchParams(location.search).get('issue') || ''; // 발급하기 토큰 (도매 상품 발급 전 — 버튼 누르면 Joytel 발주)
 var RV = new URLSearchParams(location.search).get('rv') === '1';
@@ -687,7 +693,7 @@ function makeReport(stars){
   for (var i = 40; i < 1080; i += 60) for (var j = 40; j < 1350; j += 60) { x.beginPath(); x.arc(i, j, 3, 0, 7); x.fill(); }
   x.textAlign = 'center';
   x.fillStyle = '#8FA3D9'; x.font = '800 34px Pretendard, sans-serif';
-  x.fillText('JDISIM · TRAVEL REPORT', 540, 130);
+  x.fillText(PFACE ? 'TRAVEL REPORT' : 'JDISIM · TRAVEL REPORT', 540, 130);
   // 국기 + 국가
   x.font = '200px serif'; x.fillText(FLAG_EMOJI[order && order.country] || '✈️', 540, 420);
   x.fillStyle = '#fff'; x.font = '900 92px Pretendard, sans-serif';
@@ -706,10 +712,12 @@ function makeReport(stars){
   x.fillStyle = '#C6CFE6'; x.font = '700 46px Pretendard, sans-serif';
   lines.forEach(function(t, i){ x.fillText(t, 540, 800 + i * 70); });
   // 하단
-  x.fillStyle = '#F1690D'; x.font = '900 40px Pretendard, sans-serif';
-  x.fillText('여행 데이터는 JDISIM 🦊', 540, 1240);
-  x.fillStyle = '#5B6B94'; x.font = '700 30px Pretendard, sans-serif';
-  x.fillText('jdisim.co.kr', 540, 1295);
+  if (!PFACE) { // 파트너 모드: 하단 브랜드·도메인 라인 비노출
+    x.fillStyle = '#F1690D'; x.font = '900 40px Pretendard, sans-serif';
+    x.fillText('여행 데이터는 JDISIM 🦊', 540, 1240);
+    x.fillStyle = '#5B6B94'; x.font = '700 30px Pretendard, sans-serif';
+    x.fillText('jdisim.co.kr', 540, 1295);
+  }
   var url = cv.toDataURL('image/png');
   // 마켓 리뷰 유도 (2026-08-01 CTO 감사 ④) — 만족 고객(4~5점)만 구매 마켓 리뷰로,
   // 1~3점은 기존 카톡 CS 흡수 유지. 마켓 정보(order.market)는 cname 병합으로 서버가 내려줌.
@@ -723,7 +731,7 @@ function makeReport(stars){
   } catch (e) {}
   h('<div class="card" style="text-align:center;">' + secHd('check', 'REPORT', '여행 리포트가 완성됐어요', '소중한 후기 감사합니다 🎁') +
     '<img src="' + url + '" style="width:78%;border-radius:18px;margin:12px 0;box-shadow:0 18px 44px rgba(16,22,35,0.35);">' +
-    '<div class="jbtns"><a class="btn btn-primary" download="jdisim-travel-report.png" href="' + url + '">이미지 저장</a>' +
+    '<div class="jbtns"><a class="btn btn-primary" download="' + (PFACE ? 'travel-report.png' : 'jdisim-travel-report.png') + '" href="' + url + '">이미지 저장</a>' +
     '<button type="button" class="btn btn-ghost" onclick="shareReport(\'' + '\')">공유하기</button></div>' + mkCta +
     '<div class="center" style="margin-top:8px;"><span class="muted">인스타에 올리고 친구에게 여행을 자랑해 보세요 ✈️</span></div></div>' + document.getElementById('app').innerHTML);
   window._reportUrl = url;
@@ -732,9 +740,10 @@ function makeReport(stars){
 function shareReport(){
   var url = window._reportUrl; if (!url) return;
   fetch(url).then(function(r){ return r.blob(); }).then(function(b){
-    var f = new File([b], 'jdisim-report.png', { type: 'image/png' });
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], title: 'JDISIM 여행 리포트' });
-    else { var a = document.createElement('a'); a.href = url; a.download = 'jdisim-report.png'; a.click(); }
+    var _rf = PFACE ? 'travel-report.png' : 'jdisim-report.png';
+    var f = new File([b], _rf, { type: 'image/png' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], title: (PFACE ? '' : 'JDISIM ') + '여행 리포트' });
+    else { var a = document.createElement('a'); a.href = url; a.download = _rf; a.click(); }
   });
 }
 function paintSkyW(){
@@ -798,11 +807,11 @@ function renderBottomBar(state){
     var days = planDays(), st = tripState();
     var used = st.activatedAt ? Math.floor((Date.now() - new Date(st.activatedAt).getTime()) / 86400000) + 1 : 1;
     var left = days ? Math.max(0, days - used) : 99;
-    box.innerHTML = (days && left <= 2)
+    box.innerHTML = (days && left <= 2 && !PFACE)
       ? '<a class="btn btn-primary" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">연장 eSIM 주문하기</a>'
       : '<button class="btn btn-ink" onclick="goUsage()">실시간 사용량 보기</button>';
   }
-  else if (state === 'error') box.innerHTML = '<button class="btn btn-primary" onclick="openHelp()">카톡 상담 바로 연결</button>';
+  else if (state === 'error') box.innerHTML = '<button class="btn btn-primary" onclick="openHelp()">' + CS_LABEL + ' 바로 연결</button>';
   else box.innerHTML = '';
 }
 function tripBarState(){ var st = tripState(); return st.activatedAt ? 'done' : st.installedAt ? 'activate' : 'install'; }
@@ -821,7 +830,7 @@ function deviceLabel(){
   return '기타 기기';
 }
 function helpMsg(){
-  var L = ['[JDISIM 상담 요청]'];
+  var L = [PFACE ? '[eSIM 상담 요청]' : '[JDISIM 상담 요청]'];
   if (_symp) L.push('증상: ' + _symp);
   if (order) {
     var pl = planOf(order);
@@ -843,13 +852,13 @@ function openHelp(pre){
     '<div class="grab"></div>' +
     '<button type="button" class="sx" onclick="closeHelp()" aria-label="닫기">✕</button>' +
     '<div style="display:flex;align-items:center;gap:13px;"><img src="images/fox-phone.webp" alt="" style="width:54px;height:54px;object-fit:contain;flex-shrink:0;" onerror="this.remove()"><div style="min-width:0;"><div class="ey">SUPPORT</div><div class="ct">무엇을 도와드릴까요?</div></div></div>' +
-    '<div class="muted" style="margin-top:6px;">증상을 고르면 <strong>주문 정보가 자동으로 작성</strong>돼요 — 카톡에서 붙여넣기만 하면 끝!</div>' +
+    '<div class="muted" style="margin-top:6px;">증상을 고르면 <strong>주문 정보가 자동으로 작성</strong>돼요 — ' + (PFACE ? '문자(' + PARTNER_TEL + ')로 붙여넣어 보내주세요!' : '카톡에서 붙여넣기만 하면 끝!') + '</div>' +
     '<div class="symps">' + SYMPTOMS.map(function(t, i){
       return '<button type="button" class="symp' + (t === _symp ? ' on' : '') + '" id="sy' + i + '" onclick="pickSymp(' + i + ')">' + t + '</button>';
     }).join('') + '</div>' +
     '<div class="pre-msg" id="preMsg"></div>' +
-    '<button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="helpGo()">메시지 복사하고 카톡 열기</button>' +
-    '<div class="center" style="margin-top:9px;"><span class="muted">채팅창이 열리면 길게 눌러 <strong>붙여넣기</strong>만 해주세요</span></div>' +
+    '<button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="helpGo()">메시지 복사하고 ' + (PFACE ? '문자 보내기' : '카톡 열기') + '</button>' +
+    '<div class="center" style="margin-top:9px;"><span class="muted">' + (PFACE ? '문자창' : '채팅창') + '이 열리면 길게 눌러 <strong>붙여넣기</strong>만 해주세요</span></div>' +
     '</div>';
   document.body.appendChild(dim);
   document.body.appendChild(sh);
@@ -871,10 +880,14 @@ function renderPreMsg(){
 }
 function helpGo(){
   var msg = helpMsg();
-  function go(){ window.open(KAKAO_CHAT, '_blank'); closeHelp(); }
+  function go(){
+    if (PFACE) location.href = 'sms:' + PARTNER_TEL.replace(/-/g, ''); // 파트너 모드: 본사 카톡 채널 비노출 — 전용 번호 문자
+    else window.open(KAKAO_CHAT, '_blank');
+    closeHelp();
+  }
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(msg).then(function(){ toast('메시지 복사 완료 — 채팅창에 붙여넣어 주세요'); go(); })
-      .catch(function(){ toast('카톡으로 연결할게요'); go(); });
+    navigator.clipboard.writeText(msg).then(function(){ toast('메시지 복사 완료 — ' + (PFACE ? '문자에' : '채팅창에') + ' 붙여넣어 주세요'); go(); })
+      .catch(function(){ toast(PFACE ? '문자로 연결할게요' : '카톡으로 연결할게요'); go(); });
   } else { go(); }
 }
 
@@ -986,7 +999,7 @@ netWatch();
 // ===== 티켓 공유 (가족 폰 설치용) =====
 function shareLink(){
   var url = location.href.split('#')[0];
-  var data = { title: 'JDISIM eSIM 발급 티켓', text: ((order && order.country) || '여행') + ' eSIM — 이 링크에서 QR로 바로 설치할 수 있어요', url: url };
+  var data = { title: (PFACE ? '' : 'JDISIM ') + 'eSIM 발급 티켓', text: ((order && order.country) || '여행') + ' eSIM — 이 링크에서 QR로 바로 설치할 수 있어요', url: url };
   if (navigator.share) { navigator.share(data).catch(function(){}); }
   else copy(url, '링크가 복사됐어요 — 카톡에 붙여넣어 주세요');
 }
@@ -994,15 +1007,15 @@ function shareLink(){
 function addToCalendar(){
   var dep = getDep(); if (!dep) { openDep(); return; }
   var d = dep.replace(/-/g, '');
-  var ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//JDISIM//eSIM//KO\r\nBEGIN:VEVENT\r\n' +
-    'UID:jd-' + ((order && order.orderCode) || Date.now()) + '@jdisim.co.kr\r\n' +
+  var ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//' + (PFACE ? 'eSIM Partners' : 'JDISIM') + '//eSIM//KO\r\nBEGIN:VEVENT\r\n' +
+    'UID:jd-' + ((order && order.orderCode) || Date.now()) + '@' + (PFACE ? 'esimpartners.co.kr' : 'jdisim.co.kr') + '\r\n' +
     'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z\r\n' +
     'DTSTART;VALUE=DATE:' + d + '\r\n' +
     'SUMMARY:✈️ ' + ((order && order.country) || '여행') + ' 출국 — eSIM 설치 확인!\r\n' +
-    'DESCRIPTION:JDISIM eSIM 발급 링크: ' + location.href.split('#')[0] + '\r\nEND:VEVENT\r\nEND:VCALENDAR';
+    'DESCRIPTION:' + (PFACE ? '' : 'JDISIM ') + 'eSIM 발급 링크: ' + location.href.split('#')[0] + '\r\nEND:VEVENT\r\nEND:VCALENDAR';
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
-  a.download = 'JDISIM-출국일.ics'; a.click();
+  a.download = (PFACE ? 'eSIM' : 'JDISIM') + '-출국일.ics'; a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   toast('캘린더 파일 저장 — 열면 일정에 추가돼요');
 }
@@ -1023,6 +1036,7 @@ function brandFootHTML(){
       '<img src="images/fox-thumbsup.webp" alt="" onerror="this.style.display=\'none\'">' +
       '<b>eSIM<i>P</i>artners</b>' +
       '<p>여행자의 데이터를 가장 쉽게.</p>' +
+      '<div class="fl"><a class="ch" href="sms:' + PARTNER_TEL.replace(/-/g, '') + '">문의 ' + PARTNER_TEL + '</a></div>' +
       '<span class="fs">' + ico('shield', 13) + ' QR 코드는 이 기기에서만 생성되며 외부로 전송되지 않습니다</span>' +
       '</div>';
   }
@@ -1065,7 +1079,7 @@ function saveQrLocal(lpa){
     g.fillStyle = '#0f172a';
     for (var r=0;r<n;r++) for (var c=0;c<n;c++) if (q.isDark(r,c)) g.fillRect((c+Q)*cell,(r+Q)*cell,cell,cell);
     cv.toBlob(function(b){
-      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'JDISIM-eSIM-QR.png'; a.click();
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = (PFACE ? 'eSIM-QR.png' : 'JDISIM-eSIM-QR.png'); a.click();
       setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
       toast('QR 이미지가 저장됐어요');
     }, 'image/png');
@@ -1242,8 +1256,8 @@ function devSelPick(sel){
   var note = '<div style="margin-top:8px;font-weight:600;color:#64748b;font-size:0.8rem;line-height:1.65;">' + DEVICE_DB[_devBrandKey].note + '</div>';
   buzz(10);
   if (m[1] === 1) v.innerHTML = '<div class="notice good">' + ico('check', 15) + ' <strong>' + m[0] + '</strong> — eSIM 사용 가능 기종이에요. 안심하고 발급하세요.' + note + '</div>';
-  else if (m[1] === 0) v.innerHTML = '<div class="notice bad">' + ico('alert', 15) + ' <strong>' + m[0] + '</strong> — eSIM 미지원이에요. 발급하지 말고 카톡으로 문의해 주세요 (발급 전이라 <strong>100% 환불</strong>됩니다).' + note + '</div>';
-  else v.innerHTML = '<div class="notice">키패드에 <strong>*#06#</strong> 을 눌러 <strong>EID</strong>가 보이면 사용 가능한 기종이에요. 애매하면 카톡으로 기종명을 보내주세요.</div>';
+  else if (m[1] === 0) v.innerHTML = '<div class="notice bad">' + ico('alert', 15) + ' <strong>' + m[0] + '</strong> — eSIM 미지원이에요. 발급하지 말고 ' + (PFACE ? '고객센터로' : '카톡으로') + ' 문의해 주세요 (발급 전이라 <strong>100% 환불</strong>됩니다).' + note + '</div>';
+  else v.innerHTML = '<div class="notice">키패드에 <strong>*#06#</strong> 을 눌러 <strong>EID</strong>가 보이면 사용 가능한 기종이에요. 애매하면 ' + (PFACE ? '고객센터로' : '카톡으로') + ' 기종명을 보내주세요.</div>';
 }
 
 // ===== 🛫 여행 카운터 (자가신고 기반 — 외부 API 불필요) =====
@@ -1336,7 +1350,7 @@ function renderJourney(){
       '<span class="dday" style="color:' + barColor + ';">' + ddayLabel + '</span></div>' +
       (days ? '<div class="gauge"><i style="width:' + pct + '%;background:' + barColor + ';"></i></div>' : '') +
       '<div class="muted" style="margin-top:9px;">' + (expiredCard ? '이 상품은 사용 기간이 끝났어요 — 아래에서 새 eSIM을 주문할 수 있어요' : resetInfo(order.country) ? '매일 <strong>현지 ' + resetInfo(order.country).t + '</strong>에 오늘의 고속 데이터가 새로 채워져요 ↻' : '일 용량 상품은 매일 정해진 시간에 데이터가 새로 채워져요') + '</div>' +
-      (days && rawLeft <= 2 ? '<a class="btn btn-primary" style="margin-top:12px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">' + (expiredCard ? '새 eSIM 주문하기' : '여행이 길어졌나요? 연장 eSIM 주문') + '</a>' : '');
+      (days && rawLeft <= 2 && !PFACE ? '<a class="btn btn-primary" style="margin-top:12px;" href="https://jdisim.co.kr/mobile.html" target="_blank" rel="noopener">' + (expiredCard ? '새 eSIM 주문하기' : '여행이 길어졌나요? 연장 eSIM 주문') + '</a>' : '');
   }
   box.innerHTML = secHd('plane', 'JOURNEY', '발급부터 개통까지') + strip + '<div class="stp-body">' + body + '</div>';
   if (st.activatedAt && !window._usageAuto && $('usageBody')) { window._usageAuto = 1; setTimeout(loadUsage, 450); }
@@ -1359,7 +1373,7 @@ function sosHTML(country){
     '<a class="srow" href="tel:' + e[0] + '"><span>현지 경찰</span><b>' + ico('phone', 15) + e[0] + '</b></a>' +
     '<a class="srow" href="tel:' + e[1] + '"><span>현지 구급</span><b>' + ico('phone', 15) + e[1] + '</b></a>' +
     '<a class="srow" href="tel:+8223210-0404"><span>영사콜센터 <span class="muted">24시간</span></span><b>' + ico('phone', 15) + '+82-2-3210-0404</b></a>' +
-    '<a class="srow k" href="javascript:void(0)" onclick="openHelp()"><span>eSIM 문제가 생겼다면</span><b>' + ico('chat', 15) + '카톡 상담</b></a>' +
+    '<a class="srow k" href="javascript:void(0)" onclick="openHelp()"><span>eSIM 문제가 생겼다면</span><b>' + ico('chat', 15) + CS_LABEL + '</b></a>' +
     '</div></div>';
 }
 
@@ -1483,7 +1497,7 @@ function loadCare(){
   careGet(CX ? ('t=' + encodeURIComponent(CX)) : ('iccid=' + encodeURIComponent(CARE)))
     .then(function(d){
       var e = (d && d.esim) || {};
-      if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '카톡 상담으로 도와드릴게요.');
+      if (!e.iccid && !e.qrCodeContent) return renderError('eSIM 정보를 찾지 못했어요', '' + CS_RO + ' 도와드릴게요.');
       var preIssue = !e.qrCodeContent; // 발주됨·QR 미발급 — 발급하기 버튼이 도매 API를 호출 (2026-07-20)
       var cty = e.country || countryFrom(e.prodName, e.option || e.Option, PLAN) || (e.prodName||'').split(' ')[0];
       order = {
@@ -1512,7 +1526,7 @@ function loadCare(){
       if (RV) setTimeout(openReview, 1200);
     })
     .catch(function(){
-      renderError('연결이 지연되고 있어요', 'ICCID 조회에 실패했어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.');
+      renderError('연결이 지연되고 있어요', 'ICCID 조회에 실패했어요. 잠시 후 다시 시도하시거나 ' + CS_EUL + ' 눌러주세요.');
     });
 }
 
@@ -1522,7 +1536,7 @@ function loadIssue(){
   if (!window.CARE_API) return renderError('발급 시스템 준비 중이에요', '잠시 후 다시 시도해 주세요.');
   careGet('action=issue_status&it=' + encodeURIComponent(ISSUE))
     .then(function(d){
-      if (!d || d.error) return renderError('발급 링크를 찾지 못했어요', '링크가 만료되었거나 잘못되었어요. 카톡 상담으로 문의해 주세요.');
+      if (!d || d.error) return renderError('발급 링크를 찾지 못했어요', '링크가 만료되었거나 잘못되었어요. ' + CS_RO + ' 문의해 주세요.');
       if (d.status === 'CANCELED') return renderCanceledTok();
       if (d.status === 'ISSUED' && d.care_token) { location.replace('issue.html?cx=' + encodeURIComponent(d.care_token)); return; }
       if (d.status === 'PENDING') { renderIssuingTok(); pollIssueTok(); return; }
@@ -1541,14 +1555,14 @@ function renderCanceledTok(){
   h('<div class="card center" style="padding:34px 22px;max-width:440px;margin:18px auto;">' +
       '<img src="images/fox-thinking.webp" alt="" style="width:72px;" onerror="this.style.display=\'none\'">' +
       '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">취소된 주문입니다</div>' +
-      '<div class="muted" style="margin-top:9px;font-size:.83rem;line-height:1.7;">이 주문은 취소되어 발급할 수 없어요.<br>문의가 있으시면 카톡 상담을 눌러주세요.</div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.83rem;line-height:1.7;">이 주문은 취소되어 발급할 수 없어요.<br>문의가 있으시면 ' + CS_EUL + ' 눌러주세요.</div>' +
     '</div>');
 }
 function renderTestTok(){
   h('<div class="card center" style="padding:34px 22px;max-width:440px;margin:18px auto;">' +
       '<div style="font-size:46px;">🧪</div>' +
       '<div style="font-weight:900;font-size:1.15rem;margin-top:12px;">테스트 주문입니다</div>' +
-      '<div class="muted" style="margin-top:9px;font-size:.83rem;line-height:1.7;">현재 테스트 운영 중이라 실제 발급은 진행되지 않아요.<br>정식 오픈 후 안내드리겠습니다. 문의는 카톡 상담을 눌러주세요.</div>' +
+      '<div class="muted" style="margin-top:9px;font-size:.83rem;line-height:1.7;">현재 테스트 운영 중이라 실제 발급은 진행되지 않아요.<br>정식 오픈 후 안내드리겠습니다. 문의는 ' + CS_EUL + ' 눌러주세요.</div>' +
     '</div>');
 }
 function renderIssueReadyTok(d){
@@ -1728,7 +1742,7 @@ function doIssueTok(){
     .then(function(d){
       if (d && d.status === 'CANCELED') return renderCanceledTok();
       if (d && d.status === 'TEST') return renderTestTok(); // 테스트 모드 — 실발급 안 함
-      if (d && d.error) return renderError('발급 요청 실패', '잠시 후 다시 시도하시거나 카톡 상담으로 문의해 주세요.');
+      if (d && d.error) return renderError('발급 요청 실패', '잠시 후 다시 시도하시거나 ' + CS_RO + ' 문의해 주세요.');
       pollIssueTok();
     })
     .catch(function(){ pollIssueTok(); });
@@ -1755,7 +1769,7 @@ function loadOrder(){
     return renderPreIssue();
   }
   if (!token) return renderError('링크가 올바르지 않아요','카카오톡으로 받으신 발급 링크를 다시 확인해 주세요.');
-  if (!CONFIG.ORDER_API) return renderError('발급 시스템 준비 중이에요','곧 오픈됩니다! 급하시면 카톡 상담으로 도와드릴게요.');
+  if (!CONFIG.ORDER_API) return renderError('발급 시스템 준비 중이에요','곧 오픈됩니다! 급하시면 ' + CS_RO + ' 도와드릴게요.');
   fetch(CONFIG.ORDER_API+'?token='+encodeURIComponent(token))
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(d){
@@ -1765,9 +1779,9 @@ function loadOrder(){
       if (d.status==='ISSUED' && d.lpa) renderIssued(d.lpa, true);
       else if (d.status==='PAID') renderPreIssue();
       else if (d.status==='REFUNDED') renderError('환불 처리된 주문이에요','이미 환불이 완료되어 발급할 수 없어요.');
-      else renderError('발급을 진행할 수 없는 상태예요','카톡 상담으로 문의해 주시면 바로 확인해 드릴게요.');
+      else renderError('발급을 진행할 수 없는 상태예요','' + CS_RO + ' 문의해 주시면 바로 확인해 드릴게요.');
     })
-    .catch(function(){ renderError('주문을 찾지 못했어요','링크가 만료되었거나 잘못되었을 수 있어요. 카톡 상담으로 문의해 주세요.'); });
+    .catch(function(){ renderError('주문을 찾지 못했어요','링크가 만료되었거나 잘못되었을 수 있어요. ' + CS_RO + ' 문의해 주세요.'); });
 }
 
 // ── 컴팩트 접이식 + 티켓 공유 (2026-07-20 사장님 승인: 유의사항 한곳 집결 · 선물하기) ──
@@ -1895,14 +1909,14 @@ function doIssue(){
         pollCareIssue(0); // ISSUED(already)든 PENDING이든 info 폴링이 QR을 가져와 마무리
       })
       .catch(function(e){
-        renderError('발급 요청이 접수되지 않았어요','결제와 주문은 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.');
+        renderError('발급 요청이 접수되지 않았어요','결제와 주문은 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 ' + CS_EUL + ' 눌러주세요.');
       });
     return;
   }
   fetch(CONFIG.ISSUE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,agreedNoRefund:true,agreedDevice:true,agreedAt:new Date().toISOString()})})
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(d){ if(d.lpa) seqFinish(function(){ renderIssued(d.lpa,false); }); else if(d.status==='PENDING') pollIssue(0); else throw 0; })
-    .catch(function(){ renderError('발급 중 문제가 생겼어요','결제는 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 카톡 상담을 눌러주세요.'); });
+    .catch(function(){ renderError('발급 중 문제가 생겼어요','결제는 안전하게 보존되어 있어요. 잠시 후 다시 시도하시거나 ' + CS_EUL + ' 눌러주세요.'); });
 }
 
 function pollCareIssue(n){
@@ -1936,7 +1950,7 @@ function renderIssued(lpa, revisit){
   if (!revisit) { confetti(); buzz([18,60,24,60,36]); }
   seedDep();
   h(bpassHTML(order || {}, {issued:true, print:!revisit}) +
-    '<div class="card" style="padding:11px 15px;display:flex;gap:9px;align-items:flex-start;background:#fef2f2;border:1px solid #fecaca;"><span style="flex-shrink:0;">⚠️</span><span style="font-size:0.78rem;font-weight:800;color:#b91c1c;line-height:1.55;">설치한 eSIM 프로필 <b>절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요. 문제가 생기면 삭제 대신 카톡 상담!</span></div>' +
+    '<div class="card" style="padding:11px 15px;display:flex;gap:9px;align-items:flex-start;background:#fef2f2;border:1px solid #fecaca;"><span style="flex-shrink:0;">⚠️</span><span style="font-size:0.78rem;font-weight:800;color:#b91c1c;line-height:1.55;">설치한 eSIM 프로필 <b>절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요. 문제가 생기면 삭제 대신 ' + CS_LABEL + '!</span></div>' +
     shareTicketHTML() +
     '<div class="card rv" id="usageCard" style="position:relative;">' + secHd('gear', 'DATA', '데이터 사용량') +
     '<button type="button" onclick="loadUsage()" aria-label="사용량 새로고침" style="position:absolute;top:14px;right:14px;border:1.5px solid #E4E8EF;background:#fff;border-radius:10px;width:34px;height:34px;font-size:1rem;cursor:pointer;color:#5D6B85;">↻</button>' +
@@ -2094,7 +2108,7 @@ function renderCareUsage(mode){
     : '<div class="us-skel" style="width:60%;height:14px;"></div><div class="us-skel" style="width:80%;height:30px;margin-top:9px;"></div><div class="us-skel" style="width:100%;height:8px;margin-top:11px;border-radius:99px;"></div>';
   var rows;
   if (mode === 'end') {
-    rows = careRowHTML('🧳', '다음 여행 eSIM 보러 가기', '›', 'window.open(\'https://jdisim.co.kr\',\'_blank\')') +
+    rows = (PFACE ? '' : careRowHTML('🧳', '다음 여행 eSIM 보러 가기', '›', 'window.open(\'https://jdisim.co.kr\',\'_blank\')')) +
            careRowHTML('🎫', '티켓·QR 다시 보기', '›', 'careToggleTicket()') +
            careRowHTML('🩺', '요금·환불 문의', '›', 'openHelp(\'유효기간·환불 문의\')', false, true);
   } else if (mode === 'wait') {
@@ -2242,7 +2256,7 @@ function renderUsageCare(d){
   if (extra) {
     var exHtml = '';
     var dlx = careDaysLeft(firstDate, off);
-    if (!expired && dlx != null && dlx <= 2) {
+    if (!expired && dlx != null && dlx <= 2 && !PFACE) {
       exHtml += '<div class="card" style="padding:14px 16px;margin:12px auto;background:#FFF8F2;border:1px solid #F5DCC2;text-align:left;">' +
         '<div style="font-weight:800;font-size:.85rem;">여행이 ' + (dlx === 0 ? '오늘로 끝나요' : dlx + '일 남았어요') + '</div>' +
         '<div class="muted" style="font-size:.75rem;font-weight:400;margin-top:3px;">데이터가 더 필요하면 연장 eSIM을 미리 준비해요</div>' +
