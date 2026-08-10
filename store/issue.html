@@ -2741,7 +2741,8 @@ function runDiagnose(){
   RomiMode.init({ gateParams: ['care', 'cx', 'o', 'n', 'bd', 'plan', 'local'] });
   // 로미 챗봇 로드 (발급링크에서도 상담 가능)
   // ⚠️ 기존엔 이 코드가 </html> 뒤 생텍스트로 있어 화면에 노출 + 챗봇 미로드 — 2026-07-14 수정
-  (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260719a'; sc.defer = true; document.body.appendChild(sc); })();
+  // 파트너 도메인(PFACE)에서는 미로드 — "JDISIM 여행 도우미" 브랜딩·본사 카톡 링크·소매 요금 즉답이 파트너 고객에게 노출됨
+  if (!window.PFACE) (function(){ var sc = document.createElement('script'); sc.src = 'romi-bot.js?v=20260719a'; sc.defer = true; document.body.appendChild(sc); })();
 
   // 퍼널 KPI (Phase 2): 케어링크 오픈 1회 기록 — 베스트에포트, 개인정보 비전송 (구형 care= raw ICCID는 'legacy'로 익명화)
   (function(){ try {
