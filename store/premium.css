@@ -1943,3 +1943,23 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 body { word-break: keep-all; overflow-wrap: break-word; }
 p, li, dd, span, td, th { text-wrap: pretty; }
 h1, h2, h3, h4, strong { text-wrap: balance; }
+
+/* ── 로미 가림 핫픽스 (2026-08-11 사장님 제보): 낮은 뷰포트에서 히어로 세로 스택이 넘쳐
+      로미 하반신이 신뢰 스트립 뒤로 잘리던 문제. 로미를 히어로의 '남는 공간'에 맞춰
+      유동 축소(플렉스)시켜 어떤 해상도·모드(pc-snap 포함)에서도 잘리지 않게 한다.
+      인라인 스타일 블록보다 늦게 이기도록 !important. ── */
+#view-home .hero-video-content { min-height: 0 !important; }
+#view-home .hero-video-content .hero-fox-col {
+  flex: 1 1 auto !important;
+  min-height: 40px !important;
+  overflow: visible !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+}
+#view-home .hero-fox-col .hero-fox-img {
+  height: 100% !important;
+  width: auto !important;
+  max-height: min(44svh, 320px) !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+}
