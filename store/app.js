@@ -2315,6 +2315,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (rsp.success) {
             window.lastImpUid = rsp.imp_uid; // 서버 결제 검증용 실제 결제 ID
             submitPayment(orderCode, priceVal);
+          } else if (PORTONE_STORE_ID) {
+            // 실결제 모드 — V1 폴백에서도 가상결제 우회 없음 (결제 없이 주문 금지)
+            alert(`결제가 완료되지 않았습니다.\n사유: ${rsp.error_msg || '알 수 없음'}\n\n페이지를 새로고침한 뒤 다시 시도해 주세요.`);
           } else {
             const forcePay = confirm(`결제에 실패하였습니다.\n사유: ${rsp.error_msg}\n\n[테스트 환경 안내]\n로컬 실행 환경(file:// 프로토콜 등)에서는 보안 정책으로 인해 PG사 결제창이 작동하지 않을 수 있습니다.\n\n테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?`);
             if (forcePay) {
@@ -2322,11 +2325,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
           }
         });
+      } else if (PORTONE_STORE_ID) {
+        alert('결제 모듈을 불러오지 못했어요.\n네트워크 확인 후 새로고침하고 다시 시도해 주세요.'); // 실결제 모드 — 가상 결제 금지
       } else {
-        submitPayment(orderCode, priceVal, true); // PG SDK 미로드 = 가상 결제
+        submitPayment(orderCode, priceVal, true); // PG SDK 미로드 = 가상 결제 (테스트 모드 전용)
       }
+    } else if (PORTONE_STORE_ID) {
+      alert('결제 모듈을 불러오지 못했어요.\n네트워크 확인 후 새로고침하고 다시 시도해 주세요.'); // 실결제 모드 — 가상 결제 금지
     } else {
-      submitPayment(orderCode, priceVal, true); // PG 미설정 = 가상 결제
+      submitPayment(orderCode, priceVal, true); // PG 미설정 = 가상 결제 (테스트 모드 전용)
     }
   }
 
