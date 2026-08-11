@@ -62,7 +62,9 @@ window.jdCountryLabel = (function () {
       var c = contOf(it.replace(/[（(].*$/, '').trim());
       if (c && !seen[c]) { seen[c] = 1; order.push(c); }
     });
-    if (prefix && /유럽|아시아|글로벌|북미|남미|중동|아프리카/.test(prefix)) {
+    // 접두어가 짧은 순수 카테고리일 때만 인정 (2026-08-11: "…우크라이나, 유럽 39개국: 터키…"처럼
+    // 문자열 중간의 개국 표기에 앞 나열 전체가 접두어로 오인돼 원문이 그대로 노출되던 버그)
+    if (prefix && prefix.length <= 12 && /유럽|아시아|글로벌|북미|남미|중동|아프리카/.test(prefix)) {
       return prefix.replace(/\s+/g, ' ') + ' ' + n + '개국';
     }
     // 북미+남미만이면 '미주'로 통합 (미국·캐나다·멕시코·중미 묶음이 흔함)
@@ -819,6 +821,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     return '🌏';
   }
 
+  // 통신사 컴팩트 표기 (2026-08-11 사장님: "상품명 컴팩트하게") — 중복·별칭 정리 후 2개 + "외 N"
+  function jdCompactCarriers(carriers) {
+    // 다국가 상품의 "국가=통신사" 매핑 나열은 개별 나열 대신 요약 한 줄로
+    if ((carriers || []).some(c => String(c.carrier || '').includes('='))) return '국가별 현지 통신사 자동 연결';
+    const seen = [];
+    const norm = s => String(s).toLowerCase().replace(/[^a-z가-힣0-9]/g, '');
+    (carriers || []).forEach(c => {
+      String(window.cleanCarrierName(c.carrier) || '').split(/[\/,·]+/).forEach(tk => {
+        const t = tk.trim();
+        if (!t || /자동 연결|현지 통신사/.test(t)) return;
+        const nt = norm(t);
+        if (!nt) return;
+        if (!seen.some(x => { const nx = norm(x); return nx === nt || nx.includes(nt) || nt.includes(nx); })) seen.push(t);
+      });
+    });
+    if (!seen.length) return '현지 통신사 자동 연결';
+    return seen.slice(0, 2).join(' · ') + (seen.length > 2 ? ' 외 ' + (seen.length - 2) : '');
+  }
+
   // 9. 홈화면 실시간 인기 상품 렌더링 (국가 기준으로 그룹화하여 4개 추출)
   function renderFeatured() {
     featuredGrid.innerHTML = '';
@@ -837,7 +858,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     selected.forEach((g, gi) => {
-      const carriersStr = g.carriers.map(c => window.cleanCarrierName(c.carrier)).join(' · ');
+      const carriersStr = jdCompactCarriers(g.carriers);
       const speedsStr = Array.from(g.network_speeds).join('/');
       const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화 가능' : '데이터 전용';
       const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';
@@ -941,7 +962,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     filteredCountries.forEach(g => {
-      const carriersStr = g.carriers.map(c => window.cleanCarrierName(c.carrier)).join(' · ');
+      const carriersStr = jdCompactCarriers(g.carriers);
       const speedsStr = Array.from(g.network_speeds).join('/');
       const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화 가능' : '데이터 전용';
       const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';

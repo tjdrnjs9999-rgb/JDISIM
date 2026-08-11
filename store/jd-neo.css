@@ -1104,3 +1104,51 @@ html body .romi-finder, html body .m-rv-summary {
 /* ============================================================================
    끝. 이 파일은 순수 추가 스킨 레이어 — <link> 제거 시 즉시 원상복구.
    ============================================================================ */
+
+/* ── 로미 복귀 (2026-08-11 사장님: "로미는 어디갔어") — 검색 히어로에 마스코트 재합류.
+      PC = 우측 컬럼(말풍선+로미), 모바일 = 히어로 우상단 소형. 검색 주인공 원칙은 유지. ── */
+.jd-hero .jd-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--jd-s-7); }
+.jd-hero .hero-search { flex: 1 1 auto; min-width: 0; }
+.hero-romi { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: var(--jd-s-2); padding-bottom: var(--jd-s-2); }
+.hero-romi img { width: 172px; height: auto; filter: drop-shadow(0 8px 20px rgba(25, 31, 40, 0.12)); }
+.hero-romi-bubble {
+  background: #fff;
+  border: 1px solid var(--jd-gray-200);
+  border-radius: 12px 12px 12px 4px;
+  padding: 8px 12px;
+  font-size: var(--jd-t-caption);
+  font-weight: 500;
+  color: var(--jd-gray-700);
+  box-shadow: var(--jd-e-1);
+  white-space: nowrap;
+}
+.hero-romi-bubble em { font-style: normal; font-weight: 700; color: var(--jd-brand-700); }
+@media (max-width: 920px) { .hero-romi { display: none; } }
+.m-hero-content { position: relative; }
+.m-hero-romi { position: absolute; top: 0; right: 0; width: 68px; height: auto; pointer-events: none; filter: drop-shadow(0 6px 14px rgba(25, 31, 40, 0.14)); }
+.m-hero-caption, .m-hero-title { padding-right: 80px; }
+
+/* ── 후기 트랙: 정지된 마퀴 → 사용자 가로 스크롤 캐러셀 (2026-08-11 사장님 "섹션 벗어남" 정리)
+      마퀴 애니를 죽이면서 16,000px 스트립이 얼어붙어 첫 4~5장만 보이던 문제. ── */
+#reviewExpandWrapper {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  padding-bottom: var(--jd-s-3);
+  scrollbar-width: thin;
+  scrollbar-color: var(--jd-gray-300) transparent;
+}
+#reviewTrack { animation: none !important; width: max-content; }
+#reviewTrack .review-track-card { scroll-snap-align: start; }
+
+/* 카드 통신사 서브라인 — 컴팩트 표기(2개 + 외 N) */
+.card-title .card-carrier {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--jd-t-caption);
+  font-weight: 500;
+  color: var(--jd-gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
