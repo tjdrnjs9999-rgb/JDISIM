@@ -844,9 +844,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const card = document.createElement('article');
       card.className = 'product-card';
+      const cardImgUrl = getCountryImageUrl(g.country);
       card.innerHTML = `
         <div class="card-img-wrap">
-          <span class="card-flag">${jdFlagOf(g.country)}</span>
+          ${cardImgUrl ? `<img src="${cardImgUrl}" class="card-img" alt="${g.country} 여행지" loading="lazy" onerror="this.remove()">` : `<span class="card-flag">${jdFlagOf(g.country)}</span>`}
           <div class="card-tags">
             ${gi === 0 ? '<span class="card-tag hot">판매 1위</span>' : ''}
             <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType === '로컬망' ? '현지망' : '로밍망'}</span>
@@ -948,9 +949,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const card = document.createElement('article');
       card.className = 'product-card';
 
+      const cardImgUrl2 = getCountryImageUrl(g.country);
       card.innerHTML = `
         <div class="card-img-wrap">
-          <span class="card-flag">${jdFlagOf(g.country)}</span>
+          ${cardImgUrl2 ? `<img src="${cardImgUrl2}" class="card-img" alt="${g.country} 여행지" loading="lazy" onerror="this.remove()">` : `<span class="card-flag">${jdFlagOf(g.country)}</span>`}
           <div class="card-tags">
             <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType === '로컬망' ? '현지망' : '로밍망'}</span>
             ${g.has_unlimited ? '<span class="card-tag best">무제한</span>' : ''}

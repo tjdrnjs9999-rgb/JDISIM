@@ -202,7 +202,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
   <link rel="stylesheet" href="premium.css?v=20260719b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
-  <link rel="stylesheet" href="jd-neo.css?v=20260811a">
+  <link rel="stylesheet" href="jd-neo.css?v=20260811b">
   <script src="jd-trip-cal.js?v=20260719b" defer></script>
   <!-- 폰트 정본 (2026-07-15): Pretendard 하나로 통일 — 국문·숫자 모두 선명, 로케비와 동급 렌더링 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -3729,20 +3729,22 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
     // v4 스타일 매핑 (고객 언어 → 상품): 시안 승인 2026-07-19
     function styleOf(pl) {
       const cap = planCap(pl);
-      if (cap === '무제한') return '마음껏';                       // 진짜/등급 불문 상위 — 카드에 정직 라벨
-      if (/^[\d.]+\s*Mbps$/i.test(cap)) return '마음껏';          // 속도컷 무제한(10Mbps류)
+      // 2026-08-11 사장님: "무제한 눌렀는데 데일리 3GB가 나온다" — 무제한과 대용량 카드 분리
+      if (cap === '무제한') return '무제한';                       // 진짜/등급 불문 무제한 계열
+      if (/^[\d.]+\s*Mbps$/i.test(cap)) return '무제한';          // 속도컷 무제한(10Mbps류)
       const fup = /^([\d.]+)(GB|MB)\+/i.exec(cap);
-      if (fup) { const gb = fup[2].toUpperCase() === 'GB' ? parseFloat(fup[1]) : parseFloat(fup[1]) / 1024; return gb >= 3 ? '마음껏' : (gb >= 1 ? '보통' : '가볍게'); }
+      if (fup) { const gb = fup[2].toUpperCase() === 'GB' ? parseFloat(fup[1]) : parseFloat(fup[1]) / 1024; return gb >= 3 ? '대용량' : (gb >= 1 ? '보통' : '가볍게'); }
       const m = /^([\d.]+)(GB|MB)$/i.exec(cap);
       if (!m) return '보통';
       const gb = m[2].toUpperCase() === 'GB' ? parseFloat(m[1]) : parseFloat(m[1]) / 1024;
       if (pl.service_type === '데일리' || pl.service_type === '무제한') {
-        return gb >= 3 ? '마음껏' : (gb >= 1 ? '보통' : '가볍게');
+        return gb >= 3 ? '대용량' : (gb >= 1 ? '보통' : '가볍게');
       }
-      return gb <= 3 ? '가볍게' : (gb > 10 ? '마음껏' : '보통');   // 총용량
+      return gb <= 3 ? '가볍게' : (gb > 10 ? '대용량' : '보통');   // 총용량
     }
     const STYLE_META = {
-      '마음껏': { ic: '', t: '무제한 · 대용량', s: '영상·지도·핫스팟까지 마음껏' },
+      '무제한': { ic: '', t: '무제한', s: '속도·용량 걱정 없이 쓰는 무제한' },
+      '대용량': { ic: '', t: '매일 3GB 이상', s: '영상·핫스팟까지 넉넉하게' },
       '보통':   { ic: '', t: '매일 1~2GB',   s: '지도·검색·SNS 위주면 충분해요' },
       '가볍게': { ic: '', t: '소용량', s: '짧은 여행, 가볍게 쓰는 분께' },
       '전체':   { ic: '', t: '전체 보기', s: '모든 요금제를 직접 비교해요' }
@@ -3815,7 +3817,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const box = document.getElementById('styleCards');
       const block = document.getElementById('pwStyleBlock');
       if (!box || !block) return;
-      const styles = ['마음껏', '보통', '가볍게'].filter(st =>
+      const styles = ['무제한', '대용량', '보통', '가볍게'].filter(st =>
         allCarrierOptions.some(g => (g.plans || []).some(pl => styleOf(pl) === st)));
       styles.push('전체');
       box.innerHTML = styles.map(st => {
