@@ -1,0 +1,1089 @@
+/* ============================================================================
+   jd-neo.css — JDISIM 리디자인 정본(canon) v1.0 파운데이션 스킨
+   2026-08-11 · 시안 A(정통 미니멀) 확정본
+
+   [로드 규약] styles.css → premium.css → jd-tokens.css → jd-ui.css → 인라인
+   전부 "뒤"에 로드되어 표현 계층만 덮어쓰는 순수 추가(additive) 레이어.
+   이 파일 하나를 지우면(또는 <link> 제거) 사이트는 원상복구된다.
+
+   [내부 5층 구조]
+     §1 토큰층      — :root 재선언(동명 --jd-* 덮어쓰기) + 레거시 별칭
+     §2 베이스층    — html 16px, body, 타이포·가격 유틸
+     §3 킬 스위치층 — 숨김 보존(display:none) / 무한모션·그라데이션 무효화
+                      (유일하게 !important 허용층. 그 외 층은 기존 !important
+                       맞대응 시에만 예외적으로 사용)
+     §4 컴포넌트 스킨층 — 기존 셀렉터 재선언(헤더·푸터·버튼·카드·모달·결제·탭바…)
+     §5 신규 클래스층   — .jd-btn-* .hero-search .jd-dl .jd-proof 등
+                          (신규 클래스는 이 파일에만 정의)
+
+   [불변 가드레일] id·class·data-속성·JS 훅 이름 무변경 · 결제 로직 무관 ·
+   z-index는 안전한 고정 요소만 리맵(오버레이 사다리 550~850은 Phase 후속)
+   ============================================================================ */
+
+
+/* ============================================================================
+   §1. 토큰층 — 정본 확정값 (:root 동명 재선언 → 전 소비처 자동 전환)
+   ============================================================================ */
+:root {
+  /* ---------- Brand (오렌지 — 유일한 유채색, 5단) ---------- */
+  --jd-brand-50:  #FFF4EC;   /* 틴트 배경 유일값 — 크림 전 계열 통폐합 */
+  --jd-brand-100: #FFE4D1;   /* 선택 상태 틴트 보더 */
+  --jd-brand-500: #F1690D;   /* Primary 버튼·선택 보더·활성 인디케이터 */
+  --jd-brand-600: #D95903;   /* hover */
+  --jd-brand-700: #B04A06;   /* pressed · 흰 배경 위 오렌지 텍스트(4.5:1) */
+  /* 폐기 단계는 정본 5단으로 수렴(구 소비처 안전망) */
+  --jd-brand-200: #FFE4D1;
+  --jd-brand-300: #F1690D;
+  --jd-brand-400: #F1690D;
+  --jd-brand-800: #B04A06;
+  --jd-brand-900: #B04A06;
+  --jd-rating:    #FFB331;   /* ★ 별점 전용 — 이 외 사용 금지 */
+
+  /* ---------- Gray 10단 (토스 쿨 뉴트럴 — 웜 브라운 전량 폐기) ---------- */
+  --jd-gray-900: #191F28;   /* 잉크: 제목·가격·강조 */
+  --jd-gray-800: #333D4B;   /* 카드 타이틀·강조 본문 */
+  --jd-gray-700: #4E5968;   /* 본문 */
+  --jd-gray-600: #6B7684;   /* 보조 본문 */
+  --jd-gray-500: #8B95A1;   /* 캡션·placeholder */
+  --jd-gray-400: #B0B8C1;   /* 비활성 */
+  --jd-gray-300: #D1D6DB;   /* 인풋 보더 */
+  --jd-gray-200: #E5E8EB;   /* 표준 보더·구분선 */
+  --jd-gray-100: #F2F4F6;   /* 서피스·비활성 버튼 bg */
+  --jd-gray-50:  #F9FAFB;   /* 섹션 교차 배경·푸터 */
+  --jd-bg:       #FFFFFF;   /* 페이지 배경 = 순백 하나 */
+  --jd-dim:      rgba(25,31,40,0.52);   /* 유일한 딤값 */
+
+  /* 구 뉴트럴 토큰 → 신 gray로 리맵 (jd-tokens 소비처 자동 전환) */
+  --jd-ink:         var(--jd-gray-900);
+  --jd-neutral-900: var(--jd-gray-900);
+  --jd-neutral-700: var(--jd-gray-700);
+  --jd-neutral-500: var(--jd-gray-600);
+  --jd-neutral-400: var(--jd-gray-500);
+  --jd-neutral-300: var(--jd-gray-300);
+  --jd-neutral-200: var(--jd-gray-200);
+  --jd-neutral-100: var(--jd-gray-100);
+  --jd-neutral-50:  var(--jd-gray-50);
+  --jd-white:       #FFFFFF;
+  --jd-surface:     var(--jd-gray-50);
+  --jd-card:        #FFFFFF;
+  --jd-line:        var(--jd-gray-100);
+  --jd-line-2:      var(--jd-gray-200);
+
+  /* ---------- Semantic (본색/배경/deep — 작은 글자는 deep) ---------- */
+  --jd-success: #12A25E;  --jd-success-bg: #EEFAF3;  --jd-success-deep: #0E7A47;
+  --jd-warning: #C77700;  --jd-warning-bg: #FFF7E6;  --jd-warning-deep: #935A00;
+  --jd-danger:  #F04452;  --jd-danger-bg:  #FEF0F1;  --jd-danger-deep:  #C22733;
+  --jd-info:    #3182F6;  --jd-info-bg:    #EFF6FF;  --jd-info-deep:    #1B64DA;
+  /* 구 -line 토큰 소비처 안전망 */
+  --jd-success-line: #EEFAF3;
+  --jd-warning-line: #FFF7E6;
+  --jd-danger-line:  #FEF0F1;
+  --jd-info-line:    #EFF6FF;
+
+  /* 틸 전 계열 → success로 흡수 (구 소비처 자동 전환) */
+  --jd-teal-50:  var(--jd-success-bg);
+  --jd-teal-100: var(--jd-success-bg);
+  --jd-teal-300: var(--jd-success);
+  --jd-teal-500: var(--jd-success);
+  --jd-teal-600: var(--jd-success-deep);
+  --jd-teal-700: var(--jd-success-deep);
+
+  /* 외부 브랜드 — 이 3값만, 각 1값 고정 */
+  --jd-kakao:     #FEE500;
+  --jd-kakao-ink: #191919;
+  --jd-naver:     #03C75A;
+
+  /* ---------- Typography (html 16px 기준 rem) ---------- */
+  --jd-font: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  --jd-font-mono: 'SF Mono', ui-monospace, monospace;   /* ICCID·주문번호·설치코드 전용 */
+  --jd-t-display: 2.125rem;  /* 34 / 1.25 / 800 — PC 홈 히어로 H1 1곳 전용 */
+  --jd-t-h1:      1.625rem;  /* 26 / 1.3  / 700 — 페이지 제목 */
+  --jd-t-h1-m:    1.5rem;    /* 24 / 1.3  / 800 — 모바일 히어로 전용 */
+  --jd-t-h2:      1.375rem;  /* 22 / 1.35 / 700 — 섹션 제목 */
+  --jd-t-h3:      1.125rem;  /* 18 / 1.4  / 700 — 카드 타이틀·모달 소제목 */
+  --jd-t-body-lg: 1.0625rem; /* 17 / 1.5  / 500 — 리드 문장 */
+  --jd-t-body:    0.9375rem; /* 15 / 1.6  / 400 — 본문 */
+  --jd-t-caption: 0.8125rem; /* 13 / 1.45 / 500 — 메타·캡션·칩·라벨 */
+  --jd-t-micro:   0.75rem;   /* 12 / 1.4  / 500 — 최소값. 12px 미만 전면 금지 */
+  --jd-lh-tight: 1.3;  --jd-lh-body: 1.6;  --jd-lh-caption: 1.45;
+
+  /* ---------- Radius 4종 ---------- */
+  --jd-r-sm: 8px;     /* 뱃지·작은 바·인풋 내부 */
+  --jd-r-md: 12px;    /* 카드·버튼·인풋·아코디언 */
+  --jd-r-lg: 20px;    /* 모달·바텀시트·대형 배너 */
+  --jd-r-full: 999px; /* 칩·필터 필·카운트 뱃지·아바타 전용 */
+
+  /* ---------- Shadow 3종 + 포커스 링 ---------- */
+  --jd-e-1: 0 1px 3px rgba(25,31,40,.06);    /* 카드 기본(주 구분자는 보더) */
+  --jd-e-2: 0 4px 12px rgba(25,31,40,.08);   /* hover·드롭다운·서제스트·스티키 바 */
+  --jd-e-3: 0 12px 32px rgba(25,31,40,.16);  /* 모달·바텀시트·고정 결제바 */
+  --jd-e-4: 0 12px 32px rgba(25,31,40,.16);  /* 구 e-4 소비처 → e-3로 수렴 */
+  --jd-e-brand: 0 1px 3px rgba(25,31,40,.06);/* 오렌지 글로우 폐기 → e-1로 수렴 */
+  --jd-focus: 0 0 0 3px rgba(241,105,13,.25);/* 전 인터랙션 공통 포커스 */
+
+  /* ---------- Spacing (4/8 그리드, 9단) ---------- */
+  --jd-s-1: 4px;  --jd-s-2: 8px;  --jd-s-3: 12px; --jd-s-4: 16px; --jd-s-5: 20px;
+  --jd-s-6: 24px; --jd-s-7: 32px; --jd-s-8: 48px; --jd-s-9: 64px;
+
+  /* ---------- z-index 6단 (이 밖 대역 금지) ---------- */
+  --jd-z-base: 0;
+  --jd-z-sticky:   100;  /* 헤더·탭바·buybar */
+  --jd-z-dropdown: 200;  /* 서제스트 */
+  --jd-z-drawer:   300;  /* 카트 드로어·메뉴·바텀시트 */
+  --jd-z-modal:    400;  /* 상품·결제·진단 모달·pv-layer */
+  --jd-z-toast:    500;  /* 토스트·PWA 배너 */
+  --jd-z-top:      600;  /* 티켓 세리머니 */
+  --jd-z-overlay:  300;  /* 구 토큰명 소비처 → drawer 대역 */
+
+  /* ---------- 모션 ---------- */
+  --jd-dur-1: 120ms;  /* 상태 */
+  --jd-dur-2: 200ms;  /* 전환 */
+  --jd-dur-3: 320ms;  /* 시트·모달 */
+  --jd-ease: cubic-bezier(.2, 0, 0, 1);
+  /* 구 모션 토큰명 → 신 토큰 */
+  --jd-m-fast: var(--jd-dur-1);
+  --jd-m-base: var(--jd-dur-2);
+  --jd-m-slow: var(--jd-dur-3);
+
+  /* ---------- 터치 ---------- */
+  --jd-tap-min: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --jd-dur-1: 0ms; --jd-dur-2: 0ms; --jd-dur-3: 0ms; }
+}
+
+/* ---------- 레거시 변수 별칭층 ----------
+   styles.css(인디고 :root)·premium.css(2차 재선언)·sub.css(독립 :root)의
+   구변수 소비처를 신 토큰으로 흡수. 원본 삭제는 Phase 5. */
+:root {
+  /* styles.css 인디고 시대 */
+  --font-family:     var(--jd-font);
+  --bg-primary:      var(--jd-bg);
+  --bg-secondary:    var(--jd-gray-50);
+  --bg-tertiary:     var(--jd-gray-100);
+  --bg-glass:        var(--jd-bg);          /* 글래스모피즘 폐기 → 불투명 */
+  --bg-glass-card:   var(--jd-bg);
+  --accent:          var(--jd-brand-500);
+  --accent-purple:   var(--jd-brand-600);
+  /* 그라데이션 소비처는 단색 2점 그라데이션으로 사실상 솔리드화 */
+  --accent-gradient: linear-gradient(0deg, var(--jd-brand-500), var(--jd-brand-500));
+  --accent-light:    var(--jd-brand-50);
+  --accent-success:  var(--jd-success);
+  --accent-warning:  var(--jd-warning);
+  --text-main:       var(--jd-gray-900);
+  --text-muted:      var(--jd-gray-700);
+  --text-dim:        var(--jd-gray-600);
+  --border-color:    var(--jd-gray-200);
+  --shadow-sm:       var(--jd-e-1);
+  --shadow-md:       var(--jd-e-2);
+  --shadow-lg:       var(--jd-e-3);
+  --shadow-brand:    var(--jd-e-1);         /* 오렌지 글로우 폐기 */
+  --radius-sm:       var(--jd-r-sm);
+  --radius-md:       var(--jd-r-md);
+  --radius-lg:       var(--jd-r-lg);
+  --transition-fast:   var(--jd-dur-1);
+  --transition-normal: var(--jd-dur-2);
+  --header-height:   64px;
+
+  /* premium.css 웜 리맵층 */
+  --fox-teal:  var(--jd-success);
+  --fox-cream: var(--jd-brand-50);
+  --ink-warm:  var(--jd-gray-900);
+
+  /* sub.css 독립 체계 (로드 시 대비 선제 별칭) */
+  --ink:    var(--jd-gray-900);
+  --sub:    var(--jd-gray-600);
+  --dim:    var(--jd-gray-500);
+  --orange: var(--jd-brand-500);
+  --amber:  var(--jd-rating);
+  --teal:   var(--jd-success);
+  --line:   var(--jd-gray-200);
+  --cream:  var(--jd-brand-50);
+}
+
+
+/* ============================================================================
+   §2. 베이스층 — 루트 폰트·바탕·타이포·가격 유틸
+   ============================================================================ */
+html { font-size: 16px; }   /* 현행 17px 폐기 — rem 환산 기준 정정 */
+
+body {
+  background: var(--jd-bg);
+  color: var(--jd-gray-700);
+  font-family: var(--jd-font);
+  font-size: var(--jd-t-body);
+  line-height: var(--jd-lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--jd-gray-900); line-height: var(--jd-lh-tight); }
+
+/* 모노 폰트는 코드성 데이터 전용 */
+code, .jd-mono { font-family: var(--jd-font-mono); }
+
+/* 가격 정본: 숫자 800 tabular gray-900, 단위 13/500 gray-500, "원부터" 붙여쓰기 */
+.jd-price { color: var(--jd-gray-900); }
+.jd-price b, .jd-price strong,
+.card-price b, .hotdest-price b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--jd-gray-900);
+  font-style: normal;
+}
+
+/* 포커스 정본: outline 대신 오렌지 링 */
+a:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--jd-focus);
+}
+
+
+/* ============================================================================
+   §3. 킬 스위치층 — 이 층만 !important 허용
+   ============================================================================ */
+
+/* ---- 3-A. 숨김 보존 (id-전역 참조 안전 — 마크업·JS 참조는 그대로 둔다) ---- */
+#jdSplash,                 /* 로미 스플래시 (PC·모바일) */
+.globe-section, #pcGlobe,  /* PC 3D 지구본 섹션 */
+#mGlobe,                   /* 모바일 지구본 패널 */
+#appSimulatorModal,        /* 앱 시뮬레이터 — app.js 참조 존재, 삭제 금지·숨김만 */
+.pc-trust-strip,           /* 글래스 신뢰 독 → 히어로 신뢰 1줄이 대체 */
+.snap-dots, .pc-dots,      /* 페이저 도트 (PC·모바일) */
+.pg-veil,                  /* 페이지 전환 베일 */
+#view-home [data-jdisim-datacalc] {  /* 데이터 계산기 홈 마운트 숨김 */
+  display: none !important;
+}
+
+/* ---- 3-B'. 루트 강제값 맞대응 ----
+   index.html #force-light의 `html,body{background:#FAF8F4!important}`(크림)와
+   index.html L462 `html{font-size:18px}`(링크 뒤 인라인)를 뒤집는다. */
+html, body { background: var(--jd-bg) !important; }
+html { font-size: 16px !important; }   /* 정본 16px — 17/18px 리터럴 폐기 */
+
+/* ---- 3-B. 장식·무한 모션 무효화 ---- */
+.glow-blur, .cta-sheen, .rg-edge { display: none !important; }
+.mobile-marquee, .marquee-tag {          /* 국가칩 마퀴 → 정적 */
+  animation: none !important;
+  overflow-x: auto;
+}
+.hero-video-frame video,
+.m-hero video, body > video { display: none !important; }  /* 배경 비디오 시각 제거 */
+
+/* ---- 3-C. 그라데이션 전면 금지 → 솔리드 치환 ---- */
+.logo-icon, .app-logo-badge {
+  background-image: none !important;
+  background-color: var(--jd-brand-500) !important;
+  box-shadow: none !important;
+}
+.hero-promo, .hero-promo-btn, .buy-btn-small {
+  background-image: none !important;
+}
+.hero-promo     { background-color: var(--jd-brand-50) !important; }
+.hero-promo-btn { background-color: var(--jd-brand-500) !important; box-shadow: none !important; }
+.buy-btn-small  { background-color: var(--jd-brand-500) !important; box-shadow: none !important; }
+
+/* 히어로 크림/그라데이션 배경 — 인라인 #hero-light-critical(!important, 링크보다
+   뒤에 선언됨)과의 동률을 피하려 html body 접두로 특이성 승급 */
+html body .m-hero, html body .hero-video-frame { background: var(--jd-bg) !important; }
+html body .m-hero-overlay, html body .hero-video-overlay { background: none !important; }
+html body .m-hero-content { color: var(--jd-gray-900) !important; }
+html body .m-hero-title, html body .hero-video-title {
+  color: var(--jd-gray-900) !important;
+  text-shadow: none !important;
+}
+/* 비디오 위 백색 서브 카피 → 흰 배경 위 가독 회색 */
+html body .m-hero-sub, html body .hero-video-sub {
+  color: var(--jd-gray-600) !important;
+  text-shadow: none !important;
+}
+
+/* 그라데이션 텍스트(background-clip:text) 전면 무효화 → 잉크/브랜드 단색 */
+.hero-title span, .hero-video-title span, .m-hero-title em,
+.review-track-count, .summary-total-price, .app-info-title em,
+.fox-stat strong, .m-hero-stats strong {
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--jd-gray-900) !important;
+}
+.logo {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--jd-gray-900) !important;
+}
+
+/* 모바일 앱 헤더 — 인라인 `background:#F1690D!important` 핫픽스(링크보다 뒤) 맞대응.
+   정본: 불투명 흰색 + 하단 1px gray-200, blur 금지 */
+html body .app-header {
+  background: var(--jd-bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid var(--jd-gray-200) !important;
+  color: var(--jd-gray-900);
+}
+html body .app-header .app-logo span,
+html body .app-header > div:first-child { color: var(--jd-gray-900) !important; }
+html body .app-header button, html body .app-header svg { color: var(--jd-gray-900); }
+
+/* 모바일 섹션 크림·그라데이션 배경 → 순백/gray-50 (스냅 해제는 Phase 4) */
+html body .snap-panel { background-image: none !important; background-color: var(--jd-bg) !important; }
+html body .romi-finder, html body .m-rv-summary {
+  background-image: none !important;
+  background-color: var(--jd-gray-50) !important;
+}
+#rbFab { background-image: none !important; background-color: var(--jd-brand-500) !important; box-shadow: var(--jd-e-2) !important; }
+
+/* 글래스모피즘 폐기 — 헤더 스크롤 글래스 전환 무효화(.hdr-glass 훅은 존치) */
+.hdr-glass, .ts-dock {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--jd-bg) !important;
+}
+
+/* 개런티 티켓: 보딩패스·절취선 연출 폐기 → 1줄 신뢰 바 */
+.rg-ticket {
+  background-image: none !important;
+  background-color: var(--jd-gray-50) !important;
+  border: 0 !important;
+  border-radius: var(--jd-r-sm) !important;
+  box-shadow: none !important;
+}
+
+
+/* ============================================================================
+   §4. 컴포넌트 스킨층 — 기존 셀렉터 재선언 (표현만 교체, 훅 무변경)
+   ============================================================================ */
+
+/* ---------------------------------------------------------------- 4-1. 헤더 */
+.header {
+  background: var(--jd-bg);
+  border-bottom: 1px solid var(--jd-gray-200);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: var(--jd-z-sticky);
+}
+.header .nav-menu a, .header nav a {
+  font-size: var(--jd-t-body);
+  font-weight: 500;
+  color: var(--jd-gray-700);
+}
+.header .nav-menu a:hover, .header nav a:hover { color: var(--jd-gray-900); }
+.header .nav-menu a.active {
+  color: var(--jd-gray-900);
+  font-weight: 700;
+  box-shadow: inset 0 -2px 0 var(--jd-brand-500);  /* 하단 2px 활성 인디케이터 */
+}
+.logo-text, .logo { color: var(--jd-gray-900); letter-spacing: -0.02em; font-weight: 800; }
+
+/* 카트 카운트 뱃지 — brand-500 원형 */
+.cart-count, .cart-badge {
+  background: var(--jd-brand-500) !important;  /* premium.css !important 맞대응 */
+  color: #fff;
+  font-size: var(--jd-t-micro);
+  font-weight: 700;
+  border-radius: var(--jd-r-full);
+  box-shadow: none;
+}
+
+/* 검색 서제스트 */
+.jd-suggest {
+  background: var(--jd-bg);
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: var(--jd-e-2);
+  z-index: var(--jd-z-dropdown);
+}
+
+/* ---------------------------------------------------------------- 4-2. 버튼 */
+/* 기존 5계열 클래스는 유지, 스타일 소스만 3계열로 매핑.
+   Primary 계열: 그라데이션·글로우 제거, 그림자 없음 */
+.action-btn, .cta-buy, .hero-video-btn,
+.btn-primary, #buyNowBtn, #detailBuyBtn, #rfGoBtn, #homeCtaBtn {
+  background: var(--jd-brand-500);
+  background-image: none;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  text-shadow: none;
+  transition: background var(--jd-dur-1) var(--jd-ease), transform var(--jd-dur-1) var(--jd-ease);
+}
+.action-btn:hover, .cta-buy:hover, .hero-video-btn:hover,
+.btn-primary:hover, #buyNowBtn:hover, #detailBuyBtn:hover, #rfGoBtn:hover, #homeCtaBtn:hover {
+  background: var(--jd-brand-600);
+  background-image: none;
+  box-shadow: none;
+  transform: none;
+}
+.action-btn:active, .cta-buy:active, .btn-primary:active,
+#buyNowBtn:active, #detailBuyBtn:active, #rfGoBtn:active, #homeCtaBtn:active {
+  background: var(--jd-brand-700);
+  transform: scale(0.98);
+}
+
+/* Secondary 계열: gray-100 → hover gray-200 */
+.cta-cart, .btn-secondary, #addToCartBtn {
+  background: var(--jd-gray-100);
+  background-image: none;
+  color: var(--jd-gray-800);
+  font-weight: 700;
+  border: none;
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  transition: background var(--jd-dur-1) var(--jd-ease);
+}
+.cta-cart:hover, .btn-secondary:hover, #addToCartBtn:hover {
+  background: var(--jd-gray-200);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Ghost/링크형 이동 버튼 */
+.jd-go, .dc-go {
+  background: none;
+  color: var(--jd-brand-700);
+  font-weight: 500;
+  border: none;
+  box-shadow: none;
+}
+.jd-go:hover, .dc-go:hover { color: var(--jd-gray-900); background: none; }
+
+/* ---------------------------------------------------------------- 4-3. 인풋 */
+#storeSearchInput, #rfCountry, #heroSearchInput,
+.ck-card input[type="text"], .ck-card input[type="tel"], .ck-card input[type="email"],
+.form-input, .jd-input {
+  background: var(--jd-bg);
+  border: 1px solid var(--jd-gray-300);
+  border-radius: var(--jd-r-md);
+  color: var(--jd-gray-900);
+  font-family: var(--jd-font);
+  font-size: var(--jd-t-body);
+  transition: border-color var(--jd-dur-1) var(--jd-ease), box-shadow var(--jd-dur-1) var(--jd-ease);
+}
+#storeSearchInput::placeholder, #rfCountry::placeholder, #heroSearchInput::placeholder,
+.ck-card input::placeholder, .form-input::placeholder, .jd-input::placeholder {
+  color: var(--jd-gray-400);
+}
+#storeSearchInput:focus, #rfCountry:focus, #heroSearchInput:focus,
+.ck-card input:focus, .form-input:focus, .jd-input:focus {
+  outline: none;
+  border-color: var(--jd-brand-500);
+  box-shadow: var(--jd-focus);
+}
+
+/* ---------------------------------------------------------- 4-4. 상품 카드 */
+.product-card {
+  background: var(--jd-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  overflow: hidden;
+  transition: border-color var(--jd-dur-2) var(--jd-ease),
+              box-shadow var(--jd-dur-2) var(--jd-ease),
+              transform var(--jd-dur-2) var(--jd-ease);
+}
+.product-card:hover {
+  border-color: var(--jd-gray-300);
+  box-shadow: var(--jd-e-2);
+  transform: translateY(-2px);
+}
+/* 국가 사진·원색 그라데이션 폴백 폐기 → 국기 밴드 */
+.product-card .card-img-wrap {
+  background: var(--jd-gray-50);
+  background-image: none;
+  height: 72px;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-s-4);
+}
+.product-card .card-img-wrap img { display: none; }   /* 사진 시스템 폐기 */
+.card-flag { font-size: 40px; line-height: 1; }
+.product-card .card-body { padding: var(--jd-s-4); }
+.product-card .card-title {
+  font-size: var(--jd-t-body-lg);
+  font-weight: 700;
+  color: var(--jd-gray-900);
+}
+.card-carrier { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); }
+.card-specs { font-size: var(--jd-t-caption); color: var(--jd-gray-600); }
+.card-spec-item { color: var(--jd-gray-600); background: none; border: none; }
+.card-footer { border-top: 1px solid var(--jd-gray-100); padding-top: var(--jd-s-3); }
+.card-price-label { font-size: var(--jd-t-caption); color: var(--jd-gray-500); }
+.card-price {
+  color: var(--jd-gray-900);
+  font-size: var(--jd-t-caption);
+  font-weight: 500;
+}
+.card-price b { font-size: 1.25rem; }   /* 20/800 tabular — §2 유틸이 처리 */
+
+/* 카드 태그 — 12/700, 시맨틱 배경 */
+.card-tag, .card-tag.hot, .card-tag.best, .card-tag.local {
+  font-size: var(--jd-t-micro);
+  font-weight: 700;
+  border-radius: var(--jd-r-sm);
+  background-image: none;
+  box-shadow: none;
+}
+.card-tag.local { background: var(--jd-success-bg); color: var(--jd-success-deep); }
+.card-tag.best, .card-tag.hot { background: var(--jd-brand-50); color: var(--jd-brand-700); }
+
+/* 그리드 gap 정본 */
+.product-grid { gap: var(--jd-s-4); }
+
+/* ------------------------------------------------- 4-5. 많이 찾는 여행지 */
+.hotdest-card {
+  background: var(--jd-card);
+  background-image: none;
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  padding: var(--jd-s-5);
+  text-align: left;
+  transition: border-color var(--jd-dur-2) var(--jd-ease),
+              box-shadow var(--jd-dur-2) var(--jd-ease),
+              transform var(--jd-dur-2) var(--jd-ease);
+}
+.hotdest-card:hover {
+  border-color: var(--jd-gray-300);
+  box-shadow: var(--jd-e-2);
+  transform: translateY(-2px);
+}
+.hotdest-flag { font-size: 28px; line-height: 1; }
+.hotdest-name { font-size: var(--jd-t-body-lg); font-weight: 700; color: var(--jd-gray-900); }
+.hotdest-price { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); }
+.hotdest-price b { font-size: var(--jd-t-body); }
+
+/* ------------------------------------------------- 4-6. 이용 방법(구 WHY) */
+.ai2-card {
+  background: var(--jd-card);
+  background-image: none;
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  padding: var(--jd-s-6);
+  text-align: left;
+}
+.ai2-card img { display: none; }   /* 여우 이미지 3장 철수 */
+.ai2-card h3 { font-size: var(--jd-t-h3); font-weight: 700; color: var(--jd-gray-900); }
+.ai2-card p { font-size: var(--jd-t-body); color: var(--jd-gray-600); }
+
+/* ---------------------------------------------------------- 4-7. 구매 후기 */
+.rv-card {
+  background: var(--jd-card);
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  padding: var(--jd-s-5);
+}
+.rv-card .rv-stars, .rv-stars, .star, .stars { color: var(--jd-rating); background: none; -webkit-text-fill-color: var(--jd-rating); }
+.rv-best {
+  font-size: var(--jd-t-micro);
+  font-weight: 700;
+  background: var(--jd-brand-50);
+  color: var(--jd-brand-700);
+  border-radius: var(--jd-r-sm);
+}
+.review-filter-tag {
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-600);
+  border: none;
+  border-radius: var(--jd-r-full);
+  font-size: var(--jd-t-body);
+  font-weight: 500;
+  box-shadow: none;
+}
+.review-filter-tag.active, .review-filter-tag[aria-pressed="true"] {
+  background: var(--jd-gray-900);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- 4-8. FAQ */
+.faq-item {
+  background: var(--jd-card);
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+}
+.faq-question {
+  font-size: var(--jd-t-body);
+  font-weight: 700;
+  color: var(--jd-gray-900);
+}
+.faq-answer { font-size: var(--jd-t-body); color: var(--jd-gray-700); }
+.faq-arrow { color: var(--jd-gray-400); }
+
+/* ------------------------------------------------- 4-9. 상품 팝업 위저드 */
+.modal-overlay { background: var(--jd-dim); backdrop-filter: none; }
+#productModal .modal-content, #modalContent {
+  background: var(--jd-bg);
+  border: none;                       /* 다크 잔재 rgba(255,255,255,.06) 보더 제거 */
+  border-radius: var(--jd-r-lg);
+  box-shadow: var(--jd-e-3);
+}
+/* 스텝바 */
+.pcw-chip { color: var(--jd-gray-400); font-size: var(--jd-t-caption); font-weight: 500; background: none; border: none; }
+.pcw-chip.current, .pcw-chip.active { color: var(--jd-gray-900); font-weight: 700; }
+.pcw-chip.done { color: var(--jd-brand-700); }
+/* 일수 칩 */
+.pcw-dur {
+  border-radius: var(--jd-r-full);
+  height: 40px;
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-800);
+  border: 1.5px solid transparent;
+  font-weight: 500;
+  box-shadow: none;
+}
+.pcw-dur.selected, .pcw-dur.active {
+  background: var(--jd-brand-50);
+  color: var(--jd-brand-700);
+  border-color: var(--jd-brand-500);
+}
+/* 요금제 행 */
+.pcw-item {
+  min-height: 64px;
+  background: var(--jd-bg);
+  border: 1.5px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+}
+.pcw-item:hover { border-color: var(--jd-gray-300); }
+.pcw-item.selected, .pcw-item.active {
+  background: var(--jd-brand-50);
+  border-color: var(--jd-brand-500);
+}
+.pcw-item .pcw-price, .pcw-item b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--jd-gray-900);
+}
+
+/* 확정 화면 사이드바 */
+.modal-sidebar { background: var(--jd-gray-50); border-radius: var(--jd-r-md); }
+#groupDiscountPromo {
+  background: var(--jd-brand-50);
+  background-image: none;
+  color: var(--jd-brand-700);
+  font-size: var(--jd-t-caption);
+  border: none;
+  border-radius: var(--jd-r-md);
+}
+#qtyMinus, #qtyPlus {
+  min-width: var(--jd-tap-min);
+  min-height: var(--jd-tap-min);
+  border-radius: var(--jd-r-md);
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-800);
+  border: none;
+}
+#qtyVal { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--jd-gray-900); }
+
+/* ------------------------------------------- 4-10. 망 뱃지·상태 뱃지 공통 */
+.badge-local, .net-badge.local { background: var(--jd-success-bg); color: var(--jd-success-deep); }
+.badge-roaming, .net-badge.roaming { background: var(--jd-gray-100); color: var(--jd-gray-600); }
+.order-card .badge-done, .status-badge.done { background: var(--jd-success-bg); color: var(--jd-success-deep); font-size: var(--jd-t-micro); font-weight: 700; }
+.order-card .badge-wait, .status-badge.wait { background: var(--jd-warning-bg); color: var(--jd-warning-deep); font-size: var(--jd-t-micro); font-weight: 700; }
+
+/* ---------------------------------------------------------- 4-11. 카트·드로어 */
+.cart-drawer { background: var(--jd-bg); box-shadow: var(--jd-e-3); }
+.cart-drawer-overlay { background: var(--jd-dim); }
+
+/* ---------------------------------------------------------- 4-12. 결제(체크아웃) */
+.ck-card {
+  background: var(--jd-bg);
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+  padding: var(--jd-s-4);
+}
+.ck-card label { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-600); }
+.checkout-overlay { background: var(--jd-dim); }
+/* 미동의 상태 결제 버튼 */
+#checkoutPayBtn:disabled, #checkoutPayBtn.disabled {
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-400);
+  box-shadow: none;
+}
+#checkoutPayBtn {
+  background: var(--jd-brand-500);
+  background-image: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+}
+#checkoutPayBtn:not(:disabled):hover { background: var(--jd-brand-600); }
+
+/* ---------------------------------------------------- 4-13. 모바일 시트·상세 */
+.pv-sheet, .bottom-sheet {
+  background: var(--jd-bg);            /* #FDFBF8 크림 폐지 */
+  border-radius: var(--jd-r-lg) var(--jd-r-lg) 0 0;
+  box-shadow: var(--jd-e-3);
+  padding: var(--jd-s-5);
+}
+.sheet-grabber, .pv-grab, .sheet-handle {
+  width: 32px; height: 4px;
+  background: var(--jd-gray-300);
+  border-radius: var(--jd-r-full);
+}
+.pv-tile {
+  background: var(--jd-gray-50);
+  background-image: none;
+  border: 1px solid var(--jd-gray-100);
+  border-radius: var(--jd-r-sm);
+  color: var(--jd-gray-700);
+  box-shadow: none;
+}
+.pp-appbar { background: var(--jd-bg); border-bottom: 1px solid var(--jd-gray-200); box-shadow: none; backdrop-filter: none; }
+.pp-buybar {
+  background: var(--jd-bg);
+  border-top: 1px solid var(--jd-gray-200);
+  box-shadow: var(--jd-e-2);
+  z-index: var(--jd-z-sticky);
+}
+.pw-sum { background: var(--jd-gray-50); color: var(--jd-gray-700); border-radius: var(--jd-r-sm); border: none; }
+.pw-day-chip {
+  border-radius: var(--jd-r-full);
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-800);
+  border: 1.5px solid transparent;
+  box-shadow: none;
+}
+.pw-day-chip.selected, .pw-day-chip.active {
+  background: var(--jd-brand-50);
+  color: var(--jd-brand-700);
+  border-color: var(--jd-brand-500);
+}
+.option-pill {
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-800);
+  border: 1.5px solid transparent;
+  border-radius: var(--jd-r-full);
+  box-shadow: none;
+}
+.option-pill.selected, .option-pill.active {
+  background: var(--jd-brand-50);
+  color: var(--jd-brand-700);
+  border-color: var(--jd-brand-500);
+}
+
+/* ---------------------------------------------------- 4-14. 모바일 스토어 */
+#mCatTabs .cat-tab, .cat-tab, .pill {
+  background: var(--jd-gray-100);
+  color: var(--jd-gray-600);
+  border: none;
+  border-radius: var(--jd-r-full);
+  font-weight: 500;
+  box-shadow: none;
+}
+#mCatTabs .cat-tab.active, .cat-tab.active, .pill.active {
+  background: var(--jd-gray-900) !important;   /* premium.css .pill.active !important 맞대응 */
+  color: #fff !important;
+  font-weight: 700;
+  background-image: none !important;
+}
+.store-card {
+  background: var(--jd-card);
+  background-image: none;
+  border: none;
+  border-bottom: 1px solid var(--jd-gray-100);
+  border-radius: 0;
+  box-shadow: none;
+}
+.store-card:hover { box-shadow: none; }
+
+/* ---------------------------------------------------------- 4-15. 하단 탭바 */
+.bottom-nav {
+  background: var(--jd-bg);
+  border-top: 1px solid var(--jd-gray-200);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.bottom-nav .nav-item { color: var(--jd-gray-400); border-radius: 0; }
+.bottom-nav .nav-item.active {
+  color: var(--jd-gray-900) !important;   /* premium.css !important 맞대응 — 탭바 오렌지 금지 */
+  background: none;
+  transform: none;
+  font-weight: 700;
+}
+.bottom-nav .nav-item.active::after { display: none; }   /* 인디케이터 장식 제거 */
+
+/* ---------------------------------------------------------------- 4-16. 푸터 */
+.footer, footer.footer, .site-footer {
+  background: var(--jd-gray-50);
+  background-image: none;
+  border-top: 1px solid var(--jd-gray-200);
+  color: var(--jd-gray-500);
+}
+.footer a { color: var(--jd-gray-600); }
+.footer a:hover { color: var(--jd-gray-900); }
+
+/* -------------------------------------------------- 4-17. 주문 카드(MY)·경고 */
+.order-card {
+  background: var(--jd-card);
+  border: 1px solid var(--jd-gray-200);
+  border-radius: var(--jd-r-md);
+  box-shadow: none;
+}
+.order-card .order-no, .order-card code { font-family: var(--jd-font-mono); font-size: var(--jd-t-caption); }
+
+.warn-card, .caution-card {
+  background: var(--jd-warning-bg);
+  color: var(--jd-warning-deep);
+  border: none;
+  border-radius: var(--jd-r-md);
+}
+
+/* -------------------------------------------------- 4-18. 카카오·네이버 버튼 */
+.kakao-btn, .btn-kakao {
+  background: var(--jd-kakao);
+  color: var(--jd-kakao-ink);
+  border: none;
+  border-radius: var(--jd-r-md);
+  font-weight: 700;
+  box-shadow: none;
+}
+.naver-btn, .cta-smartstore { color: var(--jd-gray-700); }
+.kakao-float-btn { box-shadow: var(--jd-e-2); z-index: var(--jd-z-toast); }
+
+/* z-index 참고: modal-overlay(550)·precaution(560)·checkout(570)·모바일 시트
+   (600~750)·세리머니(810) 사다리는 상호 순서 의존이 있어 Phase 후속에서
+   토큰 대역으로 일괄 리맵한다. 이 파일은 고정 요소(헤더·탭바·buybar·서제스트·
+   플로팅 버튼)만 안전 리맵. */
+
+
+/* ============================================================================
+   §5. 신규 클래스층 — 정본 컴포넌트 (이 파일에서만 정의)
+   ============================================================================ */
+
+/* ---------- 버튼 3계열 정본 ---------- */
+.jd-btn-primary, .jd-btn-secondary, .jd-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jd-s-2);
+  min-height: var(--jd-tap-min);       /* md 44 기본 */
+  padding: 0 var(--jd-s-5);
+  border: none;
+  border-radius: var(--jd-r-md);
+  font-family: var(--jd-font);
+  font-size: var(--jd-t-body);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background var(--jd-dur-1) var(--jd-ease),
+              color var(--jd-dur-1) var(--jd-ease),
+              transform var(--jd-dur-1) var(--jd-ease);
+}
+.jd-btn-primary { background: var(--jd-brand-500); color: #fff; }
+.jd-btn-primary:hover { background: var(--jd-brand-600); }
+.jd-btn-primary:active { background: var(--jd-brand-700); transform: scale(0.98); }
+.jd-btn-secondary { background: var(--jd-gray-100); color: var(--jd-gray-800); }
+.jd-btn-secondary:hover { background: var(--jd-gray-200); }
+.jd-btn-secondary:active { transform: scale(0.98); }
+.jd-btn-ghost { background: none; color: var(--jd-gray-600); font-weight: 500; }
+.jd-btn-ghost:hover { color: var(--jd-gray-900); }
+.jd-btn-ghost.brand { color: var(--jd-brand-700); }   /* 강조 이동 링크만 허용 */
+/* 크기 변형 */
+.jd-btn-lg { min-height: 52px; font-size: var(--jd-t-body-lg); }
+.jd-btn-sm { min-height: 36px; padding: 0 var(--jd-s-4); font-size: var(--jd-t-caption); }
+.jd-btn-block { display: flex; width: 100%; }
+
+/* ---------- 검색 히어로 ---------- */
+.hero-search {
+  max-width: 720px;
+  text-align: left;
+}
+.hero-search .hero-caption {
+  font-size: var(--jd-t-caption);
+  font-weight: 500;
+  color: var(--jd-gray-500);
+}
+.hero-search h1 {
+  font-size: var(--jd-t-display);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--jd-gray-900);
+  letter-spacing: -0.02em;
+}
+.hero-search .hero-input-wrap { position: relative; }
+.hero-search input {
+  width: 100%;
+  height: 56px;
+  padding: 0 var(--jd-s-4) 0 48px;
+  border: 1px solid var(--jd-gray-300);
+  border-radius: var(--jd-r-md);
+  font-size: var(--jd-t-body-lg);
+  color: var(--jd-gray-900);
+  background: var(--jd-bg);
+}
+.hero-search input::placeholder { color: var(--jd-gray-400); }
+.hero-search input:focus {
+  outline: none;
+  border: 1.5px solid var(--jd-brand-500);
+  box-shadow: var(--jd-focus);
+}
+.hero-search .hero-input-icon {
+  position: absolute;
+  left: var(--jd-s-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--jd-gray-400);
+}
+
+/* ---------- 국가 칩 행 ---------- */
+.hero-chips { display: flex; flex-wrap: wrap; gap: var(--jd-s-2); }
+.hero-chips .jd-chip, .jd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 var(--jd-s-4);
+  background: var(--jd-gray-100);
+  border: 1px solid transparent;
+  border-radius: var(--jd-r-full);
+  font-size: var(--jd-t-body);
+  font-weight: 500;
+  color: var(--jd-gray-800);
+  cursor: pointer;
+  transition: border-color var(--jd-dur-1) var(--jd-ease);
+}
+.jd-chip:hover { border-color: var(--jd-gray-300); }
+.jd-chip.selected {
+  background: var(--jd-brand-50);
+  color: var(--jd-brand-700);
+  border-color: var(--jd-brand-500);
+}
+
+/* ---------- 신뢰 1줄 ---------- */
+.jd-proof {
+  font-size: 0.875rem;   /* 14 — 신뢰 1줄 전용 */
+  color: var(--jd-gray-600);
+}
+.jd-proof-bar {           /* 모바일 스토어 1줄 신뢰 바 (rg-ticket 대체 스킨) */
+  display: flex;
+  align-items: center;
+  gap: var(--jd-s-2);
+  background: var(--jd-gray-50);
+  border-radius: var(--jd-r-sm);
+  padding: var(--jd-s-3) var(--jd-s-4);
+  font-size: var(--jd-t-caption);
+  color: var(--jd-gray-700);
+}
+
+/* ---------- 정의 리스트 (스펙 2열 6행 — 타일 그리드 대체) ---------- */
+.jd-dl { display: grid; grid-template-columns: auto 1fr; }
+.jd-dl > div, .jd-dl-row {
+  display: contents;
+}
+.jd-dl dt {
+  font-size: var(--jd-t-caption);
+  color: var(--jd-gray-500);
+  padding: var(--jd-s-3) 0;
+  border-bottom: 1px solid var(--jd-gray-100);
+}
+.jd-dl dd {
+  font-size: var(--jd-t-body);
+  font-weight: 700;
+  color: var(--jd-gray-900);
+  text-align: right;
+  padding: var(--jd-s-3) 0;
+  border-bottom: 1px solid var(--jd-gray-100);
+  margin: 0;
+}
+
+/* ---------- 섹션 공통 ---------- */
+.jd-section { padding: var(--jd-s-9) 0; }                 /* PC 섹션 간 64 */
+.jd-section.alt { background: var(--jd-gray-50); }        /* 흰↔gray-50 교차 */
+.jd-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--jd-s-6);                            /* 제목→콘텐츠 24 */
+}
+.jd-section-head h2 {
+  font-size: var(--jd-t-h2);
+  font-weight: 700;
+  color: var(--jd-gray-900);
+  letter-spacing: -0.01em;
+}
+.jd-section-sub { font-size: var(--jd-t-caption); color: var(--jd-gray-500); }
+
+/* ---------- 마감 CTA 배너 ---------- */
+.jd-cta-banner {
+  background: var(--jd-brand-50);
+  border-radius: var(--jd-r-lg);
+  padding: 40px;
+  text-align: left;
+}
+.jd-cta-banner h2 { font-size: var(--jd-t-h2); font-weight: 700; color: var(--jd-gray-900); }
+.jd-cta-banner p { font-size: var(--jd-t-body); color: var(--jd-gray-700); }
+
+/* ---------- 뱃지 정본 ---------- */
+.jd-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 var(--jd-s-2);
+  border-radius: var(--jd-r-sm);
+  font-size: var(--jd-t-micro);
+  font-weight: 700;
+}
+.jd-badge.brand   { background: var(--jd-brand-50);   color: var(--jd-brand-700); }
+.jd-badge.success { background: var(--jd-success-bg); color: var(--jd-success-deep); }
+.jd-badge.warning { background: var(--jd-warning-bg); color: var(--jd-warning-deep); }
+.jd-badge.danger  { background: var(--jd-danger-bg);  color: var(--jd-danger-deep); }
+.jd-badge.info    { background: var(--jd-info-bg);    color: var(--jd-info-deep); }
+.jd-badge.gray    { background: var(--jd-gray-100);   color: var(--jd-gray-600); }
+
+/* ---------- 진입 모션(허용 3종 중 ①) ---------- */
+@keyframes jdFadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.jd-fade-up { animation: jdFadeUp var(--jd-dur-2) var(--jd-ease) both; }
+
+
+/* ============================================================================
+   §6. 모바일 대응 (mobile.html은 별도 문서지만 공통 브레이크포인트 정본 준수)
+   ============================================================================ */
+@media (max-width: 768px) {
+  .jd-section { padding: var(--jd-s-8) 0; }               /* 모바일 섹션 간 48 */
+  .jd-section-head { margin-bottom: var(--jd-s-6); }
+
+  .hero-search h1 { font-size: var(--jd-t-h1-m); }        /* 24/800 모바일 히어로 */
+  .hero-search input { height: 52px; }
+
+  .jd-btn-lg { min-height: 56px; }                         /* 모바일 풀폭 CTA 56 */
+
+  .product-card .card-body { padding: var(--jd-s-4); }
+  .product-grid { gap: var(--jd-s-3); }                    /* 그리드 gap 12 */
+  .rv-card, .hotdest-card { padding: var(--jd-s-4); }      /* 카드 내부 16 */
+
+  .jd-cta-banner { padding: var(--jd-s-6); }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 993px) and (max-width: 1120px) {
+  .product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ============================================================================
+   끝. 이 파일은 순수 추가 스킨 레이어 — <link> 제거 시 즉시 원상복구.
+   ============================================================================ */

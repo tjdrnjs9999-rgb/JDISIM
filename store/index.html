@@ -98,6 +98,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <link rel="stylesheet" href="premium.css?v=20260802a">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
+  <link rel="stylesheet" href="jd-neo.css?v=20260811a">
   <script src="jd-trip-cal.js?v=20260719b" defer></script>
 <style id="hero-light-critical">
     /* 라이트 히어로 강제 — 캐시된 구 CSS 무력화 */
@@ -112,81 +113,188 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
     .m-hero-stats strong { color: #D95903 !important; }
     .m-hero-stat-div { background: rgba(34,21,16,0.14) !important; }
   </style>
-<style id="pc-snap-style">
-    @media (min-width: 900px) {
-      html.pc-snap { scroll-snap-type: y mandatory; }
-      html.pc-snap #view-home .pc-panel {
-        min-height: 100svh;
-        max-height: 100svh;
-        overflow: hidden;
-        box-sizing: border-box;
-        scroll-snap-align: start;
-        display: flex; flex-direction: column; justify-content: center;
-        padding-top: 84px; /* 고정 헤더 보정 */
-      }
-      /* 콘텐츠 세로 압착 금지: 뷰포트보다 크면 패널이 늘어나되 절대 구겨지지 않음 */
-      html.pc-snap #view-home .pc-panel > * { flex-shrink: 0; }
-      /* [핵심] flex 부모 안에서 margin:auto 컨테이너의 가로 붕괴 방지
-         (.container가 min-content 폭으로 쪼그라들어 글자가 세로로 떨어지던 원인) */
-      html.pc-snap #view-home .pc-panel > .container,
-      html.pc-snap #view-home .pc-panel .container { width: 100%; }
-      html.pc-snap #view-home .pc-panel > div { width: 100%; }
-      /* 노트북(낮은 뷰포트)에서 패널이 한 화면에 들어오도록 밀도 조절 */
-      html.pc-snap #view-home .app-info-section { padding: 28px 0 !important; }
-      html.pc-snap #view-home .app-info-title { margin-bottom: 24px !important; }
-      /* 지구본 패널: 화면을 꽉 채운다 (2026-08-02 사장님 — 예전 min-height:0 오버라이드가 섹션을
-         콘텐츠 높이로 쪼그라뜨려 상하 여백이 비어 보였음). 패널 100svh 유지 + 지구본 확대. */
-      html.pc-snap #view-home .globe-section { padding: 84px 24px 32px !important; min-height: 100svh !important; }
-      html.pc-snap #view-home #pcGlobe { height: clamp(460px, 74svh, 760px) !important; }
-      html.pc-snap #view-home .globe-section > div { max-width: 1280px !important; gap: 40px !important; }
-      html.pc-snap #view-home .pc-tail { scroll-snap-align: start; }
-      /* 히어로 프레임은 패널을 꽉 채우게 */
-      /* 히어로: 풀블리드 100svh — 라운드 프레임 해제, 영상이 화면을 꽉 채움 */
-      html.pc-snap #view-home .hero-video-frame.pc-panel { padding-top: 0 !important; }
-      html.pc-snap #view-home .pc-panel.hero-video-frame,
-      html.pc-snap #view-home .pc-panel .hero-video-frame {
-        width: 100% !important; max-width: none !important;
-        height: 100svh !important; min-height: 100svh !important;
-        margin: 0 !important; border-radius: 0 !important;
-      }
-      html.pc-snap #view-home .hero-video-frame .hero-video-element { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0 !important; }
-      /* 헤더에 타이틀이 가리지 않게 콘텐츠만 아래로 보정 */
-      html.pc-snap #view-home .hero-video-frame .hero-video-content { padding-top: 96px; }
-      /* ===== 인스턴트 페이저 (v2) ===== */
-      /* 스크롤 모션·스크롤바 숨김: 페이지가 "바뀌는" 느낌만 남김 */
-      html.pc-snap { scroll-snap-type: none; scroll-behavior: auto !important; scrollbar-width: none; }
-      html.pc-snap::-webkit-scrollbar { display: none; }
-      /* 신뢰 스트립이 로미·텍스트를 가리지 않게 히어로 콘텐츠를 스트립 위로 */
-      html.pc-snap #view-home .pc-panel .hero-video-content { padding-bottom: 140px; box-sizing: border-box; }
-      html.pc-snap #view-home .hero-fox-img { max-height: 44svh; width: auto; }
-      /* 여행지·로미케어를 정식 한 화면 패널로 (겹침 방지 밀도 조절) */
-      html.pc-snap #view-home .store-section { padding: 20px 0 !important; }
-      html.pc-snap #view-home .store-section .section-header { margin-bottom: 18px !important; }
-      /* ===== 페이지 전환 연출 v3: 시네마틱 — 새 페이지가 깊이감 있게 떠오르고(blur→선명),
-             크림 베일이 커튼처럼 걷힘 ===== */
-      @keyframes pgIn {
-        0%   { opacity: 0; transform: translateY(46px) scale(0.986); filter: blur(7px); }
-        55%  { filter: blur(0); }
-        100% { opacity: 1; transform: translateY(0) scale(1); filter: none; }
-      }
-      html.pc-snap #view-home .pc-panel.pg-in { animation: pgIn .92s cubic-bezier(.19, 1, .22, 1) both; will-change: transform, opacity, filter; }
-      /* 패널 내부 콘텐츠 살짝 늦게 따라오는 이중 레이어 시차 */
-      html.pc-snap #view-home .pc-panel.pg-in > * { animation: pgInChild .92s cubic-bezier(.19, 1, .22, 1) both; animation-delay: .07s; }
-      @keyframes pgInChild { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: none; } }
-      .pg-veil { position: fixed; inset: 0; pointer-events: none; z-index: 520; opacity: 0; background: linear-gradient(to top, rgba(251,246,239,.98) 0%, rgba(251,246,239,.55) 34%, rgba(251,246,239,0) 62%); }
-      .pg-veil.on { animation: pgVeil .92s cubic-bezier(.19, 1, .22, 1) both; }
-      @keyframes pgVeil { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-26%); } }
-      @media (prefers-reduced-motion: reduce) {
-        html.pc-snap #view-home .pc-panel.pg-in, html.pc-snap #view-home .pc-panel.pg-in > * { animation: none !important; }
-        .pg-veil { display: none; }
-      }
-      /* 우측 진행 점 (ROMI Journey Scroll — PC) */
-      .pc-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 510; display: none; flex-direction: column; gap: 10px; }
-      html.pc-snap .pc-dots { display: flex; }
-      .pc-dot { width: 7px; height: 7px; border-radius: 999px; border: none; padding: 0; cursor: pointer; background: rgba(120,100,85,0.3); transition: height .3s cubic-bezier(.22,1,.36,1), background .3s; position: relative; }
-      .pc-dot.active { height: 24px; background: var(--accent); box-shadow: 0 2px 8px rgba(241,105,13,0.4); }
-      .pc-dot.active::after { content: attr(data-label); position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size:0.75rem; font-weight: 800; color: #C2410C; background: rgba(255,255,255,0.9); border: 1px solid rgba(241,105,13,0.25); padding: 3px 9px; border-radius: 9px; white-space: nowrap; box-shadow: 0 2px 8px rgba(241,105,13,0.12); }
-    }
+<style id="jd-desktop-canon">
+    /* ============================================================
+       JDISIM 정본 v1.0 — 데스크톱 페이지 전용 스킨 (2026-08-11)
+       jd-neo.css(파운데이션) 뒤에서 이 화면의 구조 리디자인을 마감한다.
+       페이저 v2 전량 제거 — 스크롤은 브라우저 네이티브.
+       ============================================================ */
+
+    /* ---- 헤더 ---- */
+    .header-inner { height: 64px; }
+    html body .logo { font-size: 1.125rem; font-weight: 800; color: var(--jd-gray-900) !important; letter-spacing: -0.02em; }
+    .logo .logo-dot { color: var(--jd-brand-500); }
+    .nav-desktop .nav-link { font-size: var(--jd-t-body); font-weight: 500; color: var(--jd-gray-700); }
+    .nav-desktop .nav-link:hover { color: var(--jd-gray-900); }
+    .nav-desktop .nav-link.active { color: var(--jd-gray-900); font-weight: 700; box-shadow: inset 0 -2px 0 var(--jd-brand-500); }
+    .header-actions { display: flex; align-items: center; gap: var(--jd-s-4); }
+    .header-actions .nav-ghost { font-size: var(--jd-t-body); font-weight: 500; color: var(--jd-gray-600); cursor: pointer; }
+    .header-actions .nav-ghost:hover { color: var(--jd-gray-900); }
+
+    /* ---- 홈 섹션 리듬: 흰 ↔ gray-50 교차 · 전 섹션 좌정렬 ---- */
+    #view-home .jd-home-section { padding: var(--jd-s-9) 24px; }
+    #view-home .jd-home-section.alt { background: var(--jd-gray-50); }
+    #view-home .jd-home-section .jd-inner { max-width: 1120px; margin: 0 auto; }
+    #view-home .section-header { text-align: left; margin-bottom: var(--jd-s-6); }
+    #view-home .section-title { font-size: var(--jd-t-h2); font-weight: 700; color: var(--jd-gray-900); letter-spacing: -0.01em; }
+    #view-home .section-desc { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); margin-top: var(--jd-s-2); }
+
+    /* ---- 검색 히어로 ---- */
+    .jd-hero { background: var(--jd-bg); padding: 96px 24px var(--jd-s-9); }
+    .jd-hero .jd-inner { max-width: 1120px; margin: 0 auto; }
+    .jd-hero .hero-caption { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); margin: 0 0 var(--jd-s-3); }
+    .jd-hero h1 { font-size: var(--jd-t-display); font-weight: 800; line-height: 1.25; letter-spacing: -0.02em; color: var(--jd-gray-900); margin: 0 0 var(--jd-s-6); }
+    .jd-hero .hero-input-wrap { position: relative; max-width: 720px; }
+    .jd-hero .hero-chips { margin-top: var(--jd-s-4); max-width: 720px; }
+    .jd-hero .jd-proof { margin-top: var(--jd-s-5); }
+    .jd-hero .hero-input-wrap .jd-suggest { top: calc(100% + 6px); }
+
+    /* ---- 많이 찾는 여행지 ---- */
+    #view-home .hotdest-section { background: var(--jd-gray-50); padding: var(--jd-s-9) 24px; margin: 0; }
+    #view-home .hotdest-section .jd-inner { max-width: 1120px; margin: 0 auto; }
+    #view-home .hotdest-head { display: flex; align-items: baseline; justify-content: space-between; text-align: left; margin-bottom: var(--jd-s-6); }
+    html body .hotdest-title { font-size: var(--jd-t-h2); font-weight: 700; color: var(--jd-gray-900); letter-spacing: -0.01em; background: none; -webkit-text-fill-color: currentColor; margin: 0; }
+    #view-home .hotdest-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--jd-s-4); }
+    @media (max-width: 992px) { #view-home .hotdest-grid { grid-template-columns: repeat(2, 1fr); } }
+    .hotdest-card { display: flex; align-items: center; gap: var(--jd-s-3); cursor: pointer; }
+    .hotdest-body { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+    .jd-ghost-link { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer; font-family: inherit; font-size: var(--jd-t-body); font-weight: 500; color: var(--jd-brand-700); padding: 0; }
+    .jd-ghost-link:hover { color: var(--jd-gray-900); }
+    .jd-ghost-link svg { width: 14px; height: 14px; }
+
+    /* ---- 이용 방법 3단계 (구 WHY) ---- */
+    #view-home .app-info-section { background: var(--jd-gray-50); padding: var(--jd-s-9) 0; }
+    #view-home .ai2-head { text-align: left; margin-bottom: var(--jd-s-6); }
+    html body .app-info-title { font-size: var(--jd-t-h2); font-weight: 700; color: var(--jd-gray-900); letter-spacing: -0.01em; margin: 0; }
+    #view-home .ai2-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--jd-s-4); }
+    @media (max-width: 900px) { #view-home .ai2-grid { grid-template-columns: 1fr; } }
+    #view-home .ai2-card { min-height: 0; cursor: pointer; transition: border-color var(--jd-dur-2) var(--jd-ease), box-shadow var(--jd-dur-2) var(--jd-ease); }
+    #view-home .ai2-card:hover { transform: none; border-color: var(--jd-gray-300); box-shadow: var(--jd-e-2); }
+    .ai2-step { display: block; font-size: var(--jd-t-caption); font-weight: 700; color: var(--jd-brand-700); margin-bottom: var(--jd-s-3); }
+    #view-home .ai2-card h3 { margin: 0 0 var(--jd-s-2); font-size: var(--jd-t-h3); font-weight: 700; color: var(--jd-gray-900); }
+    #view-home .ai2-card p { margin: 0; font-size: var(--jd-t-body); font-weight: 400; line-height: 1.6; color: var(--jd-gray-600); }
+
+    /* ---- 가격 비교 ---- */
+    .jd-compare-card { border: 1px solid var(--jd-gray-200); border-radius: var(--jd-r-md); padding: var(--jd-s-5); background: var(--jd-bg); }
+
+    /* ---- 구매 후기 ---- */
+    #view-home .review-track-section { background: var(--jd-gray-50); padding: var(--jd-s-9) 0; }
+    #view-home .review-track-title-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: var(--jd-s-2); text-align: left; margin-bottom: var(--jd-s-5); }
+    html body .review-track-title { font-size: var(--jd-t-h2); font-weight: 700; color: var(--jd-gray-900); letter-spacing: -0.01em; margin: 0; }
+    html body .review-track-count { font-size: var(--jd-t-caption) !important; font-weight: 500; letter-spacing: 0 !important; color: var(--jd-gray-500) !important; }
+    .review-track-count .review-meta-line { font-weight: 500; color: var(--jd-gray-500); }
+    #view-home .review-tags-filter { justify-content: flex-start; }
+    html body .review-filter-tag { height: 36px; padding: 0 var(--jd-s-4); }
+    html body .review-expand-btn { background: var(--jd-gray-100); color: var(--jd-gray-800); border: none; border-radius: var(--jd-r-md); min-height: var(--jd-tap-min); padding: 0 var(--jd-s-5); font-size: var(--jd-t-body); font-weight: 700; box-shadow: none; display: inline-flex; align-items: center; gap: 6px; }
+    html body .review-expand-btn:hover { background: var(--jd-gray-200); transform: none; box-shadow: none; }
+    .rv-best { padding: 2px 6px; }
+    .rv-author em { font-style: normal; }
+
+    /* ---- FAQ 통합 ---- */
+    #view-home .guide-image-section { background: var(--jd-bg); padding: var(--jd-s-9) 0 0; }
+    #view-home .faq-section { background: var(--jd-bg); padding: 0 0 var(--jd-s-9); }
+    .faq-arrow svg { width: 16px; height: 16px; color: var(--jd-gray-400); display: block; }
+    .jd-faq-tail { display: flex; align-items: center; justify-content: space-between; gap: var(--jd-s-4); flex-wrap: wrap; max-width: 800px; margin: var(--jd-s-6) auto 0; padding: 0 20px; }
+    .jd-faq-tail p { margin: 0; font-size: var(--jd-t-body); color: var(--jd-gray-700); }
+    .jd-btn-sec { display: inline-flex; align-items: center; justify-content: center; min-height: var(--jd-tap-min); padding: 0 var(--jd-s-5); background: var(--jd-gray-100); color: var(--jd-gray-800); border: none; border-radius: var(--jd-r-md); font-family: inherit; font-size: var(--jd-t-body); font-weight: 700; cursor: pointer; text-decoration: none; }
+    .jd-btn-sec:hover { background: var(--jd-gray-200); }
+
+    /* ---- 마감 CTA 배너 ---- */
+    #view-home .cta-banner { padding: 0 24px var(--jd-s-9); background: var(--jd-bg); }
+    html body #view-home .cta-box { max-width: 1120px; margin: 0 auto; background: var(--jd-brand-50); background-image: none; border: none; border-radius: var(--jd-r-lg); box-shadow: none; padding: 40px; text-align: left; }
+    html body #view-home .cta-title { font-size: var(--jd-t-h2); font-weight: 700; color: var(--jd-gray-900); margin: 0 0 var(--jd-s-2); }
+    html body #view-home .cta-desc { font-size: var(--jd-t-body); color: var(--jd-gray-700); margin: 0 0 var(--jd-s-5); }
+    html body #view-home .cta-box .action-btn { min-height: 52px; font-size: var(--jd-t-body-lg); }
+
+    /* ---- 스토어: 지역 탭 필 ---- */
+    html body .tab-btn { background: var(--jd-gray-100); color: var(--jd-gray-600); border: none; border-radius: var(--jd-r-full); font-size: var(--jd-t-body); font-weight: 500; height: 40px; padding: 0 var(--jd-s-4); box-shadow: none; }
+    html body .tab-btn.active { background: var(--jd-gray-900); color: #fff; font-weight: 700; background-image: none; }
+
+    /* ---- 스토어: 신뢰 바·자가진단·카운트 ---- */
+    .rg-line { display: flex; align-items: center; gap: var(--jd-s-2); padding: var(--jd-s-3) var(--jd-s-4); font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-700); }
+    .rg-line svg { width: 16px; height: 16px; color: var(--jd-success); flex-shrink: 0; }
+    html body .dc-banner { background: var(--jd-bg); background-image: none; border: 1px solid var(--jd-gray-200); border-radius: var(--jd-r-md); box-shadow: none; padding: var(--jd-s-4) var(--jd-s-5); }
+    html body .dc-banner:hover { transform: none; border-color: var(--jd-gray-300); box-shadow: var(--jd-e-2); }
+    html body .dc-ic { display: none; }
+    html body .dc-tx strong { font-size: var(--jd-t-body); font-weight: 700; color: var(--jd-gray-900); }
+    html body .dc-tx span { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); }
+    html body .dc-go { background: none; background-image: none; color: var(--jd-brand-700); font-size: var(--jd-t-body); font-weight: 500; padding: 0; border-radius: 0; box-shadow: none; }
+    html body .store-meta .product-count { background: none; border: none; box-shadow: none; padding: var(--jd-s-2) 0; font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); }
+    html body .store-meta .product-count span { color: var(--jd-gray-700); font-weight: 700; }
+
+    /* ---- 상품 카드 스펙 한 줄 (· 구분) ---- */
+    .card-title { display: flex; align-items: baseline; gap: var(--jd-s-2); flex-wrap: wrap; }
+    .card-specs { display: flex; align-items: center; flex-wrap: wrap; margin-top: var(--jd-s-2); }
+    .card-spec-item { display: inline-flex; align-items: center; background: none !important; border: none !important; padding: 0 !important; font-size: var(--jd-t-caption); color: var(--jd-gray-600); font-weight: 500; }
+    .card-spec-item + .card-spec-item::before { content: '·'; margin: 0 6px; color: var(--jd-gray-300); }
+    .card-spec-item.warn { color: var(--jd-danger-deep) !important; font-weight: 700; }
+    .card-spec-item.info { color: var(--jd-info-deep) !important; font-weight: 700; }
+    .card-tag.roaming { background: var(--jd-gray-100); color: var(--jd-gray-600); font-size: var(--jd-t-micro); font-weight: 700; border-radius: var(--jd-r-sm); }
+    .card-img-wrap .card-tags { position: absolute; right: var(--jd-s-3); top: 50%; transform: translateY(-50%); display: flex; gap: var(--jd-s-1); }
+    .card-footer { display: flex; align-items: baseline; gap: var(--jd-s-2); }
+    .no-results { text-align: center; padding: var(--jd-s-8) 0; color: var(--jd-gray-600); font-size: var(--jd-t-body); }
+    .no-results img { width: 88px; margin-bottom: var(--jd-s-3); }
+
+    /* ---- 상품 팝업 위저드 정본 ---- */
+    #modalContent .pcw-chip { display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 var(--jd-s-3); background: var(--jd-gray-100); border: none; border-radius: var(--jd-r-full); font-family: inherit; font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-700); cursor: pointer; margin: 0 6px 6px 0; }
+    #modalContent .pcw-chip:hover { background: var(--jd-gray-200); }
+    #modalContent .pcw-chip svg { width: 12px; height: 12px; color: var(--jd-gray-500); }
+    #modalContent .config-section-title { font-size: var(--jd-t-h3); font-weight: 700; color: var(--jd-gray-900); }
+    #modalContent .pcw-sub-note { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); }
+    .pcw-row { display: flex; align-items: center; gap: var(--jd-s-3); width: 100%; padding: var(--jd-s-3) var(--jd-s-4); margin-top: var(--jd-s-2); min-height: 64px; border: 1.5px solid var(--jd-gray-200); border-radius: var(--jd-r-md); background: var(--jd-bg); cursor: pointer; text-align: left; font: inherit; color: var(--jd-gray-900); transition: border-color var(--jd-dur-1) var(--jd-ease); }
+    .pcw-row:hover { border-color: var(--jd-gray-300); }
+    .pcw-row .pcw-main { display: block; font-weight: 700; font-size: var(--jd-t-body); line-height: 1.4; color: var(--jd-gray-900); }
+    .pcw-row .pcw-sub { display: block; font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); margin-top: 3px; line-height: 1.45; }
+    .pcw-row .pcw-price { flex-shrink: 0; font-size: var(--jd-t-body-lg); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--jd-gray-900); }
+    .pcw-row .pcw-price i { font-style: normal; font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-500); }
+    .pcw-net { display: inline-flex; align-items: center; height: 18px; padding: 0 6px; border-radius: var(--jd-r-sm); font-size: var(--jd-t-micro); font-weight: 700; vertical-align: 1px; }
+    .pcw-net.local { background: var(--jd-success-bg); color: var(--jd-success-deep); }
+    .pcw-net.roaming { background: var(--jd-gray-100); color: var(--jd-gray-600); }
+    .pcw-best-badge { display: inline-flex; align-items: center; height: 18px; padding: 0 6px; border-radius: var(--jd-r-sm); background: var(--jd-brand-50); color: var(--jd-brand-700); font-size: var(--jd-t-micro); font-weight: 700; vertical-align: 1px; margin-left: 4px; }
+    #modalContent .pcw-dur { min-height: 40px; border-radius: var(--jd-r-full); border: 1.5px solid transparent; background: var(--jd-gray-100); color: var(--jd-gray-800); font: inherit; font-size: var(--jd-t-body); font-weight: 500; cursor: pointer; }
+    #modalContent .pcw-dur:hover { border-color: var(--jd-gray-300); }
+    #modalContent details > summary.jd-plain-summary { list-style: none; cursor: pointer; font-size: var(--jd-t-caption); font-weight: 700; color: var(--jd-brand-700); }
+    #modalContent .pcw-msg-ok { color: var(--jd-success-deep); }
+    #modalContent .pcw-msg-warn { color: var(--jd-warning-deep); }
+
+    /* ---- 확정 화면(step4) ---- */
+    #modalContent .pcw-picked { margin-top: var(--jd-s-3); padding: var(--jd-s-4); border: 1.5px solid var(--jd-brand-500); border-radius: var(--jd-r-md); background: var(--jd-brand-50); }
+    #modalContent .pcw-picked-main { font-weight: 700; font-size: var(--jd-t-body-lg); color: var(--jd-gray-900); }
+    #modalContent .pcw-picked-sub { font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-600); margin-top: 4px; }
+    #modalContent .jd-dl { margin-top: var(--jd-s-3); }
+    #modalContent .jd-dl dt { padding-right: var(--jd-s-5); }
+    #modalContent .jd-proof-line { font-size: var(--jd-t-caption); color: var(--jd-gray-600); margin: var(--jd-s-3) 0 0; }
+    #modalContent .jd-prebuy { margin-top: var(--jd-s-3); background: var(--jd-gray-50); border: 1px solid var(--jd-gray-100); border-radius: var(--jd-r-md); padding: var(--jd-s-3) var(--jd-s-4); }
+    #modalContent .jd-prebuy summary { list-style: none; cursor: pointer; font-size: var(--jd-t-body); font-weight: 700; color: var(--jd-gray-900); }
+    #modalContent .jd-prebuy .jd-prebuy-body { margin-top: var(--jd-s-2); font-size: var(--jd-t-caption); line-height: 1.7; color: var(--jd-gray-600); }
+    #modalContent .qty-selector { display: flex; align-items: center; gap: var(--jd-s-2); }
+    #modalContent .qty-note { font-size: var(--jd-t-caption); color: var(--jd-gray-500); text-align: right; margin-top: var(--jd-s-1); }
+    #modalContent .summary-total-price { font-size: var(--jd-t-h2); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--jd-gray-900); }
+    html body .device-compat-banner { display: block; background: none; border: none; box-shadow: none; padding: var(--jd-s-3) 0 0; text-align: center; font-size: var(--jd-t-caption); font-weight: 500; color: var(--jd-gray-600); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+    html body .device-compat-banner:hover { color: var(--jd-gray-900); transform: none; }
+    html body .cta-smartstore { display: block; text-align: center; font-size: var(--jd-t-caption); color: var(--jd-gray-700); }
+
+    /* ---- 확정 화면 세부 ---- */
+    #modalContent #groupDiscountPromo { display: block; padding: var(--jd-s-2) var(--jd-s-3); margin-top: var(--jd-s-2); text-align: center; font-weight: 500; }
+    #modalContent .qty-btn { font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    #modalContent #qtyVal { min-width: 28px; text-align: center; }
+    .card-carrier { background: none; border: none; padding: 0; }
+    .rv-chip { background: var(--jd-gray-100); color: var(--jd-gray-600); border: none; border-radius: var(--jd-r-sm); font-size: var(--jd-t-micro); font-weight: 500; }
+
+    /* ---- 결제 모달 ---- */
+    #paySubmitBtn:disabled { background: var(--jd-gray-100); color: var(--jd-gray-400); }
+    .pay-method-btn.kakao.selected { background: var(--jd-kakao); color: var(--jd-kakao-ink); border-color: var(--jd-kakao); }
+
+    /* ---- 푸터 ---- */
+    .footer { padding: var(--jd-s-8) 24px var(--jd-s-9); }
+    .footer-inner { max-width: 1120px; margin: 0 auto; display: block; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: var(--jd-s-4); margin-bottom: var(--jd-s-5); }
+    .footer-link { font-size: 0.875rem; color: var(--jd-gray-600); }
+    .footer-link.strong { font-weight: 700; }
+    .footer-info { font-size: var(--jd-t-micro); color: var(--jd-gray-500); line-height: 1.7; }
+    .jd-footer-care { display: flex; align-items: center; gap: var(--jd-s-4); margin: var(--jd-s-5) 0; }
+    .jd-footer-care span { font-size: var(--jd-t-body); color: var(--jd-gray-700); }
+    .footer-copyright { font-size: var(--jd-t-micro); color: var(--jd-gray-500); margin-top: var(--jd-s-5); }
   </style>
 <style id="jd-img-guard">img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}</style>
 </head>
@@ -252,35 +360,18 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
 
 
 
-  <!-- Background Video -->
-  <div class="video-bg-container">
-    <video autoplay muted loop playsinline id="bgVideo" onerror="this.style.display='none'">
-      <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
-    </video>
-    <div class="video-bg-overlay"></div>
-  </div>
-
-  <!-- Background Blur Glows -->
-  <div class="glow-blur glow-1"></div>
-  <div class="glow-blur glow-2"></div>
-
   <!-- Header -->
   <header class="header">
     <div class="container header-inner">
-      <a href="#" class="logo" id="logoLink">
-        <div class="logo-icon">J</div>
-        JDISIM
-      </a>
+      <a href="#" class="logo" id="logoLink">JDISIM<span class="logo-dot">.</span></a>
       <nav class="nav-desktop" id="navDesktop">
-        <a class="nav-link active" data-target="home">홈</a>
-        <a class="nav-link" data-target="store">eSIM 스토어</a>
-        <a class="nav-link" id="navDeviceCheckBtn" style="cursor: pointer;">기종 자가진단</a>
+        <a class="nav-link" data-target="store">요금제 찾기</a>
+        <a class="nav-link" data-target="orders">주문 조회</a>
         <a class="nav-link" onclick="window.location.assign('guide.html')" style="cursor: pointer;">케어센터</a>
         <a class="nav-link" onclick="window.location.assign('biz.html')" style="cursor: pointer;">기업·단체</a>
-        <a class="nav-link" data-target="orders">주문 조회</a>
-        <a class="nav-link" data-target="faq">이용 및 환불 안내</a>
       </nav>
       <div class="header-actions">
+        <a class="nav-ghost" id="navDeviceCheckBtn">기기 확인</a>
         <button class="cart-btn" id="headerCartBtn" aria-label="장바구니">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
           <span class="cart-count" id="cartCount">0</span>
@@ -294,41 +385,31 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
     <!-- ================= VIEW 1: HOME VIEW (DEFAULT) ================= -->
     <section id="view-home" class="page-view active">
       
-      <!-- Hero Video Banner (Rokebi Style) -->
-      <section class="hero-video-frame">
-        <video class="hero-video-element" autoplay loop muted playsinline preload="metadata" onerror="this.style.display='none'">
-          <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4" />
-        </video>
-        <div class="hero-video-overlay"></div>
-        <div class="hero-video-content">
-          <div class="hero-text-col">
-            <span class="hero-video-badge">🦊 JDISIM × 로미 · PREMIUM LOCAL eSIM</span>
-            <h1 class="hero-video-title">전 세계 150개국,<br>닿는 순간 <span>연결</span>됩니다</h1>
-            <p class="hero-video-sub">유심 교체도, 공항 대기도 없이 — QR 스캔 한 번으로 현지 로컬망에 다이렉트.</p>
-            <div class="hero-video-buttons">
-              <button class="hero-video-btn hero-video-btn-primary cta-sheen" onclick="switchView('store')">
-                ⚡ 이심 스토어 바로가기
-              </button>
-              <button class="hero-video-btn hero-video-btn-secondary" onclick="scrollToElement('precautions-section')">
-                📖 이용안내 & 가이드
-              </button>
+      <!-- 검색 히어로 (정본 §2-1): 히어로 = 검색. 비디오·여우·스탯 카드 없음 -->
+      <section class="jd-hero">
+        <div class="jd-inner">
+          <div class="hero-search">
+            <p class="hero-caption">여행 eSIM · <strong data-jd-stat="issue" style="font-weight: 500;">결제 후 평균 5~15분 QR 발송</strong></p>
+            <h1>어느 나라 가세요?</h1>
+            <div class="hero-input-wrap">
+              <svg class="hero-input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="text" id="heroSearchInput" placeholder="국가 이름을 입력하세요" autocomplete="off" aria-label="국가 검색">
+              <div class="jd-suggest" id="heroSuggest"></div>
             </div>
-            <div class="pc-hero-stats">
-              <div><strong>1,700+</strong><span>누적 고객</span></div>
-              <div class="pc-hero-stat-div"></div>
-              <div><strong>10초</strong><span>QR 개통</span></div>
-              <div class="pc-hero-stat-div"></div>
-              <div><strong>24h</strong><span>카톡 케어</span></div>
-              <div class="pc-hero-stat-div"></div>
-              <div><strong>100%</strong><span>미개통 환불</span></div>
+            <div class="hero-chips">
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('일본')">🇯🇵 일본</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('베트남')">🇻🇳 베트남</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('태국')">🇹🇭 태국</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('대만')">🇹🇼 대만</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('미국')">🇺🇸 미국</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('유럽')">🇪🇺 유럽</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('필리핀')">🇵🇭 필리핀</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('중국')">🇨🇳 중국</button>
             </div>
-          </div>
-          <div class="hero-fox-col">
-            <div class="hero-fox-bubble">안녕, 난 <em>로미</em>! QR 스캔 <em>10초</em>면 개통 완료 🦊</div>
-            <img src="images/fox-hello.webp" alt="JDISIM 마스코트 여우 로미" class="hero-fox-img">
+            <p class="jd-proof">미개통 시 100% 환불 · 카카오톡 상담 24시간 · QR 평균 5분 발송</p>
           </div>
         </div>
-        </section>
+      </section>
 
       <!-- 구매 보장 신뢰 독 (히어로 하단 글래스 바) -->
       <section class="pc-trust-strip">
@@ -509,91 +590,22 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         }
       </style>
 
-      <!-- 인기 여행지 바로가기 (2026-08-02 사장님: 가로 마퀴 제거 → 정돈된 카드 그리드)
-           지구본이 '탐색'이면 여기는 '많이 가는 곳 바로 구매' — 최저가를 함께 보여 결정을 돕는다. -->
+      <!-- 많이 찾는 여행지 (정본 §2-2) -->
       <section class="hotdest-section">
-        <div class="hotdest-head">
-          <span class="hotdest-eyebrow">POPULAR</span>
-          <h3 class="hotdest-title">많이 찾는 여행지, <em>최저가로 바로</em></h3>
+        <div class="jd-inner">
+          <div class="hotdest-head">
+            <h2 class="hotdest-title">많이 찾는 여행지</h2>
+            <button type="button" class="jd-ghost-link" onclick="switchView('store')">전체 국가 보기<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+          <div class="hotdest-grid" id="hotDestGrid"></div>
         </div>
-        <div class="hotdest-grid" id="hotDestGrid"></div>
       </section>
 
-      <!-- App Info Section — 로미 프리미엄 카드 -->
-      <section class="app-info-section">
+      <!-- 지금 많이 나가는 요금제 (정본 §2-3) -->
+      <section class="store-section jd-home-section">
         <div class="container">
-          <div class="ai2-head">
-            <span class="ai2-eyebrow">WHY JDISIM</span>
-            <h2 class="app-info-title">JDISIM 하나로, <em>간편하게 시작해요</em></h2>
-            <p class="ai2-sub">가격·커버리지·케어 — 여행 데이터에 필요한 전부를 로미가 챙깁니다</p>
-          </div>
-          <div class="app-info-grid ai2-grid">
-            <div class="ai2-card" onclick="switchView('view-store')" role="button" tabindex="0">
-              <span class="ai2-tag">PRICING</span>
-              <h3>거품 없는<br><em>정직한 가격</em></h3>
-              <p>중간 유통 거품을 걷어낸<br>업계 최저가 eSIM 스토어</p>
-              <span class="ai2-go">최저가 보러가기 →</span>
-              <img class="ai2-fox" src="images/fox-thumbsup.webp" alt="" loading="lazy">
-              <i class="ai2-orb"></i>
-            </div>
-            <div class="ai2-card ai2-c2" onclick="switchView('view-store')" role="button" tabindex="0">
-              <span class="ai2-tag">COVERAGE</span>
-              <h3>전 세계 <em>150개국</em><br>초고속 연결</h3>
-              <p>현지 1티어 통신망 다이렉트<br>5G/LTE 15,000개+ 요금제</p>
-              <span class="ai2-go">여행지 찾아보기 →</span>
-              <img class="ai2-fox" src="images/fox-phone.webp" alt="" loading="lazy">
-              <i class="ai2-orb"></i>
-            </div>
-            <div class="ai2-card ai2-c3" onclick="switchView('view-store')" role="button" tabindex="0">
-              <span class="ai2-tag">CARE</span>
-              <h3>여행 내내 곁에<br><em>24시간 로미 케어</em></h3>
-              <p>새벽에도 카톡 1:1 —<br>미개통 시 100% 환불 보장</p>
-              <span class="ai2-go">케어 알아보기 →</span>
-              <img class="ai2-fox" src="images/fox-hello.webp" alt="" loading="lazy">
-              <i class="ai2-orb"></i>
-            </div>
-          </div>
-        </div>
-        <style>
-          .ai2-head { text-align: center; margin-bottom: 34px; }
-          .ai2-eyebrow { font-size:0.75rem; font-weight: 800; letter-spacing: 3px; color: #F1690D; }
-          .app-info-title em { font-style: normal; background: linear-gradient(100deg, #F8823B, #D95903); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-          .ai2-sub { margin: 10px 0 0; font-size:0.9375rem; color: #8a7a6d; font-weight: 600; }
-          .ai2-grid { gap: 22px; }
-          .ai2-card {
-            position: relative; overflow: hidden; cursor: pointer;
-            min-height: 300px; border-radius: 24px; padding: 28px 26px;
-            background: linear-gradient(160deg, #FFFDFB 0%, #FFF3E6 100%);
-            border: 1px solid rgba(241,105,13, 0.16);
-            box-shadow: 0 10px 30px rgba(241,105,13, 0.08);
-            transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s;
-          }
-          .ai2-c2 { background: linear-gradient(160deg, #FDFEFF 0%, #E9F6F3 100%); border-color: rgba(43,179,163,0.2); }
-          .ai2-c3 { background: linear-gradient(160deg, #FFFDFB 0%, #FBEFE0 100%); }
-          .ai2-card:hover { transform: translateY(-8px); box-shadow: 0 22px 44px rgba(241,105,13, 0.16); }
-          .ai2-tag { display: inline-block; font-size:0.75rem; font-weight: 800; letter-spacing: 2px; color: #C2410C; background: rgba(255,255,255,0.8); border: 1px solid rgba(241,105,13,0.25); padding: 5px 12px; border-radius: 999px; }
-          .ai2-c2 .ai2-tag { color: #0f766e; border-color: rgba(43,179,163,0.3); }
-          .ai2-card h3 { margin: 16px 0 10px; font-size:1.625rem; line-height: 1.3; font-weight: 800; color: #221510; letter-spacing: -0.02em; }
-          .ai2-card h3 em { font-style: normal; color: #D95903; }
-          .ai2-c2 h3 em { color: #0f9488; }
-          .ai2-card p { margin: 0; font-size:0.9375rem; line-height: 1.65; color: #7a6a5d; font-weight: 600; }
-          .ai2-go { display: inline-block; margin-top: 16px; font-size:0.84375rem; font-weight: 800; color: #D95903; transition: transform .25s; }
-          .ai2-c2 .ai2-go { color: #0f9488; }
-          .ai2-card:hover .ai2-go { transform: translateX(4px); }
-          .ai2-fox { position: absolute; right: -8px; bottom: -12px; width: 128px; filter: drop-shadow(0 10px 18px rgba(241,105,13,0.25)); transition: transform .35s cubic-bezier(.22,1,.36,1); pointer-events: none; }
-          .ai2-card:hover .ai2-fox { transform: translateY(-8px) rotate(-3deg) scale(1.06); }
-          .ai2-orb { position: absolute; right: -36px; top: -36px; width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, rgba(255,170,90,0.3), transparent 70%); pointer-events: none; }
-          .ai2-c2 .ai2-orb { background: radial-gradient(circle, rgba(64,205,190,0.25), transparent 70%); }
-          @media (max-width: 900px) { .ai2-card { min-height: 230px; } .ai2-fox { width: 96px; } }
-        </style>
-      </section>
-
-      <!-- Featured Popular Countries -->
-      <section class="store-section" style="padding-bottom: 40px;">
-        <div class="container">
-          <div class="section-header" style="margin-bottom: 32px;">
-            <h2 class="section-title">지금 가장 많이 떠나는 여행지</h2>
-            <p class="section-desc">여행자들이 실제로 많이 구매하고 평균 평점 4.9를 남겨주신 실시간 베스트 이심 요금제입니다.</p>
+          <div class="section-header">
+            <h2 class="section-title">지금 많이 나가는 요금제</h2>
           </div>
           <div class="product-grid" id="featuredGrid">
             <!-- 4 popular country cards rendered dynamically -->
@@ -601,49 +613,68 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         </div>
       </section>
 
-      <!-- Call To Action (스토어 이동) -->
-      <section class="cta-banner">
+      <!-- 이용 방법 3단계 (정본 §2-4, 구 WHY — 클래스 훅 유지) -->
+      <section class="app-info-section">
         <div class="container">
-          <div class="cta-box">
-            <h3 class="cta-title">내 일정에 꼭 맞는 요금제 찾기</h3>
-            <p class="cta-desc">하루 1GB부터 무제한 데이터까지, 여행 스케줄에 딱 맞춘 요금제들이 준비되어 있습니다.</p>
-            <button class="action-btn" id="homeCtaBtn" style="display:inline-flex; width:auto; padding: 0 40px;" onclick="switchView('view-store')">전 세계 이심 보러가기 →</button>
+          <div class="ai2-head">
+            <h2 class="app-info-title">구매부터 개통까지, 3단계면 끝나요</h2>
+          </div>
+          <div class="app-info-grid ai2-grid">
+            <div class="ai2-card" onclick="switchView('store')" role="button" tabindex="0">
+              <span class="ai2-step">01</span>
+              <h3>여행지 선택</h3>
+              <p>국가와 일수만 고르면 돼요. 통신사와 용량은 가격순으로 비교해 드려요.</p>
+            </div>
+            <div class="ai2-card ai2-c2" onclick="switchView('store')" role="button" tabindex="0">
+              <span class="ai2-step">02</span>
+              <h3>결제하면 QR 도착</h3>
+              <p>결제 후 평균 5분 안에 이메일과 문자로 QR이 도착해요.</p>
+            </div>
+            <div class="ai2-card ai2-c3" onclick="switchView('store')" role="button" tabindex="0">
+              <span class="ai2-step">03</span>
+              <h3>현지 도착 후 켜기</h3>
+              <p>데이터 로밍을 켜면 현지 망에 자동 연결돼요. 안 되면 카카오톡으로 바로 도와드려요.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- 가격 비교: 로밍 vs 포켓와이파이 vs eSIM -->
-      <section class="container" style="padding: 24px 20px 0; max-width: 980px; margin: 0 auto;">
-        <div data-jdisim-compare></div>
+      <!-- 가격 비교 (정본 §2-5) -->
+      <section class="jd-home-section">
+        <div class="jd-inner" style="max-width: 980px;">
+          <div class="section-header">
+            <h2 class="section-title">같은 상품, 가격만 비교해 보세요</h2>
+            <p class="section-desc">주요 판매처 판매가를 그대로 가져왔어요</p>
+          </div>
+          <div class="jd-compare-card">
+            <div data-jdisim-compare></div>
+          </div>
+        </div>
       </section>
 
-      <!-- 데이터 용량 계산기 -->
-      <section class="container" style="padding: 20px 20px 0; max-width: 640px; margin: 0 auto;">
+      <!-- 데이터 용량 계산기 — 정본: 홈에서 숨김 (jd-neo 킬 스위치) -->
+      <section class="container" style="padding: 0;">
         <div data-jdisim-datacalc="fold"></div>
       </section>
 
-      <!-- 자체 수집: 발급 고객 인증 후기 (여행 티켓 별점) — 0건이면 자동 숨김 -->
-      <section class="container" style="padding: 8px 20px 0;">
-        <div data-jdisim-reviews="strip"></div>
-      </section>
-
-      <!-- 리얼 구매자 태그 필터 후기 섹션 -->
+      <!-- 구매 후기 (정본 §2-6 — 3중 후기 1섹션 통합) -->
       <section class="review-track-section">
         <div class="container">
           <div class="review-track-title-wrap">
-            <div class="review-track-count" style="font-size:1.625rem; letter-spacing: 2px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">★★★★★</div>
-            <div class="review-fox-badge"><img src="images/fox-thumbsup.webp" alt="엄지척 로미" loading="lazy"></div>
-            <h2 class="review-track-title">실제 이용 고객들의 100% 솔직한 리얼 후기</h2>
-            <span class="review-source-badge">✅ 네이버 실구매 후기</span>
+            <h2 class="review-track-title">구매 후기</h2>
+            <div class="review-track-count">네이버 스마트스토어 실구매 인증 후기</div>
           </div>
 
+          <!-- 자체 수집 발급 고객 인증 스트립 — 헤더 아래 1줄 요약으로 흡수 (0건이면 자동 숨김) -->
+          <div data-jdisim-reviews="strip"></div>
+
           <div class="review-tags-filter">
-            <button class="review-filter-tag active" data-filter="all">🌟 전체 후기</button>
-            <button class="review-filter-tag" data-filter="일본">🇯🇵 일본</button>
-            <button class="review-filter-tag" data-filter="베트남">🇻🇳 베트남</button>
-            <button class="review-filter-tag" data-filter="태국">🇹🇭 태국</button>
-            <button class="review-filter-tag" data-filter="photo">📸 포토 후기</button>
-            <button class="review-filter-tag" data-filter="best">👑 베스트</button>
+            <button class="review-filter-tag active" data-filter="all">전체</button>
+            <button class="review-filter-tag" data-filter="일본">일본</button>
+            <button class="review-filter-tag" data-filter="베트남">베트남</button>
+            <button class="review-filter-tag" data-filter="태국">태국</button>
+            <button class="review-filter-tag" data-filter="photo">포토</button>
+            <button class="review-filter-tag" data-filter="best">베스트</button>
           </div>
 
                     <!-- Collapsible/Dropdown Wrapper for Reviews -->
@@ -653,27 +684,26 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
           </div>
           <div class="review-expand-btn-container">
             <button class="review-expand-btn" id="reviewExpandBtn">
-              💬 리얼 고객 후기 전체 보기 (펼치기) ▾
+              후기 더 보기 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Precautions / Image Content (이용 안내 및 주의사항) -->
+      <!-- FAQ 통합 (정본 §2-7): 주의사항 아코디언 중 환불 2건 흡수 + 아래 FAQ 6건 = 8문항 -->
       <section class="guide-image-section" id="precautions-section">
-        <div class="container" style="max-width: 800px; padding: 40px 20px;">
-          <div class="section-header" style="margin-bottom: 32px;">
-            <h2 class="section-title">🛡️ 이용 안내 및 주의사항</h2>
-            <p class="section-desc">즐거운 여행길에 차질이 없도록, 구매 전에 아래 가이드를 가볍게 터치해 확인해 주세요!</p>
+        <div class="container" style="max-width: 800px; padding: 0 20px;">
+          <div class="section-header">
+            <h2 class="section-title">자주 묻는 질문</h2>
           </div>
 
           <div class="faq-accordion" id="precautionsAccordion">
-            
+
             <!-- Guide Item 1 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>📦 교환 및 환불 정책 (구입 전 필수 확인)</span>
-                <span class="faq-arrow">▼</span>
+                <span>교환 및 환불 정책이 어떻게 되나요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--text-muted); text-align: left;">
@@ -684,45 +714,11 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
               </div>
             </div>
 
-            <!-- Guide Item 2 -->
+            <!-- Guide Item 4 (체크리스트·장애조치 2건은 guide.html 링크로 대체 — 정본 §2-7) -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>⚙️ 출국 전 단말기 자가 체크리스트</span>
-                <span class="faq-arrow">▼</span>
-              </button>
-              <div class="faq-answer">
-                <ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--text-muted); text-align: left;">
-                  <li style="margin-bottom: 8px;"><strong>국내 부가서비스 차단 확인:</strong> 이용 중인 국내 통신사 고객센터를 통해 '데이터 로밍 차단', '유심 잠금', '휴대폰 보호 서비스(분실 방지)' 등 외부 유심 사용을 막는 부가서비스가 켜져 있는지 확인하고 해지 신청을 해주세요.</li>
-                  <li style="margin-bottom: 8px;"><strong>컨트리락(Country Lock) 해제 여부:</strong> 해외에서 직접 구매했거나 통신사 약정 폰의 경우 컨트리락이 걸려있는 경우가 있습니다. 미리 제조사에 확인해 완전히 풀어주셔야 합니다.
-                    <div style="margin-top: 10px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); font-size:0.84375rem;">
-                      📞 <strong>단말기 제조사 대표 고객센터:</strong><br>
-                      - 삼성전자: 1588-3366 | 애플코리아: 080-333-4000 | LG전자: 1544-7777
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Guide Item 3 -->
-            <div class="faq-item">
-              <button class="faq-question">
-                <span>📶 현지 데이터 연결 장애 발생 시 조치 요령</span>
-                <span class="faq-arrow">▼</span>
-              </button>
-              <div class="faq-answer">
-                <ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--text-muted); text-align: left;">
-                  <li style="margin-bottom: 8px;"><strong>데이터 로밍 활성화:</strong> 휴대폰 [설정] ➡️ [셀룰러(연결)] ➡️ 새로 등록한 해외 eSIM을 탭한 뒤 <strong>[데이터 로밍] 스위치를 반드시 켜주세요.</strong></li>
-                  <li style="margin-bottom: 8px;"><strong>원격 점검 필수:</strong> 데이터가 안 터질 때는 <strong>우선 공항 와이파이 등을 사용해 저희 고객센터(카톡 채널 등)로 꼭 먼저 연락해 주세요.</strong> 원격 확인 절차 없이 그냥 귀국하시면 불량 여부 판단이 불가해 환불 접수가 어렵습니다.</li>
-                  <li style="margin-bottom: 8px;">기기 장애로 인한 보상 환불 한도는 <strong>eSIM 구매 금액 범위 이내</strong>로 제한되며, 개별 로밍비나 임의 유심 현장 구매 비용 등은 보상이 불가합니다.</li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Guide Item 4 -->
-            <div class="faq-item">
-              <button class="faq-question">
-                <span>❌ 환불 접수가 불가능한 예외 케이스</span>
-                <span class="faq-arrow">▼</span>
+                <span>환불이 불가능한 경우도 있나요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--text-muted); text-align: left;">
@@ -737,20 +733,15 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         </div>
       </section>
 
-      <!-- 자주 묻는 질문 (FAQ) Section -->
+      <!-- FAQ 6문항 (위 2문항과 하나의 섹션처럼 이어짐) -->
       <section class="faq-section" id="faq">
-        <div class="container" style="max-width: 800px; padding: 40px 20px;">
-          <div class="section-header">
-            <h2 class="section-title">자주 묻는 질문 (FAQ)</h2>
-            <p class="section-desc">eSIM 개통 및 사용에 대해 여행자들이 가장 자주 질문하시는 내용을 정리했습니다.</p>
-          </div>
-          
+        <div class="container" style="max-width: 800px; padding: 0 20px;">
           <div class="faq-accordion">
             <!-- FAQ 1 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>📱 eSIM과 일반 유심(USIM)의 차이점은 무엇인가요?</span>
-                <span class="faq-arrow">▼</span>
+                <span>eSIM과 일반 유심(USIM)의 차이점은 무엇인가요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <p>eSIM(이심)은 물리 유심과 달리 기기 내부에 기본 탑재된 디지털 칩셋에 프로필을 내려받는 가상 심카드입니다. <strong>실물 심카드를 배송받아 갈아끼울 필요 없이</strong>, 결제 완료 후 전송된 QR코드를 촬영(스캔)하기만 하면 즉시 설치되어 편리합니다.</p>
@@ -760,8 +751,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
             <!-- FAQ 2 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>🛫 한국에서 미리 QR코드를 등록해도 괜찮은가요?</span>
-                <span class="faq-arrow">▼</span>
+                <span>한국에서 미리 QR코드를 등록해도 괜찮은가요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <p>네, 출국 전 <strong>한국 공항(Wi-Fi 환경)에서 미리 QR코드를 등록하는 것을 권장</strong>합니다. 한국에서는 프로필 등록만 완료되며, 실제 요금제 일수 및 데이터 소진은 현지 공항에 도착하여 해당 국가 통신사 망을 최초로 잡는 시점부터 활성화되므로 일수가 깎이지 않습니다.</p>
@@ -771,8 +762,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
             <!-- FAQ 3 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>⚙️ 등록 중 '셀룰러 요금제를 추가할 수 없음' 오류가 뜹니다.</span>
-                <span class="faq-arrow">▼</span>
+                <span>등록 중 '셀룰러 요금제를 추가할 수 없음' 오류가 뜹니다.</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <p>이 오류는 보통 세 가지 원인으로 인해 발생합니다:<br>
@@ -785,12 +776,12 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
             <!-- FAQ 4 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>📶 현지 도착 후 갑자기 데이터 연결이 안 될 때는 어떻게 하나요?</span>
-                <span class="faq-arrow">▼</span>
+                <span>현지 도착 후 갑자기 데이터 연결이 안 될 때는 어떻게 하나요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <p>현지에서 데이터 통신이 불통일 때 아래 3가지 자가 설정을 변경하시면 즉시 개통됩니다:<br>
-                ① <strong>데이터 로밍 활성화:</strong> 휴대폰 [설정] ➡️ [셀룰러(연결)] ➡️ 새로 등록한 해외 eSIM을 탭한 뒤 <strong>[데이터 로밍] 스위치를 반드시 켜주세요.</strong><br>
+                ① <strong>데이터 로밍 활성화:</strong> 휴대폰 [설정] → [셀룰러(연결)] → 새로 등록한 해외 eSIM을 탭한 뒤 <strong>[데이터 로밍] 스위치를 반드시 켜주세요.</strong><br>
                 ② <strong>APN 정보 설정:</strong> 일부 단말기(해외 직구폰 등)에서 APN 자동 등록이 실패하는 경우, 상품 설명 상세의 APN 정보 값을 설정창에 수동 기입해 줍니다.<br>
                 ③ <strong>기기 재부팅:</strong> 비행기 모드를 켰다 끄시거나 전원을 2~3회 재부팅하여 현지 기지국의 셀룰러 신호를 강제 재할당받으시기 바랍니다.</p>
               </div>
@@ -799,8 +790,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
             <!-- FAQ 5 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>❌ 실수로 셀룰러 설정에서 eSIM을 제거했는데 재발급이 가능한가요?</span>
-                <span class="faq-arrow">▼</span>
+                <span>실수로 셀룰러 설정에서 eSIM을 제거했는데 재발급이 가능한가요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <p><strong>아니요, 기술적으로 절대 불가능합니다.</strong> eSIM 프로필은 1회성 디지털 라이선스이므로, 설정에서 임의로 '요금제 삭제' 또는 '이심 삭제'를 진행하시면 메인보드 칩셋 데이터가 공장 초기화되어 복구 및 재스캔이 불가능합니다. 실수로 지우신 경우라도 환불이 어려우므로 절대 지우지 마시기 바랍니다.</p>
@@ -810,8 +801,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
             <!-- FAQ 6 -->
             <div class="faq-item">
               <button class="faq-question">
-                <span>📞 eSIM을 쓰면서 한국에서 오는 전화나 문자를 수신할 수 있나요?</span>
-                <span class="faq-arrow">▼</span>
+                <span>eSIM을 쓰면서 한국에서 오는 전화나 문자를 수신할 수 있나요?</span>
+                <span class="faq-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               </button>
               <div class="faq-answer">
                 <p>네, 가능합니다. 기존 한국 유심(실물 USIM)을 뽑지 않고 이심과 동시에 켜두는 <strong>'듀얼심 활성화'</strong> 상태를 유지해 주시면 됩니다.<br>
@@ -821,9 +812,28 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
               </div>
             </div>
           </div>
+
+          <div class="jd-faq-tail">
+            <p>설치 방법과 연결 문제 해결은 <a href="guide.html" style="color: var(--jd-brand-700); font-weight: 700;">케어센터 가이드</a>에서 확인할 수 있어요.</p>
+          </div>
+          <div class="jd-faq-tail">
+            <p>더 궁금한 점은 카카오톡으로 물어보세요 — 24시간 답변드려요</p>
+            <a class="jd-btn-sec" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">카카오톡 상담하기</a>
+          </div>
         </div>
       </section>
-      
+
+      <!-- 마감 CTA 배너 (정본 §2-8 — 유일한 CTA 배너) -->
+      <section class="cta-banner">
+        <div class="container">
+          <div class="cta-box">
+            <h3 class="cta-title">내 일정에 맞는 요금제, 지금 확인하세요</h3>
+            <p class="cta-desc">여행 일수만 고르면 맞는 요금제를 보여드려요. 결제 후 평균 5분 안에 QR이 도착해요.</p>
+            <button class="action-btn" id="homeCtaBtn" style="display:inline-flex; width:auto; padding: 0 40px;" onclick="switchView('store')">요금제 찾기</button>
+          </div>
+        </div>
+      </section>
+
     </section>
       
       <!-- ================= VIEW 2: STORE VIEW ================= -->
@@ -839,7 +849,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
 <div class="jd-search">
       <div class="jd-box">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
-        <input type="text" id="storeSearchInput" placeholder="어디로 가시나요? 국가명이나 통신사를 적어보세요." autocomplete="off">
+        <input type="text" id="storeSearchInput" placeholder="국가 이름을 입력하세요" autocomplete="off">
         <button type="button" class="jd-x" id="jdClear" aria-label="지우기">✕</button>
         <button type="button" class="jd-go" id="storeSearchBtn">검색</button>
       </div>
@@ -848,129 +858,40 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
           </div>
           
           <div class="tabs-scroll" id="tabsContainer">
-            <button class="tab-btn active" data-category="ALL">🌎 전체 국가</button>
-            <button class="tab-btn" data-category="아시아">🌏 아시아</button>
-            <button class="tab-btn" data-category="유럽">🇪🇺 유럽</button>
-            <button class="tab-btn" data-category="북미괌사이판">🇺🇸 북미/괌/사이판</button>
-            <button class="tab-btn" data-category="호주뉴질랜드">🦘 호주/뉴질랜드</button>
-            <button class="tab-btn" data-category="중동">🐫 중동</button>
-            <button class="tab-btn" data-category="아프리카">🦁 아프리카</button>
-            <button class="tab-btn" data-category="남미">🐆 남미</button>
-            <button class="tab-btn" data-category="글로벌">✈️ 글로벌</button>
+            <button class="tab-btn active" data-category="ALL">전체 국가</button>
+            <button class="tab-btn" data-category="아시아">아시아</button>
+            <button class="tab-btn" data-category="유럽">유럽</button>
+            <button class="tab-btn" data-category="북미괌사이판">북미/괌/사이판</button>
+            <button class="tab-btn" data-category="호주뉴질랜드">호주/뉴질랜드</button>
+            <button class="tab-btn" data-category="중동">중동</button>
+            <button class="tab-btn" data-category="아프리카">아프리카</button>
+            <button class="tab-btn" data-category="남미">남미</button>
+            <button class="tab-btn" data-category="글로벌">글로벌</button>
           </div>
         </div>
 
         <!-- Store Metadata -->
         <div class="store-meta">
-          <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 좌측 스텁 + 보장 3열) -->
-          <div class="rg-ticket" style="margin: 4px 0 18px;">
-            <div class="rg-edge"></div>
-            <div class="rg-inner">
-              <div class="rg-stub">
-                <span class="rg-eyebrow">ROMI GUARANTEE</span>
-                <strong class="rg-title">구매하는 순간,<br>로미가 끝까지<br>책임져요</strong>
-                <div class="rg-code">
-                  <i class="rg-barcode"></i>
-                  <span>JDISIM · OFFICIAL CARE</span>
-                </div>
-                <img loading="lazy" src="images/fox-thumbsup.webp" alt="엄지척 로미" class="rg-fox" onerror="this.style.display='none'">
-              </div>
-              <div class="rg-perf"></div>
-              <div class="rg-rows">
-                <div class="rg-row">
-                  <span class="rg-ic rg-ic-orange">⚡</span>
-                  <span class="rg-txt"><strong data-jd-stat="issue">결제 후 평균 5~15분 QR 발송</strong><span>카카오톡·문자로 자동 전송돼요</span></span>
-                  <span class="rg-badge rg-b-orange">✓</span>
-                </div>
-                <div class="rg-row">
-                  <span class="rg-ic rg-ic-amber">🛡️</span>
-                  <span class="rg-txt"><strong>미개통 시 100% 환불</strong><span>현지에서 안 터지면 전액 보장해 드려요</span></span>
-                  <span class="rg-badge rg-b-amber">✓</span>
-                </div>
-                <a class="rg-row" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">
-                  <span class="rg-ic rg-ic-teal">💬</span>
-                  <span class="rg-txt"><strong>24시간 카톡 1:1 케어</strong><span>새벽에도 실시간 — 여행 내내 곁에 있어요</span></span>
-                  <span class="rg-badge rg-b-teal">→</span>
-                </a>
-              </div>
+          <!-- 신뢰 1줄 바 (정본 §5-3 준용 — 보딩패스 연출 폐기, rg-ticket 훅 보존) -->
+          <div class="rg-ticket" style="margin: 4px 0 12px;">
+            <div class="rg-line">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>미개통 시 100% 환불 · <strong data-jd-stat="issue" style="font-weight: 500;">QR 평균 5분 발송</strong> · <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: 2px;">카카오톡 상담 24시간</a></span>
             </div>
           </div>
           <style>
-            /* store-meta: 티켓·배너·카운트를 세로 스택 풀폭으로 (flex 짓눌림 방지) */
             .store-meta { display: block; }
-            .rg-ticket { position: relative; background: linear-gradient(165deg, #FFFFFF 0%, #FFF9F3 100%); border: 1px solid rgba(241,105,13,0.16); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 36px rgba(241,105,13,0.1); }
-            .rg-edge { height: 5px; background: linear-gradient(90deg, #F1690D, #F59E0B 40%, #2BB3A3 70%, #F1690D); background-size: 200% 100%; animation: rgEdgeFlow 8s linear infinite; }
-            @keyframes rgEdgeFlow { 0% { background-position: 0 0; } 100% { background-position: 200% 0; } }
-            .rg-inner { display: grid; grid-template-columns: 282px 2px 1fr; align-items: stretch; gap: 0 24px; padding: 0; }
-            /* ── 좌측 티켓 스텁 ── */
-            .rg-stub { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 26px 22px 26px 28px; background: linear-gradient(170deg, rgba(241,105,13,0.055), rgba(245,158,11,0.02) 70%); }
-            .rg-eyebrow { font-size:0.75rem; font-weight: 900; letter-spacing: 2.8px; color: #F1690D; }
-            .rg-title { font-size:1.1875rem; font-weight: 900; line-height: 1.4; color: #221510; letter-spacing: -0.018em; word-break: keep-all; }
-            .rg-code { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
-            .rg-barcode { display: block; width: 128px; height: 24px; opacity: 0.62; background: repeating-linear-gradient(90deg, #221510 0 2px, transparent 2px 4px, #221510 4px 5px, transparent 5px 9px, #221510 9px 12px, transparent 12px 14px); }
-            .rg-code span { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.2px; color: #b09a8a; font-family: 'SF Mono', 'Courier New', monospace; }
-            .rg-fox { position: absolute; right: 12px; bottom: 10px; width: 78px; filter: drop-shadow(0 6px 14px rgba(241,105,13,0.28)); animation: rgFoxFloat 3.6s ease-in-out infinite; }
-            @keyframes rgFoxFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-            /* ── 세로 절취선 (펀칭홀) ── */
-            .rg-perf { position: relative; width: 0; border-left: 2px dashed rgba(241,105,13,0.22); }
-            .rg-perf::before, .rg-perf::after { content: ''; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: #FAF8F4; border: 1px solid rgba(241,105,13,0.16); }
-            .rg-perf::before { top: -8px; }
-            .rg-perf::after { bottom: -8px; }
-            /* ── 우측 보장 3열 (카드형) ── */
-            .rg-rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-content: center; padding: 22px 26px 22px 0; }
-            .rg-row { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic badge" "txt txt"; row-gap: 13px; align-items: start; min-width: 0; padding: 18px 16px 17px; border-radius: 17px; background: rgba(255,255,255,0.75); border: 1px dashed rgba(241,105,13,0.2); text-decoration: none; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.25s, box-shadow 0.25s, border-color 0.25s; }
-            .rg-row:hover { transform: translateY(-4px); background: #FFFFFF; border-color: rgba(241,105,13,0.4); box-shadow: 0 14px 28px rgba(241,105,13,0.13); }
-            .rg-row:hover .rg-badge { transform: scale(1.14) rotate(-6deg); }
-            .rg-ic { grid-area: ic; width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size:1.375rem; }
-            .rg-ic-orange { background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(241,105,13,0.05)); }
-            .rg-ic-amber  { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.05)); }
-            .rg-ic-teal   { background: linear-gradient(135deg, rgba(43,179,163,0.16), rgba(43,179,163,0.05)); }
-            .rg-txt { grid-area: txt; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-            .rg-txt strong { font-size:0.9375rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; line-height: 1.42; }
-            .rg-txt span { font-size:0.75rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; line-height: 1.48; }
-            .rg-badge { grid-area: badge; justify-self: end; flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size:0.84375rem; font-weight: 900; color: #fff; transition: transform 0.22s cubic-bezier(0.16,1,0.3,1); }
-            .rg-b-orange { background: linear-gradient(135deg, #F1690D, #F8823B); box-shadow: 0 3px 9px rgba(241,105,13,0.35); }
-            .rg-b-amber  { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 3px 9px rgba(245,158,11,0.35); }
-            .rg-b-teal   { background: linear-gradient(135deg, #2BB3A3, #40CDBE); box-shadow: 0 3px 9px rgba(43,179,163,0.35); }
-            @media (max-width: 959px) {
-              .rg-inner { grid-template-columns: 1fr; gap: 0; }
-              .rg-stub { padding: 20px 20px 16px; }
-              .rg-fox { width: 64px; bottom: 8px; }
-              .rg-perf { width: auto; height: 0; margin: 0 16px; border-left: none; border-top: 2px dashed rgba(241,105,13,0.22); }
-              .rg-perf::before, .rg-perf::after { top: -8px; bottom: auto; }
-              .rg-perf::before { left: -24px; }
-              .rg-perf::after { left: auto; right: -24px; }
-              .rg-rows { grid-template-columns: 1fr; gap: 10px; padding: 14px 16px 16px; }
-              .rg-row { grid-template-columns: auto 1fr auto; grid-template-areas: "ic txt badge"; row-gap: 0; column-gap: 13px; align-items: center; padding: 12px 14px; }
-              .rg-badge { justify-self: auto; }
-              .rg-row:hover { transform: none; }
-            }
-            @media (prefers-reduced-motion: reduce) { .rg-fox, .rg-edge { animation: none !important; } .rg-row, .rg-badge { transition: none !important; } }
-            /* ── 📱 자가진단 배너 (웜 팔레트 · 티켓 자매 디자인) ── */
-            .dc-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 15px 20px; background: linear-gradient(165deg, #FFFFFF, #FFF9F3); border: 1px dashed rgba(241,105,13,0.28); border-radius: 18px; box-shadow: 0 6px 18px rgba(241,105,13,0.06); cursor: pointer; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, border-color 0.2s; }
-            .dc-banner:hover { transform: translateY(-2px); border-color: rgba(241,105,13,0.5); box-shadow: 0 12px 26px rgba(241,105,13,0.12); }
-            .dc-banner:focus-visible { outline: 2px solid rgba(241,105,13,0.55); outline-offset: 2px; }
-            .dc-ic { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(241,105,13,0.14), rgba(245,158,11,0.08)); display: flex; align-items: center; justify-content: center; font-size:1.375rem; flex-shrink: 0; }
-            .dc-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-            .dc-tx strong { font-size:0.9375rem; font-weight: 800; color: #221510; letter-spacing: -0.01em; word-break: keep-all; }
-            .dc-tx span { font-size:0.75rem; font-weight: 600; color: #8a7a6d; word-break: keep-all; }
-            .dc-go { margin-left: auto; flex-shrink: 0; font-size:0.84375rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #F1690D, #F59E0B); padding: 10px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(241,105,13,0.3); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
-            .dc-banner:hover .dc-go { transform: translateX(3px); }
-            @media (max-width: 640px) { .dc-go { padding: 9px 14px; font-size:0.75rem; } }
-            /* ── 검색 결과 카운트 칩 ── */
-            .store-meta .product-count { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 14px; padding: 9px 17px; background: #FFFFFF; border: 1px solid rgba(241,105,13,0.14); border-radius: 999px; font-size:0.84375rem; font-weight: 700; color: #8a7a6d; box-shadow: 0 4px 12px rgba(241,105,13,0.05); }
-            .store-meta .product-count span { color: #F1690D; font-weight: 900; }
           </style>
-          <!-- 📱 기종 자가진단 배너 -->
+          <!-- 기종 자가진단 배너 -->
           <div class="dc-banner" role="button" tabindex="0" aria-label="기종 자가진단 열기" onclick="var b=document.getElementById('navDeviceCheckBtn'); if(b) b.click();" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="dc-ic">📱</div>
             <div class="dc-tx">
-              <strong>내 폰에서 이심이 될까요?</strong>
-              <span>구매 전 10초 자가진단 — 기종만 고르면 바로 확인돼요</span>
+              <strong>내 기기에서 되는지 3초 만에 확인하세요</strong>
+              <span>기종만 고르면 eSIM 지원 여부를 바로 알려드려요</span>
             </div>
-            <span class="dc-go">진단하기 →</span>
+            <span class="dc-go">확인하기</span>
           </div>
-          <div class="product-count">✈️ 총 <span id="productCountNum">0</span>개의 여행지가 검색됨</div>
+          <div class="product-count">여행지 <span id="productCountNum">0</span>곳</div>
         </div>
 
         <!-- Products Grid -->
@@ -985,8 +906,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <section id="view-orders" class="page-view">
     <div class="container" style="max-width: 600px; padding-top: 40px; padding-bottom: 60px;">
       <div class="section-header" style="margin-bottom: 30px;">
-        <h2 class="section-title">🔍 eSIM 주문 및 QR코드 조회</h2>
-        <p class="section-desc">구매하실 때 입력하신 이메일과 휴대폰 번호로 간편하게 개통용 QR코드와 가이드를 조회하실 수 있습니다.</p>
+        <h2 class="section-title">주문 조회</h2>
+        <p class="section-desc">주문할 때 쓴 이메일과 휴대폰 번호로 조회할 수 있어요.</p>
       </div>
 
       <!-- Query Input Card -->
@@ -1001,8 +922,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
           <input type="tel" class="checkout-input" id="lookupPhone" placeholder="010-1234-5678" style="width: 100%; height: 48px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text-main); padding: 0 16px;">
         </div>
 
-        <button class="action-btn" id="orderLookupBtn" style="width: 100%; height: 50px; font-weight: 700; font-size:1.0625rem;">
-          조회하기
+        <button class="action-btn" id="orderLookupBtn" style="width: 100%; height: 52px; font-weight: 700; font-size:1.0625rem;">
+          주문 조회하기
         </button>
       </div>
 
@@ -1031,7 +952,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <div class="cart-drawer-overlay" id="cartDrawerOverlay">
     <div class="cart-drawer" id="cartDrawer">
       <div class="cart-drawer-header">
-        <h3 class="cart-drawer-title">🛒 장바구니</h3>
+        <h3 class="cart-drawer-title">장바구니</h3>
         <button class="cart-drawer-close" id="cartDrawerCloseBtn" aria-label="장바구니 닫기">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -1048,12 +969,12 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
           <span>선택 품목 수량</span>
           <span id="cartSummaryQty" style="font-weight: 700; color: var(--text-main);">0개</span>
         </div>
-        <div class="cart-summary-row total" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">
+        <div class="cart-summary-row total" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color);">
           <span>총 예상 금액</span>
           <span class="cart-summary-total-price" id="cartSummaryTotalPrice" style="font-weight: 800; color: var(--accent); font-size:1.1875rem;">0원</span>
         </div>
         <button class="action-btn cart-checkout-btn" id="cartCheckoutBtn" style="margin-top: 16px; width: 100%;">
-          📦 선택 상품 결제 진행하기
+          결제하기
         </button>
       </div>
     </div>
@@ -1068,7 +989,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
       
       <div style="display: block !important; padding-top: 5px; text-align: left; width: 100%;">
         <h3 style="font-size:1.1875rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-          📱 내 폰 eSIM 호환성 진단
+          내 기기 eSIM 지원 확인
         </h3>
         
         <p style="font-size:0.84375rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; text-align: left;">
@@ -1104,28 +1025,28 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
 
         <!-- 4. 내 폰에서 직접 확인하는 방법 (가로 배치형 카드 블록) -->
         <div style="margin-top: 20px; border-top: 1px solid rgba(0, 0, 0, 0.08); padding-top: 16px; text-align: left;">
-          <span class="checkout-label" style="font-size:0.84375rem; font-weight: 700; margin-bottom: 12px; display: block; color: var(--text-muted);">💡 내 폰에서 직접 3초만에 확인하는 방법</span>
+          <span class="checkout-label" style="font-size:0.84375rem; font-weight: 700; margin-bottom: 12px; display: block; color: var(--text-muted);">내 기기에서 직접 확인하는 방법</span>
           
           <div class="diag-horizontal-guides" style="display: flex; flex-direction: column; gap: 8px;">
             <!-- Row 1: 키패드 -->
             <div style="background: rgba(0, 0, 0, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size:1.0625rem; flex-shrink: 0;">📞</span>
+              
               <div style="font-size:0.75rem; color: var(--text-muted); line-height: 1.4;">
                 <strong style="color: var(--text-main); margin-right: 6px;">키패드 다이얼:</strong> 기본 전화 앱 키패드에서 <strong>*#06#</strong> 입력 후 화면에 <strong>EID 항목</strong>이 노출되면 지원
               </div>
             </div>
             <!-- Row 2: 아이폰 -->
             <div style="background: rgba(0, 0, 0, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size:1.0625rem; flex-shrink: 0;">🍎</span>
+              
               <div style="font-size:0.75rem; color: var(--text-muted); line-height: 1.4;">
-                <strong style="color: var(--text-main); margin-right: 6px;">iPhone 설정:</strong> <strong>설정 ➡️ 셀룰러</strong> 메뉴 내에 파란색 <strong>[eSIM 추가]</strong> 요금제 추가 버튼 유무 확인
+                <strong style="color: var(--text-main); margin-right: 6px;">iPhone 설정:</strong> <strong>설정 → 셀룰러</strong> 메뉴 내에 파란색 <strong>[eSIM 추가]</strong> 요금제 추가 버튼 유무 확인
               </div>
             </div>
             <!-- Row 3: 갤럭시 -->
             <div style="background: rgba(0, 0, 0, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size:1.0625rem; flex-shrink: 0;">🤖</span>
+              
               <div style="font-size:0.75rem; color: var(--text-muted); line-height: 1.4;">
-                <strong style="color: var(--text-main); margin-right: 6px;">Galaxy 설정:</strong> <strong>설정 ➡️ 연결 ➡️ SIM 관리자</strong>에서 <strong>[eSIM 추가]</strong> 항목 버튼 존재 여부 확인
+                <strong style="color: var(--text-main); margin-right: 6px;">Galaxy 설정:</strong> <strong>설정 → 연결 → SIM 관리자</strong>에서 <strong>[eSIM 추가]</strong> 항목 버튼 존재 여부 확인
               </div>
             </div>
           </div>
@@ -1239,7 +1160,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <div class="precaution-overlay" id="precautionModal">
     <div class="precaution-container" style="background: var(--bg-secondary); width: 90%; max-width: 500px; border-radius: var(--radius-md); border: 1px solid var(--border-color); padding: 24px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; position: relative;">
       <h3 style="font-size:1.1875rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-        🚨 구매 전 필수 주의사항 안내
+        구매 전 확인해 주세요
       </h3>
       
       <div id="precautionContent" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
@@ -1266,11 +1187,11 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
     <div class="checkout-container">
       <!-- Step 1: Input Info -->
       <div id="checkoutStepInput">
-        <h3 class="checkout-title">📩 eSIM을 어디로 보내드릴까요?</h3>
+        <h3 class="checkout-title">QR을 받을 연락처를 알려주세요</h3>
         
         <!-- Selected Items Summary List -->
         <div class="checkout-form-group" style="background: var(--bg-secondary); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 20px;">
-          <span style="font-weight: 700; color: var(--text-main); font-size:0.9375rem; display: block; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">🛒 결제 상품 목록</span>
+          <span style="font-weight: 700; color: var(--text-main); font-size:0.9375rem; display: block; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">주문 상품</span>
           <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; padding-right: 4px;">
             <!-- Rendered dynamically by app.js -->
           </div>
@@ -1289,7 +1210,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         
         <!-- Dynamic Carrier Activation Date Input (For Orange Spain, etc.) -->
         <div class="checkout-form-group" id="checkoutActivationDateGroup" style="display: none; margin-top: 20px;">
-          <label class="checkout-label" for="checkoutActivationDate">📅 현지 개통 희망일 지정 (필수)</label>
+          <label class="checkout-label" for="checkoutActivationDate">현지 개통 희망일 지정 (필수)</label>
           <input type="date" class="checkout-input" id="checkoutActivationDate" style="padding: 0 16px; width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-sm); height: 48px; background: var(--bg-tertiary); color: var(--text-main); font-size:0.9375rem;">
           <div id="activationDateHint" style="display:none; margin-top:9px; padding:10px 13px; background:linear-gradient(165deg,#FFFFFF,#FFF9F3); border:1px dashed rgba(241,105,13,0.3); border-radius:12px; font-size:0.84375rem; font-weight:600; color:#8a7a6d; line-height:1.55; word-break:keep-all;"></div>
           <p style="font-size: 0.75rem; color: var(--accent-warning); margin-top: 6px; line-height: 1.4; font-weight: 500;">
@@ -1305,24 +1226,21 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
           <span class="pay-method-label">결제 수단 선택</span>
           <div class="pay-method-options">
             <div class="pay-method-btn kakao selected" data-method="kakaopay">
-              <span style="font-size:1.0625rem;">💛</span> 카카오페이
+              카카오페이
             </div>
             <!-- 신용·체크카드: 카드 PG 계약 완료 후 오픈 (카카오페이 단독 심사 요건으로 임시 제거) -->
           </div>
         </div>
 
         <!-- 24시간 긴급 안심 케어 무료 보증 뱃지 -->
-        <div class="safety-care-badge" style="margin-top: 16px; padding: 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-md); display: flex; align-items: flex-start; gap: 8px; text-align: left;">
-          <span style="font-size:1.1875rem; margin-top: -2px;">🛡️</span>
-          <div>
-            <span style="font-weight: 700; color: #10b981; font-size:0.84375rem;">24시간 긴급 안심 케어 보증 포함</span>
-            <p style="font-size:0.75rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4;">현지 공항 도착 후 데이터 연결 장애 발생 시 24시간 카카오 채널을 통해 즉시 1:1 기술 지원을 보장하며, 문제 미해결 시 100% 전액 환불해 드립니다. 출국 전 안심하고 등록하세요.</p>
-          </div>
+        <div class="safety-care-badge" style="margin-top: 16px; padding: 12px; background: var(--jd-success-bg); border: none; border-radius: var(--radius-md); text-align: left;">
+          <span style="font-weight: 700; color: var(--jd-success-deep); font-size:0.84375rem;">24시간 케어 포함</span>
+          <p style="font-size:0.75rem; color: var(--text-muted); margin-top: 2px; line-height: 1.5;">현지에서 연결 장애가 생기면 카카오톡으로 24시간 1:1 지원해 드려요. 해결되지 않으면 100% 환불해 드려요.</p>
         </div>
 
         <!-- 국가별 맞춤형 스펙/주의사항 요약 카드 -->
         <div id="checkoutPrecautionCard" style="margin-top: 16px; padding: 16px; background: rgba(217, 119, 6, 0.05); border: 1px solid rgba(217, 119, 6, 0.2); border-radius: var(--radius-md); text-align: left; display: none;">
-          <span style="font-weight: 800; color: var(--accent-warning); font-size:0.9375rem; display: block; margin-bottom: 8px;">⚠️ [선택 상품 필수 확인사항]</span>
+          <span style="font-weight: 800; color: var(--accent-warning); font-size:0.9375rem; display: block; margin-bottom: 8px;">선택 상품 필수 확인사항</span>
           <ul id="checkoutPrecautionList" style="margin: 0; padding-left: 18px; font-size:0.84375rem; color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; gap: 6px;">
             <!-- Dynamic elements generated by app.js -->
           </ul>
@@ -1368,8 +1286,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
       <div id="checkoutStepReceipt" class="receipt-box">
         <div class="receipt-header">
           <div class="success-icon">✓</div>
-          <h3 class="checkout-title" style="margin-bottom: 4px;">결제가 완료되었습니다! 🛫</h3>
-          <p style="font-size:0.84375rem; color: var(--text-muted);">카카오톡으로 <strong style="color: var(--accent);">eSIM 발급 링크</strong>를 보내드려요.<br>링크에서 원하시는 시점에 발급하시면 됩니다 — 발급 전에는 100% 환불 가능해요.</p>
+          <h3 class="checkout-title" style="margin-bottom: 4px;">결제가 완료됐어요</h3>
+          <p style="font-size:0.84375rem; color: var(--text-muted);">카카오톡으로 <strong style="color: var(--jd-brand-700);">eSIM 발급 링크</strong>를 보내드려요.<br>링크에서 원하는 시점에 발급하면 돼요 — 발급 전에는 100% 환불돼요.</p>
         </div>
         
         <!-- Dynamic purchased items list with their QR codes -->
@@ -1405,7 +1323,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <section id="view-terms" class="page-view">
     <div class="container" style="max-width: 800px; padding-top: 40px; padding-bottom: 60px;">
       <div class="section-header" style="margin-bottom: 30px;">
-        <h2 class="section-title">📄 이용약관</h2>
+        <h2 class="section-title">이용약관</h2>
         <p class="section-desc">JDISIM 사이트 이용에 관한 기본적인 규칙과 권리 및 의무 사항을 고지합니다.</p>
       </div>
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size:0.9375rem;">
@@ -1421,7 +1339,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">제 4 조 (회사의 의무)</h3>
         <p style="margin-bottom: 24px;">회사는 본 약관이 정하는 바에 따라 지속적이고 안정적인 서비스를 제공하는 데 최선을 다하며, 이용자의 개인 정보를 보호하기 위해 보안 시스템을 철저히 운영합니다.</p>
         
-        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">공고일자: 2026년 07월 07일 / 시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="terms.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 이용약관 전문 보기 →</a></p>
+        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">공고일자: 2026년 07월 07일 / 시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="terms.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">이용약관 전문 보기</a></p>
       </div>
     </div>
   </section>
@@ -1430,7 +1348,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <section id="view-privacy" class="page-view">
     <div class="container" style="max-width: 800px; padding-top: 40px; padding-bottom: 60px;">
       <div class="section-header" style="margin-bottom: 30px;">
-        <h2 class="section-title">🔒 개인정보처리방침</h2>
+        <h2 class="section-title">개인정보처리방침</h2>
         <p class="section-desc">회사는 이용자의 개인정보를 소중히 다루며, 관련 법령을 엄격히 준수합니다.</p>
       </div>
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size:0.9375rem;">
@@ -1453,7 +1371,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">5. 개인정보 보호책임자</h3>
         <p style="margin-bottom: 24px;">• 성명: 김성권<br>• 직책: 대표자<br>• 연락처 / 이메일: jdisim@naver.com</p>
         
-        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="privacy.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 개인정보처리방침 전문 보기 →</a></p>
+        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="privacy.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">개인정보처리방침 전문 보기</a></p>
       </div>
     </div>
   </section>
@@ -1462,7 +1380,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <section id="view-refunds" class="page-view">
     <div class="container" style="max-width: 800px; padding-top: 40px; padding-bottom: 60px;">
       <div class="section-header" style="margin-bottom: 30px;">
-        <h2 class="section-title">🔄 이용 및 환불 규정</h2>
+        <h2 class="section-title">취소·환불 규정</h2>
         <p class="section-desc">eSIM 상품의 특성상 적용되는 환불 및 교환 기준에 대해 안내해 드립니다.</p>
       </div>
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 40px; box-shadow: var(--shadow-md); color: var(--text-muted); line-height: 1.8; font-size:0.9375rem;">
@@ -1475,7 +1393,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         <h3 style="color: var(--text-main); font-size:1.1875rem; margin-bottom: 12px; font-weight: 700;">3. 기술 장애 신고 및 환불 절차</h3>
         <p style="margin-bottom: 24px;">현지에서 데이터 연결 장애 발생 시, 카카오톡 채널 '@제이디아이심'을 통해 즉시 고장 화면 스크린샷과 함께 장애 접수를 해주셔야 합니다. 현지에서 연락 없이 귀국하신 후에는 장애 사실 확인이 불가능하여 환불 처리가 어렵습니다.</p>
         
-        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="refund.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">📄 취소·환불 규정 전문 보기 →</a></p>
+        <p style="font-size:0.84375rem; color: #94a3b8; margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">시행일자: 2026년 07월 13일 (개정)</p><p style="margin-top:16px;"><a href="refund.html" style="color:#F1690D;font-weight:800;text-decoration:underline;text-underline-offset:3px;">취소·환불 규정 전문 보기</a></p>
       </div>
     </div>
   </section>
@@ -1484,8 +1402,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <section id="view-partnership" class="page-view">
     <div class="container" style="max-width: 600px; padding-top: 40px; padding-bottom: 60px;">
       <div class="section-header" style="margin-bottom: 30px;">
-        <h2 class="section-title">🤝 제휴 및 파트너십 문의</h2>
-        <p class="section-desc">여행업체, 인플루언서, 기업 및 대량 구매 문의 등 소중한 비즈니스 제안을 기다립니다.</p>
+        <h2 class="section-title">제휴 문의</h2>
+        <p class="section-desc">여행업체, 인플루언서, 기업·대량 구매 제안을 보내주세요. 영업일 기준 24시간 안에 회신드려요.</p>
       </div>
       <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 35px; box-shadow: var(--shadow-md);">
         <form id="partnershipForm" onsubmit="event.preventDefault(); submitPartnershipInquiry();">
@@ -1509,8 +1427,8 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
             <label class="checkout-label" for="partnerDetails">제휴 및 문의 상세 내용</label>
             <textarea id="partnerDetails" placeholder="제안 내용이나 대량 구매 수량 등을 구체적으로 남겨주세요" required style="width: 100%; height: 150px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text-main); padding: 12px 16px; font-family: inherit; line-height: 1.6; resize: none;"></textarea>
           </div>
-          <button type="submit" class="action-btn" style="width: 100%; height: 50px; font-size:1.0625rem;">
-            ✉️ 제휴 문의 제출하기
+          <button type="submit" class="action-btn" style="width: 100%; height: 52px; font-size:1.0625rem;">
+            문의 보내기
           </button>
         </form>
       </div>
@@ -1520,26 +1438,23 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <footer class="footer">
     <div class="container footer-inner">
       <div>
-        <div class="footer-logo">JDISIM</div>
         <div class="footer-links">
           <a href="javascript:void(0)" onclick="switchView('terms')" class="footer-link">이용약관</a>
-          <a href="javascript:void(0)" onclick="switchView('privacy')" class="footer-link">개인정보처리방침</a>
-          <a href="javascript:void(0)" onclick="switchView('refunds')" class="footer-link">이용 및 환불 규정</a>
+          <a href="javascript:void(0)" onclick="switchView('privacy')" class="footer-link strong">개인정보처리방침</a>
+          <a href="javascript:void(0)" onclick="switchView('refunds')" class="footer-link">취소·환불 규정</a>
           <a href="/guide/countries" class="footer-link">국가별 가이드</a>
-          <a href="javascript:void(0)" onclick="switchView('partnership')" class="footer-link">제휴문의</a>
-          
+          <a href="javascript:void(0)" onclick="switchView('partnership')" class="footer-link">제휴 문의</a>
         </div>
         <p class="footer-info">
           상호명: 버튼(Butt'on) | 대표자: 김성권 | 사업자등록번호: 760-15-01594<br>
           주소: 서울특별시 성북구 종암로14길 19, 5층 501호(종암동) | 대표전화: 010-9969-3248 | 이메일: jdisim@naver.com<br>
-          통신판매업신고번호: 제 2021-서울성북-0526 호 | 고객센터: 카카오톡 채널 '@제이디아이심' (실시간 채널톡 24시간 상담 가능)
+          통신판매업신고번호: 제 2021-서울성북-0526 호
         </p>
-        <p class="footer-copyright">Copyright © 2026 JDISIM. All Rights Reserved.</p>
-      </div>
-      <div class="footer-sns">
-        <a href="#" class="sns-link" aria-label="Blog">B</a>
-        <a href="#" class="sns-link" aria-label="Instagram">I</a>
-        <a href="#" class="sns-link" aria-label="YouTube">Y</a>
+        <div class="jd-footer-care">
+          <span>카카오톡 상담 24시간 접수</span>
+          <a class="jd-btn-sec" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">카카오톡 채널 열기</a>
+        </div>
+        <p class="footer-copyright">© JDISIM · 결제는 포트원(PG) 안전결제로 처리돼요</p>
       </div>
     </div>
   </footer>
@@ -1585,8 +1500,60 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="jd-devices.js?v=20260717b"></script>
-  <script src="app.js?v=20260811b"></script>
-  <script src="globe.js?v=20260717a" defer></script>
+  <script src="app.js?v=20260811c"></script>
+  <!-- globe.js 로드 제거 (정본 §7-A-2): 지구본 섹션은 display:none 보존 -->
+  <!-- 히어로 검색 프록시 (정본 §2-1): #heroSearchInput → 서제스트 → 스토어 검색 위임 -->
+  <script>
+    (function () {
+      var inp = document.getElementById('heroSearchInput');
+      var sg = document.getElementById('heroSuggest');
+      if (!inp || !sg) return;
+      var FLAGS = {'일본':'🇯🇵','베트남':'🇻🇳','태국':'🇹🇭','대만':'🇹🇼','미국':'🇺🇸','중국':'🇨🇳','홍콩':'🇭🇰','싱가포르':'🇸🇬','말레이시아':'🇲🇾','인도네시아':'🇮🇩','필리핀':'🇵🇭','괌':'🇬🇺','사이판':'🇲🇵','호주':'🇦🇺','뉴질랜드':'🇳🇿','유럽':'🇪🇺','몰디브':'🇲🇻','몽골':'🇲🇳','라오스':'🇱🇦','캄보디아':'🇰🇭','인도':'🇮🇳','한국':'🇰🇷'};
+      function dataset() {
+        var d = window.PRODUCTS_DATA || [];
+        var map = {};
+        d.forEach(function (c) {
+          var name = c.country || '';
+          if (!name) return;
+          var price = Number(c.min_price) || 0;
+          if (!map[name]) map[name] = { name: name, price: price };
+          else if (price && (!map[name].price || price < map[name].price)) map[name].price = price;
+        });
+        return Object.keys(map).map(function (k) { return map[k]; });
+      }
+      function hide() { sg.classList.remove('on'); }
+      function go(v) {
+        v = String(v || '').trim();
+        hide();
+        if (!v) { if (window.switchView) window.switchView('store'); return; }
+        if (typeof window.jdisimGoCountry === 'function') { window.jdisimGoCountry(v); return; }
+        if (window.switchView) window.switchView('store');
+        var si = document.getElementById('storeSearchInput');
+        if (si) { si.value = v; si.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' })); }
+      }
+      function show(list) {
+        if (!list.length) return hide();
+        sg.innerHTML = list.slice(0, 6).map(function (c) {
+          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '🌏') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '원부터</i>' : '') + '</button>';
+        }).join('');
+        sg.classList.add('on');
+        sg.querySelectorAll('.jd-sg').forEach(function (b) {
+          b.onclick = function () { inp.value = b.getAttribute('data-c'); go(inp.value); inp.blur(); };
+        });
+      }
+      inp.addEventListener('input', function () {
+        var v = inp.value.trim();
+        if (!v) return hide();
+        var q = v.toLowerCase();
+        show(dataset().filter(function (c) { return c.name.toLowerCase().indexOf(q) !== -1; }));
+      });
+      inp.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { go(inp.value); inp.blur(); }
+        if (e.key === 'Escape') hide();
+      });
+      document.addEventListener('click', function (e) { if (!sg.contains(e.target) && e.target !== inp) hide(); });
+    })();
+  </script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
       var GLOBE_HOST_ID = 'pcGlobe';
@@ -1614,7 +1581,6 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         }, 2500);
       }
 
-      if (!window.JDISIM_GLOBE) { console.error('❌ globe.js가 로드되지 않았습니다 — 서버에 파일이 있는지, 캐시를 지웠는지 확인'); }
       if (window.JDISIM_GLOBE) {
         JDISIM_GLOBE.mount('pcGlobe', {
           mobile: false,
@@ -1684,37 +1650,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
     });
   </script>
 
-  <!-- 채널톡(Channel.io) 실시간 상담 위젯 연동 -->
-  <script>
-    (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
-
-    ChannelIO('boot', {
-      "pluginKey": "YOUR_CHANNEL_IO_PLUGIN_KEY" // 관리자 홈에서 발급받은 플러그인 키로 대체해 주세요.
-    });
-  </script>
-  <!-- 카카오톡 상담 플로팅 버튼: 채널 주소 확정 시 href만 교체 -->
-  <script>
-    // ===== 콘텐츠 보호 (우클릭/단축키/드래그 억제 — 완전 차단은 아님) =====
-    (function () {
-      document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-      document.addEventListener('keydown', function (e) {
-        var k = (e.key || '').toUpperCase();
-        if (k === 'F12' ||
-            (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C')) ||
-            (e.metaKey && e.altKey && (k === 'I' || k === 'J' || k === 'C')) ||
-            ((e.ctrlKey || e.metaKey) && (k === 'U' || k === 'S'))) {
-          e.preventDefault();
-        }
-      });
-      document.addEventListener('dragstart', function (e) {
-        if (e.target && e.target.tagName === 'IMG') e.preventDefault();
-      });
-      try {
-        console.log('%c⚠️ 잠깐!', 'color:#F1690D;font-size:28px;font-weight:900;');
-        console.log('%c본 사이트의 코드·디자인·데이터는 JDISIM의 자산입니다.\n무단 복제 및 크롤링은 저작권법에 따라 법적 책임이 따를 수 있습니다.', 'font-size:13px;color:#334155;');
-      } catch (e) {}
-    })();
-  </script>
+  <!-- 채널톡 더미 키 부트 제거 (정본 §7-A-3) · 콘텐츠 보호 강경판 제거 (§7-A-4 — 하단 이미지 한정 경량판 1벌만 잔류) -->
   <script>
     (function(){
       var inp = document.getElementById('storeSearchInput');
@@ -1727,12 +1663,14 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
         var d = window.productsData || window.PRODUCTS_DATA || [];
         return d.map(function(c){ return { name: c.country || c.name || '', price: c.min_price || c.minPrice || 0 }; }).filter(function(c){ return c.name; });
       }
-      function doSearch(v){ if (typeof renderStoreProducts === 'function') renderStoreProducts('all', v); }
+      // (정본 §7-D-18) 미정의 renderStoreProducts 호출 제거 — app.js keyup(Enter) 핸들러에 위임
+      var syncing = false;
+      function doSearch(v){ if (syncing) return; syncing = true; try { inp.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' })); } finally { syncing = false; } }
       function hide(){ sg.classList.remove('on'); }
       function show(list){
         if (!list.length) return hide();
         sg.innerHTML = list.slice(0, 6).map(function(c){
-          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0~</i>' : '') + '</button>';
+          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0\uBD80\uD130</i>' : '') + '</button>';
         }).join('');
         sg.classList.add('on');
         sg.querySelectorAll('.jd-sg').forEach(function(b){
@@ -1755,115 +1693,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/part
 </script>
   <script src="romi-bot.js?v=20260719a" defer></script>
   <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
-  <script>
-  /* PC 프리미엄 스냅 v2 (ROMI Journey Scroll) — 인스턴트 페이저
-     휠/키 입력을 가로채 네이티브 스크롤 모션 없이 페이지가 즉시 전환됩니다.
-     마지막 패널(케어) 이후는 자유 스크롤(FAQ·가이드·푸터), 경계에서 위로 휠하면 페이저 복귀. */
-  (function () {
-    if (matchMedia('(max-width: 899px)').matches) return;
-    var ids = ['.hero-video-frame', '.globe-section', '.app-info-section', '.store-section'];
-    var labels = ['홈', '지구', '왜 JDISIM', '여행지'];
-    var panels = [];
-    ids.forEach(function (sel) {
-      var el = document.querySelector('#view-home ' + sel);
-      if (el) { el.classList.add('pc-panel'); panels.push(el); }
-    });
-    // 패널 사이 짧은 스트립이 스냅 화면에 겹쳐 보이지 않게 인접 패널 내부로 이동
-    var strip = document.querySelector('#view-home .pc-trust-strip');
-    var heroP = document.querySelector('#view-home .hero-video-frame');
-    if (strip && heroP) {
-      strip.style.cssText = 'position:absolute;left:0;right:0;bottom:30px;margin:0 auto;z-index:6;padding:0 32px;max-width:1160px;';
-      heroP.appendChild(strip);
-    }
-    var hot = document.querySelector('#view-home .hotdest-section');
-    var appP = document.querySelector('#view-home .app-info-section');
-    if (hot && appP) { hot.style.margin = '0 0 18px'; appP.insertBefore(hot, appP.firstChild); }
-    if (!panels.length) return;
-    document.documentElement.classList.add('pc-snap');
-    document.documentElement.classList.remove('snap-on'); // 구 CSS 스냅 전면 해제 — 이동은 페이저가 전담
-
-    function pagerOn() {
-      var home = document.getElementById('view-home');
-      return home && home.classList.contains('active') && document.documentElement.classList.contains('pc-snap');
-    }
-    var lastP = panels[panels.length - 1];
-    function tailTop() { return lastP.offsetTop + lastP.offsetHeight; } // 자유 구역 시작점
-    var lock = false;
-    var dotEls = [];
-    // 전환 연출: 크림 그라데이션 베일 + 새 패널 떠오름
-    var veil = document.createElement('div'); veil.className = 'pg-veil';
-    document.body.appendChild(veil);
-    function animateIn(el) {
-      panels.forEach(function (p) { p.classList.remove('pg-in'); });
-      if (el) { void el.offsetWidth; el.classList.add('pg-in'); }
-      veil.classList.remove('on'); void veil.offsetWidth; veil.classList.add('on');
-    }
-    function setDots(i) { dotEls.forEach(function (d, k) { d.classList.toggle('active', k === i); }); }
-    function jump(i) {
-      i = Math.max(0, Math.min(panels.length, i));
-      var y = i < panels.length ? panels[i].offsetTop : tailTop();
-      lock = true;
-      window.scrollTo({ top: y, behavior: 'auto' }); // 인스턴트 점프 — 스크롤 모션 없음
-      animateIn(i < panels.length ? panels[i] : null); // 대신 페이지가 "떠오르는" 연출
-      setDots(Math.min(i, panels.length - 1));
-      setTimeout(function () { lock = false; }, 720);
-    }
-    function idx() {
-      var y = window.scrollY;
-      if (y >= tailTop() - 8) return panels.length;
-      var best = 0;
-      panels.forEach(function (p, i) { if (Math.abs(p.offsetTop - y) < Math.abs(panels[best].offsetTop - y)) best = i; });
-      return best;
-    }
-    window.addEventListener('wheel', function (e) {
-      if (!pagerOn()) return;
-      var y = window.scrollY, b = tailTop();
-      if (y >= b - 8) {
-        // 자유 구역: 자연 스크롤. 단, 경계에서 위로 휠하면 마지막 페이지로 복귀
-        if (e.deltaY < 0 && y <= b + 8 && !lock) { e.preventDefault(); jump(panels.length - 1); }
-        return;
-      }
-      e.preventDefault(); // 패널 구역: 네이티브 스크롤 모션 전면 차단
-      if (lock || Math.abs(e.deltaY) < 12) return;
-      jump(idx() + (e.deltaY > 0 ? 1 : -1));
-    }, { passive: false });
-    window.addEventListener('keydown', function (e) {
-      if (!pagerOn() || lock) return;
-      var t = e.target; if (t && /INPUT|TEXTAREA|SELECT/.test(t.tagName)) return;
-      if (window.scrollY >= tailTop() - 8) return;
-      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); jump(idx() + 1); }
-      else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); jump(idx() - 1); }
-    });
-
-    var dots = document.createElement('div'); dots.className = 'pc-dots';
-    dotEls = panels.map(function (p, i) {
-      var d = document.createElement('button');
-      d.className = 'pc-dot'; d.type = 'button';
-      d.setAttribute('data-label', labels[i] || '');
-      d.addEventListener('click', function () { jump(i); });
-      dots.appendChild(d); return d;
-    });
-    document.body.appendChild(dots);
-    setDots(0);
-    requestAnimationFrame(function () { animateIn(panels[0]); }); // 첫 진입도 같은 연출로
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) {
-        es.forEach(function (en) {
-          if (!en.isIntersecting) return;
-          setDots(panels.indexOf(en.target));
-        });
-      }, { threshold: 0.5 });
-      panels.forEach(function (p) { io.observe(p); });
-    }
-    // 홈이 아닌 뷰에서는 스냅 해제 (뷰 전환 감지)
-    var mo = new MutationObserver(function () {
-      var home = document.getElementById('view-home');
-      document.documentElement.classList.toggle('pc-snap', home && home.classList.contains('active'));
-    });
-    var home = document.getElementById('view-home');
-    if (home) mo.observe(home, { attributes: true, attributeFilter: ['class'] });
-  })();
-  </script>
+  <!-- PC 인스턴트 페이저 v2 제거 (정본 §7-A-5): 스크롤은 브라우저 네이티브 -->
   <script>
   /* 콘텐츠 보호 (경량): 이미지 우클릭·드래그 억제 + 저작권 콘솔 고지 */
   (function () {

@@ -148,12 +148,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (cart.length === 0) {
       cartDrawerBody.innerHTML = `
         <div class="cart-empty-state">
-          <div class="cart-empty-icon">🛒</div>
-          <div class="cart-empty-text">장바구니가 비어 있습니다.<br>원하는 요금제를 담아보세요!</div>
+          <div class="cart-empty-icon"><img src="images/fox-hello.webp" alt="" style="width:72px;" onerror="this.parentNode.textContent=''"></div>
+          <div class="cart-empty-text">장바구니가 비어 있어요.<br>원하는 요금제를 담아 보세요.</div>
         </div>
       `;
       cartSummaryQty.textContent = '0개';
       cartSummaryTotalPrice.textContent = '0원';
+      cartCheckoutBtn.textContent = '결제하기';
       cartCheckoutBtn.disabled = true;
       cartCheckoutBtn.style.opacity = '0.5';
       cartCheckoutBtn.style.cursor = 'not-allowed';
@@ -198,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="cart-item-controls">
           <div class="cart-item-qty">
             <button class="cart-qty-btn minus" data-index="${index}">-</button>
-            <span style="font-weight: 700; color: var(--accent); min-width: 14px; text-align: center;">${item.quantity}</span>
+            <span style="font-weight: 700; color: var(--text-main); min-width: 14px; text-align: center;">${item.quantity}</span>
             <button class="cart-qty-btn plus" data-index="${index}">+</button>
           </div>
           <div class="cart-item-price">${itemPrice.toLocaleString()}원</div>
@@ -233,6 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     cartSummaryQty.textContent = `${totalQuantity}개`;
     cartSummaryTotalPrice.textContent = `${totalCartPrice.toLocaleString()}원`;
+    cartCheckoutBtn.textContent = `${totalCartPrice.toLocaleString()}원 결제하기`;
   }
 
   // 2. DOM 요소 캐싱
@@ -341,7 +343,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       productsData = window.PRODUCTS_DATA;
     } else {
       console.error('products.js 데이터 로드 실패');
-      productGrid.innerHTML = `<div class="no-results"><div class="no-results-icon">⚠️</div>데이터를 불러올 수 없습니다. products.js 파일의 데이터 정의를 확인하세요.</div>`;
+      productGrid.innerHTML = `<div class="no-results">데이터를 불러올 수 없습니다. products.js 파일의 데이터 정의를 확인하세요.</div>`;
       return;
     }
     
@@ -795,6 +797,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     return Object.values(grouped);
   }
 
+  // 8.9 국기 이모지 (정본 §3-1: 국가 사진·그라데이션 폐기 → 국기 중심 데이터 카드)
+  const JD_CARD_FLAGS = {
+    '일본': '🇯🇵', '베트남': '🇻🇳', '태국': '🇹🇭', '대만': '🇹🇼', '미국': '🇺🇸', '중국': '🇨🇳',
+    '홍콩': '🇭🇰', '마카오': '🇲🇴', '싱가포르': '🇸🇬', '싱가폴': '🇸🇬', '말레이시아': '🇲🇾',
+    '인도네시아': '🇮🇩', '필리핀': '🇵🇭', '괌': '🇬🇺', '사이판': '🇲🇵', '호주': '🇦🇺',
+    '뉴질랜드': '🇳🇿', '유럽': '🇪🇺', '몰디브': '🇲🇻', '몽골': '🇲🇳', '라오스': '🇱🇦',
+    '캄보디아': '🇰🇭', '인도': '🇮🇳', '한국': '🇰🇷', '대한민국': '🇰🇷', '캐나다': '🇨🇦',
+    '튀르키예': '🇹🇷', '터키': '🇹🇷', '영국': '🇬🇧', '쓰리': '🇬🇧', 'THREE': '🇬🇧',
+    '스페인': '🇪🇸', '프랑스': '🇫🇷', '보다폰': '🇪🇸', '오렌지스페인': '🇪🇸', '오렌지프랑스': '🇫🇷',
+    '러시아': '🇷🇺', '사우디': '🇸🇦', 'UAE': '🇦🇪', '아랍': '🇦🇪', '카타르': '🇶🇦',
+    '오만': '🇴🇲', '쿠웨이트': '🇰🇼', '바레인': '🇧🇭', '남아공': '🇿🇦', '남아프리카': '🇿🇦',
+    '케냐': '🇰🇪', '모로코': '🇲🇦', '멕시코': '🇲🇽', '브라질': '🇧🇷', '칠레': '🇨🇱',
+    '스리랑카': '🇱🇰', '방글라데시': '🇧🇩', '파키스탄': '🇵🇰'
+  };
+  function jdFlagOf(country) {
+    const c = String(country || '');
+    for (const key in JD_CARD_FLAGS) {
+      if (c.includes(key)) return JD_CARD_FLAGS[key];
+    }
+    return '🌏';
+  }
+
   // 9. 홈화면 실시간 인기 상품 렌더링 (국가 기준으로 그룹화하여 4개 추출)
   function renderFeatured() {
     featuredGrid.innerHTML = '';
@@ -812,41 +836,33 @@ document.addEventListener('DOMContentLoaded', async () => {
       selected = allGrouped.slice(0, 4);
     }
     
-    selected.forEach(g => {
-      const cardBg = getCardBackground(g.category, g.country);
-      const carriersStr = g.carriers.map(c => c.carrier).join(' / ');
+    selected.forEach((g, gi) => {
+      const carriersStr = g.carriers.map(c => window.cleanCarrierName(c.carrier)).join(' · ');
       const speedsStr = Array.from(g.network_speeds).join('/');
-      const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화가능' : '데이터전용';
-      
-      const imgUrl = getCountryImageUrl(g.country);
-      const imgHTML = imgUrl 
-        ? `<img src="${imgUrl}" class="card-img" alt="${g.country} 여행지 이미지">`
-        : `<div style="font-size: 2rem; font-weight: 900; color: rgba(255, 255, 255, 0.15); text-transform: uppercase; letter-spacing: 2px; text-align: center; pointer-events: none;">${window.jdCountryLabel(g.country)}</div>`;
+      const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화 가능' : '데이터 전용';
+      const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';
 
       const card = document.createElement('article');
       card.className = 'product-card';
       card.innerHTML = `
-        <div class="card-img-wrap" style="background: ${cardBg}; display: flex; align-items: center; justify-content: center; position: relative;">
-          ${imgHTML}
+        <div class="card-img-wrap">
+          <span class="card-flag">${jdFlagOf(g.country)}</span>
           <div class="card-tags">
-            <span class="card-tag hot">인기 상품</span>
+            ${gi === 0 ? '<span class="card-tag hot">판매 1위</span>' : ''}
+            <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType === '로컬망' ? '현지망' : '로밍망'}</span>
+            ${g.has_unlimited ? '<span class="card-tag best">무제한</span>' : ''}
           </div>
         </div>
         <div class="card-body">
-          <div class="card-title">
-            <span>${window.jdCountryLabel(g.country)}</span>
-            <span class="card-carrier" style="font-size: 0.75rem;">${carriersStr}</span>
-          </div>
+          <h3 class="card-title">${window.jdCountryLabel(g.country)} eSIM <span class="card-carrier">${carriersStr}</span></h3>
           <div class="card-specs">
-            <div class="card-spec-item">📶 ${speedsStr}</div>
-            <div class="card-spec-item">📞 ${callsStr}</div>
+            <span class="card-spec-item">${speedsStr}</span>
+            <span class="card-spec-item">${callsStr}</span>
             ${actChipHtml(g)}
           </div>
           <div class="card-footer">
-            <div>
-              <span class="card-price-label">최저가 요금</span>
-              <div class="card-price">${g.minPrice.toLocaleString()}<span>원 부터</span></div>
-            </div>
+            <span class="card-price-label">최저</span>
+            <span class="card-price jd-price"><b>${g.minPrice.toLocaleString()}</b>원부터</span>
           </div>
         </div>
       `;
@@ -917,50 +933,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (filteredCountries.length === 0) {
       productGrid.innerHTML = `
         <div class="no-results">
-          <div class="no-results-icon">🔍</div>
-          조건에 맞는 국가를 찾지 못했습니다.<br>국가 이름을 다시 확인해 보시거나, 대륙 탭을 클릭하여 요금제를 탐색해 보세요!
+          <img src="images/fox-hello.webp" alt="" onerror="this.remove()">
+          <div>검색 결과가 없어요. 국가 이름을 다시 확인해 주세요.</div>
         </div>`;
       return;
     }
 
     filteredCountries.forEach(g => {
-      const cardBg = getCardBackground(g.category, g.country);
-      const carriersStr = g.carriers.map(c => c.carrier).join(' / ');
+      const carriersStr = g.carriers.map(c => window.cleanCarrierName(c.carrier)).join(' · ');
       const speedsStr = Array.from(g.network_speeds).join('/');
-      const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화가능' : '데이터전용';
+      const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화 가능' : '데이터 전용';
       const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';
-      
-      const imgUrl = getCountryImageUrl(g.country);
-      const imgHTML = imgUrl 
-        ? `<img src="${imgUrl}" class="card-img" alt="${g.country} 여행지 이미지">`
-        : `<div style="font-size: 2.2rem; font-weight: 900; color: rgba(255, 255, 255, 0.15); text-transform: uppercase; letter-spacing: 2px; text-align: center; pointer-events: none; padding: 0 10px;">${window.jdCountryLabel(g.country)}</div>`;
 
       const card = document.createElement('article');
       card.className = 'product-card';
-      
+
       card.innerHTML = `
-        <div class="card-img-wrap" style="background: ${cardBg}; display: flex; align-items: center; justify-content: center; position: relative;">
-          ${imgHTML}
+        <div class="card-img-wrap">
+          <span class="card-flag">${jdFlagOf(g.country)}</span>
           <div class="card-tags">
-            <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType}</span>
+            <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType === '로컬망' ? '현지망' : '로밍망'}</span>
             ${g.has_unlimited ? '<span class="card-tag best">무제한</span>' : ''}
           </div>
         </div>
         <div class="card-body">
-          <div class="card-title">
-            <span>${window.jdCountryLabel(g.country)}</span>
-            <span class="card-carrier" style="font-size: 0.75rem;">${carriersStr}</span>
-          </div>
+          <h3 class="card-title">${window.jdCountryLabel(g.country)} eSIM <span class="card-carrier">${carriersStr}</span></h3>
           <div class="card-specs">
-            <div class="card-spec-item">📶 ${speedsStr}</div>
-            <div class="card-spec-item">📞 ${callsStr}</div>
+            <span class="card-spec-item">${speedsStr}</span>
+            <span class="card-spec-item">${callsStr}</span>
             ${actChipHtml(g)}
           </div>
           <div class="card-footer">
-            <div>
-              <span class="card-price-label">최저가 요금</span>
-              <div class="card-price">${g.minPrice.toLocaleString()}<span>원 부터</span></div>
-            </div>
+            <span class="card-price-label">최저</span>
+            <span class="card-price jd-price"><b>${g.minPrice.toLocaleString()}</b>원부터</span>
           </div>
         </div>
       `;
@@ -1129,11 +1134,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── PC 위저드 v5 (2026-07-20 사장님 지시: 모바일 구조 그대로 — 캘린더→스타일→전 통신사 통합 리스트→구매) ──
   const STYLE_META_PC = {
-    '마음껏': { ic: '🎬', t: '마음껏', s: '무제한·3GB↑·대용량 — 유튜브·핫스팟 자유' },
-    '보통':   { ic: '📱', t: '보통',   s: '매일 1~2GB — SNS·지도·검색 위주' },
-    '가볍게': { ic: '💬', t: '가볍게', s: '1GB 미만 소용량 — 메신저·지도 정도' },
-    '전체':   { ic: '🗂', t: '전체 상품 보기', s: '모든 상품을 직접 비교' }
+    '마음껏': { ic: '', t: '무제한', s: '영상·지도·핫스팟까지 마음껏' },
+    '보통':   { ic: '', t: '매일 1~2GB', s: '지도·검색·SNS 위주면 충분해요' },
+    '가볍게': { ic: '', t: '총 3~10GB', s: '짧은 여행, 가볍게 쓰는 분께' },
+    '전체':   { ic: '', t: '전체 보기', s: '모든 요금제를 직접 비교해요' }
   };
+  const JD_PENCIL_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
   function pcPlanCap(pl) { return String(pl.data_limit || '').replace('매일 ', '').replace('총 ', '').trim(); }
   function pcStyleOf(pl) { // 모바일 styleOf 정본과 동일 규칙
     const cap = pcPlanCap(pl);
@@ -1160,24 +1166,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const step = window.__pcwStep || 1;
     const days = window.__pcwDays, style = window.__pcwStyle;
     const rowBtn = (attrs, main, sub, right) =>
-      `<button type="button" ${attrs} style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 14px;margin-top:8px;border:1.5px solid var(--border-color);border-radius:12px;background:var(--bg-tertiary);cursor:pointer;text-align:left;font:inherit;color:var(--text-main);">
-        <span style="flex:1;min-width:0;"><span style="display:block;font-weight:800;font-size:0.98rem;line-height:1.35;">${main}</span>${sub ? `<span style="display:block;font-size:0.73rem;color:var(--text-muted);margin-top:3px;line-height:1.45;">${sub}</span>` : ''}</span>${right || ''}
+      `<button type="button" ${attrs}>
+        <span style="flex:1;min-width:0;"><span class="pcw-main">${main}</span>${sub ? `<span class="pcw-sub">${sub}</span>` : ''}</span>${right || ''}
       </button>`;
     let chips = '';
-    if (step > 1 && days) chips += `<button type="button" class="pcw-chip" data-step="1" style="font:inherit;font-size:0.78rem;font-weight:800;color:var(--accent);background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);border-radius:999px;padding:6px 12px;cursor:pointer;margin-right:6px;">📅 ${days}일 ✎</button>`;
-    if (step > 2 && style) chips += `<button type="button" class="pcw-chip" data-step="2" style="font:inherit;font-size:0.78rem;font-weight:800;color:var(--accent);background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);border-radius:999px;padding:6px 12px;cursor:pointer;margin-right:6px;">${(STYLE_META_PC[style] || {}).ic || ''} ${style} ✎</button>`;
+    if (step > 1 && days) chips += `<button type="button" class="pcw-chip" data-step="1">${days}일 ${JD_PENCIL_SVG}</button>`;
+    if (step > 2 && style) chips += `<button type="button" class="pcw-chip" data-step="2">${(STYLE_META_PC[style] || {}).t || style} ${JD_PENCIL_SVG}</button>`;
     let body = '';
     if (step === 1) {
       const uni = pcwDursUnion(carrierOptions);
-      body = `<div class="config-section-title" style="margin-top:14px;">📅 여행 날짜를 골라주세요 <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">— 출발·귀국일 두 번이면 끝</span></div>
-        <div id="pcwCal" style="margin-top:8px;"></div><div id="pcwMsg" style="display:none;margin-top:7px;font-size:0.8rem;font-weight:700;line-height:1.55;"></div>
-        <details style="margin-top:10px;"><summary style="list-style:none;cursor:pointer;font-size:0.8rem;font-weight:800;color:#B04A06;">🔢 날짜 없이 일수로 고르기</summary>
-          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:8px;">${uni.map(d => `<button type="button" class="pcw-dur" data-val="${d}" style="min-height:42px;border-radius:999px;border:1.5px solid var(--border-color);background:var(--bg-tertiary);color:var(--text-main);font:inherit;font-size:0.85rem;font-weight:800;cursor:pointer;">${d}일</button>`).join('')}</div>
+      body = `<div class="config-section-title" style="margin-top:14px;">언제 출발하세요? <span class="pcw-sub-note">출발일과 귀국일을 골라 주세요</span></div>
+        <div id="pcwCal" style="margin-top:8px;"></div><div id="pcwMsg" style="display:none;margin-top:7px;font-size:0.8125rem;font-weight:700;line-height:1.55;"></div>
+        <details style="margin-top:10px;"><summary class="jd-plain-summary">날짜 없이 일수로 고르기</summary>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px;">${uni.map(d => `<button type="button" class="pcw-dur" data-val="${d}">${d}일</button>`).join('')}</div>
         </details>`;
     } else if (step === 2) {
       const styles = ['마음껏', '보통', '가볍게'].filter(st => carrierOptions.some(g => (g.plans || []).some(pl => pcStyleOf(pl) === st)));
       styles.push('전체');
-      body = `<div class="config-section-title" style="margin-top:14px;">데이터, 어떻게 쓰실래요?</div>` + styles.map(st => {
+      body = `<div class="config-section-title" style="margin-top:14px;">데이터를 얼마나 쓰세요?</div>` + styles.map(st => {
         const m = STYLE_META_PC[st];
         let mn = 0;
         carrierOptions.forEach(g => (g.plans || []).forEach(pl => {
@@ -1185,7 +1191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (days && parseInt(pl.duration, 10) !== days) return;
           if (!mn || pl.final_price < mn) mn = pl.final_price;
         }));
-        return rowBtn(`class="pcw-style" data-style="${st}"`, `${m.ic} ${m.t}`, `${m.s}${mn ? ' · ' + mn.toLocaleString() + '원~' : ''}`);
+        return rowBtn(`class="pcw-style pcw-row" data-style="${st}"`, m.t, `${m.s}${mn ? ' · ' + mn.toLocaleString() + '원부터' : ''}`);
       }).join('');
     } else {
       // step 3: 전 통신사 통합 리스트 — 용량 오름차순·동일 용량 가격순·무제한 뒤 (통신사 = 카드 속성)
@@ -1197,26 +1203,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       let exact = items.filter(x => x.d === days), note = '';
       if (!exact.length && items.length) {
         const bigger = items.filter(x => x.d > days).sort((a, b) => a.d - b.d);
-        if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div style="font-size:0.8rem;font-weight:700;color:#B45309;margin-top:8px;">⚠️ ${days}일 상품이 없어 <b>${d2}일권</b>으로 커버해 드려요</div>`; }
+        if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div class="pcw-msg-warn" style="font-size:0.8125rem;font-weight:700;margin-top:8px;">${days}일 상품이 없어 <b>${d2}일권</b>으로 안내해 드려요</div>`; }
       }
       exact.sort((a, b) => (pcCapMB(a.pl) - pcCapMB(b.pl)) || (a.pl.final_price - b.pl.final_price));
       const bestIdx = exact.reduce((bi, x, i) => x.pl.final_price < exact[bi].pl.final_price ? i : bi, 0);
       window.__pcwList = exact;
-      body = `<div class="config-section-title" style="margin-top:14px;">딱 맞는 상품 ${exact.length}개를 골라드렸어요 <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">— 모든 통신사 비교 완료 · 아래로 스크롤</span></div>` + note +
+      body = `<div class="config-section-title" style="margin-top:14px;">요금제 ${exact.length}개를 찾았어요 <span class="pcw-sub-note">모든 통신사 가격순 비교</span></div>` + note +
         `<div class="pcw-scroll" style="margin-top:2px;max-height:430px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px;">` +
         (exact.map((x, i) => {
           const cap = pcPlanCap(x.pl);
           const capLbl = cap === '무제한' ? ((window.JD_UNL && window.JD_UNL.isTrue(x.pl.product_code)) ? '완전 무제한' : '무제한(속도정책 확인)') : ((x.pl.service_type === '데일리' || x.pl.service_type === '무제한') ? '매일 ' + cap : '전체 ' + cap);
           // 제목 = 무엇을 사는지(데이터 + 기간). 통신사·망·속도·리셋은 보조로 작게 (2026-08-02 사장님)
-          const best = i === bestIdx ? ' <span style="font-size:0.62rem;font-weight:900;color:#fff;background:var(--accent);border-radius:5px;padding:2px 6px;vertical-align:2px;">최저가</span>' : '';
-          const main = `${capLbl} <span style="font-weight:800;color:var(--text-muted);">· ${x.d}일</span>${best}`;
-          const netTxt = x.g.network_type === '로컬망' ? '🏠 현지망' : '🌐 로밍망';
-          const sub = `<span style="font-weight:700;color:var(--text-main);">${window.cleanCarrierName(x.g.carrier)}</span>`
-            + `<span style="color:var(--border-color);"> | </span>${netTxt}`
-            + `<span style="font-size:0.68rem;opacity:0.75;"> · ${[x.g.network_speed || '', (x.pl.service_type === '총용량' ? '기간 내 자유 사용' : '매일 리셋')].filter(Boolean).join(' · ')}</span>`;
-          return rowBtn(`class="pcw-item" data-i="${i}"`, main, sub,
-            `<span style="flex-shrink:0;font-size:1.08rem;font-weight:900;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.72rem;font-weight:700;">원</span></span>`);
-        }).join('') || '<div style="font-size:0.82rem;color:var(--text-muted);font-weight:700;padding:10px 2px;">이 조합의 상품이 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>') +
+          const best = i === bestIdx ? ' <span class="pcw-best-badge">최저가</span>' : '';
+          const main = `${capLbl} <span style="color:var(--jd-gray-500);">· ${x.d}일</span>${best}`;
+          const netTxt = x.g.network_type === '로컬망' ? '<span class="pcw-net local">현지망</span>' : '<span class="pcw-net roaming">로밍망</span>';
+          const sub = `<span style="font-weight:700;color:var(--jd-gray-800);">${window.cleanCarrierName(x.g.carrier)}</span> ${netTxt}`
+            + `<span> · ${[x.g.network_speed || '', (x.pl.service_type === '총용량' ? '기간 내 자유 사용' : '매일 리셋')].filter(Boolean).join(' · ')}</span>`;
+          return rowBtn(`class="pcw-item pcw-row" data-i="${i}"`, main, sub,
+            `<span class="pcw-price">${x.pl.final_price.toLocaleString()}<i>원</i></span>`);
+        }).join('') || '<div style="font-size:0.8125rem;color:var(--jd-gray-600);font-weight:500;padding:10px 2px;">이 조합의 요금제가 없어요 — 다른 사용량이나 일수를 골라 보세요</div>') +
         `</div>`;
     }
     modalContent.innerHTML = `<div style="grid-column:1/-1;">
@@ -1252,8 +1257,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.__pcwDays = pick;
         if (msg) {
           msg.style.display = 'block';
-          if (pick >= trip) { msg.style.color = '#15803d'; msg.innerHTML = '✅ ' + trip + '일 여행 — <b>' + pick + '일권' + (pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>'; }
-          else { msg.style.color = '#b45309'; msg.innerHTML = '⚠️ ' + trip + '일 여행인데 최대 <b>' + pick + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요'; }
+          if (pick >= trip) { msg.style.color = '#0E7A47'; msg.innerHTML = trip + '일 여행 — <b>' + pick + '일권' + (pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>'; }
+          else { msg.style.color = '#935A00'; msg.innerHTML = trip + '일 여행인데 최대 <b>' + pick + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요'; }
         }
         setTimeout(() => pcwSet(2), 350);
       } });
@@ -1341,136 +1346,83 @@ document.addEventListener('DOMContentLoaded', async () => {
       ? window.JD_UNL.label(activePlan.product_code)
       : activeDataLimit;
     
-        // 모달 본문 HTML 조합 (요청에 따라 제품코드 제거 완료)
+        // 모달 본문 HTML 조합 (정본 §3-3: 확정 화면 — 정의 리스트 6행 + 우측 결제 사이드바)
     modalContent.innerHTML = `
-      <!-- Left Config Section (4-Step Granular Dropdowns) -->
+      <!-- Left: 상품 확정 정보 -->
       <div>
         <div class="modal-header">
           <div class="modal-category">${p.category}</div>
-          <h2 class="modal-title">
-            ${window.jdCountryLabel(p.country)} eSIM 
-            <span class="card-carrier" style="font-size:0.95rem; padding: 4px 12px; margin-top:2px;">${window.cleanCarrierName(p.carrier)}</span>
-          </h2>
+          <h2 class="modal-title">${window.jdCountryLabel(p.country)} eSIM · ${window.cleanCarrierName(p.carrier)}</h2>
         </div>
-        
-        <!-- Buy Flow v5 (2026-07-20): 모바일 위저드에서 고른 상품의 확정 화면 — 선택 요약 + ✎ 수정 칩 -->
+
         <div class="config-group">
-          <div class="config-section-title">선택한 상품</div>
-          <div style="margin-top:8px;">
-            <button type="button" class="pcw-chip" data-step="1" style="font:inherit;font-size:0.78rem;font-weight:800;color:var(--accent);background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);border-radius:999px;padding:6px 12px;cursor:pointer;margin:0 6px 6px 0;">📅 ${activeDuration}일 ✎</button>
-            <button type="button" class="pcw-chip" data-step="2" style="font:inherit;font-size:0.78rem;font-weight:800;color:var(--accent);background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);border-radius:999px;padding:6px 12px;cursor:pointer;margin:0 6px 6px 0;">${(STYLE_META_PC[window.__pcwStyle] || {}).ic || '🗂'} ${window.__pcwStyle || '전체'} ✎</button>
-            <button type="button" class="pcw-chip" data-step="3" style="font:inherit;font-size:0.78rem;font-weight:800;color:var(--accent);background:rgba(242,117,31,0.08);border:1px solid rgba(242,117,31,0.3);border-radius:999px;padding:6px 12px;cursor:pointer;margin:0 6px 6px 0;">📶 다른 상품 보기 ✎</button>
+          <div class="pcw-picked">
+            <div class="pcw-picked-main">${summaryDataLabel} · ${activeDuration}일</div>
+            <div class="pcw-picked-sub">${window.cleanCarrierName(p.carrier)} · ${p.network_type === '로컬망' ? '현지망' : '로밍망'} · ${activePlan.service_type === '총용량' ? '기간 내 자유 사용' : '매일 리셋'}</div>
           </div>
-          <div style="margin-top:10px;padding:13px 15px;border:1.5px solid var(--accent);border-radius:12px;background:rgba(242,117,31,0.04);">
-            <div style="font-weight:900;font-size:1rem;">${window.cleanCarrierName(p.carrier)} · ${summaryDataLabel}</div>
-            <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;margin-top:4px;">${p.network_type === '로컬망' ? '🏠 로컬망' : '🌐 로밍망'} · ${p.network_speed || ''} · ${activePlan.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋'} · ${activeDuration}일</div>
+          <div style="margin-top:10px;">
+            <button type="button" class="pcw-chip" data-step="1">${activeDuration}일 변경 ${JD_PENCIL_SVG}</button>
+            <button type="button" class="pcw-chip" data-step="2">${(STYLE_META_PC[window.__pcwStyle] || {}).t || window.__pcwStyle || '전체 보기'} 변경 ${JD_PENCIL_SVG}</button>
+            <button type="button" class="pcw-chip" data-step="3">다른 요금제 보기 ${JD_PENCIL_SVG}</button>
           </div>
         </div>
 
-        <!-- 상품 안내 (2026-07-20): 모바일 상세와 동일 정보 위계 — PC는 텍스트 여유 있게 -->
         <div class="config-group">
-          <div class="config-section-title">상품 안내</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;">
-            ${[['📶', '데이터', summaryDataLabel], ['📅', '사용 기간', activeDuration + '일'], [isDaily ? '↻' : '🎒', '사용 방식', isDaily ? '매일 새로 충전' : '기간 내 자유 분배'], [p.network_type === '로컬망' ? '🏠' : '🌐', '통신망', p.network_type === '로컬망' ? '현지 로컬망' : '로밍망'], ['⚡', '속도', p.network_speed || '5G/LTE'], ['🎫', '수령 방식', 'QR 즉시 발급']].map(t =>
-              `<div style="background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 10px;text-align:center;"><div style="font-size:1.05rem;">${t[0]}</div><div style="font-size:0.68rem;font-weight:700;color:var(--text-muted);margin-top:3px;">${t[1]}</div><div style="font-size:0.82rem;font-weight:800;margin-top:2px;">${t[2]}</div></div>`).join('')}
-          </div>
-          <p style="font-size:0.85rem;line-height:1.7;color:var(--text-main);font-weight:600;margin:12px 2px 0;">
-            ${isDaily
-              ? (cleanActiveData === '무제한'
-                ? '용량 걱정 없이 마음껏 쓰는 상품이에요. 지도·유튜브·핫스팟까지 자유롭게 사용하세요.'
-                : '오늘 데이터를 다 써도 내일이면 다시 꽉 차는 데일리 상품이에요. 여행 내내 같은 리듬으로 안심하고 쓸 수 있어요.')
-              : '기간 안에서 아껴 쓰는 날, 몰아 쓰는 날을 자유롭게 조절하는 총용량 상품이에요. 사용량을 스스로 관리하는 분께 잘 맞아요.'}
-            ${/\+/.test(cleanActiveData) ? ' 고속 용량 소진 후에도 저속으로 계속 연결돼 지도·메신저는 이용할 수 있어요.' : ''}
-            사용일은 현지에서 통신망에 연결되는 순간부터 시작되니, 미리 사서 설치해 두어도 손해가 없어요.
-          </p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:0.72rem;font-weight:800;color:#10b981;">
-            <span style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:999px;padding:5px 11px;">발급 전 100% 환불</span>
-            <span style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:999px;padding:5px 11px;">미개통 100% 환불 보장</span>
-            <span style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:999px;padding:5px 11px;">24시간 카톡 케어</span>
-          </div>
-          <details style="margin-top:12px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 14px;">
-            <summary style="list-style:none;cursor:pointer;font-size:0.82rem;font-weight:800;">📂 구매 전 꼭 확인 <span style="color:var(--text-muted);font-weight:700;font-size:0.72rem;">펼쳐 보기</span></summary>
-            <div style="margin-top:8px;font-size:0.78rem;line-height:1.75;color:var(--text-muted);font-weight:600;">
-              · 다이얼 *#06# 입력 시 <b style="color:var(--text-main);">EID가 표시되는 eSIM 지원 기종</b>에서만 사용할 수 있어요<br>
-              · <b style="color:var(--text-main);">발급(QR 생성) 후에는 취소·환불이 불가</b>해요 — 발급 전에는 100% 환불<br>
-              · 설치한 eSIM 프로필은 <b style="color:var(--text-main);">절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요<br>
+          <dl class="jd-dl">
+            <dt>데이터</dt><dd>${summaryDataLabel}</dd>
+            <dt>데이터 리셋 기준</dt><dd>${isDaily ? (p.reset_data ? convertResetTime(p.reset_data, p.country) : '매일 리셋') : '기간 내 자유 사용'}</dd>
+            <dt>개통 시점</dt><dd>${p.activation || '현지 접속 시 자동 개통'}</dd>
+            <dt>유효기간</dt><dd>${p.validity || '구매 후 안내'}</dd>
+            <dt>핫스팟</dt><dd>${p.hotspot === '가능' ? '지원' : (p.hotspot ? '미지원' : '-')}</dd>
+            <dt>통신망</dt><dd>${p.network_type === '로컬망' ? '현지망' : '로밍망'} · ${p.network_speed || '5G/LTE'}</dd>
+          </dl>
+          <p class="jd-proof-line">개통 전 100% 환불 · 24시간 카카오톡 케어</p>
+          <details class="jd-prebuy">
+            <summary>구매 전 확인해 주세요</summary>
+            <div class="jd-prebuy-body">
+              · 다이얼 *#06# 입력 시 <b>EID가 표시되는 eSIM 지원 기종</b>에서만 사용할 수 있어요<br>
+              · <b>발급(QR 생성) 후에는 취소·환불이 불가</b>해요 — 발급 전에는 100% 환불<br>
+              · 설치한 eSIM 프로필은 <b>절대 삭제 금지</b> — 삭제하면 재발급이 안 돼요<br>
               · 사용 기간은 현지 도착 후 통신망 연결 시점부터 시작돼요 (유효기간 내 활성화 필요)
             </div>
           </details>
         </div>
       </div>
-      </div>
 
-      <!-- Right Sidebar (Pricing & Specs - 상품표 모든 스펙 연동) -->
+      <!-- Right: 결제 사이드바 -->
       <div class="modal-sidebar">
-        <!-- 24시간 안심 케어 보증 상단 표시 -->
-        <div class="safety-care-mini" style="display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); padding:8px 12px; border-radius:var(--radius-sm); margin-bottom:12px; font-size:0.75rem; color:#10b981; font-weight:700;">
-          <span>🛡️ 24시간 긴급 안심 케어 서비스 무료 포함</span>
-        </div>
-
         <div class="price-summary-box">
-          <div class="summary-row">
-            <span>선택한 데이터</span>
-            <span style="color:var(--text-main); font-weight:700;">${summaryDataLabel} (${activePlan.service_type})</span>
-          </div>
-          <div class="summary-row">
-            <span>이용 기간</span>
-            <span style="color:var(--text-main); font-weight:700;">${activeDuration}일</span>
-          </div>
-          <div class="summary-row" style="align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
-            <span>구매 수량</span>
-            <div class="qty-selector" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 4px 8px;">
-              <button class="qty-btn" id="qtyMinus" style="background: none; border: none; color: var(--text-main); font-weight: 700; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;">-</button>
-              <span id="qtyVal" style="color: var(--accent); font-weight: 700; min-width: 16px; text-align: center;">${activeQuantity}</span>
-              <button class="qty-btn" id="qtyPlus" style="background: none; border: none; color: var(--text-main); font-weight: 700; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;">+</button>
+          <div class="summary-row" style="align-items: center;">
+            <span>수량</span>
+            <div class="qty-selector">
+              <button class="qty-btn" id="qtyMinus" aria-label="수량 줄이기">−</button>
+              <span id="qtyVal">${activeQuantity}</span>
+              <button class="qty-btn" id="qtyPlus" aria-label="수량 늘리기">+</button>
             </div>
           </div>
-          ${activeQuantity > 1 ? `
-            <div style="font-size: 0.72rem; color: #10b981; text-align: right; margin-top: 4px; font-weight: bold;">
-              동반인 10% 할인이 적용되었습니다!
-            </div>
-          ` : ''}
-          <div id="groupDiscountPromo" style="font-size: 0.72rem; color: #10b981; background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 6px 10px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 700;">
-            👥 2개 이상 구매 시 동반인 이심 10% 추가 할인!
-          </div>
-          <div class="summary-row total" style="margin-top:14px; border-top:1px solid rgba(255,255,255,0.12); padding-top:14px;">
-            <span>최종 결제 금액</span>
+          ${activeQuantity > 1 ? `<div class="qty-note">동반인 10% 할인이 적용됐어요</div>` : ''}
+          <div id="groupDiscountPromo">2개 이상 구매하면 10% 할인돼요</div>
+          <div class="summary-row total" style="margin-top:14px; border-top:1px solid var(--jd-gray-200); padding-top:14px; align-items: baseline;">
+            <span>결제 금액</span>
             <span class="summary-total-price">${finalPriceVal.toLocaleString()}원</span>
           </div>
-          ${activeDuration > 1 ? `<div style="text-align:right; font-size:0.74rem; color:var(--text-dim); margin-top:4px; font-weight:700;">☕ 하루 약 ${Math.round(finalPriceVal / activeQuantity / activeDuration).toLocaleString()}원 꼴</div>` : ''}
+          ${activeDuration > 1 ? `<div class="qty-note">하루 ${Math.round(finalPriceVal / activeQuantity / activeDuration).toLocaleString()}원 꼴이에요</div>` : ''}
         </div>
-        
+
         <div class="modal-cta-zone">
-          <div style="display:flex;justify-content:center;gap:10px;font-size:0.7rem;font-weight:800;color:#b45309;background:linear-gradient(135deg,rgba(242,117,31,0.07),rgba(245,158,11,0.07));border:1px solid rgba(242,117,31,0.18);border-radius:12px;padding:8px 10px;margin-bottom:10px;white-space:nowrap;">
-            <span>⚡ ${(window.JD_STATS && window.JD_STATS.issue && window.JD_STATS.issue.p50_min != null) ? '실측 평균 ' + Math.round(window.JD_STATS.issue.p50_min) + '분 QR 발송' : '평균 5~15분 QR 발송'}</span><span style="opacity:0.35;">|</span><span>🛡️ 미개통 100% 환불</span><span style="opacity:0.35;">|</span><a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">💬 24h 카톡 상담</a>
-          </div>
           <button class="cta-buy" id="buyNowBtn">
-            <span class="cta-buy-main">⚡ 즉시 구매하기</span>
+            <span class="cta-buy-main">바로 구매하기</span>
             <span class="cta-buy-sub">${finalPriceVal.toLocaleString()}원 · 카카오페이</span>
           </button>
-          <button class="cta-cart" id="addToCartBtn">🛒 장바구니 담기</button>
-          <a href="guide.html" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:9px;font-size:0.78rem;font-weight:700;color:#8a7a6d;text-decoration:none;">📖 설치가 처음이세요? <span style="color:#F2751F;text-decoration:underline;text-underline-offset:2px;">3분 설치 가이드 미리보기</span></a>
+          <button class="cta-cart" id="addToCartBtn">장바구니 담기</button>
           ${SMARTSTORE_URL ? `
-          <div class="cta-divider"><span>또는 네이버페이로 간편하게</span></div>
-          <a href="${SMARTSTORE_URL}" target="_blank" rel="noopener" class="cta-smartstore">
+          <a href="${SMARTSTORE_URL}" target="_blank" rel="noopener" class="cta-smartstore" style="margin-top:10px;">
             <span class="cta-ss-main">네이버 스마트스토어에서 구매</span>
-            <span class="cta-ss-sub">네이버페이 · 네이버 포인트 적립</span>
           </a>` : ''}
         </div>
-        
-        <div class="device-compat-banner" id="detailDeviceCheckLink">
-          <div class="device-compat-banner-left">
-            <span class="device-compat-banner-icon">📱</span>
-            <div>
-              <div class="device-compat-banner-title">내 폰이 eSIM을 지원하나요?</div>
-              <div class="device-compat-banner-desc">3초 만에 호환 기종 조회하기</div>
-            </div>
-          </div>
-          <span class="device-compat-banner-arrow">➡️</span>
-        </div>
 
+        <div class="device-compat-banner" id="detailDeviceCheckLink">내 기기에서 되는지 확인하기</div>
       </div>
-
     `;
 
     // 4단계 캐스케이딩 드롭다운 리스너
@@ -1536,8 +1488,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (t && t.msgPick && t.msgTrip) {
           const det = modalContent.querySelector('#pcTripPick');
           msg.style.display = 'block';
-          if (t.msgPick >= t.msgTrip) { msg.style.color = '#15803d'; msg.innerHTML = '✅ ' + t.msgTrip + '일 여행 — <b>' + t.msgPick + '일권' + (t.msgPick === t.msgTrip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>'; }
-          else { msg.style.color = '#b45309'; msg.innerHTML = '⚠️ ' + t.msgTrip + '일 여행인데 최대 <b>' + t.msgPick + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요'; }
+          if (t.msgPick >= t.msgTrip) { msg.style.color = '#0E7A47'; msg.innerHTML = t.msgTrip + '일 여행 — <b>' + t.msgPick + '일권' + (t.msgPick === t.msgTrip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요') + '</b>'; }
+          else { msg.style.color = '#935A00'; msg.innerHTML = t.msgTrip + '일 여행인데 최대 <b>' + t.msgPick + '일권</b>까지 있어요 — 추가 구매 조합을 추천해요'; }
           if (det) det.open = true;
         }
       } catch (e) {}
@@ -1682,21 +1634,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const arr = Array.isArray(acts) ? acts : [acts];
     const has = s => arr.some(a => String(a || '').includes(s));
     const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
-    if (all('즉시 개통')) return '🚨 설치 즉시 시작';
-    if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 최소 3일 전 주문' : '⏰ 최소 2일 전 주문';
-    if (has('즉시 개통') || has('희망일')) return '⏰ 구매 타이밍 확인';
-    if (has('개통문자')) return '💬 도착 후 문자 개통';
+    if (all('즉시 개통')) return '설치 즉시 시작';
+    if (all('희망일')) return isLongLeadCountry(countryName) ? '최소 3일 전 주문' : '최소 2일 전 주문';
+    if (has('즉시 개통') || has('희망일')) return '구매 타이밍 확인';
+    if (has('개통문자')) return '도착 후 문자 개통';
     return '';
   }
-  // 카드 세 번째 스펙 칩: 치명 타이밍 = 빨간 경고 / 개통문자 = 파란 안내 / 없으면 '⚡ 즉시 개통'
+  // 카드 세 번째 스펙 칩: 치명 타이밍 = 경고색 텍스트 / 개통문자 = 안내색 / 없으면 'QR 즉시 발송'
   function actChipHtml(g) {
     const txt = activationChip((g.carriers || []).map(c => (c && c.activation) || ''), g.country);
-    if (!txt) return '<div class="card-spec-item">⚡ 즉시 개통</div>';
-    if (txt.includes('문자')) return `<div class="card-spec-item" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;font-weight:800;">${txt}</div>`;
-    return `<div class="card-spec-item" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.28);color:#dc2626;font-weight:800;">${txt}</div>`;
+    if (!txt) return '<span class="card-spec-item">QR 즉시 발송</span>';
+    if (txt.includes('문자')) return `<span class="card-spec-item info">${txt}</span>`;
+    return `<span class="card-spec-item warn">${txt}</span>`;
   }
   function leadTimeBadge(lead) {
-    return `<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F97316);color:#fff;font-size:0.82rem;font-weight:900;padding:6px 14px;border-radius:999px;margin-bottom:4px;box-shadow:0 4px 12px rgba(239,68,68,0.3);">⏰ 출국 ${lead} 전 주문 필수</div>`;
+    return `<div style="display:inline-block;background:var(--jd-danger-bg,#FEF0F1);color:var(--jd-danger-deep,#C22733);font-size:0.8125rem;font-weight:700;padding:6px 12px;border-radius:8px;margin-bottom:4px;">출국 ${lead} 전까지 주문해 주세요</div>`;
   }
   function getCustomPrecautions(country, carrier, activation, validity) {
     const list = [];
@@ -1721,9 +1673,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (vm && !isWishDate) {
       const vDays = parseInt(vm[2], 10);
       if (vDays <= 15) {
-        list.push(`<strong>⏳ ${vm[1]}로부터 ${vDays}일 안에 현지 개통 필수:</strong> 기간이 지나면 사용할 수 없어요 — 출국 ${vDays}일 전 이내에 구매하세요.${isWishDate ? ` 개통 희망일도 ${vm[1]}로부터 ${vDays}일 안쪽으로 지정해야 합니다.` : ''}`);
+        list.push(`<strong>${vm[1]}로부터 ${vDays}일 안에 현지 개통 필수:</strong> 기간이 지나면 사용할 수 없어요 — 출국 ${vDays}일 전 이내에 구매하세요.${isWishDate ? ` 개통 희망일도 ${vm[1]}로부터 ${vDays}일 안쪽으로 지정해야 합니다.` : ''}`);
       } else {
-        list.push(`<strong>⏳ 유효기간:</strong> ${vm[1]}로부터 ${vDays}일 내 현지 개통 — 여행 ${vDays}일 전 이내 구매를 권장해요.`);
+        list.push(`<strong>유효기간:</strong> ${vm[1]}로부터 ${vDays}일 내 현지 개통 — 여행 ${vDays}일 전 이내 구매를 권장해요.`);
       }
     }
 
@@ -1826,7 +1778,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     var disc = pcCouponValue(window._pcCoupon, base);
     var finalP = Math.max(0, base - disc);
     paySubmitBtn.setAttribute('data-price', finalP);
-    paySubmitBtn.textContent = finalP.toLocaleString() + '원 결제 완료하기' + (disc ? ' (쿠폰 -' + disc.toLocaleString() + ')' : '');
+    paySubmitBtn.textContent = finalP.toLocaleString() + '원 결제하기' + (disc ? ' (쿠폰 -' + disc.toLocaleString() + ')' : '');
   }
   function loadPcCoupons(orderTotal) {
     var box = document.getElementById('pcCouponBox');
@@ -1841,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     var token = '';
     try { token = localStorage.getItem('jd_member_token') || ''; } catch (e) {}
     if (!token) {
-      box.innerHTML = '<a href="login.html?return=' + encodeURIComponent('index.html') + '" target="_blank" rel="noopener" style="display:block;margin:10px 0 2px;padding:11px 13px;border-radius:11px;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.05);font-size:0.82rem;font-weight:800;color:var(--accent);text-decoration:none;text-align:left;">💰 쿠폰이 있으신가요? 로그인하면 자동으로 적용돼요</a>';
+      box.innerHTML = '<a href="login.html?return=' + encodeURIComponent('index.html') + '" target="_blank" rel="noopener" style="display:block;margin:10px 0 2px;padding:11px 13px;border-radius:11px;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.05);font-size:0.82rem;font-weight:800;color:var(--accent);text-decoration:none;text-align:left;">쿠폰이 있으신가요? 로그인하면 자동으로 적용돼요</a>';
       return;
     }
     fetch('https://jdisim-proxy.vercel.app/api/member', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ action: 'me' }) })
@@ -1853,7 +1805,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!usable.length) return;
         window._pcUsableCoupons = usable;
         var html = '<div style="margin:10px 0 2px;padding:12px 14px;border-radius:12px;border:1.5px dashed rgba(242,117,31,0.45);background:rgba(249,115,22,0.05);text-align:left;">'
-          + '<div style="font-size:0.8rem;font-weight:800;color:var(--accent);margin-bottom:6px;">💰 쿠폰 적용</div>'
+          + '<div style="font-size:0.8rem;font-weight:800;color:var(--accent);margin-bottom:6px;">쿠폰 적용</div>'
           + usable.slice(0, 3).map(function (c, i) {
               var v = pcCouponValue(c, orderTotal);
               var lab = c.type === 'cost' ? (v > 0 ? '-' + v.toLocaleString() + '원 (원가 적용)' : (checkoutItems.length !== 1 ? '단일 상품 결제에서만' : '이 상품 적용불가')) : '-' + Number(c.amount).toLocaleString() + '원';
@@ -1899,8 +1851,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">⚡ 결제하면 QR이 카톡·문자로 자동 발송돼요</div>
-        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">🛡️ 발급 전엔 100% 환불 · 발급 후엔 환불 불가</div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">결제하면 QR이 카카오톡·문자로 자동 발송돼요</div>
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:0.92rem;font-weight:800;color:var(--text-main);">발급 전엔 100% 환불 · 발급 후엔 환불 불가</div>
       </div>
     `;
 
@@ -1908,21 +1860,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const specItems = items.map(it => {
       const pr = it.product;
       const rows = [
-        ['📶 망 접속/속도', `${pr.network_type} (${pr.network_speed})`],
-        ['🔄 데이터 리셋', pr.reset_data || '-'],
-        ['📞 전화/문자', `전화 ${pr.calls} · 문자 ${pr.sms}`],
-        ['⚡ 핫스팟', pr.hotspot === '가능' ? '지원 가능' : '지원 불가'],
-        ['🛫 개통 기준', pr.activation || '-'],
-        ['🐢 소진 후 속도', it.plan.low_speed || '소진 후 차단'],
-        ['⚙️ APN', pr.apn || '자동 설정'],
-        ['📅 유효 기간', pr.validity || '-']
+        ['망 접속/속도', `${pr.network_type} (${pr.network_speed})`],
+        ['데이터 리셋', pr.reset_data || '-'],
+        ['전화/문자', `전화 ${pr.calls} · 문자 ${pr.sms}`],
+        ['핫스팟', pr.hotspot === '가능' ? '지원 가능' : '지원 불가'],
+        ['개통 기준', pr.activation || '-'],
+        ['소진 후 속도', it.plan.low_speed || '소진 후 차단'],
+        ['APN', pr.apn || '자동 설정'],
+        ['유효 기간', pr.validity || '-']
       ].map(([l, v]) => `<div style="display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed var(--border-color); font-size:0.8rem;"><span style="color:var(--text-dim); flex-shrink:0;">${l}</span><span style="color:var(--text-main); font-weight:600; text-align:right;">${v}</span></div>`).join('');
       return `<div style="margin-bottom:10px;"><div style="font-weight:800; font-size:0.85rem; color:var(--text-main); margin-bottom:4px;">${pr.country} · ${pr.carrier}</div>${rows}</div>`;
     }).join('');
     html += `
       <div class="prec-accordion-item">
         <div class="prec-accordion-header">
-          <span>📶 상품 스펙 한눈에 보기</span>
+          <span>상품 스펙 한눈에 보기</span>
           <span class="arrow">▼</span>
         </div>
         <div class="prec-accordion-content">${specItems}</div>
@@ -1933,7 +1885,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     html += `
       <div class="prec-accordion-item">
         <div class="prec-accordion-header">
-          <span>📱 내 핸드폰 eSIM 지원 여부 확인 (3초 확인)</span>
+          <span>내 기기 eSIM 지원 여부 확인</span>
           <span class="arrow">▼</span>
         </div>
         <div class="prec-accordion-content">
@@ -1949,7 +1901,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     html += `
       <div class="prec-accordion-item">
         <div class="prec-accordion-header">
-          <span>🔄 교환/환불 및 긴급 기술지원 규정</span>
+          <span>교환·환불 및 긴급 기술지원 규정</span>
           <span class="arrow">▼</span>
         </div>
         <div class="prec-accordion-content">
@@ -1987,7 +1939,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       html += `
         <div class="prec-accordion-item warning-item active">
           <div class="prec-accordion-header" style="color: var(--accent-warning);">
-            <span>⚠️ [${label}] 필수 확인사항</span>
+            <span>[${label}] 필수 확인사항</span>
             <span class="arrow">▼</span>
           </div>
           <div class="prec-accordion-content">
@@ -2087,12 +2039,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cap = new Date(); cap.setDate(cap.getDate() + validityCapDays);
         const pad = n => String(n).padStart(2, '0');
         checkoutActivationDate.max = `${cap.getFullYear()}-${pad(cap.getMonth() + 1)}-${pad(cap.getDate())}`;
-        capHtml = ` ⏳ 이 상품은 유효기간이 있어 개통일을 <strong style="color:#b91c1c;">${cap.getMonth() + 1}/${cap.getDate()}까지</strong>만 지정할 수 있어요.`;
+        capHtml = ` 이 상품은 유효기간이 있어 개통일을 <strong style="color:#b91c1c;">${cap.getMonth() + 1}/${cap.getDate()}까지</strong>만 지정할 수 있어요.`;
       } else {
         checkoutActivationDate.removeAttribute('max');
       }
       if (activationDateHint) {
-        activationDateHint.innerHTML = `📌 오늘 주문 기준 가장 빠른 개통일은 <strong style="color:#F2751F;">${ea.label}</strong>이에요 — ${ea.days === 3 ? '미주·유럽은 시차 때문에 개통 준비에 <strong>최소 3일</strong>' : '개통 준비에 <strong>최소 2일</strong>'}이 필요해요.${capHtml}`;
+        activationDateHint.innerHTML = `오늘 주문 기준 가장 빠른 개통일은 <strong style="color:#F2751F;">${ea.label}</strong>이에요 — ${ea.days === 3 ? '미주·유럽은 시차 때문에 개통 준비에 <strong>최소 3일</strong>' : '개통 준비에 <strong>최소 2일</strong>'}이 필요해요.${capHtml}`;
         activationDateHint.style.display = 'block';
       }
     } else {
@@ -2138,7 +2090,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkoutStepReceipt.style.display = 'none';
     
     paySubmitBtn.setAttribute('data-price', totalCartPrice);
-    paySubmitBtn.textContent = `${totalCartPrice.toLocaleString()}원 결제 완료하기`;
+    paySubmitBtn.textContent = `${totalCartPrice.toLocaleString()}원 결제하기`;
 
     // Buy Flow v3: 핵심 스트립 2줄 + 세부(EID·환불) 접힘 — 아이템 리스트 바로 아래 (멱등 주입)
     let ess = document.getElementById('ckEssentials');
@@ -2149,10 +2101,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     ess.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:7px;margin:12px 0 2px;">
-        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">⚡ 결제하면 QR이 카톡·문자로 자동 발송돼요</div>
-        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">🛡️ 발급 전엔 100% 환불 · 발급 후엔 환불 불가</div>
+        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">결제하면 QR이 카카오톡·문자로 자동 발송돼요</div>
+        <div style="display:flex;align-items:center;gap:9px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:11px;padding:11px 13px;font-size:0.88rem;font-weight:800;color:var(--text-main);text-align:left;">발급 전엔 100% 환불 · 발급 후엔 환불 불가</div>
       </div>
-      <details style="margin-top:8px;text-align:left;"><summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--text-muted);padding:4px 0;">📱 내 폰 eSIM 지원 확인 · 🔄 환불 규정 자세히</summary>
+      <details style="margin-top:8px;text-align:left;"><summary style="cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--text-muted);padding:4px 0;">내 기기 eSIM 지원 확인 · 환불 규정 자세히</summary>
         <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.7;padding:8px 2px 2px;">
           • <strong>기종 확인:</strong> 키패드에 <code>*#06#</code> 입력 시 32자리 EID가 보여야 사용 가능 (중국/홍콩/마카오 구매 아이폰 불가)<br>
           • <strong>단순 변심:</strong> QR 발송 후 취소·환불 불가 · <strong>프로필 삭제 시 재설치 불가</strong><br>
@@ -2368,21 +2320,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 🧳 국가별 여행 준비물 & 알아두면 좋은 이슈 (결제 완료 화면용)
   const TRAVEL_TIPS = {
-    '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용', '🛂 무비자 90일 — Visit Japan Web을 미리 작성하면 입국 심사가 빨라요'] },
-    '베트남': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['모기 기피제', '얇은 긴팔 — 실내 냉방이 강해요', '소액 현금(동) — 시장·로컬 식당용'], issues: ['전자담배 반입·사용 전면 금지(2025년~) — 적발 시 처벌', '이동은 그랩(Grab) 앱이 필수 — 미리 설치하세요', '🛂 무비자 45일 — 여권 유효기간 6개월 이상 필수'] },
-    '태국': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['자외선 차단제', '사원 방문용 무릎 덮는 하의', '모기 기피제'], issues: ['전자담배 반입·소지 금지 — 벌금·처벌 사례가 많아요', '왕실 관련 언행은 법적 처벌 대상 — 주의', '🛂 무비자 입국이지만 디지털 입국카드(TDAC)를 출국 전 온라인으로 작성해야 해요'] },
+    '일본': { power: '100V · A타입 (돼지코 어댑터)', items: ['A타입(돼지코) 어댑터 — 한국 충전기 대부분 프리볼트라 어댑터만 있으면 OK', '동전 지갑 — 현금·동전 사용이 아직 많아요', '교통카드(스이카)는 아이폰 지갑에서 바로 발급 가능'], issues: ['액상형 전자담배(니코틴)는 반입 제한 — 궐련형(아이코스류)은 사용 가능', '길거리 흡연 금지 구역이 많아요 — 지정 흡연소 이용', '무비자 90일 — Visit Japan Web을 미리 작성하면 입국 심사가 빨라요'] },
+    '베트남': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['모기 기피제', '얇은 긴팔 — 실내 냉방이 강해요', '소액 현금(동) — 시장·로컬 식당용'], issues: ['전자담배 반입·사용 전면 금지(2025년~) — 적발 시 처벌', '이동은 그랩(Grab) 앱이 필수 — 미리 설치하세요', '무비자 45일 — 여권 유효기간 6개월 이상 필수'] },
+    '태국': { power: '220V · 한국 플러그 대부분 그대로 사용', items: ['자외선 차단제', '사원 방문용 무릎 덮는 하의', '모기 기피제'], issues: ['전자담배 반입·소지 금지 — 벌금·처벌 사례가 많아요', '왕실 관련 언행은 법적 처벌 대상 — 주의', '무비자 입국이지만 디지털 입국카드(TDAC)를 출국 전 온라인으로 작성해야 해요'] },
     '대만': { power: '110V · A타입 (돼지코 어댑터)', items: ['A타입 어댑터', '접이식 우산 — 스콜성 비가 잦아요', '교통은 이지카드 하나로 해결'], issues: ['전자담배 전면 금지(2023년~)', '지하철 안 음식물 섭취 금지 — 벌금'] },
     '필리핀': { power: '220V · 한국 플러그 대부분 호환', items: ['모기 기피제', '방수팩 — 섬·액티비티용'], issues: ['전자담배는 성인 1인 소량만 반입 가능', '야간 이동 시 소지품 주의'] },
-    '싱가포르': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '얇은 겉옷 — 실내 냉방이 아주 강해요'], issues: ['껌 반입 금지 · 전자담배 소지 벌금', '무단횡단·쓰레기 투기 벌금 — 엄격해요', '🛂 입국 3일 전부터 SG 입국카드(SG Arrival Card) 온라인 제출 필수'] },
+    '싱가포르': { power: '230V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '얇은 겉옷 — 실내 냉방이 아주 강해요'], issues: ['껌 반입 금지 · 전자담배 소지 벌금', '무단횡단·쓰레기 투기 벌금 — 엄격해요', '입국 3일 전부터 SG 입국카드(SG Arrival Card) 온라인 제출 필수'] },
     '홍콩': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터', '교통·결제는 옥토퍼스 카드(모바일 발급 가능)'], issues: ['전자담배 반입 금지(2022년~)', '지하철 안 음식물 섭취 금지'] },
     '마카오': { power: '220V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['카지노는 만 21세부터 입장 가능'] },
-    '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요 ✅', '🛂 비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
-    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', '🛂 ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
+    '중국': { power: '220V · 대부분 사용 가능 (멀티어댑터 권장)', items: ['멀티 어댑터', '알리페이/위챗페이 미리 설정 — 현금보다 QR결제가 보편'], issues: ['구글·카톡·인스타가 현지에서 차단되지만, 이 로밍 eSIM은 그대로 사용 가능해요', '비자 정책이 자주 바뀌어요 — 출국 전 무비자 시행 여부를 꼭 확인하세요'] },
+    '미국': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '팁용 소액권 현금'], issues: ['팁 문화 15~20% — 식당·택시 필수', 'ESTA 사전 승인 필수 — 최소 출국 72시간 전에 신청하세요'] },
     '괌': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['이심은 현지 도착 후 개통 문자로 시작 — 미리 사도 기간이 줄지 않아요'] },
     '사이판': { power: '120V · A/B타입 (돼지코 어댑터)', items: ['A타입 어댑터', '자외선 차단제'], issues: ['이심은 현지 도착 후 개통 문자로 시작 — 미리 사도 기간이 줄지 않아요'] },
     '말레이시아': { power: '240V · G타입(영국식) 어댑터 필수', items: ['G타입 어댑터'], issues: ['실내 냉방이 강해 얇은 겉옷 추천'] },
-    '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)', '🛂 발리는 도착비자(VOA) — e-VOA로 미리 신청하면 줄이 짧아요'] },
-    '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요', '🛂 ETA(전자여행허가)를 앱으로 사전 신청해야 해요'] },
+    '인도네시아': { power: '230V · 한국 플러그 대부분 호환', items: ['모기 기피제', '자외선 차단제'], issues: ['발리 입도 시 관광세 납부(온라인 사전 결제 가능)', '발리는 도착비자(VOA) — e-VOA로 미리 신청하면 줄이 짧아요'] },
+    '호주': { power: '230V · I타입 어댑터 필수', items: ['I타입 어댑터', '자외선 차단제 — 자외선이 매우 강해요'], issues: ['입국 시 음식물·동식물 신고 엄격 — 라면 스프도 신고 대상', '전자담배는 반입 규제가 엄격해요', 'ETA(전자여행허가)를 앱으로 사전 신청해야 해요'] },
     '오렌지프랑스': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의 — 특히 지하철·에펠탑 인근'] },
     '오렌지스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
     '보다폰스페인': { power: '230V · 한국 플러그 대부분 호환', items: ['크로스백 — 앞으로 메세요'], issues: ['관광지 소매치기 주의'] },
@@ -2394,18 +2346,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const li = arr => arr.map(x => `<div style="display:flex;gap:8px;padding:5px 0;font-size:0.76rem;line-height:1.55;color:#334155;"><span style="flex-shrink:0;width:4.5px;height:4.5px;border-radius:50%;background:#F97316;margin-top:7px;"></span><span>${x}</span></div>`).join('');
     const box = (title, inner, open) => `
       <details ${open ? 'open' : ''} style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin-top:9px;overflow:hidden;width:100%;">
-        <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기 ▾</span></summary>
+        <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.8rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#94a3b8;font-size:0.7rem;font-weight:700;">펼치기</span></summary>
         <div style="padding:2px 14px 12px;">${inner}</div>
       </details>`;
     let html = '';
     if (t) {
-      html += box(`🧳 ${country} 여행 준비물`,
-        `<div style="font-size:0.72rem;font-weight:800;color:#F2751F;padding:3px 0 4px;">🔌 ${t.power}</div>` + li(t.items), false);
+      html += box(`${country} 여행 준비물`,
+        `<div style="font-size:0.72rem;font-weight:800;color:#F2751F;padding:3px 0 4px;">${t.power}</div>` + li(t.items), false);
       if (t.issues && t.issues.length) {
-        html += box(`📌 ${country}, 이건 알고 가세요`, li(t.issues), false);
+        html += box(`${country}, 이건 알고 가세요`, li(t.issues), false);
       }
     }
-    html += box('🔋 모든 여행 공통',
+    html += box('모든 여행 공통',
       li(['보조배터리는 위탁수하물 금지 — 반드시 기내 가방에!', '여권 유효기간 6개월 이상 남았는지 확인', 'QR 도착 전 eSIM 지원 기종인지 한 번 더 확인(*#06# → EID)']), false);
     return html;
   }
@@ -2534,16 +2486,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (tipsBox0) {
       tipsBox0.insertAdjacentHTML('beforebegin', `
         <div style="display:flex;gap:10px;margin-top:18px;">
-          ${[['💬','카톡으로','발급 링크 도착'],['🎫','원하는 때','링크에서 발급'],['🛬','현지 도착 후','로밍 켜면 개통']].map((s,i)=>`
-          <div style="flex:1;background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.18);border-radius:14px;padding:13px 8px;text-align:center;">
-            <div style="font-size:1.2rem;">${s[0]}</div>
-            <div style="font-size:0.66rem;font-weight:700;color:var(--text-muted);margin-top:5px;">STEP ${i+1} · ${s[1]}</div>
-            <div style="font-size:0.76rem;font-weight:800;color:var(--text-main);margin-top:2px;">${s[2]}</div>
+          ${[['카카오톡으로','발급 링크 도착'],['원하는 때','링크에서 발급'],['현지 도착 후','로밍 켜면 개통']].map((s,i)=>`
+          <div style="flex:1;background:var(--jd-gray-50);border:1px solid var(--jd-gray-200);border-radius:12px;padding:13px 8px;text-align:center;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--jd-brand-700);">STEP ${i+1}</div>
+            <div style="font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-top:5px;">${s[0]}</div>
+            <div style="font-size:0.8125rem;font-weight:700;color:var(--text-main);margin-top:2px;">${s[1]}</div>
           </div>`).join('')}
         </div>
         <a href="issue.html?local=${encodeURIComponent(orderCode)}" target="_blank" rel="noopener"
-           style="display:block;text-align:center;margin-top:14px;padding:15px;border-radius:14px;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;font-weight:800;font-size:0.92rem;text-decoration:none;box-shadow:0 8px 20px rgba(249,115,22,0.3);">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
-        <div style="font-size:0.74rem;color:var(--text-muted);text-align:center;margin-top:8px;">실서비스에서는 이 링크가 카카오톡 알림톡으로 발송돼요</div>`);
+           style="display:block;text-align:center;margin-top:14px;padding:15px;border-radius:12px;background:var(--jd-brand-500);color:#fff;font-weight:700;font-size:0.9375rem;text-decoration:none;">지금 QR 발급받기</a>
+        <div style="font-size:0.74rem;color:var(--text-muted);text-align:center;margin-top:8px;">같은 링크가 카카오톡 알림톡으로도 발송돼요</div>`);
     }
 
     // 🧳 해당 국가 여행 준비물·이슈 드롭다운 채우기
@@ -2553,13 +2505,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       tipsBox.innerHTML = buildTravelTipsHTML(firstCountry);
     }
     
-    let successMsg = `🎉 결제가 정상 처리되었습니다!\n카카오톡으로 eSIM 발급 링크를 보내드려요. 링크에서 원하시는 시점에 발급하시면 됩니다.`;
+    let successMsg = `결제가 완료됐어요.\n카카오톡으로 eSIM 발급 링크를 보내드려요. 링크에서 원하시는 시점에 발급하시면 됩니다.`;
     const requiresActivation = checkoutActivationDate.required && checkoutActivationDate.value;
     if (requiresActivation) {
-      successMsg = `🎉 예약 결제가 정상 처리되었습니다!\n입력하신 이메일(${email})로 안내 메일이 발송되었습니다.\n(지정하신 개통일 [${checkoutActivationDate.value}]에 맞춰 현지망 활성화가 순차 진행됩니다.)`;
+      successMsg = `예약 결제가 완료됐어요.\n입력하신 이메일(${email})로 안내 메일이 발송되었습니다.\n(지정하신 개통일 [${checkoutActivationDate.value}]에 맞춰 현지망 활성화가 순차 진행됩니다.)`;
     }
     
-    successMsg += `\n\n💡 구매하신 내역은 우측 상단의 [주문 조회] 메뉴에서 입력하신 정보(${email} / ${phone})로 언제든지 다시 확인하실 수 있습니다.`;
+    successMsg += `\n\n구매하신 내역은 우측 상단의 [주문 조회] 메뉴에서 입력하신 정보(${email} / ${phone})로 언제든지 다시 확인하실 수 있습니다.`;
     
     setTimeout(() => {
       alert(successMsg);
@@ -2679,23 +2631,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     diagResultPanel.className = 'diag-result-card';
     diagResultPanel.classList.add(`status-${device.status}`);
 
-    let titleIcon = '🎉';
-    let titleText = 'eSIM 개통이 가능한 기기입니다!';
+    let titleIcon = '';
+    let titleText = 'eSIM 개통이 가능한 기기예요';
     let detailHTML = '이 단말기는 내부에 eSIM 모듈칩이 장착되어 있어, 구매 후 제공받으신 QR코드 스캔을 통해 즉시 현지 데이터망 사용이 가능한 요금제입니다. 안심하고 구매하세요!';
 
     if (device.status === 'warning') {
-      titleIcon = '⚠️';
-      titleText = 'eSIM 지원여부 확인 대상 (해외/직구폰)';
+      titleIcon = '';
+      titleText = 'eSIM 지원 여부 확인 대상 (해외·직구폰)';
       detailHTML = device.note || '해외 사양 단말기인 경우 모델에 따라 지원 여부가 상이할 수 있습니다. 구매 전에 반드시 다이얼러에서 *#06#를 입력하여 EID 항목이 뜨는지 확인하시고 구매해 주세요.';
     } else if (device.status === 'danger') {
-      titleIcon = '❌';
-      titleText = 'eSIM 이용이 불가능한 기기입니다';
+      titleIcon = '';
+      titleText = 'eSIM 이용이 불가능한 기기예요';
       detailHTML = device.note || '이 기종은 가상 eSIM 기능을 지원하는 하드웨어 칩이 내장되어 있지 않습니다. 이 요금제 구매 시 사용이 불가능하므로, 대신 <strong>인천공항 수령 유심(USIM)</strong> 또는 로밍 에그 상품을 권장합니다.';
     }
 
     detailHTML += `
       <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,0.08); font-size: 0.72rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 4px;">
-        <div>📌 <strong>필수 체크 리스트:</strong></div>
+        <div><strong>필수 체크 리스트:</strong></div>
         <div>• 컨트리락(락폰) 해제 필수: 기존 통신망 계약상 컨트리락이 걸려있는 기기는 이심 프로필 설치가 거부됩니다.</div>
         <div>• 듀얼 물리 유심 기종 미지원: 중국/홍콩 출시 아이폰 등 유심 트레이가 2개인 기종은 이심이 탑재되지 않습니다.</div>
       </div>
@@ -2703,7 +2655,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     diagResultPanel.innerHTML = `
       <div class="diag-result-title" style="font-size: 0.92rem; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; text-align: left;">
-        <span>${titleIcon}</span> <span>${titleText}</span>
+        <span>${titleText}</span>
       </div>
       <div class="diag-result-desc" style="font-size: 0.78rem; line-height: 1.5; color: var(--text-muted); text-align: left;">
         ${detailHTML}
@@ -2750,7 +2702,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const localMatched = savedOrders.filter(o => (o.email || '').toLowerCase() === ne && (o.phone || '').replace(/[^0-9]/g, '') === np);
     if (window.ORDERS_API) {
       resultsContainer.style.display = 'block';
-      resultsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">⏳ 조회 중...</div>';
+      resultsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">조회 중...</div>';
       fetch(window.ORDERS_API + '?email=' + encodeURIComponent(ne) + '&phone=' + encodeURIComponent(np))
         .then(r => { if (!r.ok) throw 0; return r.json(); })
         .then(d => {
@@ -2772,8 +2724,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!matchedOrders.length) {
       resultsContainer.innerHTML = `
         <div style="text-align: center; padding: 50px 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
-          <div style="font-size: 2.5rem; margin-bottom: 16px;">🔍</div>
-          <div style="font-weight: 800; color: var(--text-main); font-size: 1.05rem; margin-bottom: 8px;">일치하는 주문 내역이 없습니다</div>
+          
+          <div style="font-weight: 800; color: var(--text-main); font-size: 1.05rem; margin-bottom: 8px;">일치하는 주문 내역이 없어요</div>
           <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; max-width: 400px; margin: 0 auto;">
             구매 시 입력하셨던 정보가 맞는지 다시 확인해 주세요. 특히 이메일 오타나 휴대폰 하이픈(-) 입력 여부에 유의해 주시기 바랍니다.
           </div>
@@ -2799,17 +2751,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <div style="flex:1;min-width:240px;">
             ${it.iccid ? `<div style="font-size:0.76rem;color:var(--text-muted);font-family:monospace;margin-bottom:10px;">ICCID: ${it.iccid}</div>` : ''}
-            <button class="action-btn" style="width:100%;margin-bottom:8px;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>alert('📋 설치 코드가 복사됐어요 — 폰의 설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력에 붙여넣으세요'))">📋 설치 코드 복사</button>
-            ${issueUrl ? `<a href="${issueUrl}" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;">🎫 발급 페이지 열기 (설치·사용량 확인)</a>` : ''}
-            <div style="font-size:0.72rem;color:var(--text-muted);line-height:1.6;margin-top:10px;">📱 폰 카메라로 위 QR을 스캔하거나, 발급 페이지를 폰에서 열면 탭 한 번 설치(iOS)도 가능해요.</div>
+            <button class="action-btn" style="width:100%;margin-bottom:8px;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>alert('설치 코드가 복사됐어요 — 폰의 설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력에 붙여넣으세요'))">설치 코드 복사</button>
+            ${issueUrl ? `<a href="${issueUrl}" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;">발급 페이지 열기 (설치·사용량 확인)</a>` : ''}
+            <div style="font-size:0.72rem;color:var(--text-muted);line-height:1.6;margin-top:10px;">폰 카메라로 위 QR을 스캔하거나, 발급 페이지를 폰에서 열면 탭 한 번 설치(iOS)도 가능해요.</div>
           </div>
         </div>`
         : (issueUrl ? `
-        <a href="${issueUrl}" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;background:linear-gradient(135deg,#F97316,#F59E0B);color:#fff;border:none;">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
+        <a href="${issueUrl}" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;background:var(--jd-brand-500);color:#fff;border:none;">지금 QR 발급받기</a>
         <div style="font-size:0.74rem;color:var(--text-muted);line-height:1.6;margin-top:10px;">발급 전에는 100% 환불 가능 · 발급 후 취소 불가 · 사용일은 현지 활성화부터 카운트돼요. 카카오톡으로 받으신 발급 링크와 동일한 페이지입니다.</div>`
         : `
-        <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;font-size:0.8rem;font-weight:700;color:#9a5b16;line-height:1.6;">🛠️ 발급 정보를 준비 중이에요 — 준비되면 카카오톡으로 발급 링크를 보내드려요.</div>
-        <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;margin-top:10px;">💬 발급 링크 다시 받기 (카톡 상담)</a>`)}
+        <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px;font-size:0.8rem;font-weight:700;color:#9a5b16;line-height:1.6;">발급 정보를 준비 중이에요 — 준비되면 카카오톡으로 발급 링크를 보내드려요.</div>
+        <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" class="action-btn" style="display:block;text-align:center;width:100%;text-decoration:none;margin-top:10px;">발급 링크 다시 받기 (카카오톡 상담)</a>`)}
       </div>`;
     }).join('');
   }
@@ -3032,10 +2984,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reviewTrack = document.getElementById('reviewTrack');
     if (!reviewTrack || !window.REVIEWS_DATA) return;
 
-    // 요약 지표 주입 (평균 평점 · 후기 수)
+    // 캡션 주입 (정본 §2-6: 실측 REVIEWS_META 연동 시에만 건수 노출)
     const countEl = document.querySelector('.review-track-count');
-    if (countEl && window.REVIEWS_META) {
-      countEl.innerHTML = '★★★★★ <span class="review-meta-line">' + window.REVIEWS_META.avg.toFixed(1) + ' / 5.0 · 실구매 후기 ' + window.REVIEWS_META.total + '건</span>';
+    if (countEl && window.REVIEWS_META && window.REVIEWS_META.total) {
+      countEl.textContent = '네이버 스마트스토어 실구매 인증 후기 ' + window.REVIEWS_META.total + '건';
     }
 
     const FLAG = { '일본': '🇯🇵', '베트남': '🇻🇳', '태국': '🇹🇭', '대만': '🇹🇼', '미국': '🇺🇸', '중국': '🇨🇳', '유럽': '🇪🇺', '뉴질랜드': '🇳🇿', '인도네시아': '🇮🇩' };
@@ -3050,16 +3002,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       card.innerHTML = `
         <div class="rv-top">
           <span class="rv-stars">${stars}</span>
-          ${rev.best ? '<span class="rv-best">👑 BEST</span>' : ''}
+          ${rev.best ? '<span class="rv-best">베스트</span>' : ''}
         </div>
         <div class="rv-chips">
           <span class="rv-chip rv-chip-country">${FLAG[rev.country] || '🌏'} ${rev.country}</span>
-          ${rev.type ? '<span class="rv-chip rv-chip-type">⏱ ' + rev.type + '</span>' : ''}
+          ${rev.type ? '<span class="rv-chip rv-chip-type">' + rev.type + '</span>' : ''}
         </div>
         ${rev.photo ? '<img class="rv-photo" loading="lazy" src="' + rev.photo + '" alt="구매 후기 사진" onerror="this.remove()">' : ''}
         <p class="rv-body">${rev.body}</p>
         <div class="rv-foot">
-          <span class="rv-author">✅ ${rev.author} <em>구매 확정</em></span>
+          <span class="rv-author">${rev.author} <em>구매 인증</em></span>
           <span class="rv-date">${rev.date}</span>
         </div>
       `;
@@ -3188,7 +3140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const isExpanded = expandWrapper.classList.contains('expanded');
       if (isExpanded) {
         expandWrapper.classList.remove('expanded');
-        expandBtn.innerHTML = '💬 리얼 고객 후기 전체 보기 (펼치기) ▾';
+        expandBtn.innerHTML = '후기 더 보기 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
         // 접었을 때 섹션 위로 포커싱 이동
         const section = document.querySelector('.review-track-section');
         if (section) {
@@ -3196,7 +3148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       } else {
         expandWrapper.classList.add('expanded');
-        expandBtn.innerHTML = '닫기 ▴';
+        expandBtn.innerHTML = '접기 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
       }
     });
   }
@@ -3264,11 +3216,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (v > 0 && v < min) min = v;
         }));
         if (!isFinite(min)) return;
-        const flag = FLAG[name] || '✈️';
+        const flag = FLAG[name] || '🌏';
         cards.push(`<button type="button" class="hotdest-card" data-country="${hit[0].country}">` +
           `<span class="hotdest-flag">${flag}</span>` +
           `<span class="hotdest-body"><span class="hotdest-name">${name}</span>` +
-          `<span class="hotdest-price"><b>${min.toLocaleString()}원</b>부터</span></span></button>`);
+          `<span class="hotdest-price"><b>${min.toLocaleString()}</b>원부터</span></span></button>`);
       });
       if (cards.length) {
         hotGrid.innerHTML = cards.join('');

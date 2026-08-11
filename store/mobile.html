@@ -63,7 +63,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       setTimeout(function () {
         showDataLoadingToast();
         var t = document.getElementById('dataToast');
-        if (t) t.textContent = '🎉 JDISIM 앱 설치 완료! 여행 준비 끝!';
+        if (t) t.textContent = 'JDISIM 앱 설치 완료! 여행 준비는 끝났어요';
       }, 1200);
     });
 
@@ -74,7 +74,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         if (bar) return;
         bar = document.createElement('div');
         bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:820;background:#0f172a;color:#fbbf24;font-size:0.75rem;font-weight:800;text-align:center;padding:9px 14px calc(9px + env(safe-area-inset-top,0px));';
-        bar.textContent = '📴 오프라인 — 저장된 주문·QR코드는 계속 볼 수 있어요';
+        bar.textContent = '오프라인 상태예요 — 저장된 주문·QR코드는 계속 볼 수 있어요';
         document.body.appendChild(bar);
       }
       function hideOffline() {
@@ -83,7 +83,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         bar = null;
         showDataLoadingToast();
         var t = document.getElementById('dataToast');
-        if (t) t.textContent = '✅ 다시 온라인이에요!';
+        if (t) t.textContent = '다시 온라인이에요';
       }
       window.addEventListener('offline', showOffline);
       window.addEventListener('online', hideOffline);
@@ -109,7 +109,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:700;background:#0f172a;color:#fff;border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 14px 34px rgba(15,23,42,0.4);font-size:0.75rem;font-weight:700;line-height:1.5;';
         b.innerHTML = '<img src="icon-192.png" style="width:36px;height:36px;border-radius:10px;flex-shrink:0;" alt="">' +
           '<div style="min-width:0;">' + html + '</div>' +
-          (onAction ? '<button id="pwaGo" style="flex-shrink:0;margin-left:auto;background:linear-gradient(135deg,#F1690D,#F59E0B);border:none;color:#fff;font-weight:800;font-size:0.75rem;padding:9px 13px;border-radius:20px;">설치</button>' : '') +
+          (onAction ? '<button id="pwaGo" style="flex-shrink:0;margin-left:auto;background:#F1690D;border:none;color:#fff;font-weight:700;font-size:0.75rem;padding:9px 13px;border-radius:12px;">설치</button>' : '') +
           '<button id="pwaX" style="flex-shrink:0;background:none;border:none;color:#64748b;font-size:1.0625rem;font-weight:800;padding:4px;' + (onAction ? '' : 'margin-left:auto;') + '">✕</button>';
         document.body.appendChild(b);
         document.getElementById('pwaX').onclick = function () { b.remove(); try { localStorage.setItem('jd_pwa_hint', '1'); } catch (e) {} };
@@ -202,6 +202,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
   <link rel="stylesheet" href="premium.css?v=20260719b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
+  <link rel="stylesheet" href="jd-neo.css?v=20260811a">
   <script src="jd-trip-cal.js?v=20260719b" defer></script>
   <!-- 폰트 정본 (2026-07-15): Pretendard 하나로 통일 — 국문·숫자 모두 선명, 로케비와 동급 렌더링 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -1973,6 +1974,197 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
   #activationNotice, #activationNotice div { font-size:0.84375rem !important; line-height: 1.6 !important; }
   /* 입력 요소 전역 16px+ — iOS는 16px 미만 입력 포커스 시 화면을 강제 확대함 */
   input, select, textarea { font-size: 16px !important; }
+
+  /* ============================================================
+     JD-NEO 모바일 리디자인 (2026-08-11, 정본 §5) — 자연 스크롤 홈
+     · 스냅 페이저 해제 상태의 홈 레이아웃 + 리스트형 스토어
+     · 토큰은 jd-neo.css(:root)의 --jd-* 소비
+     ============================================================ */
+  /* 홈: 스냅 해제 — 히어로는 콘텐츠 높이만큼만 */
+  html body .m-hero {
+    min-height: 0 !important; height: auto !important; max-height: none !important;
+    padding: 20px 0 4px !important; display: block !important; overflow: visible !important;
+  }
+  html body .m-hero-content {
+    display: block !important; padding: 0 !important; min-height: 0 !important;
+    opacity: 1 !important; transform: none !important;
+  }
+  /* 구 스냅 안무(in-view 대기 opacity:0) 무효화 — IO가 더는 붙지 않음 */
+  html.home-snap #view-home .m-hero .m-hero-content > *,
+  html.home-snap #view-home .globe-panel > div,
+  html.home-snap #view-home .finder-panel > * {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+  .m-hero-caption { font-size: 13px; font-weight: 500; color: var(--jd-gray-500, #8B95A1); }
+  html body .m-hero-title {
+    font-size: 24px !important; line-height: 1.3 !important; font-weight: 800 !important;
+    letter-spacing: -0.02em; margin: 6px 0 16px !important; color: var(--jd-gray-900, #191F28) !important;
+  }
+  /* 히어로 검색 폼 (#rfCountry/#rfDays/#rfGoBtn 훅 재배치) */
+  #view-home .rf-field { position: relative; margin-bottom: 12px; }
+  #view-home .rf-field input {
+    width: 100%; height: 52px; box-sizing: border-box; margin: 0;
+    border: 1px solid var(--jd-gray-300, #D1D6DB) !important; border-radius: 12px !important;
+    background: #fff !important; padding: 0 16px !important;
+    font-size: 16px !important; font-weight: 500; color: var(--jd-gray-900, #191F28);
+    box-shadow: none !important;
+  }
+  #view-home .rf-field input::placeholder { color: var(--jd-gray-400, #B0B8C1); font-weight: 400; }
+  #view-home .rf-field input:focus {
+    outline: none; border-color: var(--jd-brand-500, #F1690D) !important;
+    box-shadow: 0 0 0 3px rgba(241, 105, 13, 0.25) !important;
+  }
+  #view-home .rf-suggest {
+    border: 1px solid var(--jd-gray-200, #E5E8EB) !important; border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(25, 31, 40, 0.08) !important; background: #fff !important;
+  }
+  #view-home .rf-days { display: flex; flex-wrap: wrap; gap: 8px; overflow: visible; margin-bottom: 12px; padding-bottom: 0; }
+  #view-home .rf-day {
+    flex: none; height: 40px; padding: 0 15px; border-radius: 999px !important;
+    border: 1.5px solid transparent !important; background: var(--jd-gray-100, #F2F4F6) !important;
+    color: var(--jd-gray-800, #333D4B) !important; font-size: 14px !important; font-weight: 500 !important;
+    box-shadow: none !important;
+  }
+  #view-home .rf-day.selected {
+    background: var(--jd-brand-50, #FFF4EC) !important; color: var(--jd-brand-700, #B04A06) !important;
+    border-color: var(--jd-brand-500, #F1690D) !important; font-weight: 700 !important; box-shadow: none !important;
+  }
+  #view-home .rf-go {
+    height: 56px; padding: 0 !important; border-radius: 12px !important;
+    background: var(--jd-brand-500, #F1690D) !important; background-image: none !important;
+    box-shadow: none !important; font-size: 16px !important; font-weight: 700 !important;
+  }
+  #view-home .rf-go:active { background: var(--jd-brand-700, #B04A06) !important; }
+  .rf-result-head { color: var(--jd-gray-800, #333D4B) !important; }
+  .rf-card { background: #fff !important; border: 1px solid var(--jd-gray-200, #E5E8EB) !important; border-radius: 12px !important; box-shadow: none !important; }
+  .rf-card-badge { background: var(--jd-brand-50, #FFF4EC) !important; color: var(--jd-brand-700, #B04A06) !important; box-shadow: none !important; }
+  .rf-card-title { color: var(--jd-gray-900, #191F28) !important; }
+  .rf-card-price { color: var(--jd-gray-900, #191F28) !important; font-variant-numeric: tabular-nums; }
+  /* 국가 칩: 마퀴 → 정적 2행 랩 */
+  #view-home #mobileCountryChips {
+    display: flex !important; flex-wrap: wrap !important; gap: 8px !important;
+    overflow: visible !important; width: auto !important; margin: 16px 0 0 !important;
+    padding: 0 !important; -webkit-mask-image: none !important; mask-image: none !important;
+  }
+  #view-home #mobileCountryChips .marquee-tag {
+    flex: none; display: inline-flex; align-items: center; height: 40px; padding: 0 14px;
+    margin: 0 !important; border-radius: 999px !important; background: var(--jd-gray-100, #F2F4F6) !important;
+    border: none !important; color: var(--jd-gray-800, #333D4B) !important;
+    font-size: 14px !important; font-weight: 500 !important; box-shadow: none !important; cursor: pointer;
+  }
+  /* 신뢰 1줄 */
+  #view-home .jd-proof { display: block; margin: 18px 0 2px; font-size: 13px !important; color: var(--jd-gray-600, #6B7684); }
+  /* 홈 섹션 공통 */
+  .jd-sec-title { font-size: 18px; font-weight: 700; color: var(--jd-gray-900, #191F28); margin: 28px 0 10px; letter-spacing: -0.01em; }
+  .jd-sec-sub { font-size: 13px; font-weight: 500; color: var(--jd-gray-500, #8B95A1); margin: -6px 0 10px; }
+  /* 국가 바로가기 리스트 행 */
+  .jd-crow {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px;
+    padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--jd-gray-100, #F2F4F6);
+    font-family: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+  }
+  .jd-crow .flag { font-size: 28px; line-height: 1; flex: none; }
+  .jd-crow .name { flex: 1; min-width: 0; font-size: 16px !important; font-weight: 700; color: var(--jd-gray-900, #191F28); }
+  .jd-crow::after {
+    content: ''; flex: none; width: 8px; height: 8px; margin-right: 4px;
+    border-top: 1.5px solid var(--jd-gray-400, #B0B8C1); border-right: 1.5px solid var(--jd-gray-400, #B0B8C1);
+    transform: rotate(45deg);
+  }
+  /* renderHomeFeatured 부활 대비: 카드 → 리스트 행 스킨 */
+  #homeFeaturedList:empty { display: none; }
+  #homeFeaturedList .mobile-product-card {
+    background: #fff; border: none; border-bottom: 1px solid var(--jd-gray-100, #F2F4F6);
+    border-radius: 0; box-shadow: none; padding: 12px 2px; margin: 0; gap: 12px;
+  }
+  #homeFeaturedList .product-flag-img { width: 36px; height: 36px; border-radius: 50%; box-shadow: none; }
+  #homeFeaturedList .product-title { font-size: 16px !important; font-weight: 700; color: var(--jd-gray-900, #191F28); }
+  #homeFeaturedList .product-country-tag { display: none; }
+  #homeFeaturedList .product-price { color: var(--jd-gray-900, #191F28) !important; font-weight: 800; font-variant-numeric: tabular-nums; }
+  /* 서비스 바로가기 리스트 */
+  .jd-svc-row {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px;
+    padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--jd-gray-100, #F2F4F6);
+    font-family: inherit; font-size: 15px !important; font-weight: 500; color: var(--jd-gray-800, #333D4B);
+    text-align: left; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .jd-svc-row svg { width: 20px; height: 20px; color: var(--jd-gray-600, #6B7684); flex: none; }
+  .jd-svc-row .t { flex: 1; min-width: 0; }
+  .jd-svc-row::after {
+    content: ''; flex: none; width: 8px; height: 8px; margin-right: 4px;
+    border-top: 1.5px solid var(--jd-gray-400, #B0B8C1); border-right: 1.5px solid var(--jd-gray-400, #B0B8C1);
+    transform: rotate(45deg);
+  }
+  /* 후기 헤더·뱃지 */
+  .review-source-badge { background: var(--jd-gray-100, #F2F4F6) !important; color: var(--jd-gray-600, #6B7684) !important; border: none !important; box-shadow: none !important; }
+  .m-rv-card { border: 1px solid var(--jd-gray-200, #E5E8EB) !important; box-shadow: none !important; border-radius: 12px !important; background: #fff !important; }
+  .rv-stars { color: var(--jd-rating, #FFB331) !important; }
+  .rv-best { background: var(--jd-brand-50, #FFF4EC) !important; color: var(--jd-brand-700, #B04A06) !important; font-size: 12px !important; font-weight: 700 !important; border-radius: 8px; padding: 2px 7px; }
+  /* 앱 헤더 워드마크 */
+  .app-logo .app-wordmark { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: var(--jd-gray-900, #191F28); }
+  .app-logo .app-wordmark em { font-style: normal; color: var(--jd-brand-500, #F1690D); }
+  /* 스토어: 검색바 정본 스킨 */
+  .jd-search .jd-box { border: 1px solid var(--jd-gray-300, #D1D6DB) !important; border-radius: 12px !important; box-shadow: none !important; }
+  .jd-search .jd-box:focus-within { border-color: var(--jd-brand-500, #F1690D) !important; box-shadow: 0 0 0 3px rgba(241, 105, 13, 0.25) !important; }
+  .jd-search .jd-go { background: var(--jd-brand-500, #F1690D) !important; background-image: none !important; box-shadow: none !important; border-radius: 8px !important; font-weight: 700 !important; }
+  /* 스토어: 지역 탭 — 활성 잉크 반전 필 */
+  .m-cat-btn, #view-store .m-cat-btn {
+    background: var(--jd-gray-100, #F2F4F6) !important; border: none !important;
+    color: var(--jd-gray-600, #6B7684) !important; border-radius: 999px !important;
+    font-weight: 500 !important; box-shadow: none !important;
+  }
+  .m-cat-btn.active, #view-store .m-cat-btn.active {
+    background: var(--jd-gray-900, #191F28) !important; color: #fff !important; font-weight: 700 !important;
+  }
+  /* 스토어: 개런티 티켓 → 1줄 신뢰 바 */
+  .rg-ticket { display: flex; align-items: center; gap: 8px; padding: 12px 14px !important; margin: 2px 0 14px !important; font-size: 13px; color: var(--jd-gray-700, #4E5968); }
+  .rg-ticket svg { width: 16px; height: 16px; color: var(--jd-success, #12A25E); flex: none; }
+  .rg-ticket strong { font-weight: 700; color: var(--jd-gray-800, #333D4B); font-size: 13px !important; }
+  /* 스토어: 카드 → 리스트 행 */
+  #storeProductList.product-list { display: block !important; gap: 0 !important; }
+  #view-store .store-card {
+    position: relative; flex-direction: row !important; align-items: center; gap: 12px;
+    min-height: 72px; padding: 12px 2px !important; margin: 0 !important;
+    border: none !important; border-bottom: 1px solid var(--jd-gray-100, #F2F4F6) !important;
+    border-radius: 0 !important; box-shadow: none !important; overflow: visible !important;
+    animation: none !important;
+  }
+  #view-store .store-card:active { transform: none !important; background: var(--jd-gray-50, #F9FAFB); }
+  #view-store .store-card-img {
+    width: 36px !important; height: 36px !important; border-radius: 50% !important;
+    object-fit: cover; flex: none; position: static !important;
+  }
+  #view-store .store-card-body { flex: 1; min-width: 0; padding: 0 !important; }
+  #view-store .store-card-title {
+    font-size: 16px !important; font-weight: 700 !important; color: var(--jd-gray-900, #191F28) !important;
+    margin: 0 !important; min-height: 0 !important; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  #view-store .store-card-meta { font-size: 13px !important; color: var(--jd-gray-500, #8B95A1) !important; margin: 2px 0 0 !important; }
+  #view-store .store-card-price-row { flex: none; display: flex; align-items: baseline; margin: 0 !important; padding: 0 !important; }
+  #view-store .store-card-price { font-size: 15px !important; font-weight: 800 !important; color: var(--jd-gray-900, #191F28) !important; font-variant-numeric: tabular-nums; }
+  #view-store .store-card-price em { font-style: normal; font-size: 12px !important; font-weight: 500; color: var(--jd-gray-500, #8B95A1); }
+  #view-store .store-card::after {
+    content: ''; flex: none; width: 8px; height: 8px; margin-right: 4px;
+    border-top: 1.5px solid var(--jd-gray-400, #B0B8C1); border-right: 1.5px solid var(--jd-gray-400, #B0B8C1);
+    transform: rotate(45deg);
+  }
+  #view-store .store-card-btn {
+    position: absolute !important; width: 1px !important; height: 1px !important;
+    padding: 0 !important; margin: -1px !important; overflow: hidden !important;
+    clip: rect(0 0 0 0) !important; border: 0 !important; font-size: 12px !important;
+  }
+  #view-store .store-net-badge, #view-store .store-warn-badge, #view-store .store-best-badge {
+    position: static !important; font-size: 12px !important; font-weight: 700 !important;
+    padding: 2px 8px !important; border-radius: 8px !important; box-shadow: none !important;
+    background-image: none !important; line-height: 1.4;
+  }
+  #view-store .store-net-badge { background: var(--jd-gray-100, #F2F4F6) !important; color: var(--jd-gray-600, #6B7684) !important; }
+  #view-store .store-net-badge.local { background: var(--jd-success-bg, #EEFAF3) !important; color: var(--jd-success-deep, #0E7A47) !important; }
+  #view-store .store-warn-badge { background: var(--jd-warning-bg, #FFF7E6) !important; color: var(--jd-warning-deep, #935A00) !important; }
+  /* 결제 완료 세리머니: 색종이 무효화 (생성 JS는 유지, 표시만 차단) */
+  #ticketCeremony > span { display: none !important; }
+  /* 메뉴 패널 정본 스킨 */
+  #appMenuPanel { background: #fff !important; }
 </style>
 </head>
 <body>
@@ -2035,19 +2227,16 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
 
 
 
-  <!-- Background Video -->
-  <div class="video-bg-container">
-    <video autoplay muted loop playsinline id="bgVideo" onerror="this.style.display='none'">
-      <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
-    </video>
+  <!-- Background Video: 정본 §7-A 폐기 — mp4 로드 제거, id 훅만 숨김 보존 -->
+  <div class="video-bg-container" style="display:none;">
+    <video muted playsinline id="bgVideo" style="display:none;"></video>
     <div class="video-bg-overlay"></div>
   </div>
 
   <!-- App Header -->
   <header class="app-header">
     <a href="#" class="app-logo" onclick="switchNav('home')">
-      <div class="app-logo-badge">J</div>
-      <span>JDISIM</span>
+      <span class="app-wordmark">JDISIM<em>.</em></span>
     </a>
     <div style="display:flex;align-items:center;gap:8px;">
       <button class="cart-btn" onclick="openCartSheet()">
@@ -2065,51 +2254,44 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
   <div id="appMenuPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:min(300px,82vw);background:#FDFBF8;z-index:740;box-shadow:-12px 0 40px rgba(15,23,42,0.18);padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));overflow-y:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
       <div style="display:flex;align-items:center;gap:9px;">
-        <img src="images/fox-hello.webp" alt="" style="width:34px;" onerror="this.style.display='none'">
-        <b style="font-size:1.0625rem;color:#221510;">전체 메뉴</b>
+        <b style="font-size:1.0625rem;color:#191F28;">전체 메뉴</b>
       </div>
-      <button onclick="toggleAppMenu(false)" style="width:34px;height:34px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;">✕</button>
+      <button onclick="toggleAppMenu(false)" style="width:34px;height:34px;border-radius:50%;border:1px solid #E5E8EB;background:#fff;font-weight:700;cursor:pointer;">✕</button>
     </div>
-    <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:6px 2px 8px;">서비스</div>
-    <a href="biz.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.9375rem;font-weight:800;margin-bottom:9px;">🏢 기업·단체 비즈니스<span style="margin-left:auto;color:#F1690D;">→</span></a>
-    <a href="guide.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.9375rem;font-weight:800;margin-bottom:9px;">🩺 로미 케어센터<span style="margin-left:auto;color:#F1690D;">→</span></a>
-    <a href="guide/dualsim.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;text-decoration:none;color:#221510;font-size:0.9375rem;font-weight:800;margin-bottom:9px;">📱 듀얼심 설정 가이드<span style="margin-left:auto;color:#F1690D;">→</span></a>
-    <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:16px 2px 8px;">내 정보</div>
-    <button onclick="toggleAppMenu(false);switchNav('orders')" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:14px 13px;border:1px solid #ece5dd;border-radius:14px;background:#fff;font-family:inherit;font-size:0.9375rem;font-weight:800;color:#221510;margin-bottom:9px;cursor:pointer;">👤 로그인 · 주문 조회<span style="margin-left:auto;color:#F1690D;">→</span></button>
-    <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.14em;color:#2BB3A3;margin:16px 2px 8px;">고객 지원</div>
-    <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:none;border-radius:14px;background:#FEE500;text-decoration:none;color:#191919;font-size:0.9375rem;font-weight:800;">💬 카카오톡 24시간 상담</a>
+    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#8B95A1;margin:6px 2px 8px;">서비스</div>
+    <a href="biz.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;text-decoration:none;color:#191F28;font-size:0.9375rem;font-weight:700;margin-bottom:8px;">기업·단체 비즈니스<i data-lucide="chevron-right" style="margin-left:auto;width:16px;height:16px;color:#B0B8C1;"></i></a>
+    <a href="guide.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;text-decoration:none;color:#191F28;font-size:0.9375rem;font-weight:700;margin-bottom:8px;">케어센터<i data-lucide="chevron-right" style="margin-left:auto;width:16px;height:16px;color:#B0B8C1;"></i></a>
+    <a href="guide/dualsim.html" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;text-decoration:none;color:#191F28;font-size:0.9375rem;font-weight:700;margin-bottom:8px;">듀얼심 설정 가이드<i data-lucide="chevron-right" style="margin-left:auto;width:16px;height:16px;color:#B0B8C1;"></i></a>
+    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#8B95A1;margin:16px 2px 8px;">내 정보</div>
+    <button onclick="toggleAppMenu(false);switchNav('orders')" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:14px 13px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;font-family:inherit;font-size:0.9375rem;font-weight:700;color:#191F28;margin-bottom:8px;cursor:pointer;">로그인 · 주문 조회<i data-lucide="chevron-right" style="margin-left:auto;width:16px;height:16px;color:#B0B8C1;"></i></button>
+    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#8B95A1;margin:16px 2px 8px;">고객 지원</div>
+    <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:11px;padding:14px 13px;border:none;border-radius:12px;background:#FEE500;text-decoration:none;color:#191919;font-size:0.9375rem;font-weight:700;">카카오톡 상담 24시간</a>
   </div>
 
   <!-- ================= VIEW 1: HOME VIEW ================= -->
     <main id="view-home" class="mobile-view active">
-    <!-- 시네마틱 풀스크린 히어로 -->
-    <section class="m-hero snap-panel">
-      <video class="m-hero-video" id="mHeroVideo" autoplay muted loop playsinline preload="metadata" onerror="this.style.display='none'">
-        <source src="Bright_airy_looping_backgroun.mp4" type="video/mp4">
-      </video>
-      <div class="m-hero-overlay"></div>
+    <!-- 히어로 = 검색 (정본 §5-1): 로미 매칭 폼(rf-* 훅)을 히어로로 흡수, 비디오·스탯 폐기 -->
+    <section class="m-hero">
+      <video class="m-hero-video" id="mHeroVideo" muted playsinline style="display:none;"></video>
       <div class="m-hero-content">
-        <span class="m-hero-badge">🦊 JDISIM × 로미</span>
-        <h1 class="m-hero-title">전 세계 150개국,<br>닿는 순간 <em>연결</em>됩니다</h1>
-        <p class="m-hero-sub">유심 교체도, 공항 대기도 없이.<br>QR 스캔 한 번으로 현지 로컬망에 다이렉트.</p>
-        <div class="m-hero-ctas">
-          <button class="m-hero-cta-primary cta-sheen" onclick="switchNav('store')">eSIM 스토어 입장하기 →</button>
-          <button class="m-hero-cta-ghost" onclick="scrollToRomi()">🦊 로미에게 3초 추천받기</button>
+        <span class="m-hero-caption">여행 eSIM · 결제 후 평균 5분 내 QR 발송</span>
+        <h1 class="m-hero-title">어느 나라 가세요?</h1>
+        <div class="rf-field">
+          <input type="text" id="rfCountry" placeholder="국가 이름을 입력하세요" autocomplete="off">
+          <div class="rf-suggest" id="rfSuggest"></div>
         </div>
-        <div class="m-hero-stats">
-          <div><strong>1,700<em style="font-style:normal;color:#F1690D">+</em></strong><span>누적 고객</span></div>
-          <div class="m-hero-stat-div"></div>
-          <div><strong>10초</strong><span>QR 개통</span></div>
-          <div class="m-hero-stat-div"></div>
-          <div><strong>150<em style="font-style:normal;color:#F1690D">+</em></strong><span>지원 국가</span></div>
+        <div class="rf-days" id="rfDays">
+          <button class="rf-day" data-d="1">1일</button><button class="rf-day" data-d="2">2일</button><button class="rf-day" data-d="3">3일</button><button class="rf-day selected" data-d="4">4일</button><button class="rf-day" data-d="5">5일</button><button class="rf-day" data-d="7">7일</button><button class="rf-day" data-d="10">10일</button><button class="rf-day" data-d="15">15일</button><button class="rf-day" data-d="30">30일</button>
         </div>
+        <button class="rf-go" id="rfGoBtn">요금제 찾기</button>
+        <div class="rf-results" id="rfResults"></div>
+        <div class="mobile-marquee" id="mobileCountryChips"></div>
+        <div class="jd-proof">미개통 시 100% 환불 · 카카오톡 상담 24시간</div>
       </div>
-      <img src="images/fox-hello.webp" alt="JDISIM 마스코트 로미" class="m-hero-fox">
-      <div class="m-hero-scroll-cue">⌄</div>
     </section>
 
-    <!-- ★ 시그니처: 인터랙티브 3D 지구본 -->
-    <section class="snap-panel globe-panel" style="position:relative;display:flex;flex-direction:column;justify-content:center;margin-left:-16px;margin-right:-16px;background:radial-gradient(140% 90% at 50% 30%, #EAF6FF 0%, #F6FBFF 55%, #FFF8F0 100%);overflow:hidden;padding:40px 20px;">
+    <!-- ★ 3D 지구본 — 정본 §5-0 숨김 보존 (#mGlobe 훅 유지) -->
+    <section class="globe-panel" style="display:none;position:relative;flex-direction:column;justify-content:center;margin-left:-16px;margin-right:-16px;overflow:hidden;padding:40px 20px;">
       <div style="position:relative;text-align:center;">
         <span style="font-size:0.75rem;font-weight:800;letter-spacing:2.5px;color:#B04A06;">LIVE CONNECTED WORLD</span>
         <h2 style="margin:10px 0 0;font-size:1.625rem;line-height:1.35;font-weight:900;color:#221510;">서울에서 세계 어디든,<br><span style="background:linear-gradient(90deg,#F1690D,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent;">탭 한 번</span>이면 연결</h2>
@@ -2125,9 +2307,8 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       </div>
     </section>
 
-    <!-- 국가 바로가기 칩 (가로 스크롤) -->
-    <!-- WHY 01: 속도 -->
-    <section class="snap-panel why-panel why-1" data-num="01">
+    <!-- WHY 3패널 — 정본 §7-B 숨김 보존 (이용 안내는 스토어·상세가 담당) -->
+    <section class="why-panel why-1" data-num="01" style="display:none;">
       <span class="wp-eyebrow wp-el wp-d1">01 · SPEED</span>
       <h2 class="wp-title wp-el wp-d2">로밍 중계 없이<br><em>현지 로컬망</em> 다이렉트</h2>
       <p class="wp-copy wp-el wp-d3">한국 서버를 한 바퀴 돌아오는 반쪽짜리 로밍과 달라요.<br>현지 통신사 망에 바로 붙어서 지도도, 유튜브도, 영상통화도 끊김 없이.</p>
@@ -2135,8 +2316,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       <img loading="lazy" src="images/fox-phone.webp" class="wp-fox wp-el wp-d4" alt="양손에 폰을 든 로미">
     </section>
 
-    <!-- WHY 02: 개통 -->
-    <section class="snap-panel why-panel why-2" data-num="02">
+    <section class="why-panel why-2" data-num="02" style="display:none;">
       <span class="wp-eyebrow wp-el wp-d1">02 · INSTANT</span>
       <h2 class="wp-title wp-el wp-d2">유심 교체 없이<br>QR 스캔 <em>10초 개통</em></h2>
       <p class="wp-copy wp-el wp-d3">공항 유심 부스 줄서기, 뾰족한 핀으로 유심 갈아끼우기 — 이제 안 해도 돼요.<br>카톡·메일로 받은 QR을 카메라로 비추면 끝.</p>
@@ -2144,8 +2324,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       <img loading="lazy" src="images/fox-qr.webp" class="wp-fox wp-el wp-d4" alt="QR코드를 든 로미">
     </section>
 
-    <!-- WHY 03: 케어 -->
-    <section class="snap-panel why-panel why-3" data-num="03">
+    <section class="why-panel why-3" data-num="03" style="display:none;">
       <span class="wp-eyebrow wp-el wp-d1">03 · CARE</span>
       <h2 class="wp-title wp-el wp-d2">여행 내내 곁에,<br><em>24시간 로미 케어</em></h2>
       <p class="wp-copy wp-el wp-d3">현지에서 데이터가 안 잡히면 카톡 한 줄만 보내세요.<br>새벽에도 1:1로 잡아드리고, 그래도 안 되면 전액 돌려드립니다.</p>
@@ -2153,83 +2332,44 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       <img loading="lazy" src="images/fox-thumbsup.webp" class="wp-fox wp-el wp-d4" alt="엄지척 로미">
     </section>
 
-    <!-- 로미 매칭 (풀스크린 스냅 패널) -->
-    <section class="snap-panel finder-panel">
-      <div class="fp-head">
-        <span class="wp-eyebrow">04 · MATCH</span>
-        <h2 class="fp-title">이 모든 걸, <em>3초</em> 만에 골라드려요</h2>
-      </div>
-      <div class="mobile-marquee" id="mobileCountryChips"></div>
-
-      <!-- 로미의 3초 요금제 매칭 (차별화 핵심 기능) -->
-      <div class="romi-finder">
-      <div class="rf-head">
-        <img loading="lazy" src="images/fox-thinking.webp" alt="고민하는 로미" class="rf-fox">
-        <div>
-          <div class="rf-title">로미의 3초 요금제 매칭</div>
-          <div class="rf-sub">어디로, 며칠 가세요? 132개 요금제에서 딱 맞는 걸 골라드려요</div>
-        </div>
-      </div>
-      <div class="rf-field">
-        <input type="text" id="rfCountry" placeholder="🌍 여행 국가 입력 (예: 일본)" autocomplete="off">
-        <div class="rf-suggest" id="rfSuggest"></div>
-      </div>
-      <div class="rf-days" id="rfDays">
-        <button class="rf-day" data-d="1">1일</button><button class="rf-day" data-d="2">2일</button><button class="rf-day" data-d="3">3일</button><button class="rf-day selected" data-d="4">4일</button><button class="rf-day" data-d="5">5일</button><button class="rf-day" data-d="7">7일</button><button class="rf-day" data-d="10">10일</button><button class="rf-day" data-d="15">15일</button><button class="rf-day" data-d="30">30일</button>
-      </div>
-      <button class="rf-go" id="rfGoBtn">🦊 로미에게 추천받기</button>
-      <div class="rf-results" id="rfResults"></div>
-      </div>
-    </section>
+    <!-- 로미 매칭 패널 — 정본 §5-1: 폼(rf-*)은 히어로로 이동, 패널 자체는 폐기 -->
     <div class="snap-tail">
 
     <!-- 📲 PWA 설치 카드 (설치 미완 + 유도 가능 환경에서만 JS가 표시) -->
     <div id="pwaCard" style="display:none;"></div>
 
-    <!-- Quick Utilities Dashboard Links -->
-    <h3 style="font-size:0.9375rem; font-weight: 800; margin: 28px 0 16px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
-      <i data-lucide="layout-grid" style="color: #F1690D; width: 18px; height: 18px;"></i> 퀵 서비스 메뉴
-    </h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-      <div class="device-check-card" onclick="openDeviceCheck()" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; transition: transform 0.2s;">
-        <div style="font-weight: 800; font-size:0.84375rem; display: flex; align-items: center; gap: 6px; color: #F1690D; margin-bottom: 6px;">
-          <i data-lucide="smartphone" style="width:16px; height:16px;"></i> eSIM 기종 진단
-        </div>
-        <div style="font-size:0.75rem; color: #475569; line-height: 1.4;">내 폰이 eSIM을 지원하는지 3초 만에 확인하기</div>
+    <!-- 많이 찾는 여행지 (정본 §5-1) — #homeFeaturedList 부활 컨테이너 + 국가 바로가기 행 -->
+    <section>
+      <h2 class="jd-sec-title">많이 찾는 여행지</h2>
+      <div id="homeFeaturedList"></div>
+      <div class="jd-country-rows">
+        <button type="button" class="jd-crow" onclick="openBottomSheet('일본')"><span class="flag">🇯🇵</span><span class="name">일본</span></button>
+        <button type="button" class="jd-crow" onclick="openBottomSheet('베트남')"><span class="flag">🇻🇳</span><span class="name">베트남</span></button>
+        <button type="button" class="jd-crow" onclick="openBottomSheet('태국')"><span class="flag">🇹🇭</span><span class="name">태국</span></button>
+        <button type="button" class="jd-crow" onclick="openBottomSheet('대만')"><span class="flag">🇹🇼</span><span class="name">대만</span></button>
+        <button type="button" class="jd-crow" onclick="openBottomSheet('미국')"><span class="flag">🇺🇸</span><span class="name">미국</span></button>
+        <button type="button" class="jd-crow" onclick="switchNav('store');var b=document.querySelector('#mCatTabs [data-cat=&quot;유럽&quot;]');if(b)b.click();"><span class="flag">🇪🇺</span><span class="name">유럽</span></button>
       </div>
-      
-      <div class="device-check-card" onclick="switchNav('orders')" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; transition: transform 0.2s;">
-        <div style="font-weight: 800; font-size:0.84375rem; display: flex; align-items: center; gap: 6px; color: #F1690D; margin-bottom: 6px;">
-          <i data-lucide="receipt" style="width:16px; height:16px;"></i> 내 eSIM 조회
-        </div>
-        <div style="font-size:0.75rem; color: #475569; line-height: 1.4;">구매한 이심의 QR코드 및 발급 번호 실시간 조회</div>
+      <button type="button" class="jd-svc-row" style="border-bottom:none;color:#4E5968;" onclick="switchNav('store')"><span class="t">전체 국가 보기</span></button>
+    </section>
+
+    <!-- 서비스 바로가기 (정본 §5-1: 4카드 → 리스트 4행, 설명 문장 삭제) -->
+    <section>
+      <h2 class="jd-sec-title">서비스 바로가기</h2>
+      <div>
+        <button type="button" class="jd-svc-row" onclick="openDeviceCheck()"><i data-lucide="smartphone"></i><span class="t">기기 지원 확인</span></button>
+        <button type="button" class="jd-svc-row" onclick="switchNav('orders')"><i data-lucide="qr-code"></i><span class="t">내 eSIM·QR 조회</span></button>
+        <button type="button" class="jd-svc-row" onclick="window.location.assign('guide.html#doctor')"><i data-lucide="life-buoy"></i><span class="t">연결이 안 될 때</span></button>
+        <a class="jd-svc-row" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener"><i data-lucide="message-circle"></i><span class="t">카카오톡 상담 24시간</span></a>
       </div>
-      
-      <div class="device-check-card" onclick="window.location.assign('guide.html#doctor')" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; transition: transform 0.2s;">
-        <div style="font-weight: 800; font-size:0.84375rem; display: flex; align-items: center; gap: 6px; color: #F1690D; margin-bottom: 6px;">
-          <i data-lucide="help-circle" style="width:16px; height:16px;"></i> 이용 장애 가이드
-        </div>
-        <div style="font-size:0.75rem; color: #475569; line-height: 1.4;">케어센터 로미 닥터 1분 진단으로 바로 해결</div>
-      </div>
-      
-      <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" style="text-decoration: none; display: block; margin: 0;">
-        <div class="device-check-card" style="margin: 0; padding: 16px; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(15, 23, 42, 0.05); border-radius: 16px; cursor: pointer; height: 100%; box-sizing: border-box;">
-          <div style="font-weight: 800; font-size:0.84375rem; display: flex; align-items: center; gap: 6px; color: #16a34a; margin-bottom: 6px;">
-            <i data-lucide="message-circle" style="width:16px; height:16px;"></i> 카톡 1:1 실시간 상담
-          </div>
-          <div style="font-size:0.75rem; color: #475569; line-height: 1.4;">해외 현지에서도 안심할 수 있는 실시간 전담 상담</div>
-        </div>
-      </a>
-    </div>
+    </section>
 
     <!-- 자체 수집: 발급 고객 인증 후기 (티켓 별점) — 0건이면 자동 숨김 -->
     <div data-jdisim-reviews="strip" style="margin: 28px 0 4px;"></div>
 
     <!-- Real Customer Review Feed -->
-    <h3 style="font-size:0.9375rem; font-weight: 800; margin: 28px 0 16px 0; display: flex; align-items: center; gap: 6px; color: #0f172a;">
-      <i data-lucide="heart" style="color: #ef4444; width: 18px; height: 18px;"></i> 실제 이용 고객 100% 솔직 후기
-    </h3>
-    <span class="review-source-badge" style="margin: -8px 0 14px; display: inline-flex;">✅ 네이버 실구매 후기</span>
+    <h2 class="jd-sec-title" style="margin-bottom:4px;">구매 후기</h2>
+    <span class="review-source-badge" style="margin: 4px 0 14px; display: inline-flex;">네이버 스마트스토어 실구매 인증 후기</span>
     <div id="miniReviewContainer" style="margin-bottom: 24px;"></div>
 
     <!-- 사업자 정보 (카카오페이 등 PG 심사 필수 항목) -->
@@ -2262,50 +2402,29 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
     </div>
     <!-- 지역 카테고리 (PC와 동일) -->
     <div class="m-cat" id="mCatTabs">
-      <button class="m-cat-btn active" data-cat="ALL">🌎 전체 국가</button>
-      <button class="m-cat-btn" data-cat="아시아">🌏 아시아</button>
-      <button class="m-cat-btn" data-cat="유럽">🇪🇺 유럽</button>
-      <button class="m-cat-btn" data-cat="북미괌사이판">🇺🇸 북미/괌/사이판</button>
-      <button class="m-cat-btn" data-cat="호주뉴질랜드">🦘 호주/뉴질랜드</button>
-      <button class="m-cat-btn" data-cat="중동">🐫 중동</button>
-      <button class="m-cat-btn" data-cat="아프리카">🦁 아프리카</button>
-      <button class="m-cat-btn" data-cat="남미">🐆 남미</button>
-      <button class="m-cat-btn" data-cat="글로벌">✈️ 글로벌</button>
+      <button class="m-cat-btn active" data-cat="ALL">전체</button>
+      <button class="m-cat-btn" data-cat="아시아">아시아</button>
+      <button class="m-cat-btn" data-cat="유럽">유럽</button>
+      <button class="m-cat-btn" data-cat="북미괌사이판">북미·괌·사이판</button>
+      <button class="m-cat-btn" data-cat="호주뉴질랜드">호주·뉴질랜드</button>
+      <button class="m-cat-btn" data-cat="중동">중동</button>
+      <button class="m-cat-btn" data-cat="아프리카">아프리카</button>
+      <button class="m-cat-btn" data-cat="남미">남미</button>
+      <button class="m-cat-btn" data-cat="글로벌">글로벌</button>
     </div>
 
-    <!-- 🧡 로미 개런티 티켓 (보딩패스 무드 · 구매 보장 3종) -->
+    <!-- 신뢰 1줄 바 (정본 §5-3: 개런티 티켓 → 1줄, data-jd-stat 훅 유지) -->
     <div class="rg-ticket">
-      <div class="rg-edge"></div>
-      <div class="rg-top">
-        <div class="rg-head">
-          <span class="rg-eyebrow">ROMI GUARANTEE</span>
-          <strong class="rg-title">구매하는 순간,<br>로미가 끝까지 책임져요</strong>
-        </div>
-        <img loading="lazy" src="images/fox-thumbsup.webp" alt="엄지척 로미" class="rg-fox" onerror="this.style.display='none'">
-      </div>
-      <div class="rg-perf"></div>
-      <div class="rg-rows">
-        <div class="rg-row">
-          <span class="rg-ic rg-ic-orange">⚡</span>
-          <span class="rg-txt"><strong data-jd-stat="issue">결제 후 평균 5~15분 QR 발송</strong><span>카톡·문자로 자동 전송돼요</span></span>
-          <span class="rg-badge rg-b-orange">✓</span>
-        </div>
-        <div class="rg-row">
-          <span class="rg-ic rg-ic-amber">🛡️</span>
-          <span class="rg-txt"><strong>미개통 시 100% 환불</strong><span>현지에서 안 터지면 전액 보장</span></span>
-          <span class="rg-badge rg-b-amber">✓</span>
-        </div>
-        <a class="rg-row" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">
-          <span class="rg-ic rg-ic-teal">💬</span>
-          <span class="rg-txt"><strong>24시간 카톡 1:1 케어</strong><span>새벽에도 실시간 — 여행 내내 곁에</span></span>
-          <span class="rg-badge rg-b-teal">→</span>
-        </a>
-      </div>
+      <i data-lucide="badge-check"></i>
+      <span class="rg-txt">미개통 시 100% 환불 · <strong data-jd-stat="issue">QR 평균 5분 발송</strong></span>
     </div>
 
     <!-- 스토어 상단 정리 (2026-07-15 지시): 기종진단 배너·최근 본·데이터 계산기 제거 — 기종진단은 홈 퀵메뉴+주문 팝업에서 제공 -->
     <!-- Products list -->
     <div class="product-list" id="storeProductList"></div>
+
+    <!-- 자가진단: 리스트 최하단 1행 링크 (정본 §5-3) -->
+    <button type="button" class="jd-svc-row" style="margin-top:8px;" onclick="openDeviceCheck()"><i data-lucide="smartphone"></i><span class="t">내 기기에서 되는지 3초 만에 확인하세요</span></button>
 
     <!-- 가격 비교: 로밍 vs 포켓와이파이 vs eSIM (구매 결정 지점) -->
     <div data-jdisim-compare style="margin: 34px 0 10px;"></div>
@@ -2322,13 +2441,13 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
 
     <!-- ② 비회원 주문 조회 — 이름+전화 한 세트로 주문·사용량 모두 (로그인 시 자동 숨김) -->
     <div id="guestLookup" style="background:#fff;border:1px solid #F0E7DB;border-radius:18px;padding:16px 15px 15px;margin:14px 0 16px;box-shadow:0 6px 18px rgba(85,60,40,0.05);">
-      <div style="font-size:0.9375rem;font-weight:800;color:#221510;">비회원 주문 조회</div>
-      <div style="font-size:0.75rem;color:#8a7a6d;font-weight:600;margin:3px 0 12px;">구매할 때 쓴 이름·전화번호로 QR·주문·사용량을 확인해요 — 다른 기기 구매도 OK</div>
+      <div style="font-size:0.9375rem;font-weight:700;color:#191F28;">비회원 주문 조회</div>
+      <div style="font-size:0.75rem;color:#8B95A1;font-weight:500;margin:3px 0 12px;">주문할 때 쓴 이름과 휴대폰 번호로 조회할 수 있어요 — 다른 기기에서 구매했어도 돼요</div>
       <div class="order-tracker-form" style="margin:0;">
         <input type="text" id="orderSearchName" class="tracker-input" placeholder="구매자 이름">
         <input type="tel" id="orderSearchPhone" class="tracker-input" placeholder="휴대폰 번호 (숫자만)">
-        <button class="tracker-btn" onclick="searchOrders()">📦 주문·QR 조회</button>
-        <button type="button" onclick="document.getElementById('usageName').value=document.getElementById('orderSearchName').value;document.getElementById('usagePhone').value=document.getElementById('orderSearchPhone').value;lookupUsageByPhone();" style="width:100%;height:48px;margin-top:8px;border:1.5px solid rgba(241,105,13,0.4);border-radius:12px;background:#fff;color:#F1690D;font-weight:800;font-size:0.9375rem;cursor:pointer;">📡 실시간 사용량 조회</button>
+        <button class="tracker-btn" onclick="searchOrders()">주문 조회하기</button>
+        <button type="button" onclick="document.getElementById('usageName').value=document.getElementById('orderSearchName').value;document.getElementById('usagePhone').value=document.getElementById('orderSearchPhone').value;lookupUsageByPhone();" style="width:100%;height:48px;margin-top:8px;border:none;border-radius:12px;background:#F2F4F6;color:#333D4B;font-weight:700;font-size:0.9375rem;cursor:pointer;">사용량 조회</button>
       </div>
       <!-- 통합 폼 값 전달용 (lookupUsageByPhone·checkUsage가 읽는 기존 id 유지) -->
       <input type="hidden" id="usageName"><input type="hidden" id="usagePhone">
@@ -2336,7 +2455,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       <div id="orderSearchResults"></div>
 
       <details style="margin-top:12px;border-top:1px dashed rgba(34,21,16,0.08);padding-top:10px;">
-        <summary style="list-style:none;font-size:0.75rem;font-weight:700;color:#8a7a6d;cursor:pointer;-webkit-tap-highlight-color:transparent;">📊 사용량 확인법 · ICCID 직접 조회 ▾</summary>
+        <summary style="list-style:none;font-size:0.75rem;font-weight:700;color:#8B95A1;cursor:pointer;-webkit-tap-highlight-color:transparent;">사용량 확인법 · ICCID 직접 조회</summary>
         <div style="padding:9px 0 2px;font-size:0.75rem;line-height:1.7;color:#5D5049;">
           <strong style="color:#F1690D;">아이폰</strong> — 설정 → 셀룰러 → 여행 eSIM 회선 → '현재 기간' (여행 시작 때 '통계 재설정' 추천)<br>
           <strong style="color:#F1690D;">갤럭시</strong> — 설정 → 연결 → 데이터 사용 → 해당 SIM<br>
@@ -2344,11 +2463,11 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         </div>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <input type="tel" id="usageIccid" class="tracker-input" placeholder="ICCID (89로 시작)" style="flex:1;height:44px;border-radius:12px;border:1px solid #e5eaf2;padding:0 14px;font-weight:600;font-family:monospace;margin:0;">
-          <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 16px;border:none;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.84375rem;">조회</button>
+          <button type="button" onclick="checkUsage()" style="flex-shrink:0;padding:0 16px;border:none;border-radius:12px;background:#F1690D;color:#fff;font-weight:700;font-size:0.84375rem;">조회</button>
         </div>
       </details>
 
-      <button type="button" onclick="window.location.assign('guide.html#doctor')" style="display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:11px 12px;border:1px dashed rgba(241,105,13,0.35);border-radius:13px;background:rgba(241,105,13,0.04);color:#221510;font-family:inherit;font-size:0.84375rem;font-weight:800;cursor:pointer;text-align:left;">🩺 이심이 안 되나요? — 로미 닥터 1분 진단<span style="margin-left:auto;color:#F1690D;">→</span></button>
+      <button type="button" onclick="window.location.assign('guide.html#doctor')" style="display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:11px 12px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;color:#191F28;font-family:inherit;font-size:0.84375rem;font-weight:700;cursor:pointer;text-align:left;">eSIM이 안 되나요? — 1분 진단<i data-lucide="chevron-right" style="margin-left:auto;width:16px;height:16px;color:#B0B8C1;"></i></button>
     </div>
   </main>
 
@@ -2363,11 +2482,11 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
     </div>
     <div class="nav-item" data-nav="store" onclick="switchNav('store')">
       <i data-lucide="compass"></i>
-      <span>eSIM 스토어</span>
+      <span>요금제</span>
     </div>
     <div class="nav-item" onclick="window.location.assign('guide.html')">
       <i data-lucide="stethoscope"></i>
-      <span>케어센터</span>
+      <span>케어</span>
     </div>
     <!-- MY = 내 여행(케어링크·재구매) + 주문·QR 조회 통합 마이페이지 — 맨 오른쪽 (2026-07-15) -->
     <div class="nav-item" data-nav="orders" onclick="switchNav('orders')">
@@ -2400,12 +2519,12 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         <div id="carrierPills" class="pw-carriers" style="padding-bottom:2px;"></div>
       </details>
       <details id="pwInfoFold" style="display:none;margin-top:12px;border:1px solid #EFF2F6;border-radius:10px;background:#FAFBFC;">
-        <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:0.84375rem;font-weight:800;color:#334155;-webkit-tap-highlight-color:transparent;">📌 개통 시점 · 유효기간 안내 <span style="margin-left:auto;font-size:0.75rem;font-weight:700;color:#8B94A7;">펼치기 ▾</span></summary>
+        <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:0.84375rem;font-weight:700;color:#333D4B;-webkit-tap-highlight-color:transparent;">개통 시점 · 유효기간 안내 <span style="margin-left:auto;font-size:0.75rem;font-weight:500;color:#8B95A1;">펼치기</span></summary>
         <div id="activationNotice" style="display:none;margin:0 9px 9px;padding:11px 13px;border-radius:10px;font-size:0.75rem;font-weight:700;line-height:1.6;"></div>
       </details>
 
       <div class="pw-block" id="pwDaysBlock" style="display:none;">
-        <div class="pw-label">언제 떠나세요? <em>날짜를 고르면 리셋 시간까지 맞춰드려요</em></div>
+        <div class="pw-label">언제 출발하세요? <em>날짜를 고르면 리셋 시간까지 맞춰드려요</em></div>
         <div id="tripCalBox"></div>
         <div id="tripDateMsg" style="display:none;margin-top:8px;font-size:0.84375rem;font-weight:700;line-height:1.55;"></div>
         <div id="daysChips" style="display:none;"></div>
@@ -2414,13 +2533,13 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
 
       <div class="pw-block pw-step" id="pwStyleBlock" style="display:none;">
         <div id="pwSum2" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;"></div>
-        <div class="pw-label">데이터, 어떻게 쓰세요?</div>
+        <div class="pw-label">데이터를 얼마나 쓰세요?</div>
         <div id="styleCards" style="display:flex;flex-direction:column;gap:9px;"></div>
       </div>
 
       <div class="pw-block pw-step" id="pwProdBlock" style="display:none;margin-bottom:20px;">
         <div id="pwSum3" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;"></div>
-        <div class="pw-label">딱 맞는 상품이에요 <em>가격순 · 눌러서 상세</em></div>
+        <div class="pw-label">딱 맞는 요금제예요 <em>가격순 · 눌러서 상세</em></div>
         <div id="productList"></div>
       </div>
     </div>
@@ -2448,7 +2567,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
     </div>
     <div class="pp-body" id="checkoutBody"></div>
     <div class="pp-buybar" id="checkoutBuybar" style="display:none;">
-      <button type="button" class="pv-cta" id="checkoutPayBtn" style="opacity:0.5;" disabled>동의하고 결제하기</button>
+      <button type="button" class="pv-cta" id="checkoutPayBtn" style="opacity:0.5;" disabled>약관에 동의해 주세요</button>
     </div>
   </main>
 
@@ -2460,9 +2579,9 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       <button class="bottom-sheet-close" onclick="closeModal()">✕</button>
     </div>
     <div style="display:flex;gap:7px;margin-bottom:13px;" id="devTabs">
-      <button type="button" data-dev="phone" onclick="pickDevTab('phone')" style="flex:1;padding:10px 6px;border-radius:11px;border:none;background:#0f172a;color:#fff;font-family:inherit;font-weight:800;font-size:0.84375rem;cursor:pointer;">📱 스마트폰</button>
-      <button type="button" data-dev="ipad" onclick="pickDevTab('ipad')" style="flex:1;padding:10px 6px;border-radius:11px;border:1px solid #e5eaf2;background:#fff;color:#0f172a;font-family:inherit;font-weight:800;font-size:0.84375rem;cursor:pointer;">🍎 아이패드</button>
-      <button type="button" data-dev="tab" onclick="pickDevTab('tab')" style="flex:1;padding:10px 6px;border-radius:11px;border:1px solid #e5eaf2;background:#fff;color:#0f172a;font-family:inherit;font-weight:800;font-size:0.84375rem;cursor:pointer;">🤖 갤럭시탭</button>
+      <button type="button" data-dev="phone" onclick="pickDevTab('phone')" style="flex:1;padding:10px 6px;border-radius:12px;border:none;background:#191F28;color:#fff;font-family:inherit;font-weight:700;font-size:0.84375rem;cursor:pointer;">스마트폰</button>
+      <button type="button" data-dev="ipad" onclick="pickDevTab('ipad')" style="flex:1;padding:10px 6px;border-radius:12px;border:1px solid #E5E8EB;background:#fff;color:#191F28;font-family:inherit;font-weight:700;font-size:0.84375rem;cursor:pointer;">아이패드</button>
+      <button type="button" data-dev="tab" onclick="pickDevTab('tab')" style="flex:1;padding:10px 6px;border-radius:12px;border:1px solid #E5E8EB;background:#fff;color:#191F28;font-family:inherit;font-weight:700;font-size:0.84375rem;cursor:pointer;">갤럭시탭</button>
     </div>
     <div style="font-size:0.84375rem; color: #334155; line-height: 1.55; display: flex; flex-direction: column; gap: 11px;" id="devPanePhone">
       <p>1. 내 스마트폰의 전화 앱을 실행합니다.</p>
@@ -2708,20 +2827,20 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       container.innerHTML = `
         <div class="m-rv-summary">
           <div class="m-rv-score"><strong>${meta.avg.toFixed(1)}</strong><span>★★★★★</span></div>
-          <div class="m-rv-count">누적 <strong>1,700+</strong>명 선택<br><span style="font-size:0.75rem;color:#94a3b8;font-weight:600;">네이버 실구매 인증 후기</span></div>
+          <div class="m-rv-count">실구매 인증 후기 <strong>${(meta.total || 0).toLocaleString()}</strong>건<br><span style="font-size:0.75rem;color:#8B95A1;font-weight:500;">네이버 스마트스토어 기준</span></div>
         </div>
         <div class="m-rv-track">
           ${picks.map(r => `
             <div class="m-rv-card">
               <div class="m-rv-top">
                 <span class="rv-stars">${'★'.repeat(r.rating)}</span>
-                ${r.best ? '<span class="rv-best">👑</span>' : ''}
+                ${r.best ? '<span class="rv-best">베스트</span>' : ''}
               </div>
               ${r.photo ? '<img class="m-rv-photo" loading="lazy" src="' + r.photo + '" alt="후기 사진" onerror="this.remove()">' : ''}
               <p class="m-rv-body">${r.body}</p>
               <div class="m-rv-foot">
-                <span>${FLAG[r.country] || '🌏'} ${r.country}${r.type ? ' · ' + r.type : ''}</span>
-                <span>✅ ${r.author}</span>
+                <span>${FLAG[r.country] || ''} ${r.country}${r.type ? ' · ' + r.type : ''}</span>
+                <span>구매 인증 · ${r.author}</span>
               </div>
             </div>`).join('')}
         </div>`;
@@ -2863,21 +2982,14 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         card.innerHTML = `
           <img loading="lazy" src="${flagSrc}" class="product-flag-img" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
           <div class="product-info">
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <span class="product-country-tag">HOT 추천</span>
-              <span style="font-size:0.75rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; ${networkBadgeStyle}">${networkType}</span>
-              ${warnChip ? `<span style="font-size:0.75rem;font-weight:800;padding:1px 6px;border-radius:10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:#dc2626;">${warnChip}</span>` : ''}
-            </div>
-            <h4 class="product-title">${countryName} ${cleanCarrier(carrierName).split(' ')[0]} 요금제</h4>
+            <h4 class="product-title">${countryName} ${cleanCarrier(carrierName).split(' ')[0]}</h4>
             <div class="product-carrier-badge">
-              <i data-lucide="wifi" style="width: 11px; height: 11px;"></i>
-              <span>${cleanCarrier(carrierName)}</span>
+              <span>${networkType === '로컬망' ? '현지망' : networkType} · ${cleanCarrier(carrierName)}</span>
+              ${warnChip ? `<span style="font-size:0.75rem;font-weight:700;padding:1px 7px;border-radius:8px;background:#FFF7E6;color:#935A00;">${warnChip}</span>` : ''}
             </div>
           </div>
           <div class="product-price-section">
-            <span class="product-price-label">최저가</span>
-            <span class="product-price">${minPrice.toLocaleString()}원~</span>\n            <span class="product-perday">하루 ${minPerDay.toLocaleString()}원꼴~</span>
-            <button class="buy-btn-small" onclick="openBottomSheet('${countryName}', '${carrierName}')">구매하기</button>
+            <span class="product-price"><b>${minPrice.toLocaleString()}</b><span style="font-size:0.75rem;font-weight:500;color:#8B95A1;">원부터</span></span>
           </div>
         `;
         container.appendChild(card);
@@ -3003,33 +3115,26 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         card.style.animationDelay = `${(listContainer.children.length % 8) * 45}ms`;
         card.onclick = () => openBottomSheet(countryName);
         card.innerHTML = `
-          <div class="store-card-media">
-            <img src="${flagSrc}" class="store-card-img" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
-            <div class="store-card-scrim"></div>
-            <span class="store-net-badge${onlyLocal ? ' local' : ''}">${netLabel}</span>
-            ${BEST_COUNTRIES.includes(countryName) ? '<span class="store-best-badge">BEST</span>' : ''}
-            ${warnChip ? `<span class="store-warn-badge"${warnChip.includes('문자') ? ' style="background:linear-gradient(135deg,#3B82F6,#60A5FA);box-shadow:0 2px 8px rgba(59,130,246,0.35);"' : ''}>${warnChip}</span>` : ''}
-          </div>
+          <img src="${flagSrc}" class="store-card-img" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='images/global.jpg';}else{this.style.visibility='hidden';}" alt="${countryName}">
           <div class="store-card-body">
-            <h4 class="store-card-title">${countryName} eSIM</h4>
+            <h4 class="store-card-title">${countryName} eSIM${onlyLocal ? ' <span class="store-net-badge local">현지망</span>' : ''}${warnChip ? ` <span class="store-warn-badge">${warnChip}</span>` : ''}</h4>
             <div class="store-card-meta">통신사 ${entry.carriers.length}곳 · 요금제 ${entry.planCount.toLocaleString()}종</div>
-            <div class="store-card-price-row">
-              <span class="store-card-from">최저</span>
-              <span class="store-card-price">${entry.minPrice.toLocaleString()}<em>원~</em></span>
-            </div>
           </div>
-          <button class="store-card-btn" type="button">요금제 보기 →</button>
+          <div class="store-card-price-row">
+            <span class="store-card-price">${entry.minPrice.toLocaleString()}<em>원부터</em></span>
+          </div>
+          <button class="store-card-btn" type="button">요금제 보기</button>
         `;
         listContainer.appendChild(card);
       });
       // 검색/필터 결과가 없을 때: 로미 빈 상태
       if (!listContainer.children.length) {
         listContainer.innerHTML = `
-          <div style="grid-column:1/-1;text-align:center;padding:44px 20px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(241,105,13,0.24);border-radius:20px;">
+          <div style="grid-column:1/-1;text-align:center;padding:44px 20px;background:#fff;border:1px solid #E5E8EB;border-radius:12px;">
             <img loading="lazy" src="images/fox-hello.webp" alt="" style="width:82px;opacity:0.9;" onerror="this.style.display='none'">
-            <div style="font-weight:800;color:#221510;margin-top:10px;">앗, 찾으시는 여행지가 없어요 🦊</div>
-            <div style="font-size:0.75rem;color:#8a7a6d;font-weight:600;margin-top:4px;line-height:1.6;">국가 이름을 다시 확인해 보시거나<br>전체보기에서 둘러보세요</div>
-            <button type="button" onclick="document.getElementById('storeSearchInput').value='';renderStoreProducts('all','');" style="margin-top:14px;padding:10px 22px;border:none;border-radius:22px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.84375rem;box-shadow:0 5px 14px rgba(241,105,13,0.3);">전체 상품 보기</button>
+            <div style="font-weight:700;color:#191F28;margin-top:10px;">검색 결과가 없어요</div>
+            <div style="font-size:0.8125rem;color:#8B95A1;font-weight:500;margin-top:4px;line-height:1.6;">국가 이름을 다시 확인해 주세요</div>
+            <button type="button" onclick="document.getElementById('storeSearchInput').value='';renderStoreProducts('all','');" style="margin-top:14px;padding:10px 22px;border:none;border-radius:12px;background:#F2F4F6;color:#333D4B;font-weight:700;font-size:0.84375rem;">전체 국가 보기</button>
           </div>`;
       }
       if (window.lucide) lucide.createIcons();
@@ -3172,18 +3277,18 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const li = arr => arr.map(x => `<div style="display:flex;gap:8px;padding:5px 0;font-size:0.75rem;line-height:1.55;color:#334155;"><span style="flex-shrink:0;width:4.5px;height:4.5px;border-radius:50%;background:#F1690D;margin-top:7px;"></span><span>${x}</span></div>`).join('');
       const box = (title, inner, open) => `
         <details ${open ? 'open' : ''} style="background:#fff;border:1px solid #eef2f7;border-radius:14px;margin-top:9px;overflow:hidden;width:100%;">
-          <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.84375rem;font-weight:800;color:#0f172a;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#94a3b8;font-size:0.75rem;font-weight:700;">펼치기 ▾</span></summary>
+          <summary style="list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:0.84375rem;font-weight:700;color:#191F28;cursor:pointer;-webkit-tap-highlight-color:transparent;">${title}<span style="margin-left:auto;color:#8B95A1;font-size:0.75rem;font-weight:500;">펼치기</span></summary>
           <div style="padding:2px 14px 12px;">${inner}</div>
         </details>`;
       let html = '';
       if (t) {
-        html += box(`🧳 ${country} 여행 준비물`,
-          `<div style="font-size:0.75rem;font-weight:800;color:#F1690D;padding:3px 0 4px;">🔌 ${t.power}</div>` + li(t.items), false);
+        html += box(`${country} 여행 준비물`,
+          `<div style="font-size:0.75rem;font-weight:700;color:#B04A06;padding:3px 0 4px;">${t.power}</div>` + li(t.items), false);
         if (t.issues && t.issues.length) {
-          html += box(`📌 ${country}, 이건 알고 가세요`, li(t.issues), false);
+          html += box(`${country}, 이건 알고 가세요`, li(t.issues), false);
         }
       }
-      html += box('🔋 모든 여행 공통',
+      html += box('모든 여행 공통',
         li(['보조배터리는 위탁수하물 금지 — 반드시 기내 가방에!', '여권 유효기간 6개월 이상 남았는지 확인', 'QR 도착 전 eSIM 지원 기종인지 한 번 더 확인(*#06# → EID)']), false);
       return html;
     }
@@ -3193,7 +3298,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       const layer = document.createElement('div');
       layer.id = 'ticketCeremony';
-      layer.style.cssText = 'position:fixed;inset:0;background:rgba(11,16,32,0.94);z-index:810;display:flex;flex-direction:column;align-items:center;overflow-y:auto;padding:34px 22px;';
+      layer.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:810;display:flex;flex-direction:column;align-items:center;overflow-y:auto;padding:34px 22px;';
       const country = order.country || currentSelectedCountry || '';
       const flagSrc = countryImg(country);
       const issueHref = 'issue.html?local=' + encodeURIComponent(order.orderCode || '');
@@ -3201,36 +3306,36 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const rail = `<div style="display:flex;align-items:center;padding:11px 16px 2px;">${steps.map((label, i) => {
         const done = i === 0;
         const next = i === 1;
-        return `${i ? `<div style="flex:1;height:2px;background:#e2e8f0;margin:0 4px 15px;"></div>` : ''}
+        return `${i ? `<div style="flex:1;height:2px;background:#E5E8EB;margin:0 4px 15px;"></div>` : ''}
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-            <div style="width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;${done ? 'background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;box-shadow:0 2px 6px rgba(241,105,13,0.35);' : next ? 'background:#fffbeb;border:2px solid #f59e0b;color:#b45309;' : 'background:#fff;border:2px solid #e2e8f0;color:#cbd5e1;'}">${done ? '✓' : i + 1}</div>
-            <div style="font-size:0.56rem;font-weight:800;color:${done ? '#F1690D' : next ? '#b45309' : '#94a3b8'};white-space:nowrap;">${label}</div>
+            <div style="width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.625rem;font-weight:700;${done ? 'background:#F1690D;color:#fff;' : next ? 'background:#FFF7E6;border:2px solid #C77700;color:#935A00;' : 'background:#fff;border:2px solid #E5E8EB;color:#B0B8C1;'}">${done ? '✓' : i + 1}</div>
+            <div style="font-size:0.75rem;font-weight:700;color:${done ? '#B04A06' : next ? '#935A00' : '#8B95A1'};white-space:nowrap;">${label}</div>
           </div>`;
       }).join('')}</div>`;
       layer.innerHTML = `
-        <button id="tcCloseBtn" aria-label="닫기" style="position:fixed;top:14px;right:14px;z-index:1;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);color:#fff;font-size:1.0625rem;font-weight:800;display:flex;align-items:center;justify-content:center;">✕</button>
+        <button id="tcCloseBtn" aria-label="닫기" style="position:fixed;top:14px;right:14px;z-index:1;width:38px;height:38px;border-radius:50%;border:1px solid #E5E8EB;background:#fff;color:#6B7684;font-size:1.0625rem;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
         <div style="margin-top:auto;"></div>
-        <div style="color:#fbbf24;font-size:0.75rem;font-weight:900;letter-spacing:3px;font-family:'SF Mono','Courier New',monospace;margin-bottom:8px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.15s both;'}">✓ 결제 완료</div>
-        <div style="color:rgba(255,255,255,0.82);font-size:0.8125rem;font-weight:700;margin-bottom:16px;text-align:center;line-height:1.5;${reduced ? '' : 'animation:tcFade 0.5s ease 0.25s both;'}">eSIM은 아직 발급 전이에요 — 준비되면 아래 버튼으로 발급하세요</div>
-        <div style="background:#fff;border-radius:20px;width:100%;max-width:330px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.5);${reduced ? '' : 'animation:tcPrint 0.9s cubic-bezier(0.16,1,0.3,1) 0.25s both;'}">
+        <img src="images/fox-thumbsup.webp" alt="" style="width:72px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.1s both;'}" onerror="this.style.display='none'">
+        <div style="color:#191F28;font-size:1.375rem;font-weight:800;margin:10px 0 6px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.15s both;'}">결제가 완료됐어요</div>
+        <div style="color:#6B7684;font-size:0.9375rem;font-weight:500;margin-bottom:16px;text-align:center;line-height:1.5;${reduced ? '' : 'animation:tcFade 0.5s ease 0.25s both;'}">eSIM은 아직 발급 전이에요 — 준비되면 아래 버튼으로 발급하세요</div>
+        <div style="background:#fff;border:1px solid #E5E8EB;border-radius:20px;width:100%;max-width:330px;overflow:hidden;box-shadow:0 12px 32px rgba(25,31,40,0.16);${reduced ? '' : 'animation:tcPrint 0.9s cubic-bezier(0.16,1,0.3,1) 0.25s both;'}">
           <div style="position:relative;height:110px;">
             <img src="${flagSrc}" style="width:100%;height:100%;object-fit:cover;" alt="${country}">
             <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,23,42,0) 40%,rgba(15,23,42,0.6));"></div>
-            <div style="position:absolute;left:14px;bottom:10px;color:#fff;font-weight:900;font-size:1.0625rem;text-shadow:0 1px 5px rgba(0,0,0,0.4);">${country} eSIM 🎫</div>
-            <div style="position:absolute;right:10px;top:10px;background:#fffbeb;border:1px solid #fcd34d;color:#b45309;font-size:0.6875rem;font-weight:900;padding:4px 10px;border-radius:20px;">⏳ 발급 대기</div>
+            <div style="position:absolute;left:14px;bottom:10px;color:#fff;font-weight:700;font-size:1.0625rem;text-shadow:0 1px 5px rgba(0,0,0,0.4);">${country} eSIM</div>
+            <div style="position:absolute;right:10px;top:10px;background:#FFF7E6;color:#935A00;font-size:0.75rem;font-weight:700;padding:4px 10px;border-radius:20px;">발급 대기</div>
           </div>
           <div style="padding:14px 16px 4px;">
-            <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:5px 0;"><span style="color:#94a3b8;font-weight:600;">주문번호</span><strong>${order.orderCode || '-'}</strong></div>
-            <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:5px 0;"><span style="color:#94a3b8;font-weight:600;">수령인</span><strong>${order.buyerName || order.name || '-'}</strong></div>
-            <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:5px 0;border-top:1px dashed #e2e8f0;margin-top:4px;padding-top:9px;"><span style="color:#94a3b8;font-weight:600;">결제 금액</span><strong style="color:#F1690D;font-size:0.9375rem;">${(order.totalPrice || 0).toLocaleString()}원</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:5px 0;"><span style="color:#8B95A1;font-weight:500;">주문번호</span><strong style="font-family:'SF Mono',ui-monospace,monospace;">${order.orderCode || '-'}</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:5px 0;"><span style="color:#8B95A1;font-weight:500;">수령인</span><strong>${order.buyerName || order.name || '-'}</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:5px 0;border-top:1px solid #F2F4F6;margin-top:4px;padding-top:9px;"><span style="color:#8B95A1;font-weight:500;">결제 금액</span><strong style="color:#191F28;font-size:0.9375rem;font-weight:800;font-variant-numeric:tabular-nums;">${(order.totalPrice || 0).toLocaleString()}원</strong></div>
           </div>
           ${rail}
-          <div style="height:16px;margin:10px 16px 0;border-radius:2px;opacity:0.85;background:repeating-linear-gradient(90deg,#0f172a 0 1.5px,transparent 1.5px 3.5px,#0f172a 3.5px 6px,transparent 6px 7px,#0f172a 7px 8px,transparent 8px 11px);"></div>
-          <div style="text-align:center;font-size:0.75rem;font-weight:700;color:#64748b;padding:10px 16px 14px;line-height:1.7;">📩 카카오톡으로도 <strong style="color:#F1690D;">발급 링크</strong>를 보내드려요<br>발급 전에는 <strong style="color:#F1690D;">100% 환불</strong>이 가능해요</div>
+          <div style="text-align:center;font-size:0.75rem;font-weight:500;color:#6B7684;padding:10px 16px 14px;line-height:1.7;">카카오톡으로도 <strong style="color:#B04A06;">발급 링크</strong>를 보내드려요<br>발급 전에는 <strong style="color:#B04A06;">100% 환불</strong>이 가능해요</div>
         </div>
-        <a href="${issueHref}" style="display:block;width:100%;max-width:330px;margin-top:16px;text-align:center;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.9375rem;font-weight:800;text-decoration:none;box-shadow:0 10px 26px rgba(241,105,13,0.4);${reduced ? '' : 'animation:tcFade 0.5s ease 0.55s both;'}">🎫 지금 발급하러 가기</a>
-        <button id="tcDoneBtn" style="width:100%;max-width:330px;margin-top:9px;padding:13px;border:1.5px solid rgba(255,255,255,0.35);border-radius:14px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.84375rem;font-weight:800;${reduced ? '' : 'animation:tcFade 0.5s ease 0.65s both;'}">나중에 발급할게요 — 주문 내역 보기</button>
-        ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : `<a href="login.html?return=${encodeURIComponent('mobile.html#orders')}" style="display:block;width:100%;max-width:330px;margin-top:9px;text-align:center;padding:11px;border-radius:14px;background:transparent;border:1.5px dashed rgba(255,255,255,0.35);color:rgba(255,255,255,0.85);font-weight:700;font-size:0.75rem;text-decoration:none;${reduced ? '' : 'animation:tcFade 0.5s ease 0.75s both;'}">💰 1분 가입 시 <b style="color:#fbbf24;">2,000원 쿠폰</b> + 주문·케어링크 평생 보관</a>`; } catch(e){ return ''; } })()}
+        <a href="${issueHref}" style="display:block;width:100%;max-width:330px;margin-top:16px;text-align:center;padding:15px;border:none;border-radius:12px;background:#F1690D;color:#fff;font-size:0.9375rem;font-weight:700;text-decoration:none;${reduced ? '' : 'animation:tcFade 0.5s ease 0.55s both;'}">지금 QR 발급받기</a>
+        <button id="tcDoneBtn" style="width:100%;max-width:330px;margin-top:9px;padding:13px;border:1px solid #D1D6DB;border-radius:12px;background:#fff;color:#4E5968;font-size:0.84375rem;font-weight:700;${reduced ? '' : 'animation:tcFade 0.5s ease 0.65s both;'}">나중에 할게요 — 주문 내역 보기</button>
+        ${(function(){ try { return localStorage.getItem('jd_member_token') ? '' : `<a href="login.html?return=${encodeURIComponent('mobile.html#orders')}" style="display:block;width:100%;max-width:330px;margin-top:9px;text-align:center;padding:11px;border-radius:12px;background:transparent;border:1px dashed #D1D6DB;color:#6B7684;font-weight:500;font-size:0.75rem;text-decoration:none;${reduced ? '' : 'animation:tcFade 0.5s ease 0.75s both;'}">1분 가입하면 <b style="color:#B04A06;">2,000원 쿠폰</b>과 주문·케어링크를 보관해 드려요</a>`; } catch(e){ return ''; } })()}
         <div style="width:100%;max-width:330px;margin-top:6px;${reduced ? '' : 'animation:tcFade 0.5s ease 0.85s both;'}">${buildTravelTipsHTML(country)}</div>
         <div style="margin-bottom:auto;"></div>`;
       document.body.appendChild(layer);
@@ -3259,7 +3364,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       if (!box) return;
       if (ph.length < 10) { box.style.display='block'; box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px 12px;">전화번호를 확인해 주세요 (예: 01012345678)</div>'; return; }
       box.style.display='block';
-      box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">🦊 ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾고 있어요…</div>';
+      box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾고 있어요…</div>';
       // 🔐 2026-07-31: 조회에 이름 동반(본인확인) · 응답은 케어토큰(cx)만 — ICCID/LPA 원문 미수신
       fetch(window.CARE_API + '?action=history&phone=' + encodeURIComponent(ph) + '&name=' + encodeURIComponent(nm || ''))
         .then(function(r){ if(!r.ok) throw 0; return r.json(); })
@@ -3271,7 +3376,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           if (!pick) throw 1;
           var cx = String(pick.cx || '');
           var inp = document.getElementById('usageIccid'); if (inp) inp.value = pick.iccid_masked || '';
-          box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">✅ ' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾았어요 — 사용량 불러오는 중…</div>';
+          box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">' + (nm ? nm + ' 님의 ' : '') + 'eSIM을 찾았어요 — 사용량을 불러오는 중이에요</div>';
           return fetch(window.CARE_API + '?action=usage&t=' + encodeURIComponent(cx))
             .then(function(r){ if(!r.ok) throw 0; return r.json(); })
             .then(function(u){ renderUsageFlexible(u, pick, nm); });
@@ -3308,7 +3413,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       var statusBadge = expired
         ? '<span style="font-size:0.75rem;color:#b91c1c;background:rgba(239,68,68,0.1);padding:2px 7px;border-radius:8px;">만료됨</span>'
         : '<span style="font-size:0.75rem;color:#15803d;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:8px;">사용 중</span>';
-      var localBadge = (lastCountry && !expired) ? '<span style="font-size:0.75rem;color:#1B8E82;background:rgba(43,179,163,0.1);padding:2px 7px;border-radius:8px;margin-left:4px;">📍 ' + lastCountry + ' 현지망 ✓</span>' : '';
+      var localBadge = (lastCountry && !expired) ? '<span style="font-size:0.75rem;color:#0E7A47;background:#EEFAF3;padding:2px 7px;border-radius:8px;margin-left:4px;">' + lastCountry + ' 현지망 연결</span>' : '';
       var prod = (meta && (meta.prodName || meta.ProdName || meta.Option || meta.option)) || (u && u.planOption) || '';
       // 🍩 도넛 그래프 (2026-07-15): 매일형은 '오늘 사용 vs 일일 용량', 무제한·미상은 누적 링
       var capM = String(prod).match(/매일\s*([\d.]+)\s*(GB|MB)/i);
@@ -3347,7 +3452,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         '<div style="font-size:0.84375rem;font-weight:900;color:#0f172a;">' + (nm ? nm + ' 님의 eSIM' : '내 eSIM') + ' ' + statusBadge + localBadge + '</div>' +
         (prod ? '<div style="font-size:0.75rem;color:#94a3b8;font-weight:700;">' + prod + '</div>' : '') + '</div></div>' +
         donut +
-        '<div style="margin-top:8px;font-size:0.75rem;color:#94a3b8;font-weight:600;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요 ↻</div></div>';
+        '<div style="margin-top:8px;font-size:0.75rem;color:#8B95A1;font-weight:500;">일 용량 상품은 매일 정해진 현지 시간에 고속 데이터가 새로 채워져요</div></div>';
     }
 
     function checkUsage() {
@@ -3365,14 +3470,14 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         renderUsageResult({ plan_name: '일본 소프트뱅크 매일 2GB', used_mb: 3480, total_mb: 10240, expires_at: '2026-07-14', status: 'active' });
         return;
       }
-      if (window.CARE_API) { box.style.display='block'; box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">⏳ 조회 중...</div>'; fetch(window.CARE_API + '?action=usage&iccid=' + encodeURIComponent(iccid)).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(u){ renderUsageFlexible(u, null, ''); }).catch(function(){ box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border-radius:10px;padding:10px 12px;">조회에 실패했어요 — ICCID를 확인하시거나 잠시 후 다시 시도해 주세요</div>'; }); return; }
+      if (window.CARE_API) { box.style.display='block'; box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">조회 중이에요…</div>'; fetch(window.CARE_API + '?action=usage&iccid=' + encodeURIComponent(iccid)).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(u){ renderUsageFlexible(u, null, ''); }).catch(function(){ box.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#b91c1c;background:rgba(239,68,68,0.06);border-radius:10px;padding:10px 12px;">조회에 실패했어요 — ICCID를 확인하시거나 잠시 후 다시 시도해 주세요</div>'; }); return; }
       if (!window.USAGE_API_URL) {
         box.style.display = 'block';
-        box.innerHTML = '<div style="font-size:0.75rem;font-weight:700;color:#9a5b16;background:rgba(241,105,13,0.06);border:1px solid rgba(241,105,13,0.2);border-radius:10px;padding:10px 12px;line-height:1.6;">🛠️ 실시간 자동 조회는 곧 오픈돼요!<br>지금은 위의 <strong>\'데이터 사용량 확인하는 법\'</strong>으로 기기에서 바로 확인할 수 있어요</div>';
+        box.innerHTML = '<div style="font-size:0.75rem;font-weight:700;color:#935A00;background:#FFF7E6;border:none;border-radius:10px;padding:10px 12px;line-height:1.6;">실시간 자동 조회는 곧 열려요.<br>지금은 위의 <strong>\'데이터 사용량 확인하는 법\'</strong>으로 기기에서 바로 확인할 수 있어요</div>';
         return;
       }
       box.style.display = 'block';
-      box.innerHTML = '<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">⏳ 조회 중...</div>';
+      box.innerHTML = '<div style="font-size:0.75rem;font-weight:700;color:#64748b;padding:8px 2px;">조회 중이에요…</div>';
       fetch(window.USAGE_API_URL + '?iccid=' + encodeURIComponent(iccid))
         .then(r => { if (!r.ok) throw new Error('bad'); return r.json(); })
         .then(renderUsageResult)
@@ -3404,7 +3509,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:0.75rem;font-weight:700;color:#64748b;">
             <span>사용 ${gb(used)} / ${gb(total)}</span>
             <span style="color:#0f172a;">남은 데이터 <strong style="color:#F1690D;">${Math.round(remainGb * 10) / 10}GB</strong></span>
-          </div>` : '<div style="margin-top:8px;font-size:0.75rem;font-weight:700;color:#15803d;">♾️ 무제한 요금제 — 마음껏 쓰세요!</div>'}
+          </div>` : '<div style="margin-top:8px;font-size:0.75rem;font-weight:700;color:#0E7A47;">무제한 요금제 — 마음껏 쓰세요</div>'}
           ${d.expires_at ? `<div style="margin-top:7px;font-size:0.75rem;font-weight:600;color:#94a3b8;">유효기간: ${d.expires_at} 까지</div>` : ''}
         </div>`;
     }
@@ -3442,19 +3547,19 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       layer = document.createElement('div');
       layer.id = 'installGuide';
       layer.style.cssText = 'position:fixed;inset:0;background:rgba(11,16,32,0.6);backdrop-filter:blur(4px);z-index:830;display:flex;align-items:flex-end;';
-      const step = (n, t) => `<div style="display:flex;gap:10px;padding:9px 0;font-size:0.75rem;line-height:1.6;color:#334155;"><span style="flex-shrink:0;width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;">${n}</span><span>${t}</span></div>`;
+      const step = (n, t) => `<div style="display:flex;gap:10px;padding:9px 0;font-size:0.75rem;line-height:1.6;color:#4E5968;"><span style="flex-shrink:0;width:21px;height:21px;border-radius:50%;background:#F1690D;color:#fff;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;">${n}</span><span>${t}</span></div>`;
       layer.innerHTML = `
         <div style="background:#fdfefe;width:100%;border-radius:24px 24px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom,0px));max-height:86vh;overflow-y:auto;overscroll-behavior:contain;">
           <div style="width:42px;height:4.5px;border-radius:4px;background:#e2e8f0;margin:-6px auto 14px;"></div>
-          <div style="font-weight:800;font-size:0.9375rem;color:#0f172a;margin-bottom:4px;">📲 eSIM 설치 방법</div>
+          <div style="font-weight:700;font-size:0.9375rem;color:#191F28;margin-bottom:4px;">eSIM 설치 방법</div>
           <div style="font-size:0.75rem;color:#94a3b8;font-weight:600;margin-bottom:12px;">기종을 선택하세요 — 2분이면 끝나요</div>
           <div style="display:flex;gap:8px;margin-bottom:12px;">
             <button type="button" id="igTabIos" style="flex:1;padding:11px;border-radius:12px;border:none;background:#0f172a;color:#fff;font-weight:800;font-size:0.84375rem;"> 아이폰</button>
-            <button type="button" id="igTabAnd" style="flex:1;padding:11px;border-radius:12px;border:1px solid #e5eaf2;background:#fff;color:#0f172a;font-weight:800;font-size:0.84375rem;">🤖 갤럭시</button>
+            <button type="button" id="igTabAnd" style="flex:1;padding:11px;border-radius:12px;border:1px solid #e5eaf2;background:#fff;color:#0f172a;font-weight:800;font-size:0.84375rem;">갤럭시</button>
           </div>
           <div id="igBody"></div>
-          ${lpa ? `<button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='📋 설치 코드가 복사됐어요 — 직접 입력에 붙여넣으세요';})" style="width:100%;margin-top:12px;padding:13px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.84375rem;font-weight:800;color:#0f172a;">📋 설치 코드 복사하기</button>` : ''}
-          <button type="button" onclick="document.getElementById('installGuide').remove()" style="width:100%;margin-top:9px;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.84375rem;font-weight:800;">확인했어요</button>
+          ${lpa ? `<button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='설치 코드가 복사됐어요 — 직접 입력에 붙여넣으세요';})" style="width:100%;margin-top:12px;padding:13px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;font-size:0.84375rem;font-weight:700;color:#191F28;">설치 코드 복사하기</button>` : ''}
+          <button type="button" onclick="document.getElementById('installGuide').remove()" style="width:100%;margin-top:9px;padding:13px;border:none;border-radius:12px;background:#F1690D;color:#fff;font-size:0.84375rem;font-weight:700;">확인했어요</button>
         </div>`;
       layer.onclick = (e) => { if (e.target === layer) layer.remove(); };
       document.body.appendChild(layer);
@@ -3463,14 +3568,14 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         step(2, '<strong>QR 코드 사용</strong> 선택 → 다른 화면(가족 폰·PC)에 QR을 띄우고 스캔하세요'),
         step(3, '폰이 한 대뿐이라면? <strong>\'세부사항 직접 입력\'</strong>을 누르고 복사한 설치 코드를 붙여넣으세요'),
         step(4, '회선 추가 후: <strong>셀룰러 데이터 = 여행 eSIM</strong>으로 선택 (한국 회선 아님!)'),
-        step(5, '<strong>현지 도착 후</strong> 여행 eSIM의 <strong>데이터 로밍을 켜면</strong> 끝! 🎉')
+        step(5, '<strong>현지 도착 후</strong> 여행 eSIM의 <strong>데이터 로밍을 켜면</strong> 끝나요')
       ].join('');
       const and = [
         step(1, '<strong>설정 → 연결 → SIM 관리자</strong>로 이동하세요'),
         step(2, '<strong>eSIM 추가 → QR 코드 스캔</strong> — 다른 화면에 QR을 띄우고 스캔하세요'),
         step(3, '폰이 한 대뿐이라면? QR 스캔 화면의 <strong>\'활성화 코드 입력\'</strong>에 복사한 코드를 붙여넣으세요'),
         step(4, '추가된 eSIM을 켜고 <strong>모바일 데이터 = 여행 eSIM</strong>으로 선택하세요'),
-        step(5, '<strong>현지 도착 후</strong> 데이터 로밍을 켜면 끝! 🎉')
+        step(5, '<strong>현지 도착 후</strong> 데이터 로밍을 켜면 끝나요')
       ].join('');
       const body = document.getElementById('igBody');
       const tabI = document.getElementById('igTabIos');
@@ -3493,7 +3598,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       if (document.getElementById('agreeToast')) return;
       const t = document.createElement('div');
       t.id = 'agreeToast';
-      t.textContent = '✅ 약관 동의에 체크해 주세요';
+      t.textContent = '약관 동의에 체크해 주세요';
       t.style.cssText = 'position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:rgba(239,68,68,0.95);color:#fff;font-size:0.84375rem;font-weight:800;padding:11px 20px;border-radius:24px;z-index:800;box-shadow:0 8px 20px rgba(239,68,68,0.35);';
       document.body.appendChild(t);
       setTimeout(() => t.remove(), 2200);
@@ -3612,9 +3717,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         cur.classList.remove('pw-step'); void cur.offsetWidth; cur.classList.add('pw-step'); // 슬라이드인 재트리거
       }
       const sum2 = document.getElementById('pwSum2'), sum3 = document.getElementById('pwSum3');
-      const chip = (txt, step) => `<button type="button" class="pw-sum" onclick="pwStep(${step})">${txt} ✎</button>`;
-      if (n === 2 && sum2) sum2.innerHTML = chip('📅 ' + (tripLabel || (selectedDays + '일')), 1);
-      if (n === 3 && sum3) sum3.innerHTML = chip('📅 ' + (tripLabel || (selectedDays + '일')), 1) + (selectedStyle ? chip((STYLE_META[selectedStyle] || {}).ic + ' ' + selectedStyle, 2) : '');
+      const chip = (txt, step) => `<button type="button" class="pw-sum" onclick="pwStep(${step})">${txt}<i data-lucide="pencil" style="width:12px;height:12px;margin-left:5px;vertical-align:-1px;"></i></button>`;
+      if (n === 2 && sum2) sum2.innerHTML = chip((tripLabel || (selectedDays + '일')), 1);
+      if (n === 3 && sum3) sum3.innerHTML = chip((tripLabel || (selectedDays + '일')), 1) + (selectedStyle ? chip(((STYLE_META[selectedStyle] || {}).t || selectedStyle), 2) : '');
+      try { if (window.lucide && (n === 2 || n === 3)) lucide.createIcons(); } catch (e) {} // 요약 칩 연필 아이콘 렌더
       window.scrollTo({ top: 0, behavior: 'smooth' });
       try { if (!replace) history.pushState({ pwStep: n }, '', '#step' + n); } catch (e) {}
     }
@@ -3636,10 +3742,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       return gb <= 3 ? '가볍게' : (gb > 10 ? '마음껏' : '보통');   // 총용량
     }
     const STYLE_META = {
-      '마음껏': { ic: '🎬', t: '마음껏', s: '무제한·3GB↑·대용량 — 유튜브·핫스팟 자유' },
-      '보통':   { ic: '📱', t: '보통',   s: '매일 1~2GB — SNS·지도·검색 위주' },
-      '가볍게': { ic: '💬', t: '가볍게', s: '1GB 미만 소용량 — 메신저·지도 정도' },
-      '전체':   { ic: '🗂', t: '전체 상품 보기', s: '모든 상품을 직접 비교' }
+      '마음껏': { ic: '', t: '무제한 · 대용량', s: '영상·지도·핫스팟까지 마음껏' },
+      '보통':   { ic: '', t: '매일 1~2GB',   s: '지도·검색·SNS 위주면 충분해요' },
+      '가볍게': { ic: '', t: '소용량', s: '짧은 여행, 가볍게 쓰는 분께' },
+      '전체':   { ic: '', t: '전체 보기', s: '모든 요금제를 직접 비교해요' }
     };
     // 리셋 기준시각(공급사 타임존) → 여행국 현지시각 환산 (2026-07-20 사장님 지시: "홍콩 00:00 리셋은 각 나라별 시간으로")
     const RESET_BASIS_TZ = { '몰디브': 'Indian/Maldives', '홍콩': 'Asia/Hong_Kong', '몽골': 'Asia/Ulaanbaatar', '베트남': 'Asia/Ho_Chi_Minh', '일본': 'Asia/Tokyo', '중국': 'Asia/Shanghai', '태국': 'Asia/Bangkok', '스페인': 'Europe/Madrid', '미국': 'America/Los_Angeles', '캐나다': 'America/Toronto', '호주': 'Australia/Sydney', '유럽': 'UTC', '괌': 'Pacific/Guam' };
@@ -3720,7 +3826,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           if (selectedDays && parseInt(pl.duration, 10) !== selectedDays) return;
           if (!mn || pl.final_price < mn) mn = pl.final_price;
         }));
-        return `<button type="button" class="pw-car" data-style="${st}"><span class="car-main"><span class="car-name">${m.ic} ${m.t}</span><span class="car-sub">${m.s}${mn ? ' · ' + mn.toLocaleString() + '원~' : ''}</span></span></button>`;
+        return `<button type="button" class="pw-car" data-style="${st}"><span class="car-main"><span class="car-name">${m.t}</span><span class="car-sub">${m.s}${mn ? ' · ' + mn.toLocaleString() + '원부터' : ''}</span></span></button>`;
       }).join('');
       box.querySelectorAll('[data-style]').forEach(b => b.addEventListener('click', () => {
         selectedStyle = b.dataset.style;
@@ -3745,13 +3851,13 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       let note = '';
       if (!exact.length && items.length) {
         const bigger = items.filter(x => x.d > selectedDays).sort((a, b) => a.d - b.d);
-        if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div style="font-size:0.84375rem;font-weight:700;color:#B45309;margin-bottom:8px;">⚠️ ${selectedDays}일 상품이 없어 <b>${d2}일권</b>으로 커버해 드려요</div>`; }
+        if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div style="font-size:0.84375rem;font-weight:700;color:#935A00;margin-bottom:8px;">${selectedDays}일 요금제가 없어 <b>${d2}일권</b>으로 커버해 드려요</div>`; }
       }
       // 용량 적은 순 정렬 (2026-07-20) — 같은 용량은 가격순, 무제한·용량미상은 맨 뒤
       const capMB = (pl) => { const s = planCap(pl); if (s === '무제한') return Infinity; const m = /^([\d.]+)\s*(GB|MB)/i.exec(s); return m ? parseFloat(m[1]) * (m[2].toUpperCase() === 'GB' ? 1024 : 1) : 1e9; };
       exact.sort((a, b) => (capMB(a.pl) - capMB(b.pl)) || (a.pl.final_price - b.pl.final_price));
       const bestIdx = exact.reduce((bi, x, i) => x.pl.final_price < exact[bi].pl.final_price ? i : bi, 0);
-      const NET2 = { '로컬망': '<span class="net local">🏠 로컬</span>', '로밍망': '<span class="net roam">🌐 로밍</span>', '멀티': '<span class="net multi">✨ 멀티</span>' };
+      const NET2 = { '로컬망': '<span class="net local">현지망</span>', '로밍망': '<span class="net roam">로밍망</span>', '멀티': '<span class="net multi">멀티망</span>' };
       window.__pwMixed = exact;
       box.innerHTML = note + (exact.map((x, i) => {
         const cap = planCap(x.pl);
@@ -3761,12 +3867,12 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         const rst = shortReset(x.pl.product_code);
         const sub = [x.pl.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋', rst, x.g.network_speed || ''].filter(Boolean).join(' · ');
         return `<button type="button" class="pw-car" data-mixidx="${i}" style="width:100%;">
-          <span class="car-main"><span class="car-name">${cleanCarrier(x.g.carrier)} · ${capLbl}${i === bestIdx ? ' <span style="font-size:0.6875rem;font-weight:900;color:#fff;background:#F1690D;border-radius:6px;padding:2px 7px;vertical-align:2px;">BEST</span>' : ''}</span>
+          <span class="car-main"><span class="car-name">${cleanCarrier(x.g.carrier)} · ${capLbl}${i === bestIdx ? ' <span style="font-size:0.75rem;font-weight:700;color:#B04A06;background:#FFF4EC;border-radius:6px;padding:2px 7px;vertical-align:2px;">최저가</span>' : ''}</span>
           <span class="car-sub">${sub}</span></span>
           ${NET2[netScope(x.g)] || ''}
-          <span style="flex-shrink:0;font-size:1.1875rem;font-weight:900;color:#101623;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.75rem;font-weight:700;">원</span></span>
+          <span style="flex-shrink:0;font-size:1.0625rem;font-weight:800;color:#191F28;font-variant-numeric:tabular-nums;">${x.pl.final_price.toLocaleString()}<span style="font-size:0.75rem;font-weight:500;color:#8B95A1;">원</span></span>
         </button>`;
-      }).join('') || '<div style="font-size:0.84375rem;color:#94a3b8;font-weight:700;padding:8px 2px;">이 조합의 상품이 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>');
+      }).join('') || '<div style="font-size:0.84375rem;color:#8B95A1;font-weight:500;padding:8px 2px;">이 조합의 요금제가 없어요 — 다른 스타일이나 일수를 선택해 보세요</div>');
       box.querySelectorAll('[data-mixidx]').forEach(b => b.addEventListener('click', () => {
         const x = window.__pwMixed[parseInt(b.dataset.mixidx, 10)];
         if (!x) return;
@@ -3802,7 +3908,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         const tp = (cx.plans || []).filter(pl => pl.service_type === selectedProductType);
         const pls = tp.length ? tp : (cx.plans || []);
         const mn = pls.length ? Math.min.apply(null, pls.map(pl => pl.final_price)) : 0;
-        const sub = [cx.network_speed || '', mn ? mn.toLocaleString() + '원~' : ''].filter(Boolean).join(' · ');
+        const sub = [cx.network_speed || '', mn ? mn.toLocaleString() + '원부터' : ''].filter(Boolean).join(' · ');
         return `<button type="button" class="pw-car" data-caridx="${i}"><span class="car-main"><span class="car-name">${cleanCarrier(cx.carrier)}</span>${sub ? `<span class="car-sub">${sub}</span>` : ''}</span>${NET[netScope(cx)] || ''}</button>`;
       }).join('');
       box.querySelectorAll('[data-caridx]').forEach(b => b.addEventListener('click', () => pwSelectCarrier(parseInt(b.getAttribute('data-caridx'), 10))));
@@ -3817,7 +3923,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const cn0 = document.getElementById('pwCarrierName');
       if (cn0) cn0.textContent = '선택해 주세요';
       const cta0 = document.getElementById('pwCarrierCta');
-      if (cta0) cta0.textContent = '👇 아래에서 선택';
+      if (cta0) cta0.textContent = '아래에서 선택';
     }
 
     function pwSelectCarrier(idx) {
@@ -3910,11 +4016,11 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           tripLabel = range + ' · ' + pick + '일';
           msg.style.display = 'block';
           if (pick >= trip) {
-            msg.style.color = '#15803d';
-            msg.innerHTML = `✅ ${trip}일 여행(${range}) — <b>${pick}일권${pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요'}</b>`;
+            msg.style.color = '#0E7A47';
+            msg.innerHTML = `${trip}일 여행(${range}) — <b>${pick}일권${pick === trip ? '이 딱 맞아요' : '으로 여유 있게 커버돼요'}</b>`;
           } else {
-            msg.style.color = '#b45309';
-            msg.innerHTML = `⚠️ ${trip}일 여행인데 최대 <b>${pick}일권</b>까지 있어요 — ${pick}일권 + 추가 구매(현지에서 케어링크로 안내) 조합을 추천해요`;
+            msg.style.color = '#935A00';
+            msg.innerHTML = `${trip}일 여행인데 최대 <b>${pick}일권</b>까지 있어요 — ${pick}일권 + 추가 구매(현지에서 케어링크로 안내) 조합을 추천해요`;
           }
           try { localStorage.setItem('jd_trip_dates', JSON.stringify({ dep: depIso, ret: retIso })); } catch (e) {}
           selectedDays = pick;
@@ -3980,10 +4086,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const arr = Array.isArray(acts) ? acts : [acts];
       const has = s => arr.some(a => String(a || '').includes(s));
       const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
-      if (all('즉시 개통')) return '🚨 설치 즉시 시작';
-      if (all('희망일')) return isLongLeadCountry(countryName) ? '⏰ 최소 3일 전 주문' : '⏰ 최소 2일 전 주문';
-      if (has('즉시 개통') || has('희망일')) return '⏰ 구매 타이밍 확인';
-      if (has('개통문자')) return '💬 도착 후 문자 개통';
+      if (all('즉시 개통')) return '설치 즉시 시작';
+      if (all('희망일')) return isLongLeadCountry(countryName) ? '최소 3일 전 주문' : '최소 2일 전 주문';
+      if (has('즉시 개통') || has('희망일')) return '구매 타이밍 확인';
+      if (has('개통문자')) return '도착 후 문자 개통';
       return '';
     }
     // 결제 전 꼭 알기: 선택된 상품의 치명 특이사항만 추출 (최대 4개)
@@ -4111,7 +4217,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       if (g) gb = parseFloat(g[1]); else if (mb) gb = parseFloat(mb[1]) / 1000;
       if (!gb) return '';
       const fmt = h => h >= 10 ? Math.round(h) + '시간' : (Math.round(h * 10) / 10) + '시간';
-      return `💡 <strong>${prefix} ${val}</strong> ≈ 📺 유튜브 ${fmt(gb)} · 📸 인스타 ${fmt(gb * 1.4)}`;
+      return `<strong>${prefix} ${val}</strong> ≈ 유튜브 약 ${fmt(gb)} · 인스타 약 ${fmt(gb * 1.4)}`;
     }
 
     function openProductDetail(prodIdx) {
@@ -4139,27 +4245,27 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const flags = (typeof getCriticalFlags === 'function' ? getCriticalFlags() : []) || [];
       const feel = capacityFeelHTML(cap, isDaily);
 
-      const typeBadge = selectedProductType === '무제한' ? '∞ 완전 무제한 · 속도제한 없음' : (selectedProductType === '데일리' ? '📅 데일리 · 매일 새로 충전' : '🎒 총용량 · 자유 분배');
+      const typeBadge = selectedProductType === '무제한' ? '완전 무제한 · 속도제한 없음' : (selectedProductType === '데일리' ? '데일리 · 매일 새로 충전' : '총용량 · 자유 분배');
       const descLine = selectedProductType === '무제한'
         ? '용량·속도 걱정 없이 마음껏 쓰고, 미개통 시 100% 환불로 보장해요.'
         : (selectedProductType === '데일리' ? '오늘 다 써도 내일 다시 꽉 차요. 미개통 시 100% 환불 보장.' : '아껴 쓰는 날, 몰아 쓰는 날 자유롭게. 미개통 시 100% 환불 보장.');
-      const dualNet = activeCarrier.carrier.includes('+') ? ' <span style="font-size:0.75rem;font-weight:900;color:#1B8E82;background:rgba(43,179,163,0.1);border:1px solid rgba(43,179,163,0.3);padding:2px 7px;border-radius:999px;">듀얼망</span>' : '';
+      const dualNet = activeCarrier.carrier.includes('+') ? ' <span style="font-size:0.75rem;font-weight:700;color:#0E7A47;background:#EEFAF3;padding:2px 7px;border-radius:8px;">듀얼망</span>' : '';
       const body = document.getElementById('detailBody');
       body.innerHTML = `
           <div style="min-width:0;">
-            <span style="display:inline-block;font-size:0.75rem;font-weight:900;color:#F1690D;background:rgba(241,105,13,0.08);border:1px solid rgba(241,105,13,0.3);padding:4px 10px;border-radius:999px;">${typeBadge}</span>
-            <div style="font-size:1.375rem;font-weight:900;color:#221510;letter-spacing:-0.02em;line-height:1.3;margin-top:10px;">${currentSelectedCountry} ${capLbl} ${selectedDays}일</div>
-            <div style="font-size:0.84375rem;font-weight:600;color:#5D5049;margin-top:5px;line-height:1.55;">${descLine}</div>
+            <span style="display:inline-block;font-size:0.75rem;font-weight:700;color:#B04A06;background:#FFF4EC;padding:4px 10px;border-radius:8px;">${typeBadge}</span>
+            <div style="font-size:1.375rem;font-weight:700;color:#191F28;letter-spacing:-0.02em;line-height:1.3;margin-top:10px;">${currentSelectedCountry} ${capLbl} ${selectedDays}일</div>
+            <div style="font-size:0.84375rem;font-weight:500;color:#6B7684;margin-top:5px;line-height:1.55;">${descLine}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #ece5dd;border-radius:8px;padding:12px 14px;margin-top:14px;">
+          <div style="display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #E5E8EB;border-radius:12px;padding:12px 14px;margin-top:14px;">
             <img src="${countryImg(currentSelectedCountry)}" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">
-            <div style="min-width:0;font-size:0.84375rem;font-weight:700;color:#8a8378;line-height:1.6;">서비스 지역 <b style="color:#221510;">${currentSelectedCountry}</b><br>통신사 <b style="color:#221510;">${cleanCarrier(activeCarrier.carrier)}</b>${dualNet}</div>
+            <div style="min-width:0;font-size:0.84375rem;font-weight:500;color:#8B95A1;line-height:1.6;">서비스 지역 <b style="color:#191F28;">${currentSelectedCountry}</b><br>통신사 <b style="color:#191F28;">${cleanCarrier(activeCarrier.carrier)}</b>${dualNet}</div>
           </div>
           <div style="display:flex;align-items:baseline;gap:8px;margin:14px 0 2px;">
-            <b style="font-size:1.625rem;font-weight:900;color:#F1690D;">${p.final_price.toLocaleString()}원</b>
-            ${selectedDays > 1 ? `<span style="font-size:0.75rem;font-weight:700;color:#94a3b8;">하루 약 ${Math.round(p.final_price / selectedDays).toLocaleString()}원 꼴</span>` : ''}
+            <b style="font-size:1.625rem;font-weight:800;color:#191F28;font-variant-numeric:tabular-nums;">${p.final_price.toLocaleString()}원</b>
+            ${selectedDays > 1 ? `<span style="font-size:0.8125rem;font-weight:500;color:#8B95A1;">하루 ${Math.round(p.final_price / selectedDays).toLocaleString()}원 꼴이에요</span>` : ''}
           </div>
-          ${feel ? `<div style="font-size:0.75rem;font-weight:700;color:#9a5b16;margin-top:4px;">${feel}</div>` : ''}
+          ${feel ? `<div style="font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:4px;">${feel}</div>` : ''}
           <div class="pv-grid">
             ${tile('database', '데이터', dataTile)}
             ${tile('refresh-cw', '데이터 리셋', resetTile)}
@@ -4169,7 +4275,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
             ${tile('signal', '통신망', `${activeCarrier.network_type || '-'} · ${activeCarrier.network_speed || '-'}`)}
           </div>
           <details style="margin:8px 0 2px;border:1px solid #EFF2F6;border-radius:10px;background:#FAFBFC;">
-            <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:0.84375rem;font-weight:800;color:#334155;-webkit-tap-highlight-color:transparent;">📂 상세 스펙 · 개통 안내 더 보기 <span style="margin-left:auto;font-size:0.75rem;font-weight:700;color:#8B94A7;">펼치기 ▾</span></summary>
+            <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:0.84375rem;font-weight:700;color:#333D4B;-webkit-tap-highlight-color:transparent;">상세 스펙 · 개통 안내 더 보기 <span style="margin-left:auto;font-size:0.75rem;font-weight:500;color:#8B95A1;">펼치기</span></summary>
             <div style="padding:2px 9px 9px;">
               <div class="pv-grid" style="margin-top:0;">
                 ${tile('calendar', '사용일 리셋', dayResetTile)}
@@ -4180,11 +4286,11 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
               ${anHTML}
             </div>
           </details>
-          ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:1.5px solid rgba(239,68,68,0.35);border-radius:8px;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(241,105,13,0.05));">
-            <div style="font-size:0.84375rem;font-weight:900;color:#b91c1c;margin-bottom:2px;">🔎 구매 전 꼭 알기</div>
-            ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px dashed rgba(239,68,68,0.2);font-size:0.75rem;font-weight:600;color:#7f1d1d;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
+          ${flags.length ? `<div style="margin:10px 0;padding:12px 14px;border:none;border-radius:12px;background:#FFF7E6;">
+            <div style="font-size:0.84375rem;font-weight:700;color:#935A00;margin-bottom:2px;">구매 전 확인해 주세요</div>
+            ${flags.map(x => `<div style="display:flex;gap:8px;padding:8px 0 0;margin-top:8px;border-top:1px solid rgba(147,90,0,0.12);font-size:0.75rem;font-weight:500;color:#935A00;line-height:1.6;"><span class="pv-warn-ic"><i data-lucide="alert-triangle"></i></span><span class="jd-ku">${x.t}</span></div>`).join('')}
           </div>` : ''}
-          <div style="font-size:0.75rem;font-weight:700;color:#8a7a6d;margin:12px 2px 0;line-height:1.6;">🛡️ 미개통 시 100% 환불 · 발급 전 100% 취소 가능 · 24시간 카톡 케어</div>`;
+          <div style="font-size:0.75rem;font-weight:500;color:#0E7A47;margin:12px 2px 0;line-height:1.6;">미개통 시 100% 환불 · 발급 전 100% 취소 가능 · 카카오톡 케어 24시간</div>`;
       const dtitle = document.getElementById('detailTitle');
       if (dtitle) dtitle.innerText = `${capLbl} ${selectedDays}일`;
       const buyBtn = document.getElementById('detailBuyBtn');
@@ -4232,14 +4338,14 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
             </div>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:12px 2px 0;">
-            <span style="font-size:0.84375rem;font-weight:800;color:#5D5049;">총 상품 금액</span>
-            <b id="checkoutTotalPrice" class="checkout-total-price" style="font-size:1.1875rem;color:#F1690D;">0원</b>
+            <span style="font-size:0.84375rem;font-weight:700;color:#4E5968;">총 상품 금액</span>
+            <b id="checkoutTotalPrice" class="checkout-total-price" style="font-size:1.375rem;font-weight:800;color:#191F28;font-variant-numeric:tabular-nums;">0원</b>
           </div>
-          <div id="qtyAppDisc" style="display:none;justify-content:space-between;margin:4px 2px 0;font-size:0.75rem;font-weight:800;color:#15803d;"><span>📱 앱 할인 5%</span><span id="qtyAppDiscVal"></span></div>
-          <div class="pv-app-banner">📱 <span><b>앱으로 구매하면 전 상품 5% 할인!</b><br><span style="opacity:0.85;">홈 화면에 추가만 하면 돼요 — 공유 → '홈 화면에 추가'</span></span></div>
+          <div id="qtyAppDisc" style="display:none;justify-content:space-between;margin:4px 2px 0;font-size:0.75rem;font-weight:700;color:#0E7A47;"><span>앱 할인 5%</span><span id="qtyAppDiscVal"></span></div>
+          <div class="pv-app-banner"><span><b>앱으로 구매하면 전 상품 5% 할인</b><br><span style="opacity:0.85;">홈 화면에 추가만 하면 돼요 — 공유 → '홈 화면에 추가'</span></span></div>
           <div style="display:flex;gap:9px;margin-top:6px;">
-            <button type="button" onclick="addToCart()" style="flex:1;padding:15px;border-radius:14px;border:1.5px solid #ece5dd;background:#fff;font-family:inherit;font-size:0.84375rem;font-weight:800;color:#221510;cursor:pointer;">🛒 카트에 담기</button>
-            <button type="button" class="pv-cta" style="flex:1.4;" onclick="pwBuyNow()">⚡ 바로 구매하기</button>
+            <button type="button" onclick="addToCart()" style="flex:1;padding:15px;border-radius:12px;border:none;background:#F2F4F6;font-family:inherit;font-size:0.84375rem;font-weight:700;color:#333D4B;cursor:pointer;">장바구니 담기</button>
+            <button type="button" class="pv-cta" style="flex:1.4;" onclick="pwBuyNow()">바로 구매하기</button>
           </div>
         </div>`;
       layer.onclick = e => { if (e.target === layer) layer.remove(); };
@@ -4256,7 +4362,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const pd = document.getElementById('perDayPrice');
       if (pd && activePlan) {
         const days = parseInt(activePlan.duration) || selectedDays || 1;
-        pd.innerText = days > 1 ? `☕ 1개당 하루 약 ${Math.round(activePlan.final_price / days).toLocaleString()}원 꼴` : '';
+        pd.innerText = days > 1 ? `1개당 하루 ${Math.round(activePlan.final_price / days).toLocaleString()}원 꼴이에요` : '';
       }
       const dRow = document.getElementById('qtyAppDisc');
       if (dRow) {
@@ -4303,7 +4409,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       if (qs) qs.remove();
       showDataLoadingToast();
       const t = document.getElementById('dataToast');
-      if (t) t.textContent = '🛒 카트에 담았어요 — 상단 가방 아이콘에서 확인';
+      if (t) t.textContent = '장바구니에 담았어요 — 상단 가방 아이콘에서 확인하세요';
       jdTrack('add_to_cart', { country: currentSelectedCountry, value: activePlan.final_price * purchaseQty, currency: 'KRW' });
     }
     function openCartSheet() {
@@ -4318,20 +4424,20 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         <div class="pv-sheet" style="max-height:78vh;">
           <div class="pv-grab"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <b style="font-size:0.9375rem;color:#221510;">🛒 카트 (${items.length})</b>
-            <button type="button" onclick="document.getElementById('cartSheetLayer').remove()" style="width:32px;height:32px;border-radius:50%;border:1px solid #ece5dd;background:#fff;font-weight:800;cursor:pointer;">✕</button>
+            <b style="font-size:0.9375rem;color:#191F28;">장바구니 (${items.length})</b>
+            <button type="button" onclick="document.getElementById('cartSheetLayer').remove()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E8EB;background:#fff;font-weight:700;cursor:pointer;">✕</button>
           </div>
           ${items.map((x, i) => `
-            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ece5dd;border-radius:14px;padding:12px 13px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E5E8EB;border-radius:12px;padding:12px 13px;margin-bottom:8px;">
               <div style="min-width:0;flex:1;">
-                <div style="font-size:0.84375rem;font-weight:800;color:#221510;">${x.country} · ${cleanCarrier(x.carrier)}</div>
-                <div style="font-size:0.75rem;font-weight:700;color:#94a3b8;margin-top:1px;">${x.capLbl} / ${x.days}일 × ${x.qty}개</div>
+                <div style="font-size:0.84375rem;font-weight:700;color:#191F28;">${x.country} · ${cleanCarrier(x.carrier)}</div>
+                <div style="font-size:0.75rem;font-weight:500;color:#8B95A1;margin-top:1px;">${x.capLbl} / ${x.days}일 × ${x.qty}개</div>
               </div>
-              <b style="font-size:0.84375rem;font-weight:900;color:#F1690D;flex-shrink:0;">${(x.price * x.qty).toLocaleString()}원</b>
-              <button type="button" onclick="jdCartOrder(${i})" style="flex-shrink:0;padding:9px 12px;border-radius:11px;border:none;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-family:inherit;font-size:0.75rem;font-weight:800;cursor:pointer;">주문</button>
-              <button type="button" onclick="jdCartRemove(${i})" aria-label="삭제" style="flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid #ece5dd;background:#fff;color:#94a3b8;font-weight:800;cursor:pointer;">✕</button>
+              <b style="font-size:0.84375rem;font-weight:800;color:#191F28;font-variant-numeric:tabular-nums;flex-shrink:0;">${(x.price * x.qty).toLocaleString()}원</b>
+              <button type="button" onclick="jdCartOrder(${i})" style="flex-shrink:0;padding:9px 12px;border-radius:8px;border:none;background:#F1690D;color:#fff;font-family:inherit;font-size:0.75rem;font-weight:700;cursor:pointer;">주문</button>
+              <button type="button" onclick="jdCartRemove(${i})" aria-label="삭제" style="flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid #E5E8EB;background:#fff;color:#8B95A1;font-weight:700;cursor:pointer;">✕</button>
             </div>`).join('')}
-          <div style="font-size:0.75rem;font-weight:700;color:#94a3b8;margin:6px 2px 0;">국가별 개통 정책이 달라 상품별로 결제해 주세요 — 각 [주문] 버튼이 바로 결제로 이어져요</div>
+          <div style="font-size:0.75rem;font-weight:500;color:#8B95A1;margin:6px 2px 0;">국가별 개통 정책이 달라 상품별로 결제해 주세요 — 각 주문 버튼이 바로 결제로 이어져요</div>
         </div>`;
       layer.onclick = e => { if (e.target === layer) layer.remove(); };
       document.body.appendChild(layer);
@@ -4411,7 +4517,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         const perDayEl = document.getElementById('perDayPrice');
         if (perDayEl) {
           const days = parseInt(activePlan.duration) || selectedDays || 1;
-          perDayEl.innerText = days > 1 ? `☕ 하루 약 ${Math.round(esimTotal / purchaseQty / days).toLocaleString()}원 꼴` : '';
+          perDayEl.innerText = days > 1 ? `하루 ${Math.round(esimTotal / purchaseQty / days).toLocaleString()}원 꼴이에요` : '';
         }
       }
     }
@@ -4500,18 +4606,19 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       ]);
       const memberBanner = (function () {
         try { if (localStorage.getItem('jd_member_token')) return ''; } catch (e) { return ''; }
-        return '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;margin-bottom:12px;padding:16px 16px;border-radius:12px;background:linear-gradient(150deg,#221510,#46280f);color:#fff;text-decoration:none;text-align:center;">'
-          + '<span style="display:block;font-size:15px;font-weight:900;line-height:1.5;"><b style="color:#FFB56B;">1분 가입</b>하면 <b style="color:#FFB56B;">2,000원 쿠폰</b> 즉시!</span>'
-          + '<span style="display:block;margin-top:5px;font-size:11px;font-weight:600;opacity:0.75;">앱으로 담으면 전 상품 5% 상시 할인 · 여행 후 웰컴백 쿠폰까지</span></a>';
+        return '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" target="_blank" rel="noopener" style="display:block;margin-bottom:12px;padding:16px 16px;border-radius:12px;background:#191F28;color:#fff;text-decoration:none;text-align:left;">'
+          + '<span style="display:block;font-size:15px;font-weight:700;line-height:1.5;"><b style="color:#FFB56B;font-weight:800;">1분 가입</b>하면 <b style="color:#FFB56B;font-weight:800;">2,000원 쿠폰</b>을 바로 드려요</span>'
+          + '<span style="display:block;margin-top:4px;font-size:12px;font-weight:500;opacity:0.72;">전 상품 5% 상시 할인 · 여행 후 웰컴백 쿠폰</span></a>';
       })();
 
       const body = document.getElementById('checkoutBody');
       body.innerHTML = `
+        ${memberBanner}
         <div class="ck-card">
-          <div style="font-size:16px;font-weight:900;color:#221510;">${currentSelectedCountry} ${capLbl}</div>
-          <div style="font-size:13px;color:#8a8378;font-weight:700;margin-top:2px;">${cleanCarrier(activeCarrier.carrier)} · ${activePlan.duration || selectedDays}일</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px dashed #ece5dd;">
-            <span style="font-size:13px;font-weight:800;color:#5D5049;">수량</span>
+          <div style="font-size:16px;font-weight:700;color:#191F28;">${currentSelectedCountry} ${capLbl}</div>
+          <div style="font-size:13px;color:#8B95A1;font-weight:500;margin-top:2px;">${cleanCarrier(activeCarrier.carrier)} · ${activePlan.duration || selectedDays}일</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #F2F4F6;">
+            <span style="font-size:13px;font-weight:700;color:#4E5968;">수량</span>
             <div class="qty-stepper">
               <button class="qty-btn" type="button" onclick="changeQty(-1)" aria-label="수량 줄이기">−</button>
               <span id="ckQty">${purchaseQty}</span>
@@ -4520,31 +4627,33 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           </div>
         </div>
         <div class="ck-card">
-          <div class="ck-row"><span style="color:#5D5049;font-weight:700;">상품 금액</span><span id="ckBase" style="font-weight:800;">-</span></div>
-          <div class="ck-row" id="ckDiscRow" style="display:none;color:#15803d;font-weight:800;"><span>📱 앱 할인 5%</span><span id="ckDisc"></span></div>
-          <div class="ck-row" id="ckCouponRow" style="display:none;"><span style="color:#F1690D;font-weight:800;">쿠폰 할인</span><span id="ckCoupon" style="color:#F1690D;font-weight:800;"></span></div>
-          <div class="ck-row" style="margin-top:11px;padding-top:11px;border-top:1px dashed #ece5dd;"><span style="font-size:15px;font-weight:900;">최종 결제 금액</span><b id="ckFinal" style="font-size:21px;color:#F1690D;">-</b></div>
-          ${!jdIsApp() ? '<div class="ck-row" style="margin-top:7px;"><span style="font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.08);border-radius:6px;padding:3px 8px;">📱 앱 전용 5% 할인가</span><span id="ckAppHint" style="font-size:13px;font-weight:900;color:#7c3aed;"></span></div>' : ''}
-        </div>
-        <div id="mwDeviceCheck"></div>
-        <div class="ck-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <span class="ck-label" style="margin:0;">✉️ 수령 정보 <span style="font-size:11px;font-weight:600;color:#94a3b8;">QR 발송처</span></span>
+            <span class="ck-label" style="margin:0;">QR을 받을 연락처를 알려주세요</span>
           </div>
           <input type="text" id="buyerName" class="ck-input" placeholder="수령인 이름 (한글)" value="${q(savedBuyer.name)}">
           <input type="tel" id="buyerPhone" class="ck-input" placeholder="연락처 (예: 01012345678)" value="${q(savedBuyer.phone)}">
-          <input type="email" id="buyerEmail" class="ck-input" style="margin-bottom:0;" placeholder="eSIM 받을 이메일" value="${q(savedBuyer.email)}">
+          <input type="email" id="buyerEmail" class="ck-input" style="margin-bottom:0;" placeholder="QR 받을 이메일" value="${q(savedBuyer.email)}">
         </div>
         <div id="checkoutCouponBox" style="display:none;margin-bottom:12px;"></div>
-        ${memberBanner}
+        <div class="ck-card">
+          <div class="ck-row"><span style="color:#4E5968;font-weight:500;">상품 금액</span><span id="ckBase" style="font-weight:700;font-variant-numeric:tabular-nums;">-</span></div>
+          <div class="ck-row" id="ckDiscRow" style="display:none;color:#0E7A47;font-weight:700;"><span>앱 할인 5%</span><span id="ckDisc"></span></div>
+          <div class="ck-row" id="ckCouponRow" style="display:none;"><span style="color:#B04A06;font-weight:700;">쿠폰 할인</span><span id="ckCoupon" style="color:#B04A06;font-weight:700;"></span></div>
+          <div class="ck-row" style="margin-top:11px;padding-top:11px;border-top:1px solid #F2F4F6;"><span style="font-size:15px;font-weight:700;">최종 결제 금액</span><b id="ckFinal" style="font-size:20px;font-weight:800;color:#191F28;font-variant-numeric:tabular-nums;">-</b></div>
+          ${!jdIsApp() ? '<div class="ck-row" style="margin-top:7px;"><span style="font-size:12px;font-weight:700;color:#B04A06;background:#FFF4EC;border-radius:6px;padding:3px 8px;">앱 전용 5% 할인가</span><span id="ckAppHint" style="font-size:13px;font-weight:700;color:#B04A06;"></span></div>' : ''}
+        </div>
+        <details class="ck-card ck-fold" style="padding:12px 15px;">
+          <summary>내 기기에서 되는지 확인하기</summary>
+          <div id="mwDeviceCheck" style="margin-top:8px;"></div>
+        </details>
         <details class="ck-card ck-fold" open style="padding:12px 15px;">
-          <summary>⚠️ 구매 전 꼭 확인 ${precautions.length}가지 — 읽고 아래에 체크해 주세요</summary>
+          <summary>구매 전 꼭 확인 ${precautions.length}가지 — 읽고 아래에 체크해 주세요</summary>
           <div style="margin-top:8px;font-size:12.5px;color:#5D5049;line-height:1.6;">
             ${precautions.map(t => `<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid #f3ede5;"><span style="flex-shrink:0;width:5px;height:5px;border-radius:50%;background:#F1690D;margin-top:6px;"></span><span class="jd-ku">${t}</span></div>`).join('')}
           </div>
         </details>
         <details class="ck-card ck-fold" id="ckFoldPrivacy" style="padding:12px 15px;">
-          <summary>📄 개인정보 수집·이용 동의 내용</summary>
+          <summary>개인정보 수집·이용 동의 내용</summary>
           <div style="margin-top:8px;font-size:12px;color:#64748b;line-height:1.7;">
             · <b>수집 항목</b>: 수령인 이름, 휴대전화번호, 이메일 주소<br>
             · <b>수집 목적</b>: 주문 처리 및 eSIM(QR코드) 발급·발송, 주문 조회·케어링크 제공, 고객 상담·민원 처리, 부정거래 방지<br>
@@ -4554,7 +4663,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           </div>
         </details>
         <details class="ck-card ck-fold" id="ckFoldTerms" style="padding:12px 15px;">
-          <summary>📄 이용약관 · 결제대행 서비스 약관</summary>
+          <summary>이용약관 · 결제대행 서비스 약관</summary>
           <div style="margin-top:8px;font-size:12px;color:#64748b;line-height:1.7;">
             · 주문·판매·환불 등 서비스 이용 조건은 이용약관을 따릅니다. <a href="terms.html" target="_blank" style="color:#2563eb;font-weight:800;">이용약관 전문 보기</a><br>
             · 결제는 전자지급결제대행사 <b>포트원(PortOne)</b> 및 제휴 PG(카카오페이·다날 등)를 통해 처리되며, 카드번호 등 결제수단 정보는 당사에 저장되지 않습니다.<br>
@@ -4686,7 +4795,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       set('ckFinal', final.toLocaleString() + '원');
       set('ckAppHint', (base - Math.round(base * 0.05)).toLocaleString() + '원');
       const payBtn = document.getElementById('checkoutPayBtn');
-      if (payBtn) payBtn.innerText = (payBtn.disabled ? '동의하고 결제 · ' : '결제하기 · ') + final.toLocaleString() + '원';
+      if (payBtn) payBtn.innerText = payBtn.disabled ? '약관에 동의해 주세요' : (final.toLocaleString() + '원 결제하기');
     }
 
     // 💰 회원 쿠폰 (구매 페이지) — 서버 지갑에서 사용 가능만 표시, 실차감은 결제 후 서버 검증
@@ -4712,7 +4821,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           const box = document.getElementById('checkoutCouponBox');
           if (!box || !usable.length) return;
           box.innerHTML = '<div class="ck-card" style="margin:0;border:1.5px dashed rgba(241,105,13,0.45);background:rgba(241,105,13,0.04);">'
-            + '<div class="ck-label">💰 쿠폰 적용</div>'
+            + '<div class="ck-label">쿠폰 적용</div>'
             + usable.slice(0, 3).map((c, i) => '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#5D5049;"><input type="radio" name="ckCoupon" value="' + i + '" style="width:19px;height:19px;accent-color:#F1690D;"><span style="flex:1;">' + c.name.replace(/</g, '&lt;') + ' <b style="color:#F1690D;">' + (c.type === 'cost' ? (couponValue(c) > 0 ? '-' + couponValue(c).toLocaleString() + '원 (원가 적용)' : '이 상품 적용불가') : '-' + Number(c.amount).toLocaleString() + '원') + '</b></span></label>').join('')
             + '<label style="display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;font-size:13px;font-weight:700;color:#8a7a6d;"><input type="radio" name="ckCoupon" value="-1" checked style="width:19px;height:19px;accent-color:#F1690D;"><span>적용 안 함</span></label></div>';
           box.style.display = 'block';
@@ -4933,7 +5042,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const saved = JSON.parse(localStorage.getItem('esim_orders') || '[]');
       const localMatched = saved.filter(o => (o.buyerName || '') === name && String(o.phone || '').replace(/[^0-9]/g, '') === np);
       if (window.ORDERS_API) {
-        resultsContainer.innerHTML = '<div style="text-align:center;padding:26px;color:#64748b;font-size:0.84375rem;">⏳ 조회 중...</div>';
+        resultsContainer.innerHTML = '<div style="text-align:center;padding:26px;color:#64748b;font-size:0.84375rem;">조회 중이에요…</div>';
         fetch(window.ORDERS_API + '?name=' + encodeURIComponent(name) + '&phone=' + encodeURIComponent(np))
           .then(r => { if (!r.ok) throw 0; return r.json(); })
           .then(d => {
@@ -4967,17 +5076,17 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         <div class="order-card">
           <div class="order-card-header">
             <span>주문번호: ${o.orderCode}</span>
-            <span style="color:${issued ? '#15803d' : '#b45309'}; font-weight:800;">${issued ? '발급 완료' : '발급 대기'}</span>
+            <span style="color:${issued ? '#0E7A47' : '#935A00'}; font-weight:700;">${issued ? '발급 완료' : '발급 대기'}</span>
           </div>
           <div style="font-size:0.84375rem; font-weight:600; margin-bottom:10px;">${it.productName || ''} ${it.quantity ? `(${it.quantity}개)` : ''}</div>
 
           <div style="display:flex;align-items:center;margin:2px 2px 12px;">
             ${steps.map((label, i) => {
               const done = i <= doneUpto;
-              return `${i ? `<div style="flex:1;height:2px;background:${done ? 'linear-gradient(90deg,#F1690D,#F59E0B)' : '#e2e8f0'};margin:0 3px 14px;"></div>` : ''}
+              return `${i ? `<div style="flex:1;height:2px;background:${done ? '#F1690D' : '#E5E8EB'};margin:0 3px 14px;"></div>` : ''}
               <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                <div style="width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:900;${done ? 'background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;box-shadow:0 2px 6px rgba(241,105,13,0.35);' : 'background:#fff;border:2px solid #e2e8f0;color:#cbd5e1;'}">${done ? '✓' : i + 1}</div>
-                <div style="font-size:0.56rem;font-weight:800;color:${done ? '#F1690D' : '#94a3b8'};white-space:nowrap;">${label}</div>
+                <div style="width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.625rem;font-weight:700;${done ? 'background:#F1690D;color:#fff;' : 'background:#fff;border:2px solid #E5E8EB;color:#B0B8C1;'}">${done ? '✓' : i + 1}</div>
+                <div style="font-size:0.75rem;font-weight:700;color:${done ? '#B04A06' : '#8B95A1'};white-space:nowrap;">${label}</div>
               </div>`;
             }).join('')}
           </div>
@@ -4991,31 +5100,31 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           </div>
           ${isIOS ? `
           <a href="https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${encodeURIComponent(lpa)}"
-             style="display:block;text-align:center;padding:13px;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.84375rem;text-decoration:none;box-shadow:0 5px 14px rgba(241,105,13,0.3);margin-bottom:8px;">⚡ 탭 한 번으로 eSIM 설치 (iOS 17.4+)</a>` : ''}
+             style="display:block;text-align:center;padding:13px;border-radius:12px;background:#F1690D;color:#fff;font-weight:700;font-size:0.84375rem;text-decoration:none;margin-bottom:8px;">탭 한 번으로 eSIM 설치 (iOS 17.4+)</a>` : ''}
           <div style="display:flex;gap:8px;margin-bottom:8px;">
-            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='📋 설치 코드가 복사됐어요';})"
-              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:800;color:#0f172a;">설치 코드 복사</button>
+            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${lpa}').then(()=>{showDataLoadingToast();const t=document.getElementById('dataToast');if(t)t.textContent='설치 코드가 복사됐어요';})"
+              style="flex:1;padding:11px;border:none;border-radius:12px;background:#F2F4F6;font-size:0.75rem;font-weight:700;color:#333D4B;">설치 코드 복사</button>
             <button type="button" onclick="openInstallGuide('${lpa}')"
-              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:800;color:#0f172a;">📲 설치 방법</button>
+              style="flex:1;padding:11px;border:none;border-radius:12px;background:#F2F4F6;font-size:0.75rem;font-weight:700;color:#333D4B;">설치 방법</button>
           </div>
           <div style="display:flex;gap:8px;margin-bottom:10px;">
             <button type="button" onclick="var u=document.getElementById('usageIccid');if(u){u.value='${it.iccid || ''}';}checkUsage();window.scrollTo({top:0,behavior:'smooth'});"
-              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:800;color:#0f172a;">📡 사용량 조회</button>
-            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[QR 재발송 요청] 주문번호: ${o.orderCode}');showDataLoadingToast();var t=document.getElementById('dataToast');if(t)t.textContent='📋 주문번호 복사됨 — 채팅창에 붙여넣으세요';window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
-              style="flex:1;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:800;color:#0f172a;">🔁 재발송 요청</button>
+              style="flex:1;padding:11px;border:none;border-radius:12px;background:#F2F4F6;font-size:0.75rem;font-weight:700;color:#333D4B;">사용량 조회</button>
+            <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[QR 재발송 요청] 주문번호: ${o.orderCode}');showDataLoadingToast();var t=document.getElementById('dataToast');if(t)t.textContent='주문번호가 복사됐어요 — 채팅창에 붙여넣으세요';window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
+              style="flex:1;padding:11px;border:none;border-radius:12px;background:#F2F4F6;font-size:0.75rem;font-weight:700;color:#333D4B;">재발송 요청</button>
           </div>
-          ${issueUrl ? `<a href="${issueUrl}" style="display:block;text-align:center;padding:11px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:800;color:#0f172a;text-decoration:none;margin-bottom:10px;">🎫 발급 페이지에서 자세히 보기 (사용량·설치확인)</a>` : ''}
+          ${issueUrl ? `<a href="${issueUrl}" style="display:block;text-align:center;padding:11px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:700;color:#191F28;text-decoration:none;margin-bottom:10px;">발급 페이지에서 자세히 보기 (사용량·설치 확인)</a>` : ''}
           <div style="font-size:0.75rem; color:#64748b; line-height:1.55;">
             ${isIOS ? '※ 버튼이 안 되면 QR을 다른 화면에 띄워 스캔하거나, 설치 코드를 복사해 설정 → 셀룰러 → eSIM 추가 → 세부사항 직접 입력에 붙여넣으세요.' : '※ 설정 → 연결 → SIM 관리자 → eSIM 추가에서 QR 스캔 또는 복사한 코드로 등록하세요.'}
           </div>`
           : `
           ${issueUrl ? `
-          <a href="${issueUrl}" style="display:block;text-align:center;padding:14px;border-radius:12px;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-weight:800;font-size:0.84375rem;text-decoration:none;box-shadow:0 5px 14px rgba(241,105,13,0.3);margin-bottom:8px;">🎫 발급 페이지 열기 — 원하는 시점에 발급하세요</a>
-          <div style="font-size:0.75rem;color:#64748b;line-height:1.55;">발급 전에는 100% 환불 가능 · 발급 후 취소 불가 · 사용일은 현지 활성화부터 카운트</div>`
+          <a href="${issueUrl}" style="display:block;text-align:center;padding:14px;border-radius:12px;background:#F1690D;color:#fff;font-weight:700;font-size:0.84375rem;text-decoration:none;margin-bottom:8px;">지금 QR 발급받기 — 원하는 시점에 발급하세요</a>
+          <div style="font-size:0.75rem;color:#6B7684;line-height:1.55;">발급 전에는 100% 환불 가능 · 발급 후 취소 불가 · 사용일은 현지 활성화부터 카운트</div>`
           : `
-          <div style="background:rgba(241,105,13,0.06);border:1px solid rgba(241,105,13,0.2);border-radius:12px;padding:12px 13px;font-size:0.75rem;font-weight:700;color:#9a5b16;line-height:1.6;">🛠️ 발급 정보를 준비 중이에요 — 준비되면 <strong>카카오톡으로 발급 링크</strong>를 보내드려요. 링크가 안 왔다면 아래로 문의해 주세요.</div>
+          <div style="background:#FFF7E6;border:none;border-radius:12px;padding:12px 13px;font-size:0.75rem;font-weight:500;color:#935A00;line-height:1.6;">발급 정보를 준비하고 있어요 — 준비되면 <strong>카카오톡으로 발급 링크</strong>를 보내드려요. 링크가 안 왔다면 아래로 문의해 주세요.</div>
           <button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('[발급 링크 요청] 주문번호: ${o.orderCode}');window.open('https://pf.kakao.com/_GSixcn/chat','_blank');"
-            style="width:100%;margin-top:8px;padding:12px;border:1px solid #e5eaf2;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:800;color:#0f172a;">💬 발급 링크 다시 받기 (카톡)</button>`}`}
+            style="width:100%;margin-top:8px;padding:12px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;font-size:0.75rem;font-weight:700;color:#191F28;">발급 링크 다시 받기 (카카오톡)</button>`}`}
         </div>`;
       }).join('');
       // 사용량 조회 ICCID 자동 입력 (발급된 주문이 있을 때만)
@@ -5345,7 +5454,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         const country = input.value.trim();
         const days = parseInt(daysWrap.querySelector('.rf-day.selected').getAttribute('data-d'));
         if (!countries.includes(country)) {
-          results.innerHTML = '<div class="rf-empty">🦊 앗, 그 국가는 아직 준비 중이에요. 위 검색으로 지원 국가를 확인해 주세요!</div>';
+          results.innerHTML = '<div class="rf-empty">아직 준비 중인 국가예요 — 검색으로 지원 국가를 확인해 주세요</div>';
           return;
         }
         if (!window.__fullReady) {
@@ -5355,12 +5464,12 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         }
         const picks = romiMatch(country, days);
         if (!picks || !picks.length) {
-          results.innerHTML = '<div class="rf-empty">조건에 맞는 요금제를 찾지 못했어요 😢</div>';
+          results.innerHTML = '<div class="rf-empty">조건에 맞는 요금제를 찾지 못했어요</div>';
           return;
         }
-        results.innerHTML = '<div class="rf-result-head">🦊 ' + country + ' ' + days + '일 여행이라면, 로미 추천은:</div>' + picks.map(p => `
+        results.innerHTML = '<div class="rf-result-head">' + country + ' ' + days + '일 여행 추천 요금제예요</div>' + picks.map(p => `
           <div class="rf-card" onclick="romiOpenPlan('${country}', '${p.g.carrier.replace(/'/g, "\\'")}', '${p.pl.data_limit}', ${p.d})">
-            <span class="rf-card-badge">${p.icon} ${p.label}</span>
+            <span class="rf-card-badge">${p.label}</span>
             <div class="rf-card-body">
               <div class="rf-card-title">${p.g.carrier.replace(/\s*\([^)]*(망|티어|다이렉트|현지)[^)]*\)/g, '')} · ${(p.pl.data_limit === '무제한' && window.JD_UNL) ? window.JD_UNL.short(p.pl.product_code) : p.pl.data_limit}</div>
               <div class="rf-card-sub">${p.d}일 · ${p.g.network_type || ''} ${p.g.network_speed || ''}</div>
@@ -5375,7 +5484,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       const wrap = document.getElementById('mobileCountryChips');
       if (!wrap || !window.PRODUCTS_DATA) return;
       const countries = [...new Set(window.PRODUCTS_DATA.map(p => p.country))].slice(0, 14);
-      wrap.innerHTML = countries.map(c => `<div class="marquee-tag" data-country="${c}">#${c}</div>`).join('');
+      wrap.innerHTML = countries.map(c => `<div class="marquee-tag" data-country="${c}">${c}</div>`).join('');
       wrap.addEventListener('click', (e) => {
         const tag = e.target.closest('.marquee-tag');
         if (!tag) return;
@@ -5443,7 +5552,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       function show(list){
         if (!list.length) return hide();
         sg.innerHTML = list.slice(0, 6).map(function(c){
-          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0~</i>' : '') + '</button>';
+          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0\uBD80\uD130</i>' : '') + '</button>';
         }).join('');
         sg.classList.add('on');
         sg.querySelectorAll('.jd-sg').forEach(function(b){
@@ -5603,30 +5712,28 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         var today = new Date(); today.setHours(0, 0, 0, 0);
         var d = new Date(dep); d.setHours(0, 0, 0, 0);
         var diff = Math.round((d - today) / 86400000);
-        if (diff > 0) ddayHtml = '<span style="background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.75rem;font-weight:900;padding:4px 11px;border-radius:999px;box-shadow:0 3px 9px rgba(241,105,13,0.3);">✈️ D-' + diff + '</span>';
-        else if (diff === 0) ddayHtml = '<span style="background:linear-gradient(135deg,#2BB3A3,#40CDBE);color:#fff;font-size:0.75rem;font-weight:900;padding:4px 11px;border-radius:999px;">✈️ 오늘 출국!</span>';
+        if (diff > 0) ddayHtml = '<span style="background:#FFF4EC;color:#B04A06;font-size:0.75rem;font-weight:700;padding:4px 11px;border-radius:999px;">D-' + diff + '</span>';
+        else if (diff === 0) ddayHtml = '<span style="background:#EEFAF3;color:#0E7A47;font-size:0.75rem;font-weight:700;padding:4px 11px;border-radius:999px;">오늘 출국</span>';
       }
       var testBadge = isTest ? ' <span style="background:#EEF2F7;color:#64748B;font-size:0.75rem;font-weight:800;padding:3px 9px;border-radius:999px;vertical-align:middle;">테스트 주문</span>' : '';
       var subLine = isCare
         ? esc(care.productName || '') + (care.at ? ' · 케어링크 저장 ' + esc(care.at) : '')
         : esc(item.planLimit || '') + (item.planDuration ? ' · ' + esc(item.planDuration) + '일' : '') + ' · 주문 ' + esc(o && o.date || '');
       var careHref = isCare ? care.url : ('issue.html?local=' + encodeURIComponent(orderCode));
-      var careLabel = isCare ? '🎫 여행 케어 데스크 열기' : '🎫 내 케어링크 열기';
+      var careLabel = isCare ? '여행 케어 데스크 열기' : '내 케어링크 열기';
 
       slot.innerHTML =
-        '<div style="position:relative;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(241,105,13,0.22);border-radius:18px;padding:0 0 12px;margin:12px 0 14px;overflow:hidden;box-shadow:0 10px 26px rgba(241,105,13,0.09);">'
-        + '<div style="height:4px;background:linear-gradient(90deg,#F1690D,#F59E0B 55%,#2BB3A3);"></div>'
+        '<div style="position:relative;background:#fff;border:1px solid #E5E8EB;border-radius:12px;padding:0 0 12px;margin:12px 0 14px;overflow:hidden;">'
         + '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px 4px;">'
         +   '<div style="flex:1;min-width:0;">'
-        +     '<div style="font-size:0.75rem;font-weight:900;letter-spacing:2px;color:#F1690D;">MY TRIP · 내 여행</div>'
-        +     '<div style="font-size:0.9375rem;font-weight:800;color:#221510;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + testBadge + '</div>'
-        +     '<div style="font-size:0.75rem;font-weight:600;color:#8a7a6d;margin-top:2px;">' + subLine + '</div>'
+        +     '<div style="font-size:0.75rem;font-weight:700;color:#8B95A1;">내 여행</div>'
+        +     '<div style="font-size:0.9375rem;font-weight:700;color:#191F28;margin-top:3px;">' + esc(country) + ' 여행 준비 중 ' + ddayHtml + testBadge + '</div>'
+        +     '<div style="font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:2px;">' + subLine + '</div>'
         +   '</div>'
-        +   '<img loading="lazy" src="images/fox-thumbsup.webp" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
         + '</div>'
         + '<div style="display:flex;gap:8px;padding:10px 14px 0;">'
-        +   '<a href="' + careHref.replace(/"/g, '&quot;') + '" style="flex:1.4;text-align:center;text-decoration:none;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.84375rem;font-weight:800;padding:11px 8px;border-radius:13px;box-shadow:0 4px 12px rgba(241,105,13,0.28);">' + careLabel + '</a>'
-        +   '<button type="button" data-mt-rebuy style="flex:1;background:#fff;border:1.5px solid rgba(241,105,13,0.4);color:#F1690D;font-family:inherit;font-size:0.84375rem;font-weight:800;padding:11px 8px;border-radius:13px;cursor:pointer;">같은 나라 재구매</button>'
+        +   '<a href="' + careHref.replace(/"/g, '&quot;') + '" style="flex:1.4;text-align:center;text-decoration:none;background:#F1690D;color:#fff;font-size:0.84375rem;font-weight:700;padding:11px 8px;border-radius:12px;">' + careLabel + '</a>'
+        +   '<button type="button" data-mt-rebuy style="flex:1;background:#F2F4F6;border:none;color:#333D4B;font-family:inherit;font-size:0.84375rem;font-weight:700;padding:11px 8px;border-radius:12px;cursor:pointer;">같은 나라 재구매</button>'
         + '</div></div>';
       var rb = slot.querySelector('[data-mt-rebuy]');
       if (rb) rb.addEventListener('click', function () {
@@ -5647,16 +5754,16 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       var slot = document.getElementById('pwaCard');
       if (!slot) return;
       slot.innerHTML =
-        '<div style="position:relative;display:flex;align-items:center;gap:12px;background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px dashed rgba(241,105,13,0.35);border-radius:16px;padding:13px 14px;margin:6px 0 20px;">'
-        + '<img loading="lazy" src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;box-shadow:0 4px 10px rgba(241,105,13,0.2);" onerror="this.remove()">'
+        '<div style="position:relative;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E5E8EB;border-radius:12px;padding:13px 14px;margin:6px 0 20px;">'
+        + '<img loading="lazy" src="images/icon-192.png" alt="" style="width:42px;height:42px;border-radius:11px;flex-shrink:0;" onerror="this.remove()">'
         + '<div style="flex:1;min-width:0;">'
-        +   '<div style="font-size:0.84375rem;font-weight:800;color:#221510;">앱스토어 없이, 1초만에 앱으로</div>'
-        +   '<div style="font-size:0.75rem;font-weight:600;color:#8a7a6d;margin-top:2px;">홈 화면에 추가하면 주문·QR·케어를 앱처럼 써요</div>'
+        +   '<div style="font-size:0.84375rem;font-weight:700;color:#191F28;">앱스토어 없이 앱으로 쓸 수 있어요</div>'
+        +   '<div style="font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:2px;">홈 화면에 추가하면 주문·QR·케어를 앱처럼 써요</div>'
         + '</div>'
         + (mode === 'ios'
-          ? '<span style="flex-shrink:0;font-size:0.75rem;font-weight:800;color:#F1690D;text-align:center;line-height:1.4;">공유 버튼 →<br>홈 화면에 추가</span>'
-          : '<button type="button" data-pwa-go style="flex-shrink:0;background:linear-gradient(135deg,#F1690D,#F59E0B);border:none;color:#fff;font-family:inherit;font-size:0.84375rem;font-weight:800;padding:10px 15px;border-radius:22px;cursor:pointer;box-shadow:0 4px 12px rgba(241,105,13,0.3);">설치</button>')
-        + '<button type="button" data-pwa-x aria-label="닫기" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#c9b8a9;font-size:0.9375rem;cursor:pointer;padding:4px;">✕</button>'
+          ? '<span style="flex-shrink:0;font-size:0.75rem;font-weight:700;color:#B04A06;text-align:center;line-height:1.4;">공유 버튼 →<br>홈 화면에 추가</span>'
+          : '<button type="button" data-pwa-go style="flex-shrink:0;background:#F1690D;border:none;color:#fff;font-family:inherit;font-size:0.84375rem;font-weight:700;padding:10px 15px;border-radius:12px;cursor:pointer;">설치</button>')
+        + '<button type="button" data-pwa-x aria-label="닫기" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#B0B8C1;font-size:0.9375rem;cursor:pointer;padding:4px;">✕</button>'
         + '</div>';
       var go = slot.querySelector('[data-pwa-go]');
       if (go) go.addEventListener('click', function () {
@@ -5720,20 +5827,19 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
         var care = JSON.parse(localStorage.getItem('jd_last_care') || 'null');
         var orders = JSON.parse(localStorage.getItem('esim_orders') || '[]');
         if (care && care.url) {
-          quick = '<a href="' + care.url.replace(/"/g, '&quot;') + '" style="display:flex;align-items:center;gap:8px;margin-top:11px;padding:10px 12px;border:1px dashed rgba(255,255,255,0.35);border-radius:12px;text-decoration:none;color:#fff;font-size:0.84375rem;font-weight:700;">🎫 최근 케어링크 — ' + esc(care.country || '내 여행') + ' 티켓 열기<span style="margin-left:auto;">→</span></a>';
+          quick = '<a href="' + care.url.replace(/"/g, '&quot;') + '" style="display:flex;align-items:center;gap:8px;margin-top:11px;padding:10px 12px;border:1px solid #E5E8EB;border-radius:12px;text-decoration:none;color:#333D4B;font-size:0.84375rem;font-weight:700;">최근 케어링크 — ' + esc(care.country || '내 여행') + ' 티켓 열기<span style="margin-left:auto;color:#B0B8C1;">›</span></a>';
         } else if (orders[0]) {
-          quick = '<a href="issue.html?local=' + encodeURIComponent(orders[0].orderCode || '') + '" style="display:flex;align-items:center;gap:8px;margin-top:11px;padding:10px 12px;border:1px dashed rgba(255,255,255,0.35);border-radius:12px;text-decoration:none;color:#fff;font-size:0.84375rem;font-weight:700;">🎫 이 기기 주문 — ' + esc(((orders[0].items || [])[0] || {}).country || '내 여행') + ' 티켓 열기' + (orders[0].test ? ' <span style="font-size:0.75rem;background:rgba(255,255,255,0.18);padding:2px 7px;border-radius:999px;">테스트</span>' : '') + '<span style="margin-left:auto;">→</span></a>';
+          quick = '<a href="issue.html?local=' + encodeURIComponent(orders[0].orderCode || '') + '" style="display:flex;align-items:center;gap:8px;margin-top:11px;padding:10px 12px;border:1px solid #E5E8EB;border-radius:12px;text-decoration:none;color:#333D4B;font-size:0.84375rem;font-weight:700;">이 기기 주문 — ' + esc(((orders[0].items || [])[0] || {}).country || '내 여행') + ' 티켓 열기' + (orders[0].test ? ' <span style="font-size:0.75rem;background:#F2F4F6;color:#6B7684;padding:2px 7px;border-radius:999px;">테스트</span>' : '') + '<span style="margin-left:auto;color:#B0B8C1;">›</span></a>';
         }
       } catch (e) {}
       zone.innerHTML =
-        '<div style="background:linear-gradient(135deg,#101623,#25314F);border-radius:18px;padding:16px;margin:0 0 4px;box-shadow:0 12px 30px rgba(16,22,35,0.25);">'
+        '<div style="background:#fff;border:1px solid #E5E8EB;border-radius:12px;padding:16px;margin:0 0 4px;">'
         + '<a href="login.html?return=' + encodeURIComponent('mobile.html#orders') + '" style="display:flex;align-items:center;gap:13px;text-decoration:none;">'
-        +   '<img loading="lazy" src="images/fox-hello.webp" alt="" style="width:46px;flex-shrink:0;" onerror="this.remove()">'
-        +   '<span style="flex:1;min-width:0;color:#fff;">'
-        +     '<span style="display:block;font-size:0.9375rem;font-weight:800;">가입만 해도 <b style="color:#FDBA74;">2,000원 쿠폰</b> ✈️</span>'
-        +     '<span style="display:block;font-size:0.75rem;font-weight:600;color:#B7BFCF;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 + 웰컴백 쿠폰 🧡</span>'
+        +   '<span style="flex:1;min-width:0;">'
+        +     '<span style="display:block;font-size:0.9375rem;font-weight:700;color:#191F28;">가입하면 <b style="color:#B04A06;">2,000원 쿠폰</b>을 드려요</span>'
+        +     '<span style="display:block;font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:3px;">휴대폰 인증 1분 · 모든 기기에서 주문·케어링크 확인</span>'
         +   '</span>'
-        +   '<span style="flex-shrink:0;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.84375rem;font-weight:800;padding:10px 16px;border-radius:22px;box-shadow:0 4px 12px rgba(241,105,13,0.35);">로그인</span></a>'
+        +   '<span style="flex-shrink:0;background:#F1690D;color:#fff;font-size:0.84375rem;font-weight:700;padding:10px 16px;border-radius:12px;">로그인</span></a>'
         + quick
         + '</div>';
     }
@@ -5744,51 +5850,48 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
       var fresh = coupons.filter(function (c) { return !c.used && !cExpired(c); });
       var deadCoupons = coupons.filter(function (c) { return c.used || cExpired(c); });
       var html =
-        '<div style="background:linear-gradient(165deg,#FFFFFF,#FFF9F3);border:1px solid rgba(241,105,13,0.22);border-radius:18px;overflow:hidden;margin:0 0 14px;box-shadow:0 10px 26px rgba(241,105,13,0.09);">'
-        + '<div style="height:4px;background:linear-gradient(90deg,#F1690D,#F59E0B 55%,#2BB3A3);"></div>'
+        '<div style="background:#fff;border:1px solid #E5E8EB;border-radius:12px;overflow:hidden;margin:0 0 14px;">'
         + '<div style="display:flex;align-items:center;gap:10px;padding:13px 15px 10px;">'
-        +   '<span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(241,105,13,0.14),rgba(245,158,11,0.08));display:flex;align-items:center;justify-content:center;font-size:1.1875rem;flex-shrink:0;">👤</span>'
-        +   '<span style="flex:1;min-width:0;"><b style="font-size:0.9375rem;color:#221510;">' + esc((me.profile && me.profile.name) || me.phoneMasked || '여행자') + ' 님</b>'
-        +   '<span style="display:block;font-size:0.75rem;font-weight:600;color:#8a7a6d;margin-top:1px;">주문 ' + orders.length + '건 · 쿠폰 ' + fresh.length + '장</span></span>'
-        +   '<button type="button" data-m-logout style="border:none;background:none;font-family:inherit;font-size:0.75rem;font-weight:700;color:#B0A28C;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px;">로그아웃</button>'
+        +   '<span style="flex:1;min-width:0;"><b style="font-size:0.9375rem;color:#191F28;">' + esc((me.profile && me.profile.name) || me.phoneMasked || '여행자') + ' 님</b>'
+        +   '<span style="display:block;font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:1px;">주문 ' + orders.length + '건 · 쿠폰 ' + fresh.length + '장</span></span>'
+        +   '<button type="button" data-m-logout style="border:none;background:none;font-family:inherit;font-size:0.75rem;font-weight:500;color:#8B95A1;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px;">로그아웃</button>'
         + '</div>';
       // 🎟️ 쿠폰 지갑 (2026-07-17): 발급된 모든 쿠폰 표시 — 원가 구매권(type:'cost')은 금액 대신 라벨, 지난 쿠폰은 접힘
       if (fresh.length || deadCoupons.length) {
-        html += '<div style="margin:0 12px 7px;font-size:0.84375rem;font-weight:800;color:#221510;">🎟️ 내 쿠폰 <b style="color:#F1690D;">' + fresh.length + '장</b></div>';
+        html += '<div style="margin:0 12px 7px;font-size:0.84375rem;font-weight:700;color:#191F28;">내 쿠폰 <b style="color:#B04A06;">' + fresh.length + '장</b></div>';
         fresh.forEach(function (c) {
           var isCost = c.type === 'cost';
-          var icon = isCost ? '💎' : (c.reason === 'welcomeback' ? '🧡' : '🎟️');
-          var amt = isCost ? '<b style="color:#7c3aed;">어떤 상품이든 원가로</b>' : '<b style="color:#F1690D;">' + Number(c.amount || 0).toLocaleString() + '원</b>';
-          html += '<div style="margin:0 12px 8px;padding:12px 14px;border:1.5px dashed ' + (isCost ? 'rgba(124,58,237,0.45)' : 'rgba(241,105,13,0.5)') + ';border-radius:14px;background:' + (isCost ? 'rgba(124,58,237,0.05)' : 'rgba(241,105,13,0.05)') + ';">'
-            + '<div style="font-size:0.84375rem;font-weight:800;color:#221510;">' + icon + ' ' + esc(c.name) + ' ' + amt + '</div>'
-            + '<div style="font-size:0.75rem;font-weight:600;color:#8a7a6d;margin-top:3px;">' + (c.note ? esc(c.note) + ' · ' : '') + (c.expires ? esc(c.expires) + '까지' : '기한 없음') + (c.min_order ? ' · ' + Number(c.min_order).toLocaleString() + '원 이상 주문 시' : '') + ' · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div>'
-            + '<div style="font-size:0.75rem;font-weight:700;color:#1B8E82;margin-top:4px;">💡 결제 직전 화면에 자동으로 떠요 — 누르면 바로 적용</div></div>';
+          var amt = isCost ? '<b style="color:#B04A06;">어떤 상품이든 원가로</b>' : '<b style="color:#B04A06;">' + Number(c.amount || 0).toLocaleString() + '원</b>';
+          html += '<div style="margin:0 12px 8px;padding:12px 14px;border:1px solid #FFE4D1;border-radius:12px;background:#FFF4EC;">'
+            + '<div style="font-size:0.84375rem;font-weight:700;color:#191F28;">' + esc(c.name) + ' ' + amt + '</div>'
+            + '<div style="font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:3px;">' + (c.note ? esc(c.note) + ' · ' : '') + (c.expires ? esc(c.expires) + '까지' : '기한 없음') + (c.min_order ? ' · ' + Number(c.min_order).toLocaleString() + '원 이상 주문 시' : '') + ' · 코드 <b style="font-family:monospace;">' + esc(c.code) + '</b></div>'
+            + '<div style="font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:4px;">결제 직전 화면에 자동으로 떠요 — 누르면 바로 적용돼요</div></div>';
         });
-        if (!fresh.length) html += '<div style="margin:0 12px 8px;padding:12px;text-align:center;font-size:0.75rem;font-weight:600;color:#8a7a6d;background:#FFFDFB;border:1px dashed #EDE4D8;border-radius:12px;">사용 가능한 쿠폰이 없어요 — 여행 다녀오시면 웰컴백 쿠폰이 도착해요 🧡</div>';
+        if (!fresh.length) html += '<div style="margin:0 12px 8px;padding:12px;text-align:center;font-size:0.75rem;font-weight:500;color:#6B7684;background:#F9FAFB;border:1px solid #F2F4F6;border-radius:12px;">사용 가능한 쿠폰이 없어요 — 여행 다녀오시면 웰컴백 쿠폰이 도착해요</div>';
         if (deadCoupons.length) {
-          html += '<details style="margin:0 12px 10px;"><summary style="font-size:0.75rem;font-weight:700;color:#B0A28C;cursor:pointer;list-style:none;">▸ 지난 쿠폰 ' + deadCoupons.length + '장 보기</summary>';
+          html += '<details style="margin:0 12px 10px;"><summary style="font-size:0.75rem;font-weight:500;color:#8B95A1;cursor:pointer;list-style:none;">지난 쿠폰 ' + deadCoupons.length + '장 보기</summary>';
           deadCoupons.forEach(function (c) {
-            html += '<div style="margin-top:6px;padding:9px 12px;border:1px solid #EDE4D8;border-radius:11px;background:#FAF7F2;opacity:0.62;font-size:0.75rem;font-weight:700;color:#8a7a6d;">' + esc(c.name) + ' · ' + (c.type === 'cost' ? '원가 구매권' : Number(c.amount || 0).toLocaleString() + '원') + ' · ' + (c.used ? '사용 완료' : '기간 만료') + '</div>';
+            html += '<div style="margin-top:6px;padding:9px 12px;border:1px solid #F2F4F6;border-radius:12px;background:#F9FAFB;opacity:0.7;font-size:0.75rem;font-weight:500;color:#6B7684;">' + esc(c.name) + ' · ' + (c.type === 'cost' ? '원가 구매권' : Number(c.amount || 0).toLocaleString() + '원') + ' · ' + (c.used ? '사용 완료' : '기간 만료') + '</div>';
           });
           html += '</details>';
         }
       }
       // 주문 목록 (케어링크 = 기기 무관 서버 URL!)
       orders.slice(0, 5).forEach(function (o) {
-        html += '<div style="display:flex;align-items:center;gap:10px;margin:0 12px 9px;padding:11px 13px;background:#fff;border:1px solid #F0E7DB;border-radius:14px;">'
-          + '<span style="flex:1;min-width:0;"><b style="font-size:0.84375rem;color:#221510;">' + esc(o.country || '여행') + '</b>'
-          + '<span style="display:block;font-size:0.75rem;font-weight:600;color:#8a7a6d;margin-top:1px;">' + esc((o.plan || '').slice(0, 30)) + ' · ' + esc((o.at || '').slice(0, 10)) + '</span></span>'
-          + (o.care_url ? '<a href="' + o.care_url.replace(/"/g, '&quot;') + '" style="flex-shrink:0;text-decoration:none;background:linear-gradient(135deg,#F1690D,#F59E0B);color:#fff;font-size:0.75rem;font-weight:800;padding:8px 13px;border-radius:20px;">🎫 케어링크</a>' : '')
+        html += '<div style="display:flex;align-items:center;gap:10px;margin:0 12px 9px;padding:11px 13px;background:#fff;border:1px solid #E5E8EB;border-radius:12px;">'
+          + '<span style="flex:1;min-width:0;"><b style="font-size:0.84375rem;color:#191F28;">' + esc(o.country || '여행') + '</b>'
+          + '<span style="display:block;font-size:0.75rem;font-weight:500;color:#6B7684;margin-top:1px;">' + esc((o.plan || '').slice(0, 30)) + ' · ' + esc((o.at || '').slice(0, 10)) + '</span></span>'
+          + (o.care_url ? '<a href="' + o.care_url.replace(/"/g, '&quot;') + '" style="flex-shrink:0;text-decoration:none;background:#F1690D;color:#fff;font-size:0.75rem;font-weight:700;padding:8px 13px;border-radius:8px;">케어링크</a>' : '')
           + '</div>';
       });
-      if (!orders.length) html += '<div style="margin:0 12px 12px;padding:14px;text-align:center;font-size:0.84375rem;font-weight:600;color:#8a7a6d;background:#FFFDFB;border:1px dashed #EDE4D8;border-radius:14px;">아직 연결된 주문이 없어요 — 구매하시면 여기에 자동으로 모여요</div>';
+      if (!orders.length) html += '<div style="margin:0 12px 12px;padding:14px;text-align:center;font-size:0.84375rem;font-weight:500;color:#6B7684;background:#F9FAFB;border:1px solid #F2F4F6;border-radius:12px;">아직 연결된 주문이 없어요 — 구매하시면 여기에 자동으로 모여요</div>';
       // 계정 관리 (프로필·쿠폰 사용법·탈퇴)
       var pf = me.profile || {};
-      html += '<div style="margin:2px 12px 12px;padding:12px 13px;background:#FFFDFB;border:1px solid #F0E7DB;border-radius:14px;font-size:0.75rem;font-weight:600;color:#8a7a6d;line-height:1.75;">'
-        + '<div style="font-size:0.84375rem;font-weight:800;color:#221510;margin-bottom:4px;">⚙️ 내 계정</div>'
+      html += '<div style="margin:2px 12px 12px;padding:12px 13px;background:#F9FAFB;border:1px solid #F2F4F6;border-radius:12px;font-size:0.75rem;font-weight:500;color:#6B7684;line-height:1.75;">'
+        + '<div style="font-size:0.84375rem;font-weight:700;color:#191F28;margin-bottom:4px;">내 계정</div>'
         + '이메일 ' + esc(pf.email || '미등록') + ' · 혜택 알림 ' + (pf.marketing ? 'ON' : 'OFF')
-        + '<br>💡 쿠폰은 <b style="color:#F1690D;">결제 직전 화면에서 선택</b>하면 자동 차감돼요 (조건 충족 시에만 표시)'
-        + '<br>정보 수정·탈퇴는 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#1B8E82;font-weight:800;">카카오톡 고객센터</a>로 — 탈퇴 시 즉시 파기돼요</div>';
+        + '<br>쿠폰은 <b style="color:#B04A06;">결제 직전 화면에서 선택</b>하면 자동 차감돼요 (조건 충족 시에만 표시)'
+        + '<br>정보 수정·탈퇴는 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#4E5968;font-weight:700;">카카오톡 고객센터</a>로 — 탈퇴 시 즉시 파기돼요</div>';
       html += '<div style="height:8px;"></div></div>';
       zone.innerHTML = html;
       var lo = zone.querySelector('[data-m-logout]');
