@@ -4438,7 +4438,8 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
 
     async function loadEnvForPayment() {
       try {
-        const response = await fetch('.env');
+        // Vercel은 .env(닷파일)를 정적으로 서빙하지 않으므로 공개 설정은 pay.env로
+        const response = await fetch('pay.env');
         if (response.ok) {
           const text = await response.text();
           text.split('\n').forEach(line => {
@@ -4838,7 +4839,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           orderName: paymentName,
           totalAmount: priceVal,
           currency: "CURRENCY_KRW",
-          payMethod: "CARD",
+          payMethod: "EASY_PAY",   // 카카오페이 채널 (2026-08-11 실결제 개시)
           customer: {
             name: name,
             email: email,
@@ -4853,9 +4854,8 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/p
           })
         }).then(function(rsp) {
           if (rsp.code != null) {
-            alert("결제 실패: " + rsp.message);
-            const forcePay = confirm("결제에 실패하였습니다. 테스트 모드이므로 강제로 결제 처리할까요?");
-            if (forcePay) submitRealOrder();
+            // 실결제 모드 — 결제 없이 주문이 생기면 안 되므로 강제 처리 없음 (2026-08-11)
+            alert("결제가 완료되지 않았습니다: " + rsp.message);
           } else {
             submitRealOrder();
           }

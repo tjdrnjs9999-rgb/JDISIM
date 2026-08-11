@@ -5,8 +5,9 @@
 // .env 파일이 없거나 로드에 실패할 시 아래 기본 가상 테스트 코드가 적용됩니다.
 let PORTONE_MERCHANT_ID = "imp19278797";
     let PORTONE_STORE_ID = "";
-    let PORTONE_CHANNEL_KEY = ""; 
-let PORTONE_PG_PROVIDER = "kakaopay.TC0ONETIME"; 
+    let PORTONE_CHANNEL_KEY = "";
+    let PORTONE_CARD_CHANNEL_KEY = ""; // 카드 실채널 계약 전까지 빈값 — 빈값이면 카드 버튼 숨김
+let PORTONE_PG_PROVIDER = "kakaopay.TC0ONETIME";
 // 신용·체크카드 일반결제 PG (현재 KG이니시스 테스트 채널 - 실계약 후 실채널 코드로 교체)
 let CARD_PG_PROVIDER = "html5_inicis.INIpayTest";
 // 네이버 스마트스토어 대체 구매 링크 (URL 입력 시 구매 버튼 자동 노출, PG 오픈 전 임시 판매 경로)
@@ -308,7 +309,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function init() {
     // 프로젝트 루트의 .env 파일 동적 로드 및 파싱 시도
     try {
-      const response = await fetch('.env');
+      // Vercel은 .env(닷파일)를 정적으로 서빙하지 않으므로 공개 설정은 pay.env로 (STORE_ID·채널키는 클라 노출 설계값만)
+      const response = await fetch('pay.env');
       if (response.ok) {
         const text = await response.text();
         text.split('\n').forEach(line => {
@@ -322,6 +324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (key === 'PORTONE_PG_PROVIDER') PORTONE_PG_PROVIDER = val;
             if (key === 'PORTONE_STORE_ID') PORTONE_STORE_ID = val;
             if (key === 'PORTONE_CHANNEL_KEY') PORTONE_CHANNEL_KEY = val;
+            if (key === 'PORTONE_CARD_CHANNEL_KEY') PORTONE_CARD_CHANNEL_KEY = val;
           }
         });
       }
@@ -2270,14 +2273,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Check if PortOne V2 parameters are present in env
       if (window.PortOne && PORTONE_STORE_ID) {
+        // 카카오페이 채널 = EASY_PAY / 카드는 실채널 키가 있을 때만 (2026-08-11 실결제 개시)
+        const v2Card = method === 'card' && PORTONE_CARD_CHANNEL_KEY;
         window.PortOne.requestPayment({
           storeId: PORTONE_STORE_ID,
-          channelKey: PORTONE_CHANNEL_KEY,
+          channelKey: v2Card ? PORTONE_CARD_CHANNEL_KEY : PORTONE_CHANNEL_KEY,
           paymentId: orderCode,
           orderName: paymentName,
           totalAmount: priceVal,
           currency: "CURRENCY_KRW",
-          payMethod: "CARD",
+          payMethod: v2Card ? "CARD" : "EASY_PAY",
           customer: {
             email: email,
             phoneNumber: phone
@@ -2291,9 +2296,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           })
         }).then(function (rsp) {
           if (rsp.code != null) {
-            alert(`결제에 실패하였습니다.\n사유: ${rsp.message}`);
-            const forcePay = confirm("테스트 모드이므로 가상으로 결제를 완료하고 영수증 화면으로 이동하시겠습니까?");
-            if (forcePay) submitPayment(orderCode, priceVal, true);
+            // 실결제 모드 — 결제 없이 주문이 생기면 안 되므로 가상결제 우회 없음
+            alert(`결제가 완료되지 않았습니다.\n사유: ${rsp.message}`);
           } else {
             submitPayment(orderCode, priceVal);
           }
@@ -3296,6 +3300,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.classList.add('selected');
         window.selectedPayMethod = btn.getAttribute('data-method');
       });
+      // 실결제 개시(2026-08-11): 카드 실채널 계약 전 — 카드 버튼 숨김(카카오페이 단일). 카드 채널 키가 생기면 자동 복귀.
+      if (PORTONE_STORE_ID && !PORTONE_CARD_CHANNEL_KEY) {
+        const cardBtn = payGroup.querySelector('[data-method="card"]');
+        if (cardBtn) cardBtn.style.display = 'none';
+        window.selectedPayMethod = 'kakaopay';
+      }
     }
   }
 
