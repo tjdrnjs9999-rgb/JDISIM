@@ -1963,3 +1963,23 @@ h1, h2, h3, h4, strong { text-wrap: balance; }
   max-width: 100% !important;
   object-fit: contain !important;
 }
+
+/* ── 로미 말풍선 겹침 픽스 (2026-08-11 사장님 제보 2차): 로미가 유동 축소되자 절대좌표(top:-6px)
+      말풍선이 로미 몸통 위로 내려앉음 → 말풍선을 로미 '위' 흐름 배치로 전환. ── */
+#view-home .hero-fox-col {
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+#view-home .hero-fox-bubble {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+}
+#view-home .hero-fox-col .hero-fox-img {
+  height: auto !important;
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+}
