@@ -10,10 +10,6 @@
       "dest": "/api/emp-orders.js"
     },
     {
-      "src": "/robots.txt",
-      "dest": "https://jdisim-proxy.vercel.app/api/robots"
-    },
-    {
       "src": "/",
       "has": [{ "type": "host", "value": "esimpartners.co.kr" }],
       "status": 308,
