@@ -10,10 +10,14 @@
       "dest": "/api/emp-orders.js"
     },
     {
+      "src": "/robots.txt",
+      "dest": "/api/robots.js"
+    },
+    {
       "src": "/",
       "has": [{ "type": "host", "value": "esimpartners.co.kr" }],
       "status": 308,
-      "headers": { "Location": "/partner" }
+      "headers": { "Location": "/start" }
     },
     {
       "src": "/",
@@ -31,6 +35,15 @@
         "x-content-type-options": "nosniff"
       },
       "dest": "/store/issue.html"
+    },
+    {
+      "src": "/(start|partner|partner-guide)(\\.html)?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow, noarchive",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff"
+      },
+      "dest": "/store/$1.html"
     },
     {
       "src": "/(.*)",
