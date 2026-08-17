@@ -11,7 +11,7 @@
     },
     {
       "src": "/robots.txt",
-      "dest": "/api/robots.js"
+      "dest": "https://jdisim-proxy.vercel.app/api/robots"
     },
     {
       "src": "/",
