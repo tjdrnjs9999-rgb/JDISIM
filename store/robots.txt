@@ -1,4 +1,51 @@
+# 파트너 영역(/start, /partner*)은 전 도메인에서 수집 금지 (2026-08-15)
 User-agent: *
-Allow: /
+Disallow: /start
+Disallow: /start.html
+Disallow: /partner
+Disallow: /partner.html
+Disallow: /partner-guide
+Disallow: /partner-guide.html
+
+# AI 학습·수집 크롤러 — 파트너 영역 접근 전면 금지
+User-agent: GPTBot
+Disallow: /start
+Disallow: /partner
+User-agent: ChatGPT-User
+Disallow: /start
+Disallow: /partner
+User-agent: OAI-SearchBot
+Disallow: /start
+Disallow: /partner
+User-agent: ClaudeBot
+Disallow: /start
+Disallow: /partner
+User-agent: anthropic-ai
+Disallow: /start
+Disallow: /partner
+User-agent: CCBot
+Disallow: /start
+Disallow: /partner
+User-agent: Google-Extended
+Disallow: /start
+Disallow: /partner
+User-agent: PerplexityBot
+Disallow: /start
+Disallow: /partner
+User-agent: Bytespider
+Disallow: /start
+Disallow: /partner
+User-agent: Amazonbot
+Disallow: /start
+Disallow: /partner
+User-agent: meta-externalagent
+Disallow: /start
+Disallow: /partner
+User-agent: Applebot-Extended
+Disallow: /start
+Disallow: /partner
+User-agent: Diffbot
+Disallow: /start
+Disallow: /partner
 
 Sitemap: https://jdisim.co.kr/sitemap.xml
