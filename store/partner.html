@@ -105,7 +105,9 @@
   <button data-s="orders" onclick="go('orders',this)">📋 주문 조회</button>
   <button data-s="ledger" onclick="go('ledger',this)">💰 정산·충전</button>
   <button data-s="price" onclick="go('price',this)">🏷️ 가격표</button>
+  <button data-s="notice" onclick="go('notice',this)">📢 공지사항</button>
   <button data-s="conf" onclick="go('conf',this)">⚙️ 설정</button>
+  <button onclick="window.open('/partner-guide.html','_blank')">📖 이용 가이드</button>
   <div class="foot"><b id="ftName"></b><br><a onclick="logout()">로그아웃</a></div>
 </aside>
 <main>
@@ -195,6 +197,11 @@
     <div style="overflow-x:auto"><table id="prTbl"></table></div>
     <div class="note">이 가격은 <b>파트너님 전용 공급가</b>입니다. 다운로드 파일에 파트너명·기준일이 표기됩니다.</div>
   </div>
+</section>
+
+<section id="notice" class="scr">
+  <h1>📢 공지사항</h1>
+  <div id="ntList" class="panel"><div class="muted">불러오는 중…</div></div>
 </section>
 
 <section id="conf" class="scr">
@@ -312,6 +319,7 @@ function go(id, btn){
   if (id==='orders') loadOrders();
   if (id==='ledger') loadLedger();
   if (id==='price' && !window._pl) loadPrice();
+  if (id==='notice') loadNotice();
   if (id==='conf') loadConf();
 }
 
@@ -510,6 +518,19 @@ function renderOrders(){
       return '<tr><td>' + esc(String(o.at).replace('T',' ').slice(5,16)) + '</td><td>' + esc(o.plan) + '</td><td>' + esc(o.buyer) + ' (' + esc(o.ph4) + ')</td>' +
         '<td>' + won(o.price) + '</td><td><span class="chip ' + st[1] + '">' + st[0] + '</span></td><td>' + act + '</td></tr>';
     }).join('') : '<tr><td colspan="6" class="muted">내역이 없습니다</td></tr>');
+}
+// 📢 공지사항 (2026-08-19 사장님) — 어드민 파트너 탭에서 작성한 공지를 조회
+function loadNotice(){
+  $('ntList').innerHTML = '<div class="muted">불러오는 중…</div>';
+  api('partner_notices').then(function(j){
+    var ns = j.notices || [];
+    $('ntList').innerHTML = ns.length ? ns.map(function(n){
+      return '<div style="padding:12px 2px;border-bottom:1px solid #F0F2F6;">' +
+        '<div style="display:flex;align-items:center;gap:8px;"><b style="font-size:.9rem;">' + esc(n.title) + '</b>' +
+        '<span class="muted">' + esc(String(n.at).replace('T',' ').slice(2,16)) + '</span></div>' +
+        (n.body ? '<div style="margin-top:6px;font-size:.82rem;color:#334155;font-weight:600;white-space:pre-wrap;line-height:1.7;">' + esc(n.body) + '</div>' : '') + '</div>';
+    }).join('') : '<div class="muted">등록된 공지가 없습니다</div>';
+  }).catch(function(){ $('ntList').innerHTML = '<div class="muted">불러오기 실패</div>'; });
 }
 function cancelOrder(tok){
   if (!confirm('이 발급 링크를 취소할까요? (고객이 이미 발급했다면 취소되지 않습니다)')) return;
