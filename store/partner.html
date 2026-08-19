@@ -139,6 +139,16 @@
     <div id="isOut" style="margin-top:10px"></div>
     <div class="note">발급 확정 시 수령인에게 발급 링크가 전달됩니다(알림톡 연동 시 자동). 잔액 차감은 고객이 발급을 누르는 시점에 확정돼요.<br>고객이 발급 버튼을 누르기 <b>전까지만</b> 취소 가능 — 발주 후 취소·환불 불가.</div>
   </div>
+  <div class="panel"><h2>📄 엑셀 대량 발급</h2>
+    <div class="muted" style="margin-bottom:8px">여러 명은 엑셀로 한 번에 — 양식에 <b>제품코드·이름·휴대폰</b>을 채워 올리면 행마다 발급 링크가 전송됩니다. 제품코드는 가격표 탭에서 복사하세요.</div>
+    <div class="row" style="align-items:center;flex-wrap:wrap;gap:8px">
+      <button class="btn btn-g btn-sm" onclick="bulkTpl()">📥 양식 다운로드</button>
+      <input type="file" id="bkFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="bulkParse(this)">
+      <button class="btn btn-g btn-sm" onclick="document.getElementById('bkFile').click()">📤 채운 양식 업로드</button>
+      <button class="btn btn-p btn-sm" id="bkGo" onclick="bulkIssue()" style="display:none">일괄 발급 실행</button>
+    </div>
+    <div id="bkOut" style="margin-top:10px"></div>
+  </div>
 </section>
 
 <section id="orders" class="scr">
@@ -176,7 +186,7 @@
       <select id="prNt" onchange="renderPrice()" style="max-width:130px"><option value="">망 전체</option><option>로컬</option><option>로밍</option></select>
       <select id="prSt" onchange="renderPrice()" style="max-width:140px"><option value="">유형 전체</option><option>데일리</option><option>총량</option><option>무제한</option></select>
       <input id="prQ" placeholder="검색" oninput="renderPrice()">
-      <button class="btn btn-p" onclick="priceCsv()">엑셀(CSV) 다운로드</button>
+      <button class="btn btn-p" onclick="priceCsv()">엑셀 다운로드</button>
     </div>
     <div style="overflow-x:auto"><table id="prTbl"></table></div>
     <div class="note">이 가격은 <b>파트너님 전용 공급가</b>입니다. 다운로드 파일에 파트너명·기준일이 표기됩니다.</div>
@@ -210,7 +220,7 @@
     <div id="alOut" style="margin-top:8px"></div>
     <div class="note" style="margin-top:8px">입력한 값은 발송에만 사용됩니다. 일부만 저장해도 되고(나머지는 나중에), 6가지가 모두 채워지면 상태가 <b>연동됨</b>으로 바뀝니다.</div></div>
   <div class="panel"><h2>🔌 오픈마켓 주문 자동 수집</h2>
-    <div class="muted" style="margin-bottom:8px">내 스토어 API 키를 등록하면 주문이 자동으로 발급 링크로 이어집니다.</div>
+    <div class="muted" style="margin-bottom:8px">내 스토어 API 키를 등록하면 주문이 자동으로 발급 링크로 이어집니다.<br>마켓에 API를 신청할 때 <b>허용(호출) IP</b>를 물으면 <b>101.79.21.62</b> (수집 서버 고정 IP)로 등록하세요.</div>
     <div id="cfMkts" class="muted">불러오는 중…</div></div>
   <div class="panel"><h2>🔑 API (자체 시스템 연동)</h2>
     <div class="muted">키는 반드시 <b>헤더(x-jd-pkey)</b>로 전송하세요. URL에 키를 넣지 마세요.</div>
@@ -578,11 +588,112 @@ function renderPrice(){
       return '<tr><td>' + esc(r.ct) + '</td><td>' + esc(r.carrier) + '</td><td>' + esc(r.nt||'') + '</td><td>' + esc(r.st||'') + '</td><td>' + esc(r.spec||'') + '</td><td>' + r.days + '</td><td class="muted">' + esc(r.code) + '</td><td><b>' + won(r.price) + '</b></td></tr>';
     }).join('') + (list.length > shown.length ? '<tr><td colspan="8" class="muted">500개까지만 표시 — 검색·필터를 쓰거나 CSV로 받으세요</td></tr>' : '');
 }
+// SheetJS 지연 로드 (엑셀 다운로드·대량발급 파싱에만 필요 — 초기 로딩 무부담)
+function loadXLSX(){
+  if (window.XLSX) return Promise.resolve();
+  return new Promise(function(ok, er){
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = ok; s.onerror = er;
+    document.head.appendChild(s);
+  });
+}
+// 전 상세 컬럼 (2026-08-19 사장님: APN·리셋·유효기간 등 전부 표기)
+var PL_HD = ['국가','제품코드','통신사','망','서비스유형','데이터용량','사용기간(일)','공급가','APN','네트워크속도','저속시속도','전화','문자','개통시점','사용일리셋','데이터리셋','유효기간','핫스팟','데이터충전','상품연장'];
+function plRow(r){
+  return [r.ct, r.code, r.carrier, r.nt||'', r.st||'', r.spec||'', r.days, r.price,
+          r.apn||'', r.spd||'', r.slow||'', r.call||'', r.sms||'', r.act||'',
+          r.drst||'', r.rst||'', r.val||'', r.hot||'', r.chg||'', r.ext||''];
+}
 function priceCsv(){
   if (!window._pl) return;
-  var rows = [['국가','통신사','망','유형','사용량','일수','코드','공급가 (' + (window._pl.name||'') + ' 전용 · ' + window._pl.at + ' 기준)']]
-    .concat(window._pl.rows.map(function(r){ return [r.ct, r.carrier, r.nt||'', r.st||'', r.spec, r.days, r.code, r.price]; }));
-  csvDown('공급가격표_' + window._pl.at + '.csv', rows);
+  var data = [PL_HD].concat(window._pl.rows.map(plRow));
+  loadXLSX().then(function(){
+    var ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!autofilter'] = { ref: 'A1:T' + data.length };   // 표 범위 자동 지정 + 필터 (사장님 2026-08-19)
+    ws['!cols'] = [10,16,18,6,9,14,11,9,14,10,14,16,14,26,18,20,18,8,9,9].map(function(w){ return { wch: w }; });
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '공급가격표');
+    XLSX.writeFile(wb, '공급가격표_' + (window._pl.name||'파트너') + '_' + window._pl.at + '.xlsx');
+  }).catch(function(){ csvDown('공급가격표_' + window._pl.at + '.csv', data); });   // CDN 실패 폴백
+}
+// ── 엑셀 대량 발급 (2026-08-19 사장님) — 양식 다운 → 채워서 업로드 → 검증 미리보기 → 순차 발급 ──
+function bulkTpl(){
+  loadXLSX().then(function(){
+    var ws = XLSX.utils.aoa_to_sheet([
+      ['제품코드', '이름', '휴대폰번호', '이메일(선택)'],
+      ['JD-JPCMI1G-03', '홍길동', '01012345678', ''],
+    ]);
+    ws['!cols'] = [{wch:18},{wch:10},{wch:14},{wch:22}];
+    var g = XLSX.utils.aoa_to_sheet([
+      ['엑셀 대량 발급 안내'],
+      ['1. 제품코드: 가격표 탭에서 복사 (JD- 로 시작)'],
+      ['2. 휴대폰번호: 숫자만 (010…) — 이 번호로 발급 링크가 전송됩니다'],
+      ['3. 예시 행은 지우고 실제 수령인으로 채워 업로드하세요'],
+      ['4. 발급 즉시 행 수만큼 잔액이 차감 대기됩니다 (고객 미클릭 건은 취소 가능)'],
+    ]);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '발급목록');
+    XLSX.utils.book_append_sheet(wb, g, '안내');
+    XLSX.writeFile(wb, 'eSIM_대량발급_양식.xlsx');
+  }).catch(function(){ toast('양식 생성 실패 — 네트워크 확인 후 재시도'); });
+}
+function bulkParse(inp){
+  var f = inp.files && inp.files[0];
+  if (!f) return;
+  loadXLSX().then(function(){ return f.arrayBuffer(); }).then(function(buf){
+    var wb = XLSX.read(buf, { type: 'array' });
+    var rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+    var out = [], bad = [];
+    for (var i = 1; i < rows.length; i++) {   // 0행 = 헤더
+      var r = rows[i] || [];
+      var code = String(r[0]||'').trim().toUpperCase();
+      var nm = String(r[1]||'').trim();
+      var ph = String(r[2]||'').replace(/[^0-9]/g,'');
+      var em = String(r[3]||'').trim();
+      if (!code && !nm && !ph) continue;   // 빈 행
+      if (code === 'JD-JPCMI1G-03' && nm === '홍길동') continue;   // 예시 행 방치 무시
+      if (!/^JD-/.test(code) || !nm || ph.length < 10 || ph.length > 11) { bad.push({ i: i+1, code: code, nm: nm, ph: ph }); continue; }
+      out.push({ code: code, nm: nm, ph: ph, em: em, state: '대기' });
+    }
+    window._bulk = out;
+    var h = '<div class="note">유효 <b>' + out.length + '건</b>' + (bad.length ? ' · <span style="color:#C2410C">형식 오류 ' + bad.length + '건(행 ' + bad.map(function(b){ return b.i; }).join(', ') + ' — 제외됨)</span>' : '') + '</div>';
+    if (out.length) {
+      h += '<div style="overflow-x:auto"><table id="bkTbl"><tr><th>#</th><th>제품코드</th><th>이름</th><th>휴대폰</th><th>상태</th></tr>' +
+        out.map(function(o, i){ return '<tr><td>' + (i+1) + '</td><td class="muted">' + esc(o.code) + '</td><td>' + esc(o.nm) + '</td><td>' + esc(o.ph) + '</td><td id="bkSt' + i + '">대기</td></tr>'; }).join('') + '</table></div>';
+    }
+    $('bkOut').innerHTML = h;
+    $('bkGo').style.display = out.length ? '' : 'none';
+    $('bkGo').disabled = false;
+    inp.value = '';
+  }).catch(function(){ toast('파일을 읽지 못했어요 — 양식 그대로인지 확인해 주세요'); inp.value = ''; });
+}
+function bulkIssue(){
+  var list = window._bulk || [];
+  if (!list.length || window._bulkRun) return;
+  if (!confirm(list.length + '건을 일괄 발급할까요? 행마다 잔액이 차감됩니다.')) return;
+  window._bulkRun = true;
+  $('bkGo').disabled = true;
+  var okN = 0, failN = 0;
+  (function step(i){
+    if (i >= list.length) {
+      window._bulkRun = false;
+      window._balAt = 0; updateConfirm();
+      $('bkOut').insertAdjacentHTML('afterbegin', '<div class="note">완료 — 성공 <b>' + okN + '</b> · 실패 <b>' + failN + '</b>' + (failN ? ' (실패 행만 새 파일로 다시 올리면 돼요)' : '') + '</div>');
+      toast('일괄 발급 완료');
+      return;
+    }
+    var o = list[i];
+    var cell = $('bkSt' + i);
+    if (cell) cell.textContent = '발급 중…';
+    api('partner_issue', { code: o.code, phone: o.ph, buyer: o.nm, email: o.em })
+      .then(function(j){
+        if (j && j.ok) { okN++; if (cell) cell.innerHTML = '<span class="chip c-ok">완료</span>'; }
+        else { failN++; if (cell) cell.innerHTML = '<span class="chip c-bad">' + esc(j && j.error === 'INSUFFICIENT_BALANCE' ? '잔액 부족' : (j && (j.detail || j.error) || '실패')) + '</span>'; }
+      })
+      .catch(function(){ failN++; if (cell) cell.innerHTML = '<span class="chip c-bad">네트워크</span>'; })
+      .then(function(){ setTimeout(function(){ step(i+1); }, 600); });
+  })(0);
 }
 
 // ── ⑥ 설정 ──
