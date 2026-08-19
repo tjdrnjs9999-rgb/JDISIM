@@ -144,7 +144,7 @@
     <div class="note">발급 확정 시 수령인에게 발급 링크가 전달되고, <b>잔액은 즉시 차감</b>됩니다.<br>고객이 발급 버튼을 누르기 <b>전까지는</b> 주문 조회 탭에서 취소하면 <b>전액 환급</b>돼요 — 발주 후에는 취소·환불 불가.</div>
   </div>
   <div class="panel"><h2>📄 엑셀 대량 발급</h2>
-    <div class="muted" style="margin-bottom:8px">여러 명은 엑셀로 한 번에 — 양식에 <b>제품코드·이름·휴대폰</b>을 채워 올리면 행마다 발급 링크가 전송됩니다. 제품코드는 가격표 탭에서 복사하세요.</div>
+    <div class="muted" style="margin-bottom:8px">여러 명은 엑셀로 한 번에 — 양식에 <b>제품코드·이름·휴대폰</b>을 채워 올리면 행마다 발급 링크가 전송됩니다. <b>알리고 연동(설정 탭) 후 이용 가능</b>합니다. 제품코드는 가격표 탭에서 복사하세요.</div>
     <div class="row" style="align-items:center;flex-wrap:wrap;gap:8px">
       <button class="btn btn-g btn-sm" onclick="bulkTpl()">📥 양식 다운로드</button>
       <input type="file" id="bkFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="bulkParse(this)">
@@ -460,7 +460,7 @@ function doIssue(){
   api('partner_issue', { code: it.code, phone: $('isPhone').value.replace(/[^0-9]/g,''), buyer: $('isName').value.trim(), email: $('isEmail').value.trim() })
     .then(function(j){
       if (!j.ok) {
-        $('isOut').innerHTML = '<div class="banner">발급 실패: ' + esc(j.error==='INSUFFICIENT_BALANCE' ? '잔액 부족 (필요 ' + won(j.need) + '원)' : (j.error||'')) + '</div>';
+        $('isOut').innerHTML = '<div class="banner">발급 실패: ' + esc(j.error==='INSUFFICIENT_BALANCE' ? '잔액 부족 (필요 ' + won(j.need) + '원)' : (j.detail || j.error || '')) + '</div>';
         $('isGo').disabled = false; return;
       }
       var tok = String(j.issue_url||'').split('issue=')[1] || '';
