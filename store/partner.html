@@ -227,6 +227,36 @@
       <input id="alTplI" placeholder="발급 템플릿 코드 (예: UB_1234)" autocomplete="off">
       <input id="alTplC" placeholder="발급완료 템플릿 코드 (예: UB_1235)" autocomplete="off">
     </div>
+    <details style="margin-top:12px;border:1.5px solid var(--line);border-radius:11px;padding:10px 14px;">
+      <summary style="cursor:pointer;font-weight:800;font-size:.82rem;">📋 알리고 템플릿 등록 문안 (복사해서 그대로 등록하세요)</summary>
+      <div class="muted" style="margin:8px 0 6px;">알리고 → 알림톡 → 템플릿 관리에서 아래 2개를 등록하고 <b>승인 후</b> 발급된 템플릿 코드를 위 칸에 입력하세요. 본문은 <b>한 글자도 바꾸지 말고</b> 그대로 써야 발송이 됩니다 (#{이름}·#{url}은 변수).</div>
+      <div style="font-weight:800;font-size:.78rem;margin-top:8px;">① 발급 템플릿 — 강조표기 제목: eSIM 발급 / 버튼: 웹링크(WL) · 버튼명 <b>발급하기</b> · 링크(모바일·PC 동일) <b>#{url}</b></div>
+      <textarea readonly rows="8" style="width:100%;font-size:.74rem;margin-top:4px;" onclick="this.select()">#{이름} 고객님, 여행 eSIM 주문이 확인되었습니다.
+
+출발 준비는 딱 한 번, 아래 발급하기로 끝납니다.
+원하는 시점에 eSIM을 발급받으세요.
+
+[발급 안내]
+
+● 발급하기를 누르면 QR과 설치 정보가 생성됩니다.
+● 발급(QR 생성) 전까지는 100% 환불이 가능합니다.
+● 설치는 티켓에서 원클릭·QR 스캔·수동 입력 중 선택하실 수 있습니다.
+● 사용 기간은 현지 도착 후 통신망 연결 시점부터 시작됩니다.
+● 본 메시지는 eSIM 구매 고객님께 발송되는 안내 메시지입니다.</textarea>
+      <div style="font-weight:800;font-size:.78rem;margin-top:10px;">② 발급완료 템플릿 — 강조표기 제목: eSIM 발급 완료 / 버튼: 웹링크(WL) · 버튼명 <b>내 티켓 열기</b> · 링크 <b>#{url}</b></div>
+      <textarea readonly rows="8" style="width:100%;font-size:.74rem;margin-top:4px;" onclick="this.select()">#{이름} 고객님, 구매하신 여행 eSIM 발급이 완료되었습니다.
+
+아래 내 여행 티켓에서 QR 확인, 설치, 데이터 사용량 조회를 한 번에 이용하실 수 있습니다.
+
+[이용 안내]
+- 설치는 티켓에서 원클릭, QR 스캔, 수동 입력 중 선택하실 수 있습니다.
+- 사용 기간은 현지 도착 후 통신망 연결 시점부터 시작됩니다.
+- 설치된 eSIM 프로필을 삭제하시면 재발급이 불가하니 주의해 주세요.
+- 문제가 생기면 삭제하지 마시고 티켓 안 상담 버튼으로 연락 주세요.
+
+본 메시지는 eSIM 구매 고객님께 발송되는 안내 메시지입니다.</textarea>
+      <div class="muted" style="margin-top:6px;">💡 클릭하면 전체 선택돼요. 변수 설정: #{이름}(수신자 이름)·#{url}(발급 링크) — 버튼 링크에 #{url}을 넣는 것을 잊지 마세요. 승인은 보통 1~2영업일.</div>
+    </details>
     <div style="margin-top:10px"><button class="btn btn-p" onclick="saveAligo()">알림톡 연동 저장</button></div>
     <div id="alOut" style="margin-top:8px"></div>
     <div class="note" style="margin-top:8px">입력한 값은 발송에만 사용됩니다. 일부만 저장해도 되고(나머지는 나중에), 6가지가 모두 채워지면 상태가 <b>연동됨</b>으로 바뀝니다.</div></div>
