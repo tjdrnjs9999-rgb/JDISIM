@@ -67,7 +67,7 @@ window.RomiMode = (function () {
     }[plat];
 
     if (mode === 'travel') return [
-      { icon: '📶', title: 'Wi-Fi 통화 켜기 (한국 번호 통화가 와이파이로 — 로밍 수신료 걱정 끝)', body: wifiCallPath + '<br><small>한국 번호로 오는 전화·문자를 와이파이에서 국내 기준 요금으로 받아요. 통신사(SKT/KT/LGU+)별 명칭·요금 기준은 통신사 앱에서 한 번 확인!</small>' },
+      { icon: '📶', title: 'Wi-Fi 통화 켜기 (와이파이에서 한국 번호 통화)', body: wifiCallPath + '<br><small>⚠️ 와이파이에 연결된 동안만 국내 기준 요금이에요. 와이파이가 끊기면 일반 로밍으로 수신돼 로밍 수신료가 나올 수 있어요 — 전화를 아예 안 받으려면 한국 회선을 잠시 꺼두세요. 통신사(SKT/KT/LGU+)별 지원·요금은 통신사 앱에서 꼭 확인!</small>' },
       { icon: '✈️', title: '데이터 회선을 여행 eSIM으로', body: dataPath + '에서 <b>여행 eSIM 선택</b> (데이터 전환 허용은 끄기)' },
       { icon: '🇰🇷', title: '한국 회선은 켜두고, 데이터 로밍만 끄기', body: '한국 회선 설정에서 <b>데이터 로밍 OFF</b> — 인증문자는 계속 받고 요금 폭탄은 차단' },
       { icon: '🛬', title: '현지 도착 후: 여행 eSIM 로밍 ON', body: '여행 eSIM 회선의 <b>데이터 로밍 ON</b> → 1~3분 내 연결. 안 되면 비행기모드 껐다 켜기' }
