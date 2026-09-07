@@ -1086,6 +1086,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!carrier) return [];
     if (carrier.plans && carrier.plans.length) return carrier.plans;
     const full = window.PRODUCTS_DATA || [];
+    // lite 그룹 ↔ full 그룹은 인덱스 1:1 — 통신사 무시하고 국가·망으로 합치던 종전 방식은 같은 망의 타 통신사 플랜을
+    // 섞어 넣었다(도코모 IIJ 그룹에 소프트뱅크 7,820원 노출, 2026-09-07 사장님). 인덱스 매칭 우선, 검증 실패 시 종전 폴백.
+    // lite와 full은 같은 전역명(PRODUCTS_DATA)을 써서 인덱스 참조 불가 → 국가·망 후보 중 통신사명 일치, 없으면 plan_count(그룹 고유) 일치
+    const sameNet = full.filter(f => f.country === carrier.country && f.network_type === carrier.network_type && f.plans && f.plans.length);
+    const norm = v => String(v || '').replace(/\s+/g, '').toLowerCase();
+    let fi = sameNet.find(f => norm(f.carrier) === norm(carrier.carrier));
+    if (!fi && carrier.plan_count) { const byCnt = sameNet.filter(f => f.plans.length === carrier.plan_count); if (byCnt.length === 1) fi = byCnt[0]; }
+    if (!fi && sameNet.length === 1) fi = sameNet[0];
+    if (fi) { carrier.plans = fi.plans.slice(); return carrier.plans; }
     const cand = full.filter(f => f.country === carrier.country && f.plans && f.plans.length);
     const byNet = cand.filter(f => f.network_type === carrier.network_type);
     const pool = byNet.length ? byNet : cand;
@@ -1229,6 +1238,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (bigger.length) { const d2 = bigger[0].d; exact = bigger.filter(x => x.d === d2); note = `<div class="pcw-msg-warn" style="font-size:0.8125rem;font-weight:700;margin-top:8px;">${days}일 상품이 없어 <b>${d2}일권</b>으로 안내해 드려요</div>`; }
       }
       exact.sort((a, b) => (pcCapMB(a.pl) - pcCapMB(b.pl)) || (a.pl.final_price - b.pl.final_price));
+      // 같은 통신사·망·용량·기간·타입·소진후속도 = 고객에게 동일 상품 → 최저가 1개만 (2026-09-07 사장님 "같은 상품 두 가격")
+      { const seen = new Set(); exact = exact.filter(x => { const k = [x.g.carrier, x.g.network_type, pcPlanCap(x.pl), x.d, x.pl.service_type, (window.jdLowSpeed ? window.jdLowSpeed(x.pl.product_code) : '')].join('|'); if (seen.has(k)) return false; seen.add(k); return true; }); }
       const bestIdx = exact.reduce((bi, x, i) => x.pl.final_price < exact[bi].pl.final_price ? i : bi, 0);
       window.__pcwList = exact;
       body = `<div class="config-section-title" style="margin-top:14px;">요금제 ${exact.length}개를 찾았어요 <span class="pcw-sub-note">모든 통신사 가격순 비교</span></div>` + note +
@@ -1238,10 +1249,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           const capLbl = cap === '무제한' ? ((window.JD_UNL && window.JD_UNL.isTrue(x.pl.product_code)) ? '완전 무제한' : '무제한(속도정책 확인)') : ((x.pl.service_type === '데일리' || x.pl.service_type === '무제한') ? '매일 ' + cap : '전체 ' + cap);
           // 제목 = 무엇을 사는지(데이터 + 기간). 통신사·망·속도·리셋은 보조로 작게 (2026-08-02 사장님)
           const best = i === bestIdx ? ' <span class="pcw-best-badge">최저가</span>' : '';
-          const main = `${capLbl} <span style="color:var(--jd-gray-500);">· ${x.d}일</span>${best}`;
+          // 통신사를 제목 줄로 승격 — 통합 리스트에서 같은 용량·기간이 "같은 상품 두 가격"으로 읽히던 문제 (2026-09-07 사장님)
           const netTxt = x.g.network_type === '로컬망' ? '<span class="pcw-net local">현지망</span>' : '<span class="pcw-net roaming">로밍망</span>';
-          const sub = `<span style="font-weight:700;color:var(--jd-gray-800);">${window.cleanCarrierName(x.g.carrier)}</span> ${netTxt}`
-            + `<span> · ${[x.g.network_speed || '', (x.pl.service_type === '총용량' ? '기간 내 자유 사용' : '매일 리셋')].filter(Boolean).join(' · ')}</span>`;
+          const main = `${capLbl} <span style="color:var(--jd-gray-500);">· ${x.d}일</span> <span style="color:var(--jd-gray-500);font-weight:600;">— ${window.cleanCarrierName(x.g.carrier)}</span> ${netTxt}${best}`;
+          const lowTxt = window.jdLowLabel ? window.jdLowLabel(x.pl.product_code) : '';
+          const sub = `<span> ${[x.g.network_speed || '', (x.pl.service_type === '총량' ? '기간 내 자유 사용' : '매일 리셋'), lowTxt].filter(Boolean).join(' · ')}</span>`;
           return rowBtn(`class="pcw-item pcw-row" data-i="${i}"`, main, sub,
             `<span class="pcw-price">${x.pl.final_price.toLocaleString()}<i>원</i></span>`);
         }).join('') || '<div style="font-size:0.8125rem;color:var(--jd-gray-600);font-weight:500;padding:10px 2px;">이 조합의 요금제가 없어요 — 다른 사용량이나 일수를 골라 보세요</div>') +
@@ -1381,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="config-group">
           <div class="pcw-picked">
             <div class="pcw-picked-main">${summaryDataLabel} · ${activeDuration}일</div>
-            <div class="pcw-picked-sub">${window.cleanCarrierName(p.carrier)} · ${p.network_type === '로컬망' ? '현지망' : '로밍망'} · ${activePlan.service_type === '총용량' ? '기간 내 자유 사용' : '매일 리셋'}</div>
+            <div class="pcw-picked-sub">${window.cleanCarrierName(p.carrier)} · ${p.network_type === '로컬망' ? '현지망' : '로밍망'} · ${activePlan.service_type === '총량' ? '기간 내 자유 사용' : '매일 리셋'}</div>
           </div>
           <div style="margin-top:10px;">
             <button type="button" class="pcw-chip" data-step="1">${activeDuration}일 변경 ${JD_PENCIL_SVG}</button>
@@ -1888,7 +1900,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         ['전화/문자', `전화 ${pr.calls} · 문자 ${pr.sms}`],
         ['핫스팟', pr.hotspot === '가능' ? '지원 가능' : '지원 불가'],
         ['개통 기준', pr.activation || '-'],
-        ['소진 후 속도', it.plan.low_speed || '소진 후 차단'],
+        ['소진 후 속도', it.plan.low_speed || (window.jdLowSpeed && window.jdLowSpeed(it.plan.product_code)) || '소진 후 차단'],
         ['APN', pr.apn || '자동 설정'],
         ['유효 기간', pr.validity || '-']
       ].map(([l, v]) => `<div style="display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed var(--border-color); font-size:0.8rem;"><span style="color:var(--text-dim); flex-shrink:0;">${l}</span><span style="color:var(--text-main); font-weight:600; text-align:right;">${v}</span></div>`).join('');

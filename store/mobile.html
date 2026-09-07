@@ -2614,6 +2614,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   <script src="https://cdn.iamport.kr/v1/iamport.js" defer></script>
   <script src="https://cdn.portone.io/v2/browser-sdk.js" defer></script>
   <script src="speed-truth.js?v=20260718b" defer></script>
+  <script src="jd-lowspeed.js?v=20260907a" defer></script>
   <script src="jd-devices.js?v=20260717b" defer></script>
   <script src="jd-precautions.js?v=20260715b" defer></script>
   <script src="jd-resets.js?v=20260715a" defer></script>
@@ -3925,6 +3926,8 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       // 용량 적은 순 정렬 (2026-07-20) — 같은 용량은 가격순, 무제한·용량미상은 맨 뒤
       const capMB = (pl) => { const s = planCap(pl); if (s === '무제한') return Infinity; const m = /^([\d.]+)\s*(GB|MB)/i.exec(s); return m ? parseFloat(m[1]) * (m[2].toUpperCase() === 'GB' ? 1024 : 1) : 1e9; };
       exact.sort((a, b) => (capMB(a.pl) - capMB(b.pl)) || (a.pl.final_price - b.pl.final_price));
+      // 같은 통신사·망·용량·기간·타입·소진후속도 = 동일 상품 → 최저가 1개만 (2026-09-07 사장님 "같은 상품 두 가격")
+      { const seen = new Set(); exact = exact.filter(x => { const k = [x.g.carrier, netScope(x.g), planCap(x.pl), x.pl.duration, x.pl.service_type, (window.jdLowSpeed ? window.jdLowSpeed(x.pl.product_code) : '')].join('|'); if (seen.has(k)) return false; seen.add(k); return true; }); }
       const bestIdx = exact.reduce((bi, x, i) => x.pl.final_price < exact[bi].pl.final_price ? i : bi, 0);
       const NET2 = { '로컬망': '<span class="net local">현지망</span>', '로밍망': '<span class="net roam">로밍망</span>', '멀티': '<span class="net multi">멀티망</span>' };
       window.__pwMixed = exact;
@@ -3934,7 +3937,8 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
           ? ((window.JD_UNL && window.JD_UNL.isTrue(x.pl.product_code)) ? '완전 무제한' : '무제한(속도정책 확인)')
           : ((x.pl.service_type === '데일리' || x.pl.service_type === '무제한') ? '매일 ' + cap : '전체 ' + cap);
         const rst = shortReset(x.pl.product_code);
-        const sub = [x.pl.service_type === '총용량' ? '기간 전체 자유 사용' : '매일 리셋', rst, x.g.network_speed || ''].filter(Boolean).join(' · ');
+        const lowTxt = window.jdLowLabel ? window.jdLowLabel(x.pl.product_code) : '';
+        const sub = [x.pl.service_type === '총량' ? '기간 전체 자유 사용' : '매일 리셋', rst, x.g.network_speed || '', lowTxt].filter(Boolean).join(' · ');
         return `<button type="button" class="pw-car" data-mixidx="${i}" style="width:100%;">
           <span class="car-main"><span class="car-name">${cleanCarrier(x.g.carrier)} · ${capLbl}${i === bestIdx ? ' <span style="font-size:0.75rem;font-weight:700;color:#B04A06;background:#FFF4EC;border-radius:6px;padding:2px 7px;vertical-align:2px;">최저가</span>' : ''}</span>
           <span class="car-sub">${sub}</span></span>
