@@ -117,11 +117,11 @@ footer a{color:#93C5FD;text-decoration:none;font-weight:700}
     <textarea id="fm" rows="3" maxlength="200" placeholder="예: 베트남 단체 위주인데 공급가가 궁금해요"></textarea>
     <input class="hp" id="fw" tabindex="-1" autocomplete="off">
     <div style="margin-top:18px"><button class="btn btn-p" style="width:100%" id="fbtn">신청하기 — 데모 키 받기</button></div>
-    <p class="mut" style="text-align:center">보통 당일 안에 문자·전화로 연락드려요 · 급하시면 <a href="sms:010-4689-4669" style="color:var(--blue)">010-4689-4669</a> 문자 주세요</p>
+    <p class="mut" style="text-align:center">보통 당일 안에 문자·전화로 연락드려요 · 급하시면 <a href="sms:010-4869-4669" style="color:var(--blue)">010-4869-4669</a> 문자 주세요</p>
   </form>
   <div class="done card" id="ok">
     <b>신청이 접수됐어요 ✅</b>
-    <p>담당자가 확인 후 데모 키를 문자로 보내드릴게요.<br>급하시면 010-4689-4669 로 문자 남겨주세요.</p>
+    <p>담당자가 확인 후 데모 키를 문자로 보내드릴게요.<br>급하시면 010-4869-4669 로 문자 남겨주세요.</p>
   </div>
 </section>
 
@@ -136,7 +136,7 @@ footer a{color:#93C5FD;text-decoration:none;font-weight:700}
 </div>
 
 <footer>
-  eSIM Partners · 파트너 문의 <a href="sms:010-4689-4669">010-4689-4669</a> (문자 환영)
+  eSIM Partners · 파트너 문의 <a href="sms:010-4869-4669">010-4869-4669</a> (문자 환영)
 </footer>
 
 <script>
@@ -149,8 +149,8 @@ function go(e){
       biz:document.getElementById('fb').value,memo:document.getElementById('fm').value,web:document.getElementById('fw').value})})
   .then(function(r){return r.json()}).then(function(j){
     if(j&&j.ok){document.getElementById('f').style.display='none';document.getElementById('ok').style.display='block';}
-    else{alert((j&&j.detail)||'접수에 실패했어요. 010-4689-4669로 문자 주세요.');b.disabled=false;b.textContent='신청하기 — 데모 키 받기';}
-  }).catch(function(){alert('네트워크 오류 — 010-4689-4669로 문자 주세요.');b.disabled=false;b.textContent='신청하기 — 데모 키 받기';});
+    else{alert((j&&j.detail)||'접수에 실패했어요. 010-4869-4669로 문자 주세요.');b.disabled=false;b.textContent='신청하기 — 데모 키 받기';}
+  }).catch(function(){alert('네트워크 오류 — 010-4869-4669로 문자 주세요.');b.disabled=false;b.textContent='신청하기 — 데모 키 받기';});
   return false;
 }
 </script>

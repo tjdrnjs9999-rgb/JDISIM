@@ -496,7 +496,7 @@ var CX = new URLSearchParams(location.search).get('cx') || ''; // 케어 토큰 
 var CARE = new URLSearchParams(location.search).get('care') || (CX ? '__cx__' : ''); // 구형 care= 링크 호환 유지
 // 파트너 화이트라벨 도메인 (2026-08-10) — 파트너 고객에게는 본사 브랜드 비노출 (헤더·밴드·푸터·공유 문구·상담 경로·연장 유도 링크)
 var PFACE = /(^|\.)esimpartners\.co\.kr$/.test(location.hostname);
-var PARTNER_TEL = '010-4689-4669'; // 파트너 문의처 정본 A안 — 본사 카톡 채널 대신 전용 번호
+var PARTNER_TEL = '010-4869-4669'; // 파트너 문의처 정본 A안 — 본사 카톡 채널 대신 전용 번호
 var CS_LABEL = PFACE ? '고객센터' : '카톡 상담';
 var CS_EUL = CS_LABEL + (PFACE ? '를' : '을');
 var CS_RO = CS_LABEL + (PFACE ? '로' : '으로');
