@@ -1669,7 +1669,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const arr = Array.isArray(acts) ? acts : [acts];
     const has = s => arr.some(a => String(a || '').includes(s));
     const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
-    if (all('즉시 개통')) return '설치 즉시 시작';
+    if (all('즉시 개통')) return all('발급 즉시') ? '발급 즉시 시작' : '설치 즉시 시작';
     if (all('희망일')) return isLongLeadCountry(countryName) ? '최소 3일 전 주문' : '최소 2일 전 주문';
     if (has('즉시 개통') || has('희망일')) return '구매 타이밍 확인';
     if (has('개통문자')) return '도착 후 문자 개통';
@@ -1697,6 +1697,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isWishDate) {
       const ea = earliestActivationInfo(country);
       list.push(leadTimeBadge(`최소 ${ea.days}일`) + `<strong>개통 희망일 지정 상품</strong> — 오늘 주문하면 <strong>${ea.label}부터</strong> 개통일로 지정할 수 있어요.${ea.days === 3 ? ' 미주·유럽은 시차로 하루 더 여유가 필요합니다.' : ''} 개통일 등록은 구매 후 케어 안내로 도와드립니다.`);
+    } else if (actStr.includes('발급 즉시')) {
+      // 2026-11-04 데이터 정합: QR 생성 순간 사용기간이 시작되는 상품(보다폰ES·호주 보다폰·AT&T·레바라)
+      list.push("<strong>QR 발급 즉시 사용기간 시작:</strong> 발급하기를 누르는 순간부터 기간이 흘러요 — 결제 후 받는 발급 링크에서 <strong>출발일에 맞춰 자동 발급</strong>을 예약하거나, 출발 직전에 발급하세요.");
+    } else if (actStr.includes('즉시 개통')) {
+      list.push("<strong>QR 설치(스캔) 즉시 사용기간 시작:</strong> 미리 사두는 건 괜찮지만, 설치는 출발 당일이나 현지 도착 후에 해 주세요.");
     } else if (normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
       list.push("<strong>현지 도착 후 개통 문자로 시작:</strong> 도착해서 개통 문자가 발송되는 시점부터 사용일이 카운트돼요 — 미리 구매해 두셔도 기간이 줄지 않습니다.");
     }
@@ -1764,12 +1769,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       list.push("<strong>다국가 환승 시 대처법:</strong> 국가 경유 시 5~10초간 비행기 모드를 켰다 켜거나 단말기를 종료 후 재부팅하여 파트너 로밍망을 다시 잡도록 하세요.");
     }
 
-    // 6. 유럽 특수 통신사 매칭 (보다폰스페인, 오렌지스페인, 오렌지프랑스, 쓰리)
-    if (normalizedCarrier.includes('보다폰스페인') || normalizedCarrier.includes('vodafone')) {
-      list.push("<strong>QR 발송 즉시 사용일 시작 (Vodafone):</strong> 보다폰스페인 이심은 이메일로 QR이 <strong>발송되는 순간 개통 시작</strong>되므로, 꼭 일정을 확인 후 구매해 주세요.");
-      list.push("<strong>eSIM 프로필 삭제 금지:</strong> 삭제 시 재등록이 불가하오니 설정 등록 후 절대 지우지 마세요.");
-    }
-    
+    // 6. 유럽 특수 통신사 매칭 (오렌지스페인, 오렌지프랑스)
+    //    (2026-11-04) 보다폰 통신사명 규칙 삭제 — 유럽 로밍(그리스 Vodafone/Wind 등) 25그룹에 '즉시 개통' 경고가 오탐 발동했음.
+    //    개통 시점은 상품 데이터 activation('QR 발급/설치 즉시 개통')이 정본 — 위 0번 분기가 처리.
+
     if (normalizedCarrier.includes('오렌지스페인') || normalizedCarrier.includes('orange스페인')) {
       list.push("<strong>개통 예약형 상품 (Orange):</strong> 개통 예약은 구매 후 케어 안내에 따라 진행됩니다.");
     }
@@ -1780,11 +1783,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       list.push("<strong>500GB 장기 요금제 실명인증:</strong> 90일 상품은 30일 이내에 수신되는 링크를 통해 여권 인증을 거쳐야 회선이 유지됩니다.");
     }
 
-    if (normalizedCarrier.includes('쓰리') || normalizedCarrier.includes('three')) {
-      list.push("<strong>QR 스캔 즉시 개통 시작 (Three):</strong> 단말기에 QR코드를 스캔하여 등록하는 순간 개통되므로 출국 직전 또는 현지 공항에서 설치를 권장합니다.");
-      list.push("<strong>eSIM 프로필 삭제 금지:</strong> 임의 삭제 시 절대 복구되지 않으므로 주의하십시오.");
-      list.push("<strong>영국 외 번호 발신 금지:</strong> 영국 내에서는 영국 번호로만 발신할 수 있으며 타 국가로의 발신은 제한될 수 있습니다.");
-    }
+    // (2026-11-04) 쓰리(Three) 통신사명 규칙 삭제 — 도도매 시절 산물, 현 카탈로그에 해당 상품 없음. 개통 시점은 activation 데이터가 정본.
 
     return list;
   }

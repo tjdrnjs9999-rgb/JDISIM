@@ -21,7 +21,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       window.__fullLoading = true;
       var lite = window.PRODUCTS_DATA;
       var sc = document.createElement('script');
-      sc.src = 'products.js?v=20261022a';
+      sc.src = 'products.js?v=20261104a';
       sc.onload = function () {
         var full = window.PRODUCTS_DATA;
         if (lite && lite !== full && lite.length) {
@@ -2618,10 +2618,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   <script src="speed-truth.js?v=20260718b" defer></script>
   <script src="jd-lowspeed.js?v=20260907a" defer></script>
   <script src="jd-devices.js?v=20260717b" defer></script>
-  <script src="jd-precautions.js?v=20260715b" defer></script>
+  <script src="jd-precautions.js?v=20261104a" defer></script>
   <script src="jd-resets.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260717a" defer></script>
-  <script src="products-lite.js?v=20261022a" defer></script>
+  <script src="products-lite.js?v=20261104a" defer></script>
   <script src="reviews_data.js?v=20260709" defer></script>
   <script src="jdisim-reviews.js?v=20260718a" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
@@ -4161,7 +4161,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       const arr = Array.isArray(acts) ? acts : [acts];
       const has = s => arr.some(a => String(a || '').includes(s));
       const all = s => arr.length > 0 && arr.every(a => String(a || '').includes(s));
-      if (all('즉시 개통')) return '설치 즉시 시작';
+      if (all('즉시 개통')) return all('발급 즉시') ? '발급 즉시 시작' : '설치 즉시 시작';
       if (all('희망일')) return isLongLeadCountry(countryName) ? '최소 3일 전 주문' : '최소 2일 전 주문';
       if (has('즉시 개통') || has('희망일')) return '구매 타이밍 확인';
       if (has('개통문자')) return '도착 후 문자 개통';
@@ -4176,15 +4176,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       const nc = String(currentSelectedCountry || '');
       const longLead = isLongLeadCountry(nc);
       if (act.includes('희망일')) { const ea = earliestActivationInfo(nc); f.push({ i: '⏰', t: `<strong>출국 최소 ${ea.days}일 전 주문 필수</strong> — <span>오늘 주문하면</span> <span><strong>${ea.label}부터</strong> 개통일 지정 가능</span>${longLead ? ' · <span>미주·유럽은 시차로</span> <span>하루 더 여유가 필요해요</span>' : ''}. <span>개통일 등록은</span> <span>구매 후 케어 안내로 도와드려요.</span>` }); }
-      if (act.includes('즉시 개통')) f.push({ i: '🚨', t: '<strong>QR 발급·설치 즉시 사용일 시작</strong> — <span>미리 사면 여행 전에 기간이 녹아요.</span> <span>출국 직전에 구매하고,</span> <span>설치는 출발 당일이나 현지에서!</span>' });
-      if (nk.includes('보다폰') || nk.includes('vodafone')) {
-        f.push({ i: '🚨', t: '<strong>QR 발송 즉시 개통 시작 (보다폰)</strong> — <span>일정 확정 후 구매하세요.</span>' });
-        f.push({ i: '🗑️', t: '<strong>eSIM 프로필 삭제 금지</strong> — <span>삭제하면 재등록이 불가능해요.</span>' });
-      }
-      if (nk.includes('쓰리') || nk.includes('three')) {
-        f.push({ i: '🚨', t: '<strong>QR 스캔 즉시 개통 (Three)</strong> — <span>출국 직전 또는</span> <span>현지 공항에서 설치하세요.</span>' });
-        f.push({ i: '🗑️', t: '<strong>프로필 삭제 금지</strong> — <span>임의 삭제 시 복구 불가.</span>' });
-      }
+      // 개통 시점 2유형 (2026-11-04 데이터 정합): '발급 즉시' = QR 생성 순간 기간 시작(보다폰ES·호주 보다폰·AT&T·레바라) /
+      //   '설치·스캔 즉시' = 설치 순간 시작(태국 True·DTAC·10MAX). 통신사명(보다폰·쓰리) 규칙은 유럽 로밍 오탐이라 삭제.
+      if (act.includes('발급 즉시')) f.push({ i: '🚨', t: '<strong>QR 발급 즉시 사용기간 시작</strong> — <span>발급하기를 누르는 순간부터 기간이 흘러요.</span> <span>결제 후 받는 발급 링크에서</span> <span>출발일에 맞춰 자동 발급을 예약하거나,</span> <span>출발 직전에 발급하세요.</span>' });
+      else if (act.includes('즉시 개통')) f.push({ i: '🚨', t: '<strong>QR 설치(스캔) 즉시 사용기간 시작</strong> — <span>미리 사두는 건 괜찮지만,</span> <span>설치는 출발 당일이나 현지 도착 후에!</span>' });
       const vm = String(activeCarrier.validity || '').match(/(구매일|발급일)로부터\s*(\d+)일/);
       if (vm && parseInt(vm[2], 10) <= 15) f.push({ i: '⏳', t: `<strong>${vm[1]}로부터 ${vm[2]}일 안에 현지 개통 필수</strong> — <span>출국 ${vm[2]}일 전 이내에 구매하세요.</span>${act.includes('희망일') ? ` <span>개통 희망일도 ${vm[2]}일 안쪽으로!</span>` : ''}` });
       if (nc.includes('대만')) f.push({ i: '🪪', t: '<strong>여권 실명등록(KYC) 필수</strong> — <span>설치 후 현지 수신 문자 링크로</span> <span>등록해야 데이터가 열려요.</span>' });
@@ -4218,9 +4213,14 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
             ? '<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,0.07);border:1px dashed rgba(239,68,68,0.35);border-radius:10px;color:#b91c1c;"><strong>🌍 미주·유럽 시차 주의!</strong> 현지 날짜가 하루 어긋날 수 있어요 — 여유 있게 <strong>출국 최소 3일 전에 주문</strong>해 주세요.</div>'
             : '');
         bg = 'rgba(241,105,13,0.07)'; border = 'rgba(241,105,13,0.35)'; color = '#9a5b16';
+      } else if (act.includes('발급 즉시')) {
+        // 2026-11-04 데이터 정합: QR 생성 순간 사용기간 시작(보다폰ES·호주 보다폰·AT&T·레바라) — 미리 사도 되지만 '발급' 타이밍이 핵심
+        html = '<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F1690D);color:#fff;font-size:0.75rem;font-weight:900;padding:5px 12px;border-radius:999px;margin-bottom:7px;">🚨 발급 타이밍 주의</div>'
+          + '<div><strong>QR 발급 즉시 사용기간 시작</strong> — 발급하기를 누르는 순간부터 기간이 흘러요. 결제 후 받는 발급 링크에서 <strong>출발일에 맞춰 자동 발급</strong>을 예약하거나, 출발 직전에 발급하세요.</div>';
+        bg = 'rgba(239,68,68,0.06)'; border = 'rgba(239,68,68,0.3)'; color = '#b91c1c';
       } else if (act.includes('즉시 개통')) {
-        html = timingBadge('직전(1~2일)', true)
-          + '<div>🚨 <strong>QR 발급·설치 즉시 사용일 시작</strong> — 미리 사면 여행 전에 기간이 녹아요. 출국 직전에 구매하고, 설치는 출발 당일이나 현지 도착 후에!</div>';
+        html = '<div style="display:inline-block;background:linear-gradient(135deg,#EF4444,#F1690D);color:#fff;font-size:0.75rem;font-weight:900;padding:5px 12px;border-radius:999px;margin-bottom:7px;">🚨 설치 타이밍 주의</div>'
+          + '<div><strong>QR 설치(스캔) 즉시 사용기간 시작</strong> — 미리 사두는 건 괜찮아요. 설치는 출발 당일이나 현지 도착 후에!</div>';
         bg = 'rgba(239,68,68,0.06)'; border = 'rgba(239,68,68,0.3)'; color = '#b91c1c';
       } else if (act.includes('개통문자')) {
         html = '💬 현지 도착 후 <strong>개통 문자 발송 시</strong> 사용일이 시작돼요 — 미리 사두셔도 괜찮아요';
