@@ -1643,7 +1643,7 @@ function tipBoxHTML(tp, pre){
   if (!pre) {
     var has = function(re){ return tips.some(function(x){ return re.test(String(x)); }); };
     if (!has(/^(데이터|사용량)/)) b += row('📊', '데이터 사용량 확인', '아이폰: 설정 → 셀룰러 → 이 eSIM 회선 선택 → 사용량\n갤럭시: 설정 → 연결 → 데이터 사용 → 모바일 데이터 사용량 (이 eSIM 선택)');
-    if (!tp.v && !has(/^번호/)) b += row('☎️', '전화번호', '데이터 전용 eSIM이라 전화번호가 없어요 (전화·문자 불가)');
+    if (!tp.v && !has(/^번호/)) b += row('☎️', '전화·문자', '데이터 전용 상품이라 전화·문자는 쓸 수 없어요');
   }
   return '<div class="jd-tipbox" style="margin:' + (pre ? '0 0 14px' : '14px auto') + ';max-width:460px;padding:13px 15px 6px;border-radius:14px;text-align:left;background:' + (warn ? '#FFFBEB' : '#F3F7FF') + ';border:2px solid ' + (warn ? '#F59E0B' : '#93B4F5') + ';color:#1F2937;">' +
     '<div style="font-weight:900;font-size:.95rem;padding-bottom:8px;">' + (warn ? '⚠️ ' + (pre ? '발급 전에 꼭 확인해 주세요' : '이 상품은 꼭 확인해 주세요') : '📌 데이터·번호 확인 방법') + '</div>' + b + '</div>';
