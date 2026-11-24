@@ -2665,10 +2665,15 @@ function loadUsage(){
         if (document.getElementById('careStPill')) {
           // 케어 히어로 안 — 시안 톤으로 담백하게
           box.innerHTML = '<div class="muted" style="font-size:.8rem;font-weight:500;">데이터 사용량</div>' +
-            '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">여기서는 사용량이 표시되지 않아요</div>' +
-            '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:8px;line-height:1.6;">휴대폰에서 바로 확인할 수 있어요 — 아래 <b>데이터·번호 확인 방법</b>을 봐 주세요.</div>';
+            (d && d.unsupported
+              ? '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">현지 통신사 상품이라 여기서는 표시되지 않아요</div>' +
+                '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:8px;line-height:1.6;">아래 <b>데이터·번호 확인 방법</b>으로 휴대폰에서 바로 확인해 주세요.</div>'
+              : '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">아직 사용 기록이 없어요</div>' +
+                '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:8px;line-height:1.6;">현지에서 연결되어 데이터를 쓰면 여기에 표시돼요 (반영까지 시간이 걸릴 수 있어요).<br>↻ 를 눌러 다시 확인해 보세요.</div>');
         } else {
-          box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 이 화면에서는 사용량이 표시되지 않아요.<br>휴대폰 설정이나 통신사 조회 번호로 바로 확인할 수 있어요.</div>' + tipBoxHTML((order && order.tip) || window._tipD);
+          box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">' +
+            (d && d.unsupported ? 'ℹ️ 현지 통신사 상품이라 이 화면에서는 사용량이 표시되지 않아요.<br>아래 방법으로 휴대폰에서 바로 확인할 수 있어요.' : 'ℹ️ 아직 사용 기록이 없어요.<br>현지에서 연결되어 데이터를 쓰면 여기에 표시돼요. 반영까지 시간이 걸릴 수 있어요.') +
+            '</div>' + tipBoxHTML((order && order.tip) || window._tipD);
         }
         setCareStatus(null);
         return;
