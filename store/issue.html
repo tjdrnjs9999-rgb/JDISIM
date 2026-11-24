@@ -1629,15 +1629,24 @@ function rsvDueNotice(d){ // reserveDue: 예약 시각은 지났고 자동 발�
 }
 // ── 개통·조회 안내 상자 (2026-11-23 사장님) — 서버가 tip{note 개통 방식, reg 설치 주의, tips[조회 방법]}을 줄 때만 보인다. 발급 전(READY)·발급 직후·케어 화면 공통.
 function tipBoxHTML(tp, pre){
-  if (!tp || !(tp.note || tp.reg || (tp.tips && tp.tips.length))) return '';
+  // 발급 전(pre): 서버 안내가 있을 때만. 발급 후·케어: 항상 — 데이터 사용량·전화번호 확인 방법 기본값 포함 (2026-11-24 사장님 "데이터 사용량·번호 확인 다 발급링크에")
+  tp = tp || {};
+  var tips = tp.tips || [];
+  if (pre && !(tp.note || tp.reg || tips.length)) return '';
   var warn = !!(tp.note || tp.reg);
-  var row = function(ic, lb, tx, strong){ return '<div style="display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(0,0,0,.06);"><span style="flex-shrink:0;">' + ic + '</span><div style="flex:1;"><div style="font-size:.7rem;font-weight:800;opacity:.7;">' + lb + '</div><div style="font-size:.86rem;line-height:1.6;font-weight:' + (strong ? 800 : 600) + ';word-break:keep-all;">' + esc(tx) + '</div></div></div>'; };
+  var row = function(ic, lb, tx, strong){ return '<div style="display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(0,0,0,.06);"><span style="flex-shrink:0;">' + ic + '</span><div style="flex:1;"><div style="font-size:.7rem;font-weight:800;opacity:.7;">' + lb + '</div><div style="font-size:.86rem;line-height:1.6;font-weight:' + (strong ? 800 : 600) + ';word-break:keep-all;white-space:pre-line;">' + esc(tx) + '</div></div></div>'; };
   var b = '';
   if (tp.note) b += row('⏱️', '개통 방식', tp.note, true);
   if (tp.reg) b += row('📲', '설치할 때', tp.reg, true);
-  (tp.tips || []).forEach(function(x){ var i = String(x).indexOf(':'); b += (i > 0 && i < 14) ? row('🔎', String(x).slice(0, i), String(x).slice(i + 1).trim()) : row('🔎', '안내', x); });
+  if (tp.v) b += row('📞', '전화·문자', tp.v);
+  tips.forEach(function(x){ var i = String(x).indexOf(':'); b += (i > 0 && i < 14) ? row('🔎', String(x).slice(0, i), String(x).slice(i + 1).trim()) : row('🔎', '안내', x); });
+  if (!pre) {
+    var has = function(re){ return tips.some(function(x){ return re.test(String(x)); }); };
+    if (!has(/^(데이터|사용량)/)) b += row('📊', '데이터 사용량 확인', '아이폰: 설정 → 셀룰러 → 이 eSIM 회선 선택 → 사용량\n갤럭시: 설정 → 연결 → 데이터 사용 → 모바일 데이터 사용량 (이 eSIM 선택)');
+    if (!tp.v && !has(/^번호/)) b += row('☎️', '전화번호', '데이터 전용 eSIM이라 전화번호가 없어요 (전화·문자 불가)');
+  }
   return '<div class="jd-tipbox" style="margin:' + (pre ? '0 0 14px' : '14px auto') + ';max-width:460px;padding:13px 15px 6px;border-radius:14px;text-align:left;background:' + (warn ? '#FFFBEB' : '#F3F7FF') + ';border:2px solid ' + (warn ? '#F59E0B' : '#93B4F5') + ';color:#1F2937;">' +
-    '<div style="font-weight:900;font-size:.95rem;padding-bottom:8px;">' + (warn ? '⚠️ ' + (pre ? '발급 전에 꼭 확인해 주세요' : '이 상품은 꼭 확인해 주세요') : '📌 번호·데이터 조회 방법') + '</div>' + b + '</div>';
+    '<div style="font-weight:900;font-size:.95rem;padding-bottom:8px;">' + (warn ? '⚠️ ' + (pre ? '발급 전에 꼭 확인해 주세요' : '이 상품은 꼭 확인해 주세요') : '📌 데이터·번호 확인 방법') + '</div>' + b + '</div>';
 }
 function rsvBanner(d, mode){
   try { window._tipD = (d && d.tip) || null; } catch(e){}
@@ -2656,10 +2665,10 @@ function loadUsage(){
         if (document.getElementById('careStPill')) {
           // 케어 히어로 안 — 시안 톤으로 담백하게
           box.innerHTML = '<div class="muted" style="font-size:.8rem;font-weight:500;">데이터 사용량</div>' +
-            '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">아직 사용 기록이 없어요</div>' +
-            '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:8px;line-height:1.6;">무제한 요금제이거나 현지 개통 전일 수 있어요.<br>개통 후 ↻ 를 눌러 다시 확인해 보세요.</div>';
+            '<div style="font-weight:900;font-size:1.05rem;margin-top:5px;">여기서는 사용량이 표시되지 않아요</div>' +
+            '<div class="muted" style="font-size:.76rem;font-weight:400;margin-top:8px;line-height:1.6;">휴대폰에서 바로 확인할 수 있어요 — 아래 <b>데이터·번호 확인 방법</b>을 봐 주세요.</div>';
         } else {
-          box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 아직 사용량 기록이 없어요.<br>무제한 요금제이거나 현지에서 아직 개통 전일 수 있어요. 개통 후 다시 눌러보세요!<br><span style="color:#64748b;">정확한 사용량은 설정 → 셀룰러 → 해당 회선에서도 볼 수 있어요.</span></div>';
+          box.innerHTML='<div class="notice" style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);color:#1d4ed8;text-align:left;">ℹ️ 이 화면에서는 사용량이 표시되지 않아요.<br>휴대폰 설정이나 통신사 조회 번호로 바로 확인할 수 있어요.</div>' + tipBoxHTML((order && order.tip) || window._tipD);
         }
         setCareStatus(null);
         return;
