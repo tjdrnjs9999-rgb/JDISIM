@@ -5878,6 +5878,15 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
         history.replaceState(null, '', _u.pathname + _u.search + (location.hash || '#orders'));
       }
     } catch (e) {}
+    // ?promo=코드 : 유심 설명서 등에서 들어온 쿠폰 코드 — 로그인 후 자동 등록 (2026-11-25)
+    try {
+      var _pc = new URLSearchParams(location.search).get('promo');
+      if (_pc) {
+        localStorage.setItem('jd_promo', String(_pc).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 20));
+        var _u2 = new URL(location.href); _u2.searchParams.delete('promo');
+        history.replaceState(null, '', _u2.pathname + _u2.search + (location.hash || '#orders'));
+      }
+    } catch (e) {}
     function memberToken() { try { return localStorage.getItem('jd_member_token') || ''; } catch (e) { return ''; } }
     function renderMember() {
       var zone = document.getElementById('memberZone');
@@ -5951,6 +5960,13 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
           html += '</details>';
         }
       }
+      // 🎟️ 쿠폰 코드 등록 (2026-11-25 — 유심 동봉 설명서 코드 등)
+      html += '<div style="margin:0 12px 12px;">'
+        + '<div style="display:flex;gap:8px;">'
+        +   '<input id="mPromoInput" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" maxlength="20" placeholder="쿠폰 코드 입력" style="flex:1;min-width:0;height:42px;padding:0 12px;border:1px solid #E5E8EB;border-radius:10px;font-family:inherit;font-size:0.9375rem;text-transform:uppercase;">'
+        +   '<button type="button" data-m-redeem style="flex-shrink:0;height:42px;padding:0 16px;border:none;border-radius:10px;background:#191F28;color:#fff;font-family:inherit;font-size:0.84375rem;font-weight:700;cursor:pointer;">등록</button>'
+        + '</div>'
+        + '<div id="mPromoMsg" style="display:none;margin-top:6px;font-size:0.75rem;font-weight:600;color:#D92222;"></div></div>';
       // 주문 목록 (케어링크 = 기기 무관 서버 URL!)
       orders.slice(0, 5).forEach(function (o) {
         html += '<div style="display:flex;align-items:center;gap:10px;margin:0 12px 9px;padding:11px 13px;background:#fff;border:1px solid #E5E8EB;border-radius:12px;">'
@@ -5969,6 +5985,23 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
         + '<br>정보 수정·탈퇴는 <a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener" style="color:#4E5968;font-weight:700;">카카오톡 고객센터</a>로 — 탈퇴 시 즉시 파기돼요</div>';
       html += '<div style="height:8px;"></div></div>';
       zone.innerHTML = html;
+      var pin = zone.querySelector('#mPromoInput'), pbtn = zone.querySelector('[data-m-redeem]'), pmsg = zone.querySelector('#mPromoMsg');
+      function doRedeem(code) {
+        code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 20);
+        if (!code) { pmsg.textContent = '쿠폰 코드를 입력해 주세요'; pmsg.style.display = 'block'; return; }
+        if (pbtn) pbtn.disabled = true;
+        fetch(MEMBER_API, { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + memberToken() }, body: JSON.stringify({ action: 'redeem', code: code }) })
+          .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }); })
+          .then(function (x) {
+            if (x.s === 200 && x.j.ok) { try { localStorage.removeItem('jd_promo'); } catch (e) {} renderMember(); return; }
+            if (x.s === 404 || x.s === 409) { try { localStorage.removeItem('jd_promo'); } catch (e) {} }
+            pmsg.textContent = (x.j && x.j.error) || '잠시 후 다시 시도해 주세요'; pmsg.style.display = 'block'; if (pbtn) pbtn.disabled = false;
+          })
+          .catch(function () { pmsg.textContent = '잠시 후 다시 시도해 주세요'; pmsg.style.display = 'block'; if (pbtn) pbtn.disabled = false; });
+      }
+      if (pbtn) pbtn.addEventListener('click', function () { doRedeem(pin.value); });
+      if (pin) pin.addEventListener('keydown', function (e) { if (e.key === 'Enter') doRedeem(pin.value); });
+      try { var pend = localStorage.getItem('jd_promo'); if (pend) { if (pin) pin.value = pend; doRedeem(pend); } } catch (e) {}
       var lo = zone.querySelector('[data-m-logout]');
       if (lo) lo.addEventListener('click', function () {
         var t = memberToken();
