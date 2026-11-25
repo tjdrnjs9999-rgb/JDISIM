@@ -430,6 +430,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 모달 닫기 리스너
     modalCloseBtn.addEventListener('click', closeModal);
+    // 11/25 UI 감사: Esc 로 상품 모달이 닫히지 않음
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && productModal.classList.contains('active')) closeModal(); });
     productModal.addEventListener('click', (e) => {
       if (e.target === productModal) closeModal();
     });
@@ -694,9 +696,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     ['몽골', 'mn'], ['인도', 'in'], ['스리랑카', 'lk'], ['네팔', 'np'], ['몰디브', 'mv'], ['호주', 'au'], ['뉴질랜드', 'nz'], ['튀르키예', 'tr'], ['터키', 'tr'], ['러시아', 'ru'],
     ['사우디', 'sa'], ['오만', 'om'], ['아랍에미리트', 'ae'], ['두바이', 'ae'], ['UAE', 'ae'], ['모로코', 'ma'], ['영국', 'gb'], ['프랑스', 'fr'], ['스페인', 'es'],
     ['이탈리아', 'it'], ['스위스', 'ch'], ['체코', 'cz'], ['그리스', 'gr'], ['포르투갈', 'pt'], ['한국', 'kr']];
+  // 11/25 UI 감사: '5G/4G/4G' 중복·'모름' 내부값 노출 → 세대 토큰 단위로 합치고 미상은 숨김
+  window.jdSpeedLabel = function (speeds) {
+    const toks = [];
+    Array.from(speeds || []).forEach(function (v) { String(v || '').split(/[\/,·\s]+/).forEach(function (t) { t = t.trim().toUpperCase(); if (t && t !== '모름' && toks.indexOf(t) < 0) toks.push(t); }); });
+    const order = ['5G', '4G', 'LTE', '3G'];
+    toks.sort(function (a, b) { return (order.indexOf(a) < 0 ? 9 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 9 : order.indexOf(b)); });
+    return toks.length ? toks.join('/') : '고속 데이터';
+  };
   window.jdFoxThumb = function (country) {
     const c = String(country || '');
-    for (const kv of JD_FOX_KEYS) if (c.includes(kv[0])) return 'https://scoreix.co.kr/esimg/aum_' + kv[1] + '.jpg';
+    for (const kv of JD_FOX_KEYS) if (c.startsWith(kv[0])) return 'https://scoreix.co.kr/esimg/aum_' + kv[1] + '.jpg';
     return '';
   };
   function getCountryImageUrl(country) {
@@ -871,7 +881,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     selected.forEach((g, gi) => {
       const carriersStr = jdCompactCarriers(g.carriers);
-      const speedsStr = Array.from(g.network_speeds).join('/');
+      const speedsStr = window.jdSpeedLabel(g.network_speeds);
       const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화 가능' : '데이터 전용';
       const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';
 
@@ -975,7 +985,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     filteredCountries.forEach(g => {
       const carriersStr = jdCompactCarriers(g.carriers);
-      const speedsStr = Array.from(g.network_speeds).join('/');
+      const speedsStr = window.jdSpeedLabel(g.network_speeds);
       const callsStr = g.carriers.some(c => String(c.calls || '').indexOf('가능') === 0) ? '통화 가능' : '데이터 전용';
       const mainNetworkType = g.network_types.has('로컬망') ? '로컬망' : '로밍망';
 

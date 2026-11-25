@@ -95,7 +95,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260720d">
+  <link rel="stylesheet" href="styles.css?v=20261125a">
   <link rel="stylesheet" href="premium.css?v=20260802a">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
@@ -111,6 +111,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
     .hotdest-card:has(.hotdest-fox) { flex-direction: column !important; align-items: stretch !important; padding: 0 0 12px !important; overflow: hidden; gap: 10px !important; }
     .hotdest-fox { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
     .hotdest-card:has(.hotdest-fox) .hotdest-body { padding: 0 14px; }
+    #rbFab { z-index: 520 !important; }   /* 11/25 UI 감사: 챗봇 버튼이 장바구니 드로어(540)·결제 버튼 위에 뜸 → 아래로 */
     .jd-kind-pc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 520px; margin: 0 0 18px; }
     .jd-kind-pc > * { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 13px 16px; border-radius: 14px; border: 1.5px solid #E5E8EB; background: #fff; text-align: left; text-decoration: none; color: #191F28; font-family: inherit; cursor: pointer; }
     .jd-kind-pc > * b { font-size: 18px; font-weight: 900; }
@@ -416,14 +417,14 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
               <div class="jd-suggest" id="heroSuggest"></div>
             </div>
             <div class="hero-chips">
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('일본')">🇯🇵 일본</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('베트남')">🇻🇳 베트남</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('태국')">🇹🇭 태국</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('대만')">🇹🇼 대만</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('미국')">🇺🇸 미국</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('유럽')">🇪🇺 유럽</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('필리핀')">🇵🇭 필리핀</button>
-              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('중국')">🇨🇳 중국</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('일본')">일본</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('베트남')">베트남</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('태국')">태국</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('대만')">대만</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('미국')">미국</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('유럽')">유럽</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('필리핀')">필리핀</button>
+              <button type="button" class="jd-chip" onclick="window.jdisimGoCountry('중국')">중국</button>
             </div>
             <p class="jd-proof">미개통 시 100% 환불 · 카카오톡 상담 24시간 · QR 평균 5분 발송</p>
           </div>
@@ -1521,12 +1522,12 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
     };
     window.addEventListener('load', function () { setTimeout(function () { window.ensureFullProducts(); }, 900); });
   </script>
-  <script src="reviews_data.js?v=20260708"></script>
+  <script src="reviews_data.js?v=20261125a"></script>
   <script src="jdisim-reviews.js?v=20260718a" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="jd-devices.js?v=20260717b"></script>
-  <script src="app.js?v=20261125a"></script>
+  <script src="app.js?v=20261125b"></script>
   <!-- globe.js 로드 제거 (정본 §7-A-2): 지구본 섹션은 display:none 보존 -->
   <!-- 히어로 검색 프록시 (정본 §2-1): #heroSearchInput → 서제스트 → 스토어 검색 위임 -->
   <script>
@@ -1540,7 +1541,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
         var map = {};
         d.forEach(function (c) {
           var name = c.country || '';
-          if (!name) return;
+          if (!name || name.length > 16 || name.indexOf('【') >= 0 || (name.match(/,/g) || []).length > 1) return;   // 11/25 감사: 다국가 국가 나열 제외
           var price = Number(c.min_price) || 0;
           if (!map[name]) map[name] = { name: name, price: price };
           else if (price && (!map[name].price || price < map[name].price)) map[name].price = price;
@@ -1560,7 +1561,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
       function show(list) {
         if (!list.length) return hide();
         sg.innerHTML = list.slice(0, 6).map(function (c) {
-          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '🌏') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '원부터</i>' : '') + '</button>';
+          return '<button type="button" class="jd-sg" data-c="' + c.name + '">' + (window.jdFoxThumb && window.jdFoxThumb(c.name) ? '<img class="fl" src="' + window.jdFoxThumb(c.name) + '" alt="" style="width:28px;height:28px;border-radius:8px;object-fit:cover">' : '<span class="fl">' + (FLAGS[c.name] || '🌏') + '</span>') + '<b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '원부터</i>' : '') + '</button>';
         }).join('');
         sg.classList.add('on');
         sg.querySelectorAll('.jd-sg').forEach(function (b) {
@@ -1687,7 +1688,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
       var FLAGS = {'일본':'\uD83C\uDDEF\uD83C\uDDF5','베트남':'\uD83C\uDDFB\uD83C\uDDF3','태국':'\uD83C\uDDF9\uD83C\uDDED','대만':'\uD83C\uDDF9\uD83C\uDDFC','미국':'\uD83C\uDDFA\uD83C\uDDF8','중국':'\uD83C\uDDE8\uD83C\uDDF3','홍콩':'\uD83C\uDDED\uD83C\uDDF0','싱가포르':'\uD83C\uDDF8\uD83C\uDDEC','말레이시아':'\uD83C\uDDF2\uD83C\uDDFE','인도네시아':'\uD83C\uDDEE\uD83C\uDDE9','필리핀':'\uD83C\uDDF5\uD83C\uDDED','괌':'\uD83C\uDDEC\uD83C\uDDFA','사이판':'\uD83C\uDDF2\uD83C\uDDF5','호주':'\uD83C\uDDE6\uD83C\uDDFA','뉴질랜드':'\uD83C\uDDF3\uD83C\uDDFF','유럽':'\uD83C\uDDEA\uD83C\uDDFA','몰디브':'\uD83C\uDDF2\uD83C\uDDFB','몽골':'\uD83C\uDDF2\uD83C\uDDF3','라오스':'\uD83C\uDDF1\uD83C\uDDE6','캄보디아':'\uD83C\uDDF0\uD83C\uDDED','인도':'\uD83C\uDDEE\uD83C\uDDF3','한국':'\uD83C\uDDF0\uD83C\uDDF7'};
       function dataset(){
         var d = window.productsData || window.PRODUCTS_DATA || [];
-        return d.map(function(c){ return { name: c.country || c.name || '', price: c.min_price || c.minPrice || 0 }; }).filter(function(c){ return c.name; });
+        return d.map(function(c){ return { name: c.country || c.name || '', price: c.min_price || c.minPrice || 0 }; }).filter(function(c){ return c.name && c.name.length <= 16 && c.name.indexOf('【') < 0 && (c.name.match(/,/g) || []).length <= 1; });   // 11/25 감사: 다국가 국가 나열 제외
       }
       // (정본 §7-D-18) 미정의 renderStoreProducts 호출 제거 — app.js keyup(Enter) 핸들러에 위임
       var syncing = false;
@@ -1696,7 +1697,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
       function show(list){
         if (!list.length) return hide();
         sg.innerHTML = list.slice(0, 6).map(function(c){
-          return '<button type="button" class="jd-sg" data-c="' + c.name + '"><span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span><b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0\uBD80\uD130</i>' : '') + '</button>';
+          return '<button type="button" class="jd-sg" data-c="' + c.name + '">' + (window.jdFoxThumb && window.jdFoxThumb(c.name) ? '<img class="fl" src="' + window.jdFoxThumb(c.name) + '" alt="" style="width:28px;height:28px;border-radius:8px;object-fit:cover">' : '<span class="fl">' + (FLAGS[c.name] || '\uD83C\uDF0F') + '</span>') + '<b>' + c.name + '</b>' + (c.price ? '<i>' + Number(c.price).toLocaleString() + '\uC6D0\uBD80\uD130</i>' : '') + '</button>';
         }).join('');
         sg.classList.add('on');
         sg.querySelectorAll('.jd-sg').forEach(function(b){

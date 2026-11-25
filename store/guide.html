@@ -82,6 +82,9 @@
       pointer-events: none;
     }
     .g-toc { display: flex; gap: 8px; flex-wrap: wrap; max-width: 78%; }
+    /* 11/25 UI 감사: 좁은 화면에서 로미가 제목·부제를 가림 → 제목 줄 오른쪽 여백 확보, 아주 좁으면 축소 */
+    .g-hero h1, .g-hero p { padding-right: min(150px, 30vw); }
+    @media (max-width: 420px) { .g-hero-fox { width: 96px; bottom: -20px; } .g-hero h1, .g-hero p { padding-right: 84px; } }
     .g-toc a {
       font-size: 0.78rem; font-weight: 800; text-decoration: none;
       color: var(--muted); background: #fff;

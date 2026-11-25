@@ -101,6 +101,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       var dismissed = false;
       try { dismissed = !!localStorage.getItem('jd_pwa_hint'); } catch (e) {}
       if (isStandalone || dismissed) return;
+      return;   // 11/25 UI 감사: 떠 있는 설치 배너가 상세·결제 CTA를 가림 — 홈의 #pwaCard 설치 카드로 일원화
       var deferredPrompt = null;
       function showBanner(html, onAction) {
         if (document.getElementById('pwaBanner')) return;
@@ -200,7 +201,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.iamport.kr" crossorigin>
   <link rel="preconnect" href="https://cdn.portone.io" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20260720d">
+  <link rel="stylesheet" href="styles.css?v=20261125a">
   <link rel="stylesheet" href="premium.css?v=20260719b">
   <link rel="stylesheet" href="jd-tokens.css?v=20260718a">
   <link rel="stylesheet" href="jd-ui.css?v=20260718b">
@@ -1841,6 +1842,8 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   .pp-cartbtn { flex-shrink: 0; width: 54px; border: 1.5px solid #e5ddd2; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #221510; }
   .pp-cartbtn svg { width: 22px; height: 22px; }
   body:has(#view-detail.active) .bottom-nav, body:has(#view-checkout.active) .bottom-nav { display: none; }
+  /* 11/25 UI 감사: 챗봇 버튼이 상품·상세·결제의 하단 CTA·금액을 가림 → 이 화면들에서는 숨김(상담은 헤더·상세 안내로) */
+  body:has(#view-product.active) #rbFab, body:has(#view-detail.active) #rbFab, body:has(#view-checkout.active) #rbFab { display: none !important; }
   /* 구매 페이지 컴팩트 요소 */
   .ck-card { background: #fff; border: 1px solid #ece5dd; border-radius: 10px; padding: 14px 15px; margin-bottom: 12px; }
   .ck-label { font-size: 14px; font-weight: 800; color: #221510; margin-bottom: 10px; }
@@ -1988,7 +1991,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
     padding: 20px 0 4px !important; display: block !important; overflow: visible !important;
   }
   html body .m-hero-content {
-    display: block !important; padding: 0 !important; min-height: 0 !important;
+    display: block !important; padding: 0 16px !important; min-height: 0 !important;   /* 11/25 감사: 좌우 여백 0 → 16px */
     opacity: 1 !important; transform: none !important;
   }
   /* 구 스냅 안무(in-view 대기 opacity:0) 무효화 — IO가 더는 붙지 않음 */
@@ -2016,7 +2019,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
     outline: none; border-color: var(--jd-brand-500, #F1690D) !important;
     box-shadow: 0 0 0 3px rgba(241, 105, 13, 0.25) !important;
   }
+  #view-home .rf-field { position: relative !important; }
   #view-home .rf-suggest {
+    position: absolute !important; left: 0; right: 0; top: calc(100% + 6px); z-index: 120 !important;
+    max-height: 264px !important; overflow-y: auto !important; padding: 4px 0 !important;
     border: 1px solid var(--jd-gray-200, #E5E8EB) !important; border-radius: 12px !important;
     box-shadow: 0 4px 12px rgba(25, 31, 40, 0.08) !important; background: #fff !important;
   }
@@ -2578,7 +2584,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
 
       <div class="pw-block pw-step" id="pwProdBlock" style="display:none;margin-bottom:20px;">
         <div id="pwSum3" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;"></div>
-        <div class="pw-label">딱 맞는 요금제예요 <em>가격순 · 눌러서 상세</em></div>
+        <div class="pw-label">딱 맞는 요금제예요 <em>용량 적은 순 · 눌러서 상세</em></div>
         <div id="productList"></div>
       </div>
     </div>
@@ -2658,7 +2664,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   <script src="jd-resets.js?v=20260715a" defer></script>
   <script src="jd-stats.js?v=20260717a" defer></script>
   <script src="products-lite.js?v=20261123b" defer></script>
-  <script src="reviews_data.js?v=20260709" defer></script>
+  <script src="reviews_data.js?v=20261125a" defer></script>
   <script src="jdisim-reviews.js?v=20260718a" defer></script>
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="globe.js?v=20260717a" defer></script>
@@ -2968,7 +2974,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       ['이탈리아', 'it'], ['스위스', 'ch'], ['체코', 'cz'], ['그리스', 'gr'], ['포르투갈', 'pt'], ['한국', 'kr']];
     function foxThumb(country) {
       const c = String(country || '');
-      for (const [k, v] of FOX_KEYS) if (c.includes(k)) return 'https://scoreix.co.kr/esimg/aum_' + v + '.jpg';
+      for (const [k, v] of FOX_KEYS) if (c.startsWith(k)) return 'https://scoreix.co.kr/esimg/aum_' + v + '.jpg';
       return '';
     }
     window.foxThumb = foxThumb;
@@ -3863,9 +3869,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
     }
     const STYLE_META = {
       '무제한': { ic: '', t: '무제한', s: '속도·용량 걱정 없이 쓰는 무제한' },
-      '대용량': { ic: '', t: '매일 3GB 이상', s: '영상·핫스팟까지 넉넉하게' },
-      '보통':   { ic: '', t: '매일 1~2GB',   s: '지도·검색·SNS 위주면 충분해요' },
-      '가볍게': { ic: '', t: '소용량', s: '짧은 여행, 가볍게 쓰는 분께' },
+      // 11/25 UI 감사: '매일 1~2GB' 라벨에 총용량 4~10GB가 섞여 보임 → 실제 분류 기준(styleOf)대로 표기
+      '대용량': { ic: '', t: '넉넉하게', s: '매일 3GB↑ · 총 10GB↑ — 영상·핫스팟까지' },
+      '보통':   { ic: '', t: '적당히',   s: '매일 1~2GB · 총 4~10GB — 지도·SNS 위주' },
+      '가볍게': { ic: '', t: '가볍게', s: '매일 1GB 미만 · 총 3GB 이하 — 짧은 여행' },
       '전체':   { ic: '', t: '전체 보기', s: '모든 요금제를 직접 비교해요' }
     };
     // 리셋 기준시각(공급사 타임존) → 여행국 현지시각 환산 (2026-07-20 사장님 지시: "홍콩 00:00 리셋은 각 나라별 시간으로")
@@ -4540,10 +4547,26 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       const items = jdCartGet();
       let layer = document.getElementById('cartSheetLayer');
       if (layer) layer.remove();
-      if (!items.length) { switchNav('orders'); return; }
       layer = document.createElement('div');
       layer.id = 'cartSheetLayer';
       layer.className = 'pv-layer';
+      // 11/25 UI 감사: 빈 장바구니에서 안내 없이 MY로 점프하던 것 → 빈 상태 안내 시트
+      if (!items.length) {
+        layer.innerHTML = `
+        <div class="pv-sheet" style="max-height:60vh;text-align:center;">
+          <div class="pv-grab"></div>
+          <img src="images/fox-hello.webp" alt="" style="width:72px;margin:6px auto 8px;display:block;" onerror="this.remove()">
+          <b style="display:block;font-size:1rem;color:#191F28;">장바구니가 비어 있어요</b>
+          <div style="font-size:0.8125rem;font-weight:500;color:#8B95A1;margin-top:4px;">요금제를 담아 두면 여기서 바로 결제할 수 있어요</div>
+          <div style="display:flex;gap:8px;margin-top:16px;">
+            <button type="button" onclick="document.getElementById('cartSheetLayer').remove();switchNav('store')" style="flex:1;height:48px;border:none;border-radius:12px;background:#F1690D;color:#fff;font-family:inherit;font-size:0.9375rem;font-weight:700;cursor:pointer;">요금제 보러 가기</button>
+            <button type="button" onclick="document.getElementById('cartSheetLayer').remove();switchNav('orders')" style="flex:1;height:48px;border:1px solid #E5E8EB;border-radius:12px;background:#fff;color:#333D4B;font-family:inherit;font-size:0.9375rem;font-weight:700;cursor:pointer;">내 주문 조회</button>
+          </div>
+        </div>`;
+        layer.onclick = e => { if (e.target === layer) layer.remove(); };
+        document.body.appendChild(layer);
+        return;
+      }
       layer.innerHTML = `
         <div class="pv-sheet" style="max-height:78vh;">
           <div class="pv-grab"></div>
@@ -5555,10 +5578,15 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       const results = document.getElementById('rfResults');
       if (!input || !goBtn || !window.PRODUCTS_DATA) return;
       const countries = [...new Set(window.PRODUCTS_DATA.map(p => p.country))];
+      // 11/25 감사: 다국가 상품의 국가 나열('【지역 1】안도라…')이 그대로 떠서 화면을 덮음 → 짧은 국가명만, 앞글자 일치 우선
+      const shortNames = countries.filter(c => c && c.length <= 16 && c.indexOf('【') < 0 && (c.match(/,/g) || []).length <= 1);
+      const closeSuggest = () => { suggest.innerHTML = ''; suggest.style.display = 'none'; };
+      document.addEventListener('click', (e) => { if (!e.target.closest('.rf-field')) closeSuggest(); });
+      input.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSuggest(); });
       input.addEventListener('input', () => {
         const q = input.value.trim();
-        if (!q) { suggest.innerHTML = ''; suggest.style.display = 'none'; return; }
-        const hits = countries.filter(c => c.includes(q)).slice(0, 6);
+        if (!q) { closeSuggest(); return; }
+        const hits = shortNames.filter(c => c.startsWith(q)).concat(shortNames.filter(c => !c.startsWith(q) && c.includes(q))).slice(0, 6);
         suggest.innerHTML = hits.map(c => `<div class="rf-suggest-item" data-c="${c}">${c}</div>`).join('');
         suggest.style.display = hits.length ? 'block' : 'none';
       });
@@ -5575,6 +5603,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
         btn.classList.add('selected');
       });
       goBtn.addEventListener('click', () => {
+        closeSuggest();
         const country = input.value.trim();
         const days = parseInt(daysWrap.querySelector('.rf-day.selected').getAttribute('data-d'));
         if (!countries.includes(country)) {
