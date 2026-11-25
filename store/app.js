@@ -704,9 +704,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     toks.sort(function (a, b) { return (order.indexOf(a) < 0 ? 9 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 9 : order.indexOf(b)); });
     return toks.length ? toks.join('/') : '고속 데이터';
   };
-  window.jdFoxThumb = function (country) {
+  // 11/25: 정본은 jd-fox.js(지역 판정·?v= 캐시 무효화). 미로드 시에만 아래 단순표로 대체
+  if (typeof window.jdFoxThumb !== 'function') window.jdFoxThumb = function (country) {
     const c = String(country || '');
-    for (const kv of JD_FOX_KEYS) if (c.startsWith(kv[0])) return 'https://scoreix.co.kr/esimg/aum_' + kv[1] + '.jpg';
+    for (const kv of JD_FOX_KEYS) if (c.startsWith(kv[0])) return 'https://scoreix.co.kr/esimg/aum_' + kv[1] + '.jpg?v=20261125';
     return '';
   };
   function getCountryImageUrl(country) {

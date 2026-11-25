@@ -207,7 +207,7 @@ a{color:inherit}
       CAT.countries.forEach(function (c) {
         if (q && (c.name + ' ' + c.city).indexOf(q) < 0) return;
         var mp = Math.min(minPrice(c.daily || [], 4), minPrice(c.total || [], 4));
-        html += '<button class="card" data-k="' + c.key + '"><img loading="lazy" src="' + IMG + 'usim_' + c.key + '.jpg" alt=""><div><b>' + esc(c.name) + '</b><span>' + esc(c.city) + '</span><em>' + won(mp) + '~</em></div></button>';
+        html += '<button class="card" data-k="' + c.key + '"><img loading="lazy" src="' + IMG + 'usim_' + c.key + '.jpg?v=20261125" alt=""><div><b>' + esc(c.name) + '</b><span>' + esc(c.city) + '</span><em>' + won(mp) + '~</em></div></button>';
       });
     } else if (TAB === 'local') {
       CAT.local.forEach(function (l) {
@@ -247,7 +247,7 @@ a{color:inherit}
     $('list').style.display = 'none'; $('pv').style.display = window.innerWidth >= 900 ? 'grid' : 'block'; $('bar').style.display = 'block'; $('btnBack').style.display = 'block';
     if (!noPush) history.pushState({ pv: 1 }, '', '#' + type + ':' + key);
     var title, sub, img, det;
-    if (type === 'c') { title = c.name + ' 유심 USIM'; sub = c.city + ' · 평일 오후 2시 전 주문 당일 발송'; img = IMG + 'usim_' + key + '.jpg'; det = (c.det || []).map(function (f) { return IMG + 'usimd/' + f; }); }
+    if (type === 'c') { title = c.name + ' 유심 USIM'; sub = c.city + ' · 평일 오후 2시 전 주문 당일 발송'; img = IMG + 'usim_' + key + '.jpg?v=20261125'; det = (c.det || []).map(function (f) { return IMG + 'usimd/' + f; }); }
     else if (type === 'l') { title = L.name.split(' 유심')[0] + ' 로컬 유심'; sub = '현지 통신사 정품 · 현지 유심 확보 후 5~7영업일 발송'; img = IMG + L.thumb; det = [1, 2, 3].map(function (i) { return IMG + 'usimd/usim_local_' + key + '_0' + i + '.jpg'; }); }
     else { title = c.name + ' 유심 2·3·4개 세트'; sub = '같은 요금제 유심을 한 상자로 · 1개당 더 저렴'; img = IMG + 'usim_set_' + key + '.jpg'; det = [IMG + 'usim_set_banner.jpg'].concat((c.det || []).map(function (f) { return IMG + 'usimd/' + f; })); }
     $('pvImg').src = img; $('pvTitle').textContent = title; $('pvSub').textContent = sub;

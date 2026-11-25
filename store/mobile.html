@@ -2388,12 +2388,12 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       <div id="homeFeaturedList"></div>
       <!-- 🦊 로미 카드 (2026-11-25 — 국기 이모지 행 → 썸네일 카드, usim.html 과 같은 톤) -->
       <div class="jd-fox-grid">
-        <button type="button" onclick="openBottomSheet('일본')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_jp.jpg" alt=""><b>일본</b></button>
-        <button type="button" onclick="openBottomSheet('베트남')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_vn.jpg" alt=""><b>베트남</b></button>
-        <button type="button" onclick="openBottomSheet('태국')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_th.jpg" alt=""><b>태국</b></button>
-        <button type="button" onclick="openBottomSheet('대만')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_tw.jpg" alt=""><b>대만</b></button>
-        <button type="button" onclick="openBottomSheet('중국')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_cn.jpg" alt=""><b>중국</b></button>
-        <button type="button" onclick="switchNav('store');var b=document.querySelector('#mCatTabs [data-cat=&quot;유럽&quot;]');if(b)b.click();"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_eu.jpg" alt=""><b>유럽</b></button>
+        <button type="button" onclick="openBottomSheet('일본')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_jp.jpg?v=20261125" alt=""><b>일본</b></button>
+        <button type="button" onclick="openBottomSheet('베트남')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_vn.jpg?v=20261125" alt=""><b>베트남</b></button>
+        <button type="button" onclick="openBottomSheet('태국')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_th.jpg?v=20261125" alt=""><b>태국</b></button>
+        <button type="button" onclick="openBottomSheet('대만')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_tw.jpg?v=20261125" alt=""><b>대만</b></button>
+        <button type="button" onclick="openBottomSheet('중국')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_cn.jpg?v=20261125" alt=""><b>중국</b></button>
+        <button type="button" onclick="switchNav('store');var b=document.querySelector('#mCatTabs [data-cat=&quot;유럽&quot;]');if(b)b.click();"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_eu.jpg?v=20261125" alt=""><b>유럽</b></button>
       </div>
       <button type="button" class="jd-svc-row" style="border-bottom:none;color:#4E5968;" onclick="switchNav('store')"><span class="t">전체 국가 보기</span></button>
     </section>
@@ -2659,6 +2659,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   <script src="https://cdn.portone.io/v2/browser-sdk.js" defer></script>
   <script src="speed-truth.js?v=20260718b" defer></script>
   <script src="jd-lowspeed.js?v=20261125a" defer></script>
+  <script src="jd-fox.js?v=20261125a"></script>
   <script src="jd-devices.js?v=20260717b" defer></script>
   <script src="jd-precautions.js?v=20261104a" defer></script>
   <script src="jd-resets.js?v=20260715a" defer></script>
@@ -2973,8 +2974,9 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       ['사우디', 'sa'], ['오만', 'om'], ['아랍에미리트', 'ae'], ['두바이', 'ae'], ['UAE', 'ae'], ['모로코', 'ma'], ['영국', 'gb'], ['프랑스', 'fr'], ['스페인', 'es'],
       ['이탈리아', 'it'], ['스위스', 'ch'], ['체코', 'cz'], ['그리스', 'gr'], ['포르투갈', 'pt'], ['한국', 'kr']];
     function foxThumb(country) {
+      if (typeof window.jdFoxThumb === 'function') return window.jdFoxThumb(country);   // 11/25 정본 jd-fox.js (지역 판정·?v=)
       const c = String(country || '');
-      for (const [k, v] of FOX_KEYS) if (c.startsWith(k)) return 'https://scoreix.co.kr/esimg/aum_' + v + '.jpg';
+      for (const [k, v] of FOX_KEYS) if (c.startsWith(k)) return 'https://scoreix.co.kr/esimg/aum_' + v + '.jpg?v=20261125';
       return '';
     }
     window.foxThumb = foxThumb;
