@@ -2174,6 +2174,10 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
     background: #fff; text-align: left; text-decoration: none; color: #191F28; font-family: inherit; cursor: pointer; }
   .jd-kind > * b { font-size: 17px; font-weight: 900; letter-spacing: -0.3px; }
   .jd-kind > * span { font-size: 12px; font-weight: 600; color: #6B7684; line-height: 1.4; }
+  /* 11/25 아이폰 사파리: button 플렉스 자식이 min-content 폭 → 단어마다 줄바꿈 → 폭 100%·단어 단위 줄바꿈 고정 */
+  .jd-kind > * { align-items: stretch; min-width: 0; -webkit-appearance: none; appearance: none; }
+  .jd-kind > * b, .jd-kind > * span { display: block; width: 100%; word-break: keep-all; overflow-wrap: break-word; }
+  .m-hero-head { position: relative; }
   .jd-kind > .on { border-color: #F1690D; background: #FFF4EC; box-shadow: 0 4px 14px rgba(241,105,13,0.15); }
   .jd-kind > .on b { color: #B04A06; }
   .jd-fox-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 10px; }
@@ -2312,14 +2316,17 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
     <section class="m-hero">
       <video class="m-hero-video" id="mHeroVideo" muted playsinline style="display:none;"></video>
       <div class="m-hero-content">
-        <img src="images/fox-hello.webp" class="m-hero-romi" alt="마스코트 로미" aria-hidden="true" onerror="this.remove()">
         <!-- 🔀 eSIM / USIM 선택 (2026-11-25 사장님 "메인화면에 esim usim 선택할 수 있게") -->
         <div class="jd-kind" role="tablist" aria-label="상품 종류">
           <button type="button" class="on" role="tab" aria-selected="true" onclick="document.getElementById('rfCountry').focus()"><b>eSIM</b><span>QR로 바로 개통<br>평균 5분 발송</span></button>
           <a href="usim.html" role="tab" aria-selected="false"><b>USIM</b><span>유심칩 택배<br>평일 2시 전 당일 발송</span></a>
         </div>
+        <!-- 로미는 제목 옆에 (선택 카드 뒤로 깔려 주황 조각이 보이던 문제 11/25) -->
+        <div class="m-hero-head">
+        <img src="images/fox-hello.webp" class="m-hero-romi" alt="마스코트 로미" aria-hidden="true" onerror="this.remove()">
         <span class="m-hero-caption">여행 eSIM · 결제 후 평균 5분 내 QR 발송</span>
         <h1 class="m-hero-title">어느 나라 가세요?</h1>
+        </div>
         <div class="rf-field">
           <input type="text" id="rfCountry" placeholder="국가 이름을 입력하세요" autocomplete="off">
           <div class="rf-suggest" id="rfSuggest"></div>
