@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>해외 유심 USIM 당일발송 | JDISIM</title>
+<meta name="description" content="일본·베트남·중국·대만 등 34개국 해외 유심. 평일 오후 2시 전 주문 당일 발송, 무료배송. 현지 통신사 로컬 유심과 2~4개 세트도 자사몰 최저가로.">
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdn.portone.io/v2/browser-sdk.js" defer></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" defer></script>
+<!-- 자사몰 실물 USIM (2026-11-25) — 카탈로그 usim_site.json(VPS usim_site_catalog.py) · 결제 포트원 V2 카카오페이(pay.env) · 접수 jdisim-proxy /api/order {usimorder}
+     서버가 포트원 확정 결제의 customData(품목·배송지)와 서버 가격표 합계를 대조한 뒤 유심 작업 대기열에 넣는다 — 이 페이지의 가격은 표시용 -->
+<style>
+:root{--o:#F1690D;--od:#B04A06;--ol:#FFF4EC;--ink:#191F28;--g1:#333D4B;--g2:#6B7684;--g3:#8B95A1;--line:#E5E8EB;--bg:#F2F4F6;--red:#D92222}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;color:var(--ink);letter-spacing:-.2px;word-break:keep-all;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:560px;margin:0 auto;min-height:100vh;background:#fff;padding-bottom:110px}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #F2F4F6}
+.top a.logo{font-weight:900;font-size:1.1rem;text-decoration:none;letter-spacing:-.5px}
+.top .back{border:none;background:none;font-size:1.35rem;cursor:pointer;padding:0 6px 0 0;display:none;color:var(--g1)}
+.top .sp{flex:1}
+.top .kk{font-size:.8rem;font-weight:700;color:var(--g2);text-decoration:none}
+.hero{padding:22px 16px 10px}
+.hero h1{font-size:1.55rem;line-height:1.3;font-weight:800}
+.hero h1 b{color:var(--o)}
+.hero p{margin-top:8px;color:var(--g2);font-size:.92rem;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.badges span{font-size:.75rem;font-weight:700;background:var(--ol);color:var(--od);padding:5px 10px;border-radius:999px}
+.tabs{display:flex;gap:6px;padding:10px 16px 4px;position:sticky;top:53px;background:#fff;z-index:10}
+.tabs button{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 4px;font:inherit;font-size:.88rem;font-weight:700;color:var(--g2);cursor:pointer}
+.tabs button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.search{margin:10px 16px 4px;position:relative}
+.search input{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:inherit;font-size:.95rem;background:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px}
+.card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;cursor:pointer;text-align:left;font:inherit;padding:0}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--bg)}
+.card div{padding:8px 9px 10px}
+.card b{display:block;font-size:.88rem}
+.card span{display:block;font-size:.72rem;color:var(--g3);margin-top:2px}
+.card em{display:block;font-style:normal;font-size:.78rem;font-weight:800;color:var(--od);margin-top:4px}
+.grid.wide{grid-template-columns:repeat(2,1fr)}
+.pv{display:none}
+.pv .thumb{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--bg)}
+.pv .head{padding:16px}
+.pv .head h2{font-size:1.25rem;font-weight:800;line-height:1.35}
+.pv .head p{color:var(--g2);font-size:.85rem;margin-top:4px}
+.sel{padding:4px 16px 6px}
+.sel h3{font-size:.86rem;font-weight:800;color:var(--g1);margin:14px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;font:inherit;font-size:.86rem;font-weight:600;color:var(--g1);cursor:pointer}
+.chips button.on{border-color:var(--o);background:var(--ol);color:var(--od);font-weight:800}
+.chips button small{display:block;font-size:.7rem;font-weight:700;color:var(--g3);margin-top:2px}
+.chips button.on small{color:var(--od)}
+.cond{margin:12px 16px 0;padding:11px 13px;background:var(--bg);border-radius:12px;font-size:.8rem;color:var(--g1);line-height:1.55;display:none}
+.det img{width:100%;display:block}
+.det{margin-top:18px;border-top:8px solid var(--bg)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:none}
+.bar .in{max-width:528px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.bar .pr{flex:1;min-width:0}
+.bar .pr s{display:block;font-size:.75rem;color:var(--g3)}
+.bar .pr b{font-size:1.25rem;font-weight:900}
+.bar .pr i{font-style:normal;font-size:.78rem;font-weight:800;color:var(--red);margin-left:4px}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px}
+.qty button{width:34px;height:40px;border:none;background:none;font-size:1.1rem;cursor:pointer;color:var(--g1)}
+.qty span{min-width:22px;text-align:center;font-weight:800}
+.buy{border:none;background:var(--o);color:#fff;font:inherit;font-weight:800;font-size:1rem;border-radius:12px;height:48px;padding:0 20px;cursor:pointer}
+.buy:disabled{background:#FFC9A6}
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}
+.sheet .box{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet h3{font-size:1.15rem;font-weight:800}
+.sum{margin:12px 0 4px;padding:12px 13px;background:var(--bg);border-radius:12px;font-size:.86rem;line-height:1.6}
+.sum b{font-size:1.05rem}
+.f{margin-top:12px}
+.f label{display:block;font-size:.8rem;font-weight:700;color:var(--g1);margin-bottom:6px}
+.f input,.f textarea{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 13px;font:inherit;font-size:.95rem}
+.f textarea{height:64px;padding:10px 13px;resize:none}
+.row{display:flex;gap:8px}
+.row button{flex-shrink:0;border:1px solid var(--ink);background:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
+.agree{margin-top:14px;font-size:.8rem;color:var(--g1);line-height:1.6;background:#FFF8F3;border:1px solid #FFE4D1;border-radius:12px;padding:11px 12px}
+.agree label{display:flex;gap:8px;align-items:flex-start;font-weight:700;cursor:pointer;margin-top:6px}
+.agree input{width:18px;height:18px;margin-top:2px;accent-color:var(--o)}
+.pay{width:100%;margin-top:16px;height:54px;font-size:1.05rem}
+.err{color:var(--red);font-size:.8rem;font-weight:700;margin-top:8px;display:none}
+.done{display:none;padding:40px 20px;text-align:center}
+.done .ic{font-size:3rem}
+.done h2{font-size:1.35rem;font-weight:800;margin-top:10px}
+.done p{color:var(--g2);font-size:.92rem;line-height:1.7;margin-top:10px}
+.done a{display:inline-block;margin-top:18px;background:#FEE500;color:#3C1E1E;font-weight:800;text-decoration:none;padding:13px 20px;border-radius:12px}
+.note{padding:16px;font-size:.78rem;color:var(--g3);line-height:1.7}
+.empty{padding:30px 16px;text-align:center;color:var(--g3);font-size:.88rem}
+@media(min-width:561px){.grid{grid-template-columns:repeat(4,1fr)}.grid.wide{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <button class="back" id="btnBack" aria-label="뒤로">‹</button>
+    <a class="logo" href="index.html">JDISIM<span style="color:var(--o)">.</span></a>
+    <span class="sp"></span>
+    <a class="kk" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">카톡 상담</a>
+  </div>
+
+  <div id="list">
+    <div class="hero">
+      <h1>해외 유심, <b>자사몰이 제일 싸요</b></h1>
+      <p>평일 오후 2시 전 주문은 당일 발송 · CJ대한통운 무료배송<br>마켓보다 저렴한 자사몰 전용가예요.</p>
+      <div class="badges"><span>당일 발송</span><span>무료배송</span><span>3in1 유심</span><span>유심핀·보관 케이스</span></div>
+    </div>
+    <div class="tabs">
+      <button data-tab="country" class="on">나라별</button>
+      <button data-tab="local">로컬 유심</button>
+      <button data-tab="set">2~4개 세트</button>
+    </div>
+    <div class="search" id="searchBox"><input id="q" type="search" placeholder="나라 이름 검색 (예: 일본, 다낭)"></div>
+    <div class="grid" id="grid"><div class="empty">불러오는 중…</div></div>
+    <div class="note">· 현지 통신사 로컬 유심은 주문 후 현지 유심을 따로 확보해 5~7영업일 안에 보내드려요.<br>· 개봉·개통 후에는 반품·환불이 어려워요. 미개봉 반품은 왕복 배송비 7,000원이에요.<br>· 문의: 카카오톡 채널 '제이디아이심'</div>
+  </div>
+
+  <div class="pv" id="pv">
+    <img class="thumb" id="pvImg" alt="">
+    <div class="head"><h2 id="pvTitle"></h2><p id="pvSub"></p></div>
+    <div class="sel" id="sel"></div>
+    <div class="cond" id="cond"></div>
+    <div class="det" id="det"></div>
+  </div>
+
+  <div class="done" id="done"></div>
+</div>
+
+<div class="bar" id="bar"><div class="in">
+  <div class="pr"><s id="mkt"></s><b id="price">—</b><i id="off"></i></div>
+  <div class="qty"><button id="qm" aria-label="수량 줄이기">−</button><span id="qn">1</span><button id="qp" aria-label="수량 늘리기">+</button></div>
+  <button class="buy" id="buy" disabled>구매하기</button>
+</div></div>
+
+<div class="sheet" id="sheet"><div class="box">
+  <h3>배송 정보</h3>
+  <div class="sum" id="sum"></div>
+  <div class="f"><label>받는 분</label><input id="fName" autocomplete="name" maxlength="20"></div>
+  <div class="f"><label>휴대폰 번호</label><input id="fPhone" inputmode="tel" autocomplete="tel" placeholder="01012345678" maxlength="13"></div>
+  <div class="f"><label>주소</label><div class="row"><input id="fZip" placeholder="우편번호" readonly><button type="button" id="btnZip">주소 찾기</button></div></div>
+  <div class="f"><input id="fAddr1" placeholder="기본 주소" readonly></div>
+  <div class="f"><input id="fAddr2" placeholder="상세 주소 (동·호수)" maxlength="60"></div>
+  <div class="f"><label>출국 날짜 (꼭 적어 주세요)</label><input id="fDate" type="date"></div>
+  <div class="f"><label>배송 메모 (선택)</label><textarea id="fMemo" maxlength="100" placeholder="문 앞에 놓아 주세요 등"></textarea></div>
+  <div class="agree">
+    · 요금제를 충전(또는 확보)해서 보내는 상품이라 <b>개봉·개통 후 반품·환불이 어려워요.</b><br>
+    · 미개봉 상태라면 출국 전 반품할 수 있어요 (왕복 배송비 7,000원).<br>
+    · 해외 유심을 쓸 수 있는(국가 잠금 없는) 휴대폰이어야 해요.
+    <label><input type="checkbox" id="fAgree"> 위 내용을 확인했고 결제에 동의해요</label>
+  </div>
+  <div class="err" id="fErr"></div>
+  <button class="buy pay" id="btnPay">카카오페이로 결제하기</button>
+  <button type="button" id="btnClose" style="width:100%;margin-top:8px;height:44px;border:none;background:none;font:inherit;color:var(--g2);cursor:pointer">닫기</button>
+</div></div>
+
+<script>
+(function () {
+  var ORDER_API = 'https://jdisim-proxy.vercel.app/api/order';
+  var IMG = 'https://scoreix.co.kr/esimg/';
+  var CAT = null, TAB = 'country', CUR = null, PICK = null, QTY = 1;
+  var STORE_ID = '', CHANNEL_KEY = '';
+  var $ = function (id) { return document.getElementById(id); };
+  var won = function (n) { return Number(n || 0).toLocaleString() + '원'; };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var uniq = function (a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); };
+  var gbv = function (s) { var m = /([\d.]+)\s*GB/.exec(s); return m ? parseFloat(m[1]) : 999; };
+  var dnum = function (s) { return parseInt(String(s).replace(/\D/g, ''), 10) || 0; };
+
+  // ── 공개 결제 설정 (pay.env — STORE_ID·채널키만) ──
+  fetch('pay.env').then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
+    String(t || '').split('\n').forEach(function (l) {
+      l = l.trim(); if (!l || l[0] === '#') return; var i = l.indexOf('='); if (i < 0) return;
+      var k = l.slice(0, i).trim(), v = l.slice(i + 1).trim().replace(/^['"]|['"]$/g, '');
+      if (k === 'PORTONE_STORE_ID') STORE_ID = v; if (k === 'PORTONE_CHANNEL_KEY') CHANNEL_KEY = v;
+    });
+  }).catch(function () {});
+
+  // ── 카탈로그 ──
+  fetch('usim_site.json?v=20261125a').then(function (r) { return r.json(); }).then(function (j) {
+    CAT = j; renderList();
+    var ret = resumeFromRedirect(); if (ret) return;
+    var h = decodeURIComponent((location.hash || '').slice(1));
+    if (h) openByHash(h);
+  }).catch(function () { $('grid').innerHTML = '<div class="empty">상품을 불러오지 못했어요. 새로고침해 주세요.</div>'; });
+
+  function minPrice(rows, idx) { var m = Infinity; rows.forEach(function (r) { if (r[idx] < m) m = r[idx]; }); return m; }
+  function renderList() {
+    var q = ($('q').value || '').trim(), html = '';
+    $('searchBox').style.display = TAB === 'local' ? 'none' : '';
+    $('grid').className = 'grid' + (TAB === 'country' ? '' : ' wide');
+    if (TAB === 'country') {
+      CAT.countries.forEach(function (c) {
+        if (q && (c.name + ' ' + c.city).indexOf(q) < 0) return;
+        var mp = Math.min(minPrice(c.daily || [], 4), minPrice(c.total || [], 4));
+        html += '<button class="card" data-k="' + c.key + '"><img loading="lazy" src="' + IMG + 'usim_' + c.key + '.jpg" alt=""><div><b>' + esc(c.name) + '</b><span>' + esc(c.city) + '</span><em>' + won(mp) + '~</em></div></button>';
+      });
+    } else if (TAB === 'local') {
+      CAT.local.forEach(function (l) {
+        html += '<button class="card" data-l="' + l.key + '"><img loading="lazy" src="' + IMG + l.thumb + '" alt=""><div><b>' + esc(l.name.split(' 유심')[0]) + ' 로컬 유심</b><span>' + esc(uniq(l.opts.map(function (o) { return o[0].split(' (')[0]; })).join(' · ')) + '</span><em>' + won(minPrice(l.opts, 3)) + '~</em></div></button>';
+      });
+    } else {
+      CAT.countries.forEach(function (c) {
+        var S = CAT.sets[c.key]; if (!S) return;
+        if (q && (c.name + ' ' + c.city).indexOf(q) < 0) return;
+        html += '<button class="card" data-s="' + c.key + '"><img loading="lazy" src="' + IMG + 'usim_set_' + c.key + '.jpg" alt=""><div><b>' + esc(c.name) + ' 2~4개 세트</b><span>함께 가면 1개당 더 싸요</span><em>' + won(minPrice(S, 4)) + '~</em></div></button>';
+      });
+    }
+    $('grid').innerHTML = html || '<div class="empty">찾는 나라가 없어요 — 카카오톡으로 문의 주세요</div>';
+  }
+  document.querySelectorAll('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on');
+      TAB = b.getAttribute('data-tab'); renderList();
+    });
+  });
+  $('q').addEventListener('input', function () { if (CAT) renderList(); });
+  $('grid').addEventListener('click', function (e) {
+    var c = e.target.closest('.card'); if (!c) return;
+    if (c.dataset.k) openProduct('c', c.dataset.k); else if (c.dataset.l) openProduct('l', c.dataset.l); else if (c.dataset.s) openProduct('s', c.dataset.s);
+  });
+
+  // ── 상품 화면 ──
+  function openByHash(h) { var p = h.split(':'); if (p.length === 2 && 'cls'.indexOf(p[0]) >= 0) openProduct(p[0], p[1], true); }
+  function openProduct(type, key, noPush) {
+    var c = CAT.countries.filter(function (x) { return x.key === key; })[0];
+    if (type === 'c' && !c) return;
+    var L = type === 'l' ? CAT.local.filter(function (x) { return x.key === key; })[0] : null;
+    if (type === 'l' && !L) return;
+    if (type === 's' && !(c && CAT.sets[key])) return;
+    CUR = { type: type, key: key, c: c, l: L, kind: (c && c.daily && c.daily.length) ? 'daily' : 'total', a: {} };
+    PICK = null; QTY = 1; $('qn').textContent = '1';
+    $('list').style.display = 'none'; $('pv').style.display = 'block'; $('bar').style.display = 'block'; $('btnBack').style.display = 'block';
+    if (!noPush) history.pushState({ pv: 1 }, '', '#' + type + ':' + key);
+    var title, sub, img, det;
+    if (type === 'c') { title = c.name + ' 유심 USIM'; sub = c.city + ' · 평일 오후 2시 전 주문 당일 발송'; img = IMG + 'usim_' + key + '.jpg'; det = (c.det || []).map(function (f) { return IMG + 'usimd/' + f; }); }
+    else if (type === 'l') { title = L.name.split(' 유심')[0] + ' 로컬 유심'; sub = '현지 통신사 정품 · 현지 유심 확보 후 5~7영업일 발송'; img = IMG + L.thumb; det = [1, 2, 3].map(function (i) { return IMG + 'usimd/usim_local_' + key + '_0' + i + '.jpg'; }); }
+    else { title = c.name + ' 유심 2·3·4개 세트'; sub = '같은 요금제 유심을 한 상자로 · 1개당 더 저렴'; img = IMG + 'usim_set_' + key + '.jpg'; det = [IMG + 'usim_set_banner.jpg'].concat((c.det || []).map(function (f) { return IMG + 'usimd/' + f; })); }
+    $('pvImg').src = img; $('pvTitle').textContent = title; $('pvSub').textContent = sub;
+    $('det').innerHTML = det.map(function (u) { return '<img loading="lazy" src="' + u + '" alt="">'; }).join('');
+    renderSel(); window.scrollTo(0, 0);
+  }
+  function rowsNow() {
+    if (CUR.type === 'c') return (CUR.c[CUR.kind] || []).map(function (r) { return { a: r[0], b: r[1], d: r[2], code: r[3], price: r[4], mkt: r[5] }; });
+    if (CUR.type === 'l') return CUR.l.opts.map(function (r) { var p = r[1].split(' · '); return { a: r[0], b: p[0], d: p[1] || '', code: r[2], price: r[3], mkt: r[4] }; });
+    return CAT.sets[CUR.key].map(function (r) { return { s: r[0], a: r[1], d: r[2], code: r[3], price: r[4], mkt: r[5] }; });
+  }
+  function chipRow(title, vals, cur, field, sub) {
+    var h = '<h3>' + title + '</h3><div class="chips">';
+    vals.forEach(function (v) { h += '<button data-f="' + field + '" data-v="' + esc(v) + '"' + (v === cur ? ' class="on"' : '') + '>' + esc(v) + (sub && sub[v] ? '<small>' + sub[v] + '</small>' : '') + '</button>'; });
+    return h + '</div>';
+  }
+  function renderSel() {
+    var R = rowsNow(), A = CUR.a, h = '';
+    if (CUR.type === 'c' && CUR.c.daily.length && CUR.c.total.length) {
+      h += '<h3>사용 방식</h3><div class="chips"><button data-f="kind" data-v="daily"' + (CUR.kind === 'daily' ? ' class="on"' : '') + '>매일 데이터<small>하루마다 다시 채워져요</small></button><button data-f="kind" data-v="total"' + (CUR.kind === 'total' ? ' class="on"' : '') + '>총용량<small>기간 안에 나눠 써요</small></button></div>';
+    }
+    if (CUR.type === 's') {
+      var sets = uniq(R.map(function (r) { return r.s; })); if (sets.indexOf(A.s) < 0) A.s = sets[0];
+      h += chipRow('세트 수량', sets, A.s, 's'); R = R.filter(function (r) { return r.s === A.s; });
+    }
+    var carriers = uniq(R.map(function (r) { return CUR.type === 's' ? r.a.replace(/ 매일 .*$/, '') : r.a; }));
+    if (carriers.indexOf(A.car) < 0) A.car = carriers.length === 1 ? carriers[0] : null;
+    h += chipRow(CUR.type === 'l' ? '통신사' : '통신사', carriers, A.car, 'car');
+    var R2 = A.car ? R.filter(function (r) { return (CUR.type === 's' ? r.a.replace(/ 매일 .*$/, '') : r.a) === A.car; }) : [];
+    var datas = uniq(R2.map(function (r) { return CUR.type === 's' ? r.a.replace(A.car + ' ', '') : r.b; }));
+    if (CUR.type !== 'l') datas.sort(function (x, y) { return gbv(x) - gbv(y); });
+    if (datas.indexOf(A.data) < 0) A.data = datas.length === 1 ? datas[0] : null;
+    if (A.car) h += chipRow(CUR.type === 'l' ? '요금제' : '데이터', datas, A.data, 'data');
+    var R3 = A.data ? R2.filter(function (r) { return (CUR.type === 's' ? r.a.replace(A.car + ' ', '') : r.b) === A.data; }) : [];
+    var days = uniq(R3.map(function (r) { return r.d; })).sort(function (x, y) { return dnum(x) - dnum(y); });
+    if (days.indexOf(A.d) < 0) A.d = days.length === 1 ? days[0] : null;
+    if (A.data && CUR.type !== 'l') {
+      var sub = {}; R3.forEach(function (r) { sub[r.d] = won(r.price); });
+      h += chipRow('사용 일수', days, A.d, 'd', sub);
+    }
+    PICK = (A.data && (A.d || CUR.type === 'l')) ? R3.filter(function (r) { return CUR.type === 'l' || r.d === A.d; })[0] || null : null;
+    $('sel').innerHTML = h;
+    var cond = $('cond');
+    if (PICK && CUR.type === 'c' && /후|완전/.test(PICK.b)) { cond.style.display = 'block'; cond.textContent = '데이터 조건: ' + PICK.b + ' (조건 그대로 제공돼요)'; } else cond.style.display = 'none';
+    updateBar();
+  }
+  $('sel').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-f]'); if (!b) return;
+    var f = b.dataset.f, v = b.dataset.v;
+    if (f === 'kind') { CUR.kind = v; CUR.a = {}; } else if (f === 's') CUR.a.s = v; else if (f === 'car') { CUR.a.car = v; CUR.a.data = null; CUR.a.d = null; } else if (f === 'data') { CUR.a.data = v; CUR.a.d = null; } else CUR.a.d = v;
+    renderSel();
+  });
+  function updateBar() {
+    if (!PICK) { $('price').textContent = '옵션을 골라 주세요'; $('price').style.fontSize = '1rem'; $('mkt').textContent = ''; $('off').textContent = ''; $('buy').disabled = true; return; }
+    var t = PICK.price * QTY, m = (PICK.mkt || 0) * QTY;
+    $('price').style.fontSize = ''; $('price').textContent = won(t);
+    if (m > t) { $('mkt').textContent = '마켓가 ' + won(m); $('off').textContent = Math.round(100 - t * 100 / m) + '%'; } else { $('mkt').textContent = ''; $('off').textContent = ''; }
+    $('buy').disabled = false;
+  }
+  $('qm').addEventListener('click', function () { if (QTY > 1) { QTY--; $('qn').textContent = QTY; updateBar(); } });
+  $('qp').addEventListener('click', function () { if (QTY < 5) { QTY++; $('qn').textContent = QTY; updateBar(); } });
+  function goList() { $('pv').style.display = 'none'; $('bar').style.display = 'none'; $('done').style.display = 'none'; $('list').style.display = 'block'; $('btnBack').style.display = 'none'; }
+  $('btnBack').addEventListener('click', function () { if (history.state && history.state.pv) history.back(); else { history.replaceState(null, '', location.pathname); goList(); } });
+  window.addEventListener('popstate', function () { var h = decodeURIComponent((location.hash || '').slice(1)); if (h && CAT) openByHash(h); else goList(); });
+
+  // ── 주문서 ──
+  function itemName() {
+    if (CUR.type === 's') return CUR.c.name + ' 유심 ' + CUR.a.s + ' ' + CUR.a.car + ' ' + CUR.a.data + ' ' + CUR.a.d;
+    if (CUR.type === 'l') return CUR.l.name.split(' 유심')[0] + ' 로컬 유심 ' + PICK.a.split(' (')[0] + ' ' + PICK.b + (PICK.d ? ' ' + PICK.d : '');
+    return CUR.c.name + ' 유심 ' + PICK.a + ' ' + PICK.b + ' ' + PICK.d;
+  }
+  $('buy').addEventListener('click', function () {
+    if (!PICK) return;
+    $('sum').innerHTML = esc(itemName()) + ' × ' + QTY + '<br><b>' + won(PICK.price * QTY) + '</b> · 무료배송' + (CUR.type === 'l' ? '<br><span style="color:#B04A06;font-weight:700">현지 유심 확보 후 5~7영업일 안에 발송</span>' : '<br><span style="color:#B04A06;font-weight:700">평일 오후 2시 전 결제 시 당일 발송</span>');
+    $('fErr').style.display = 'none'; $('sheet').style.display = 'flex';
+  });
+  $('btnClose').addEventListener('click', function () { $('sheet').style.display = 'none'; });
+  $('btnZip').addEventListener('click', openZip); $('fAddr1').addEventListener('click', openZip); $('fZip').addEventListener('click', openZip);
+  function openZip() {
+    if (!window.daum || !window.daum.Postcode) { alert('주소 검색을 불러오는 중이에요. 잠시 후 다시 눌러 주세요.'); return; }
+    new window.daum.Postcode({ oncomplete: function (d) { $('fZip').value = d.zonecode; $('fAddr1').value = d.roadAddress || d.jibunAddress; $('fAddr2').focus(); } }).open();
+  }
+  function ferr(m) { $('fErr').textContent = m; $('fErr').style.display = 'block'; }
+  $('btnPay').addEventListener('click', function () {
+    var name = $('fName').value.trim(), phone = $('fPhone').value.replace(/[^0-9]/g, ''), zip = $('fZip').value.trim(), a1 = $('fAddr1').value.trim(), a2 = $('fAddr2').value.trim(), dt = $('fDate').value;
+    if (name.length < 2) return ferr('받는 분 이름을 입력해 주세요');
+    if (!/^01[016789][0-9]{7,8}$/.test(phone)) return ferr('휴대폰 번호를 확인해 주세요');
+    if (!zip || !a1) return ferr('주소 찾기로 주소를 입력해 주세요');
+    if (!a2) return ferr('상세 주소를 입력해 주세요');
+    if (!dt) return ferr('출국 날짜를 입력해 주세요');
+    if (!$('fAgree').checked) return ferr('안내 내용을 확인하고 동의해 주세요');
+    if (!(window.PortOne && STORE_ID)) return ferr('결제 모듈을 불러오지 못했어요. 새로고침 후 다시 시도해 주세요.');
+    var amount = PICK.price * QTY, pid = 'USIM-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+    var memo = ('출국 ' + dt + ' ' + $('fMemo').value.trim()).trim();
+    var custom = { t: 'usim', amount: amount, items: [{ c: PICK.code, q: QTY, n: itemName() }], s: { n: name, p: phone, z: zip, a1: a1, a2: a2, m: memo } };
+    try { localStorage.setItem('jd_usim_pending', JSON.stringify({ pid: pid, name: itemName(), q: QTY, local: CUR.type === 'l', at: Date.now() })); } catch (e) {}
+    $('btnPay').disabled = true;
+    window.PortOne.requestPayment({
+      storeId: STORE_ID, channelKey: CHANNEL_KEY, paymentId: pid, orderName: itemName().slice(0, 60), totalAmount: amount, currency: 'CURRENCY_KRW',
+      payMethod: 'EASY_PAY', customer: { fullName: name, phoneNumber: phone },
+      redirectUrl: location.origin + location.pathname + '?usimpaid=1', customData: JSON.stringify(custom)
+    }).then(function (rsp) {
+      $('btnPay').disabled = false;
+      if (!rsp) return;
+      if (rsp.code != null) { ferr('결제가 완료되지 않았어요: ' + (rsp.message || '')); return; }
+      finalize(rsp.paymentId || pid);
+    }).catch(function (e) { $('btnPay').disabled = false; ferr('결제 창을 열지 못했어요: ' + (e && e.message || '')); });
+  });
+  // 모바일 결제 후 리다이렉트 복귀 (?usimpaid=1&paymentId=…&code=…)
+  function resumeFromRedirect() {
+    var u = new URLSearchParams(location.search); if (!u.get('usimpaid')) return false;
+    var pid = u.get('paymentId'), code = u.get('code');
+    history.replaceState(null, '', location.pathname);
+    if (code) { showDone(false, '결제가 완료되지 않았어요', esc(u.get('message') || '다시 시도해 주세요.')); return true; }
+    if (pid) { finalize(pid); return true; }
+    return false;
+  }
+  function finalize(pid) {
+    $('sheet').style.display = 'none';
+    showDone(true, '주문을 확인하고 있어요…', '잠시만 기다려 주세요.');
+    fetch(ORDER_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ usimorder: { paymentId: pid } }) })
+      .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }); })
+      .then(function (x) {
+        var pend = {}; try { pend = JSON.parse(localStorage.getItem('jd_usim_pending') || '{}'); localStorage.removeItem('jd_usim_pending'); } catch (e) {}
+        if (x.s === 200 && x.j.ok) {
+          showDone(true, '주문이 접수됐어요 🎉', (pend.local ? '현지 통신사 유심을 확보해 <b>5~7영업일 안에</b> 보내드려요.' : '<b>평일 오후 2시 전 주문은 오늘</b>, 그 이후는 다음 영업일에 보내드려요.') +
+            '<br>배송 조회는 카카오톡 채널로 주문번호를 보내 주세요.<br><br>주문번호 <b style="font-family:monospace">' + esc(pid) + '</b>');
+        } else showDone(false, '결제는 됐지만 접수 확인이 늦어지고 있어요', esc((x.j && x.j.error) || '') + '<br>주문번호 <b style="font-family:monospace">' + esc(pid) + '</b>를 카카오톡으로 보내 주시면 바로 처리해 드려요.');
+      })
+      .catch(function () { showDone(false, '접수 확인 중 연결이 끊겼어요', '결제가 됐다면 주문번호 <b style="font-family:monospace">' + esc(pid) + '</b>를 카카오톡으로 보내 주세요. 바로 확인해 드려요.'); });
+  }
+  function showDone(ok, title, msg) {
+    $('list').style.display = 'none'; $('pv').style.display = 'none'; $('bar').style.display = 'none';
+    var d = $('done'); d.style.display = 'block';
+    d.innerHTML = '<div class="ic">' + (ok ? '📦' : '⚠️') + '</div><h2>' + title + '</h2><p>' + msg + '</p><a href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">카카오톡 채널로 문의하기</a><p style="margin-top:14px"><a href="usim.html" style="background:none;color:#6B7684;padding:0;font-weight:700">다른 유심 보기</a></p>';
+  }
+})();
+</script>
+</body>
+</html>
