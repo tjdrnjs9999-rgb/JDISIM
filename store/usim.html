@@ -191,7 +191,7 @@ a{color:inherit}
   }).catch(function () {});
 
   // ── 카탈로그 ──
-  fetch('usim_site.json?v=20261125a').then(function (r) { return r.json(); }).then(function (j) {
+  fetch('usim_site.json?v=20261125b').then(function (r) { return r.json(); }).then(function (j) {
     CAT = j; renderList();
     var ret = resumeFromRedirect(); if (ret) return;
     var h = decodeURIComponent((location.hash || '').slice(1));
