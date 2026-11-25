@@ -106,6 +106,18 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
     .m-hero, .hero-video-frame { background: linear-gradient(165deg,#FFFDFB 0%,#FFF1E2 42%,#DFF4F1 100%) !important; }
     .m-hero-overlay, .hero-video-overlay { background: linear-gradient(180deg,rgba(255,253,250,0) 0%,rgba(255,252,248,0.45) 55%,rgba(255,250,244,0.9) 100%) !important; }
     .m-hero-content { color: #221510 !important; }
+    /* 🦊 로미 썸네일 카드 (2026-11-25) */
+    .product-card .card-img-wrap.is-fox { height: auto !important; aspect-ratio: 1 / 1; }
+    .hotdest-card:has(.hotdest-fox) { flex-direction: column !important; align-items: stretch !important; padding: 0 0 12px !important; overflow: hidden; gap: 10px !important; }
+    .hotdest-fox { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+    .hotdest-card:has(.hotdest-fox) .hotdest-body { padding: 0 14px; }
+    .jd-kind-pc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 520px; margin: 0 0 18px; }
+    .jd-kind-pc > * { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 13px 16px; border-radius: 14px; border: 1.5px solid #E5E8EB; background: #fff; text-align: left; text-decoration: none; color: #191F28; font-family: inherit; cursor: pointer; }
+    .jd-kind-pc > * b { font-size: 18px; font-weight: 900; }
+    .jd-kind-pc > * span { font-size: 13px; font-weight: 600; color: #6B7684; }
+    .jd-kind-pc > .on { border-color: #F1690D; background: #FFF4EC; box-shadow: 0 4px 14px rgba(241,105,13,0.15); }
+    .jd-kind-pc > .on b { color: #B04A06; }
+    .jd-kind-pc > a:hover { border-color: #FFB48A; }
     .m-hero-title, .hero-video-title { color: #221510 !important; text-shadow: 0 2px 14px rgba(255,255,255,0.8) !important; }
     .m-hero-sub { color: #4a3a30 !important; opacity: 1 !important; }
     .m-hero-badge { background: rgba(255,255,255,0.88) !important; border-color: rgba(241,105,13,0.3) !important; color: #C2410C !important; }
@@ -391,6 +403,11 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
       <section class="jd-hero">
         <div class="jd-inner">
           <div class="hero-search">
+            <!-- 🔀 eSIM / USIM 선택 (2026-11-25) -->
+            <div class="jd-kind-pc" role="tablist" aria-label="상품 종류">
+              <button type="button" class="on" role="tab" aria-selected="true" onclick="var i=document.querySelector('.hero-input-wrap input');if(i)i.focus();"><b>eSIM</b><span>QR로 바로 개통 · 평균 5분 발송</span></button>
+              <a href="usim.html" role="tab" aria-selected="false"><b>USIM</b><span>유심칩 택배 · 평일 2시 전 당일 발송</span></a>
+            </div>
             <p class="hero-caption">여행 eSIM · <strong data-jd-stat="issue" style="font-weight: 500;">결제 후 평균 5~15분 QR 발송</strong></p>
             <h1>어느 나라 가세요?</h1>
             <div class="hero-input-wrap">
@@ -1509,7 +1526,7 @@ if(/(^|\.)esimpartners\.co\.kr$/.test(location.hostname))location.replace("/star
   <script src="jdisim-compare.js?v=20260713" defer></script>
   <script src="jdisim-datacalc.js?v=20260713" defer></script>
   <script src="jd-devices.js?v=20260717b"></script>
-  <script src="app.js?v=20261104a"></script>
+  <script src="app.js?v=20261125a"></script>
   <!-- globe.js 로드 제거 (정본 §7-A-2): 지구본 섹션은 display:none 보존 -->
   <!-- 히어로 검색 프록시 (정본 §2-1): #heroSearchInput → 서제스트 → 스토어 검색 위임 -->
   <script>

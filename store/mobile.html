@@ -2162,6 +2162,35 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
   }
   #view-store .store-net-badge { background: var(--jd-gray-100, #F2F4F6) !important; color: var(--jd-gray-600, #6B7684) !important; }
   #view-store .store-net-badge.local { background: var(--jd-success-bg, #EEFAF3) !important; color: var(--jd-success-deep, #0E7A47) !important; }
+  /* 🔀 메인 eSIM / USIM 선택 카드 + 🦊 많이 찾는 여행지 로미 카드 (2026-11-25) */
+  .jd-kind { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin: 0 0 14px; }
+  .jd-kind > * { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 13px; border-radius: 14px; border: 1.5px solid #E5E8EB;
+    background: #fff; text-align: left; text-decoration: none; color: #191F28; font-family: inherit; cursor: pointer; }
+  .jd-kind > * b { font-size: 17px; font-weight: 900; letter-spacing: -0.3px; }
+  .jd-kind > * span { font-size: 12px; font-weight: 600; color: #6B7684; line-height: 1.4; }
+  .jd-kind > .on { border-color: #F1690D; background: #FFF4EC; box-shadow: 0 4px 14px rgba(241,105,13,0.15); }
+  .jd-kind > .on b { color: #B04A06; }
+  .jd-fox-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 10px; }
+  .jd-fox-grid button { border: 1px solid #E5E8EB; border-radius: 14px; overflow: hidden; background: #fff; padding: 0 0 9px; font-family: inherit; cursor: pointer; text-align: center; }
+  .jd-fox-grid img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #F2F4F6; margin-bottom: 7px; }
+  .jd-fox-grid b { font-size: 14px; font-weight: 800; color: #191F28; }
+  /* 🦊 스토어 로미 카드 그리드 (2026-11-25 사장님 "esim 페이지도 usim처럼 귀엽게") — 리스트 행 규칙 위에 덮어씀 */
+  #view-store #storeProductList.product-list { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+  #view-store #storeProductList .store-card {
+    flex-direction: column !important; align-items: stretch !important; gap: 0 !important; min-height: 0 !important;
+    padding: 0 !important; border: 1px solid #E5E8EB !important; border-radius: 14px !important; overflow: hidden !important; background: #fff !important;
+  }
+  #view-store #storeProductList .store-card::after { display: none !important; }
+  #view-store #storeProductList .store-card-img { width: 100% !important; height: auto !important; aspect-ratio: 1 / 1; border-radius: 0 !important; display: block; background: #F2F4F6; }
+  #view-store #storeProductList .store-card-body { padding: 8px 9px 0 !important; }
+  #view-store #storeProductList .store-card-title { font-size: 14px !important; line-height: 1.3 !important; gap: 4px !important; }
+  #view-store #storeProductList .store-card-title .store-net-badge,
+  #view-store #storeProductList .store-card-title .store-warn-badge { font-size: 10px !important; padding: 1px 6px !important; }
+  #view-store #storeProductList .store-card-meta { font-size: 11px !important; margin-top: 2px !important; }
+  #view-store #storeProductList .store-card-price-row { padding: 4px 9px 10px !important; }
+  #view-store #storeProductList .store-card-price { font-size: 13px !important; color: #B04A06 !important; }
+  #view-store #storeProductList .store-card-price em { font-size: 11px !important; color: #B04A06 !important; }
+  @media (min-width: 600px) { #view-store #storeProductList.product-list { grid-template-columns: repeat(4, 1fr) !important; } }
   #view-store .store-warn-badge { background: var(--jd-warning-bg, #FFF7E6) !important; color: var(--jd-warning-deep, #935A00) !important; }
   /* 결제 완료 세리머니: 색종이 무효화 (생성 JS는 유지, 표시만 차단) */
   #ticketCeremony > span { display: none !important; }
@@ -2278,6 +2307,11 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       <video class="m-hero-video" id="mHeroVideo" muted playsinline style="display:none;"></video>
       <div class="m-hero-content">
         <img src="images/fox-hello.webp" class="m-hero-romi" alt="마스코트 로미" aria-hidden="true" onerror="this.remove()">
+        <!-- 🔀 eSIM / USIM 선택 (2026-11-25 사장님 "메인화면에 esim usim 선택할 수 있게") -->
+        <div class="jd-kind" role="tablist" aria-label="상품 종류">
+          <button type="button" class="on" role="tab" aria-selected="true" onclick="document.getElementById('rfCountry').focus()"><b>eSIM</b><span>QR로 바로 개통<br>평균 5분 발송</span></button>
+          <a href="usim.html" role="tab" aria-selected="false"><b>USIM</b><span>유심칩 택배<br>평일 2시 전 당일 발송</span></a>
+        </div>
         <span class="m-hero-caption">여행 eSIM · 결제 후 평균 5분 내 QR 발송</span>
         <h1 class="m-hero-title">어느 나라 가세요?</h1>
         <div class="rf-field">
@@ -2346,13 +2380,14 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
     <section>
       <h2 class="jd-sec-title">많이 찾는 여행지</h2>
       <div id="homeFeaturedList"></div>
-      <div class="jd-country-rows">
-        <button type="button" class="jd-crow" onclick="openBottomSheet('일본')"><span class="flag">🇯🇵</span><span class="name">일본</span></button>
-        <button type="button" class="jd-crow" onclick="openBottomSheet('베트남')"><span class="flag">🇻🇳</span><span class="name">베트남</span></button>
-        <button type="button" class="jd-crow" onclick="openBottomSheet('태국')"><span class="flag">🇹🇭</span><span class="name">태국</span></button>
-        <button type="button" class="jd-crow" onclick="openBottomSheet('대만')"><span class="flag">🇹🇼</span><span class="name">대만</span></button>
-        <button type="button" class="jd-crow" onclick="openBottomSheet('미국')"><span class="flag">🇺🇸</span><span class="name">미국</span></button>
-        <button type="button" class="jd-crow" onclick="switchNav('store');var b=document.querySelector('#mCatTabs [data-cat=&quot;유럽&quot;]');if(b)b.click();"><span class="flag">🇪🇺</span><span class="name">유럽</span></button>
+      <!-- 🦊 로미 카드 (2026-11-25 — 국기 이모지 행 → 썸네일 카드, usim.html 과 같은 톤) -->
+      <div class="jd-fox-grid">
+        <button type="button" onclick="openBottomSheet('일본')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_jp.jpg" alt=""><b>일본</b></button>
+        <button type="button" onclick="openBottomSheet('베트남')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_vn.jpg" alt=""><b>베트남</b></button>
+        <button type="button" onclick="openBottomSheet('태국')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_th.jpg" alt=""><b>태국</b></button>
+        <button type="button" onclick="openBottomSheet('대만')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_tw.jpg" alt=""><b>대만</b></button>
+        <button type="button" onclick="openBottomSheet('중국')"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_cn.jpg" alt=""><b>중국</b></button>
+        <button type="button" onclick="switchNav('store');var b=document.querySelector('#mCatTabs [data-cat=&quot;유럽&quot;]');if(b)b.click();"><img loading="lazy" src="https://scoreix.co.kr/esimg/aum_eu.jpg" alt=""><b>유럽</b></button>
       </div>
       <button type="button" class="jd-svc-row" style="border-bottom:none;color:#4E5968;" onclick="switchNav('store')"><span class="t">전체 국가 보기</span></button>
     </section>
@@ -2924,6 +2959,19 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
       '중화권': 'images/global.jpg',
       '월드와이드': 'images/global.jpg'
     };
+    // 🦊 로미 eSIM 썸네일 (scoreix esimg/aum_<키>.jpg — 마켓 대표이미지 정본, 2026-11-25 스토어 카드에 사용)
+    const FOX_KEYS = [['중국 홍콩', 'cnhkmo'], ['홍콩', 'hkmo'], ['마카오', 'hkmo'], ['괌', 'gusp'], ['사이판', 'gusp'], ['호주 뉴질랜드', 'aunz'], ['한국 일본', 'krjp'],
+      ['북미', 'nam'], ['남미', 'sam'], ['유럽', 'eu'], ['일본', 'jp'], ['베트남', 'vn'], ['태국', 'th'], ['대만', 'tw'], ['중국', 'cn'], ['미국', 'us'], ['하와이', 'us'],
+      ['캐나다', 'ca'], ['멕시코', 'mx'], ['필리핀', 'ph'], ['싱가포르', 'sg'], ['말레이시아', 'my'], ['인도네시아', 'id'], ['발리', 'id'], ['캄보디아', 'kh'], ['라오스', 'la'],
+      ['몽골', 'mn'], ['인도', 'in'], ['스리랑카', 'lk'], ['네팔', 'np'], ['몰디브', 'mv'], ['호주', 'au'], ['뉴질랜드', 'nz'], ['튀르키예', 'tr'], ['터키', 'tr'], ['러시아', 'ru'],
+      ['사우디', 'sa'], ['오만', 'om'], ['아랍에미리트', 'ae'], ['두바이', 'ae'], ['UAE', 'ae'], ['모로코', 'ma'], ['영국', 'gb'], ['프랑스', 'fr'], ['스페인', 'es'],
+      ['이탈리아', 'it'], ['스위스', 'ch'], ['체코', 'cz'], ['그리스', 'gr'], ['포르투갈', 'pt'], ['한국', 'kr']];
+    function foxThumb(country) {
+      const c = String(country || '');
+      for (const [k, v] of FOX_KEYS) if (c.includes(k)) return 'https://scoreix.co.kr/esimg/aum_' + v + '.jpg';
+      return '';
+    }
+    window.foxThumb = foxThumb;
     function countryImg(country) {
       const c = String(country || '');
       if (flagMap[c]) return 'images/' + flagMap[c];
@@ -3171,7 +3219,7 @@ if(/(^|[.])esimpartners[.]co[.]kr$/.test(location.hostname))location.replace("/s
                               entry.carriers.some(c => c.toLowerCase().includes(lowercaseQuery));
         if (searchQuery && !matchesSearch) return;
 
-        const flagSrc = countryImg(countryName);
+        const flagSrc = foxThumb(countryName) || countryImg(countryName);
         const netArr = [...entry.nets];
         const netLabel = netArr.join('·');
         const onlyLocal = netArr.length === 1 && netArr[0] === '로컬망';

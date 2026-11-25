@@ -687,6 +687,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 8.05 나라별 이미지 URL 매핑 함수
+  // 🦊 로미 eSIM 썸네일 (2026-11-25 사장님 "esim 페이지도 usim처럼 귀엽게") — scoreix esimg/aum_<키>.jpg, mobile.html foxThumb 과 같은 표
+  const JD_FOX_KEYS = [['중국 홍콩', 'cnhkmo'], ['홍콩', 'hkmo'], ['마카오', 'hkmo'], ['괌', 'gusp'], ['사이판', 'gusp'], ['호주 뉴질랜드', 'aunz'], ['한국 일본', 'krjp'],
+    ['북미', 'nam'], ['남미', 'sam'], ['유럽', 'eu'], ['일본', 'jp'], ['베트남', 'vn'], ['태국', 'th'], ['대만', 'tw'], ['중국', 'cn'], ['미국', 'us'], ['하와이', 'us'],
+    ['캐나다', 'ca'], ['멕시코', 'mx'], ['필리핀', 'ph'], ['싱가포르', 'sg'], ['말레이시아', 'my'], ['인도네시아', 'id'], ['발리', 'id'], ['캄보디아', 'kh'], ['라오스', 'la'],
+    ['몽골', 'mn'], ['인도', 'in'], ['스리랑카', 'lk'], ['네팔', 'np'], ['몰디브', 'mv'], ['호주', 'au'], ['뉴질랜드', 'nz'], ['튀르키예', 'tr'], ['터키', 'tr'], ['러시아', 'ru'],
+    ['사우디', 'sa'], ['오만', 'om'], ['아랍에미리트', 'ae'], ['두바이', 'ae'], ['UAE', 'ae'], ['모로코', 'ma'], ['영국', 'gb'], ['프랑스', 'fr'], ['스페인', 'es'],
+    ['이탈리아', 'it'], ['스위스', 'ch'], ['체코', 'cz'], ['그리스', 'gr'], ['포르투갈', 'pt'], ['한국', 'kr']];
+  window.jdFoxThumb = function (country) {
+    const c = String(country || '');
+    for (const kv of JD_FOX_KEYS) if (c.includes(kv[0])) return 'https://scoreix.co.kr/esimg/aum_' + kv[1] + '.jpg';
+    return '';
+  };
   function getCountryImageUrl(country) {
     const nameMap = {
       '일본': 'images/japan.jpg',
@@ -865,9 +877,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const card = document.createElement('article');
       card.className = 'product-card';
-      const cardImgUrl = getCountryImageUrl(g.country);
+      const cardFox = window.jdFoxThumb(g.country), cardImgUrl = cardFox || getCountryImageUrl(g.country);
       card.innerHTML = `
-        <div class="card-img-wrap">
+        <div class="card-img-wrap${cardFox ? ' is-fox' : ''}">
           ${cardImgUrl ? `<img src="${cardImgUrl}" class="card-img" alt="${g.country} 여행지" loading="lazy" onerror="this.remove()">` : `<span class="card-flag">${jdFlagOf(g.country)}</span>`}
           <div class="card-tags">
             ${gi === 0 ? '<span class="card-tag hot">판매 1위</span>' : ''}
@@ -970,9 +982,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const card = document.createElement('article');
       card.className = 'product-card';
 
-      const cardImgUrl2 = getCountryImageUrl(g.country);
+      const cardFox2 = window.jdFoxThumb(g.country), cardImgUrl2 = cardFox2 || getCountryImageUrl(g.country);
       card.innerHTML = `
-        <div class="card-img-wrap">
+        <div class="card-img-wrap${cardFox2 ? ' is-fox' : ''}">
           ${cardImgUrl2 ? `<img src="${cardImgUrl2}" class="card-img" alt="${g.country} 여행지" loading="lazy" onerror="this.remove()">` : `<span class="card-flag">${jdFlagOf(g.country)}</span>`}
           <div class="card-tags">
             <span class="card-tag ${mainNetworkType === '로컬망' ? 'local' : 'roaming'}">${mainNetworkType === '로컬망' ? '현지망' : '로밍망'}</span>
@@ -3252,7 +3264,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!isFinite(min)) return;
         const flag = FLAG[name] || '🌏';
         cards.push(`<button type="button" class="hotdest-card" data-country="${hit[0].country}">` +
-          `<span class="hotdest-flag">${flag}</span>` +
+          (window.jdFoxThumb(name) ? `<img class="hotdest-fox" src="${window.jdFoxThumb(name)}" alt="" loading="lazy">` : `<span class="hotdest-flag">${flag}</span>`) +
           `<span class="hotdest-body"><span class="hotdest-name">${name}</span>` +
           `<span class="hotdest-price"><b>${min.toLocaleString()}</b>원부터</span></span></button>`);
       });
