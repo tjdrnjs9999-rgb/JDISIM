@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>유심 등록 · JDISIM</title>
+<meta name="robots" content="noindex">
+<!-- 2026-11-27 로켓그로스 유심 등록 (사장님 "로켓그로스 간다"). QR = jdisim.co.kr/u?p=<상품코드 RG-…>
+     서버: jdisim-proxy /api/admin?fn=usimreg — 이름 암호화 저장·끝 4자리 매칭·유심 1장 1회·등록 기록(반품 분쟁 증빙).
+     손님 문구에 '충전' 금지(사장님) → '유심 등록'·'사용 준비'. -->
+<style>
+:root{--brand:#F1690D;--brand-700:#B04A06;--brand-50:#FFF4EC;--brand-100:#FFE4D1;--ink:#191F28;--g800:#333D4B;--g700:#4E5968;--g600:#6B7684;--g500:#8B95A1;--g400:#B0B8C1;--g300:#D1D6DB;--g200:#E5E8EB;--g100:#F2F4F6;--g50:#F9FAFB;
+  --ok:#12A25E;--ok-bg:#EEFAF3;--warn:#C77700;--warn-bg:#FFF7E6;--bad:#F04452;
+  --font:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;--mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--g50)}
+body{font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;word-break:keep-all}
+.wrap{max-width:480px;margin:0 auto;min-height:100vh;background:#fff;display:flex;flex-direction:column}
+header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--g100)}
+.logo{font-weight:800;font-size:18px;letter-spacing:-.3px}.logo b{color:var(--brand)}
+.help{font-size:13px;color:var(--g600);text-decoration:none}
+main{padding:24px 20px 32px;flex:1}
+.prod{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--g50);border-radius:14px;margin-bottom:24px}
+.flag{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:24px;box-shadow:0 0 0 1px var(--g200);flex:none}
+.prod .t{font-weight:700;font-size:16px}.prod .s{font-size:13px;color:var(--g600)}
+h1{font-size:24px;font-weight:800;letter-spacing:-.4px;line-height:1.35}
+.lead{margin-top:8px;color:var(--g700);font-size:15px}
+.field{margin-top:22px}
+label{display:block;font-size:14px;font-weight:600;color:var(--g800);margin-bottom:8px}
+input{width:100%;height:54px;border:1.5px solid var(--g300);border-radius:12px;padding:0 16px;font:inherit;font-size:17px;color:var(--ink);background:#fff;outline:none}
+input:focus{border-color:var(--brand)}input.err{border-color:var(--bad)}
+.pin{font-family:var(--mono);letter-spacing:10px;font-size:24px;text-align:center}
+.hint{margin-top:8px;font-size:13px;color:var(--g500)}
+.msg{margin-top:8px;font-size:13px;color:var(--bad);display:none}
+.sim{margin-top:14px;border:1px dashed var(--g300);border-radius:14px;padding:14px;display:flex;gap:14px;align-items:center}
+.sim svg{flex:none}.sim p{font-size:13px;color:var(--g700)}
+.agree{margin-top:22px;display:flex;gap:10px;align-items:flex-start;background:var(--warn-bg);border-radius:12px;padding:14px;font-size:14px;color:var(--g800);cursor:pointer}
+.agree input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--brand)}
+.btn{display:block;width:100%;height:56px;border:0;border-radius:14px;background:var(--brand);color:#fff;font:inherit;font-size:17px;font-weight:700;margin-top:22px;cursor:pointer}
+.btn:active{background:var(--brand-700)}.btn:disabled{background:var(--g100);color:var(--g400);cursor:default}
+.note{margin-top:16px;font-size:13px;color:var(--g500);text-align:center}
+.state{display:none;text-align:center;padding-top:16px}
+.badge{width:76px;height:76px;border-radius:50%;margin:8px auto 18px;display:grid;place-items:center}
+.badge.wait{background:var(--brand-50)}.badge.done{background:var(--ok-bg)}.badge.warn{background:var(--warn-bg)}
+.state h2{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.state .d{margin-top:8px;color:var(--g700);font-size:15px}
+.box{margin-top:24px;text-align:left;background:var(--g50);border-radius:14px;padding:16px}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:6px 0}.row span:first-child{color:var(--g600);flex:none}.row span:last-child{font-weight:600;text-align:right}
+.steps{margin-top:22px;text-align:left;list-style:none}
+.steps li{position:relative;padding:0 0 14px 38px;font-size:15px;color:var(--g800)}
+.steps li::before{content:attr(data-n);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--g100);color:var(--g700);font-size:13px;font-weight:700;display:grid;place-items:center}
+.steps li.on::before{background:var(--brand);color:#fff}
+.steps li.ok::before{content:'✓';background:var(--ok);color:#fff}
+.spin{width:30px;height:30px;border:3px solid var(--brand-100);border-top-color:var(--brand);border-radius:50%;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+.sub{display:block;margin-top:12px;font-size:14px;color:var(--g600);background:none;border:0;font-family:inherit;text-decoration:underline;cursor:pointer;width:100%}
+.howto{margin-top:20px;text-align:left;font-size:14px;color:var(--g700);background:var(--g50);border-radius:14px;padding:16px}
+.howto b{color:var(--ink)}
+footer{padding:20px;border-top:1px solid var(--g100);font-size:12px;color:var(--g500);text-align:center}
+.kakao{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:8px 14px;border-radius:10px;background:#FEE500;color:#191919;font-weight:700;font-size:13px;text-decoration:none}
+.bad{padding:40px 0;text-align:center;color:var(--g700)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="logo">JDI<b>SIM</b></div><a class="help" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">문의</a></header>
+  <main>
+    <div class="prod" id="prodBox" style="display:none"><div class="flag" id="pFlag"></div><div><div class="t" id="pName"></div><div class="s" id="pSpec"></div></div></div>
+
+    <section id="sLoad" class="bad">불러오는 중…</section>
+    <section id="sBad" class="bad" style="display:none">상품을 확인할 수 없어요.<br>설명서에 있는 QR을 다시 찍어 주세요.</section>
+
+    <!-- ① 입력 -->
+    <section id="sForm" style="display:none">
+      <h1>유심 등록</h1>
+      <p class="lead">받으신 유심을 쓰려면 등록이 필요해요.<br>받는 즉시 등록해 두면 출국 날 바로 쓸 수 있어요.</p>
+      <div class="field">
+        <label for="nm">받는 분 이름</label>
+        <input id="nm" autocomplete="name" placeholder="쿠팡 주문의 받는 분 이름">
+      </div>
+      <div class="field">
+        <label for="l4">유심 번호 끝 4자리</label>
+        <input id="l4" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off">
+        <div class="msg" id="l4msg">번호를 다시 확인해 주세요. 유심 카드에 적힌 긴 번호의 마지막 4자리예요.</div>
+        <div class="sim">
+          <svg width="86" height="58" viewBox="0 0 86 58" aria-hidden="true"><rect x="1" y="1" width="84" height="56" rx="6" fill="#fff" stroke="#D1D6DB"/><rect x="8" y="12" width="20" height="16" rx="3" fill="#FFE4D1" stroke="#F1690D"/><text x="8" y="46" font-size="7.5" font-family="monospace" fill="#8B95A1">8986 0000 0000</text><rect x="62" y="38" width="20" height="12" rx="2" fill="none" stroke="#F1690D" stroke-width="1.5"/><text x="64" y="47" font-size="7.5" font-family="monospace" font-weight="700" fill="#F1690D">1234</text></svg>
+          <p>유심 카드(또는 카드가 끼워진 플라스틱 판)에 적힌 <b>긴 숫자의 마지막 4자리</b>를 입력해 주세요.</p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="dep">출국일</label>
+        <input id="dep" type="date">
+        <div class="hint">출국일에 맞춰 사용 준비를 해 드려요.</div>
+      </div>
+      <label class="agree"><input type="checkbox" id="ag"><span><b>유심 등록(사용 준비)을 마친 뒤에는 반품·환불이 어려워요.</b> 등록 전에는 미개봉 상태로 반품할 수 있어요.</span></label>
+      <button class="btn" id="go" disabled>등록하기</button>
+      <div class="msg" id="gomsg" style="text-align:center"></div>
+      <p class="note">등록은 유심 1장당 한 번만 할 수 있어요.</p>
+    </section>
+
+    <!-- ② 접수됨 -->
+    <section class="state" id="sWait">
+      <div class="badge wait"><div class="spin"></div></div>
+      <h2>등록이 접수됐어요</h2>
+      <p class="d">출국 전까지 사용 준비를 마쳐 드려요.<br>준비가 끝나면 이 화면에 표시돼요.</p>
+      <ol class="steps"><li class="ok" data-n="1">유심 등록 접수</li><li class="on" data-n="2">사용 준비 중</li><li data-n="3">현지 도착 후 유심 끼우기</li></ol>
+      <div class="box"><div class="row"><span>상품</span><span id="wP"></span></div><div class="row"><span>유심 번호</span><span id="wN"></span></div><div class="row"><span>출국일</span><span id="wD"></span></div></div>
+      <p class="note">이 창을 닫아도 괜찮아요. 설명서의 QR을 다시 찍으면 진행 상태를 볼 수 있어요.</p>
+    </section>
+
+    <!-- ③ 사용 준비 완료 -->
+    <section class="state" id="sDone">
+      <div class="badge done"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#12A25E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2>사용 준비 완료</h2>
+      <p class="d">현지에 도착해서 유심을 끼우면 바로 쓸 수 있어요.</p>
+      <ol class="steps"><li class="ok" data-n="1">유심 등록 접수</li><li class="ok" data-n="2">사용 준비 완료</li><li class="on" data-n="3">현지 도착 후 유심 끼우기</li></ol>
+      <div class="box"><div class="row"><span>상품</span><span id="dP"></span></div><div class="row"><span>사용 기간</span><span>현지에서 처음 연결한 날부터</span></div></div>
+      <div class="howto"><b>현지에서 이렇게 하세요</b><br>① 비행기에서 내리면 휴대폰을 끄고 유심을 바꿔 끼워요<br>② 켠 뒤 <b>설정 → 데이터 로밍 켜기</b><br>③ 1~3분 안에 연결돼요. 안 되면 비행기 모드를 한 번 켰다 꺼 보세요<br>한국 유심은 함께 드린 케이스에 잘 보관해 주세요.</div>
+    </section>
+
+    <!-- ④ 이미 등록됨 -->
+    <section class="state" id="sDup">
+      <div class="badge warn"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C77700" stroke-width="2.4" stroke-linecap="round"><path d="M12 7v6M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg></div>
+      <h2>이미 등록된 유심이에요</h2>
+      <p class="d">직접 등록하신 적이 없다면 카카오톡으로 알려 주세요.<br>확인해서 바로 도와드릴게요.</p>
+      <a class="kakao" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카카오톡 문의</a>
+      <button class="sub" onclick="show('sForm')">번호 다시 입력하기</button>
+    </section>
+  </main>
+  <footer>문의 카카오톡 채널 <b>제이디아이심</b> · 10시~18시<br><a class="kakao" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카카오톡 문의</a></footer>
+</div>
+<script>
+var API = 'https://jdisim-proxy.vercel.app/api/admin?fn=usimreg';
+var P = (new URLSearchParams(location.search).get('p') || '').replace(/[^A-Za-z0-9_-]/g, '');
+var PROD = null, timer = null;
+function $(id){ return document.getElementById(id); }
+function show(id){ ['sLoad','sBad','sForm','sWait','sDone','sDup'].forEach(function(s){ $(s).style.display = s === id ? 'block' : 'none'; }); window.scrollTo(0, 0); }
+function lsGet(){ try { return localStorage.getItem('ureg:' + P); } catch (e) { return null; } }
+function lsSet(v){ try { localStorage.setItem('ureg:' + P, v); } catch (e) {} }
+function label(){ return PROD ? (PROD.label.replace(' 유심 ·', '') + ' · ' + PROD.spec.split(' · ')[0]) : ''; }
+function fmtD(d){ return d ? d.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2월 $3일').replace(/^0/, '').replace('월 0', '월 ') : ''; }
+function paint(r){
+  if (r.state === 'done') { $('dP').textContent = label(); show('sDone'); clearInterval(timer); return; }
+  $('wP').textContent = label(); $('wN').textContent = '····' + (r.l4 || ''); $('wD').textContent = fmtD(r.dep); show('sWait');
+  if (!timer) timer = setInterval(poll, 30000);
+}
+function poll(){ var id = lsGet(); if (!id) return;
+  fetch(API + '&id=' + encodeURIComponent(id)).then(function(r){ return r.json(); }).then(function(j){ if (j && j.ok) paint(j); }).catch(function(){}); }
+function init(){
+  if (!P) return show('sBad');
+  fetch(API + '&prod=' + encodeURIComponent(P)).then(function(r){ return r.json(); }).then(function(j){
+    if (!j || !j.prod) return show('sBad');
+    PROD = j.prod; $('prodBox').style.display = 'flex'; $('pFlag').textContent = PROD.flag || '📶'; $('pName').textContent = PROD.label; $('pSpec').textContent = PROD.spec;
+    var t = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); $('dep').min = t;
+    var id = lsGet();
+    if (id) { fetch(API + '&id=' + encodeURIComponent(id)).then(function(r){ return r.json(); }).then(function(x){ if (x && x.ok) paint(x); else show('sForm'); }).catch(function(){ show('sForm'); }); }
+    else show('sForm');
+  }).catch(function(){ $('sBad').textContent = '연결이 원활하지 않아요. 잠시 후 다시 열어 주세요.'; show('sBad'); });
+}
+function chk(){ $('go').disabled = !($('nm').value.trim().length >= 2 && /^\d{4}$/.test($('l4').value) && $('dep').value && $('ag').checked); $('l4').classList.remove('err'); $('l4msg').style.display = 'none'; $('gomsg').style.display = 'none'; }
+$('nm').oninput = chk; $('dep').onchange = chk; $('ag').onchange = chk;
+$('l4').oninput = function(){ $('l4').value = $('l4').value.replace(/\D/g, '').slice(0, 4); chk(); };
+$('go').onclick = function(){
+  var b = $('go'); b.disabled = true; b.textContent = '확인 중…';
+  fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ reg: { p: P, name: $('nm').value.trim(), l4: $('l4').value, dep: $('dep').value, agree: $('ag').checked } }) })
+  .then(function(r){ return r.json().then(function(j){ return { s: r.status, j: j }; }); })
+  .then(function(x){
+    b.textContent = '등록하기'; b.disabled = false;
+    if (x.j && x.j.ok) { lsSet(x.j.id); return paint(x.j); }
+    var e = (x.j && x.j.error) || '';
+    if (e === 'nomatch') { $('l4').classList.add('err'); $('l4msg').style.display = 'block'; return; }
+    if (e === 'dup') return show('sDup');
+    $('gomsg').textContent = e || '잠시 후 다시 시도해 주세요'; $('gomsg').style.display = 'block';
+  }).catch(function(){ b.textContent = '등록하기'; b.disabled = false; $('gomsg').textContent = '연결이 원활하지 않아요. 잠시 후 다시 시도해 주세요'; $('gomsg').style.display = 'block'; });
+};
+init();
+</script>
+</body>
+</html>
