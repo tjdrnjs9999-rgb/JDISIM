@@ -1758,7 +1758,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (normalizedCountry.includes('대만')) {
-      list.push("<strong>실명 인증(KYC) 등록 필수:</strong> 대만 통신법에 따라 eSIM 스캔 직후 현지에서 수신되는 문자 링크로 여권 실명 등록(KYC)을 완료해 주셔야 데이터 차단이 해제됩니다.");
+      list.push("<strong>실명 등록(KYC) 필수:</strong> 대만 법에 따라 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 현지에서 연결하면 오는 문자 링크로 등록하거나, 로밍(CMI) 상품은 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 등록할 수 있어요.");
+    }
+
+    if (normalizedCountry.includes('홍콩') && normalizedCarrier.includes('cmhk')) {   // 11/28 CMI(CMLink) 실명 등록
+      list.push("<strong>홍콩 실명 등록 필수:</strong> 홍콩 법에 따라 홍콩에서 쓰려면 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 하거나, 현지에서 받은 문자 링크로 등록해 주세요. (마카오·중국에서만 쓰면 필요 없어요)");
     }
 
     if (normalizedCountry.includes('미국') || normalizedCountry.includes('캐나다') || normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
