@@ -1758,7 +1758,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (normalizedCountry.includes('대만') && normalizedCarrier.trim() === 'chunghwa') {   // 11/28 CMI 만 — 조이텔 이심은 실명 등록 불필요(사장님)
-      list.push("<strong>실명 등록(KYC) 필수:</strong> 대만 법에 따라 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 현지에서 연결하면 오는 문자 링크로 등록하거나, 로밍(CMI) 상품은 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 등록할 수 있어요.");
+      list.push("<strong>실명 등록(KYC) 필수:</strong> 대만 법에 따라 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 하거나, 현지에서 받은 문자 링크로 등록해 주세요.");
     }
 
     if (normalizedCountry.includes('홍콩') && normalizedCarrier.includes('cmhk')) {   // 11/28 CMI(CMLink) 실명 등록
