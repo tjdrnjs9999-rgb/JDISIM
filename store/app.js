@@ -699,7 +699,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 11/25 UI 감사: '5G/4G/4G' 중복·'모름' 내부값 노출 → 세대 토큰 단위로 합치고 미상은 숨김
   window.jdSpeedLabel = function (speeds) {
     const toks = [];
-    Array.from(speeds || []).forEach(function (v) { String(v || '').split(/[\/,·\s]+/).forEach(function (t) { t = t.trim().toUpperCase(); if (t && t !== '모름' && toks.indexOf(t) < 0) toks.push(t); }); });
+    // 11/28 점검: 구분자로 쪼개면 '4G·5G/4G (국가별 상이)' 의 괄호 문구까지 토큰이 돼 '5G/4G/(국가별/상이)' 로 깨짐(23개 카드) → 세대 표기만 뽑는다
+    Array.from(speeds || []).forEach(function (v) { (String(v || '').toUpperCase().match(/5G|4G|LTE|3G/g) || []).forEach(function (t) { if (toks.indexOf(t) < 0) toks.push(t); }); });
     const order = ['5G', '4G', 'LTE', '3G'];
     toks.sort(function (a, b) { return (order.indexOf(a) < 0 ? 9 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 9 : order.indexOf(b)); });
     return toks.length ? toks.join('/') : '고속 데이터';
