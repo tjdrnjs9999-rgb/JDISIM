@@ -1757,7 +1757,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       list.push("<strong>ChatGPT 접속 제한 안내:</strong> 본 상품은 홍콩 IP를 경유하므로 보안상 ChatGPT 등의 특수 해외 서비스 접속이 원활하지 않을 수 있습니다.");
     }
 
-    if (normalizedCountry.includes('대만')) {
+    if (normalizedCountry.includes('대만') && normalizedCarrier.trim() === 'chunghwa') {   // 11/28 CMI 만 — 조이텔 이심은 실명 등록 불필요(사장님)
       list.push("<strong>실명 등록(KYC) 필수:</strong> 대만 법에 따라 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 현지에서 연결하면 오는 문자 링크로 등록하거나, 로밍(CMI) 상품은 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 등록할 수 있어요.");
     }
 
