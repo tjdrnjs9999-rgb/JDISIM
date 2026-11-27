@@ -83,7 +83,7 @@ footer{padding:20px;border-top:1px solid var(--g100);font-size:12px;color:var(--
         <input id="l4" class="pin" inputmode="numeric" maxlength="4" placeholder="····" autocomplete="off">
         <div class="msg" id="l4msg">번호를 다시 확인해 주세요. 유심 카드에 적힌 긴 번호의 마지막 4자리예요.</div>
         <div class="sim">
-          <svg width="86" height="58" viewBox="0 0 86 58" aria-hidden="true"><rect x="1" y="1" width="84" height="56" rx="6" fill="#fff" stroke="#D1D6DB"/><rect x="8" y="12" width="20" height="16" rx="3" fill="#FFE4D1" stroke="#F1690D"/><text x="8" y="46" font-size="7.5" font-family="monospace" fill="#8B95A1">8986 0000 0000</text><rect x="62" y="38" width="20" height="12" rx="2" fill="none" stroke="#F1690D" stroke-width="1.5"/><text x="64" y="47" font-size="7.5" font-family="monospace" font-weight="700" fill="#F1690D">1234</text></svg>
+          <svg width="86" height="58" viewBox="0 0 86 58" aria-hidden="true"><rect x="1" y="1" width="84" height="56" rx="6" fill="#fff" stroke="#D1D6DB"/><rect x="8" y="12" width="20" height="16" rx="3" fill="#FFE4D1" stroke="#F1690D"/><text x="8" y="46" font-size="7.5" font-family="monospace" fill="#8B95A1">8985 0000 0000</text><rect x="62" y="38" width="20" height="12" rx="2" fill="none" stroke="#F1690D" stroke-width="1.5"/><text x="64" y="47" font-size="7.5" font-family="monospace" font-weight="700" fill="#F1690D">1234</text></svg>
           <p>유심 카드(또는 카드가 끼워진 플라스틱 판)에 적힌 <b>긴 숫자의 마지막 4자리</b>를 입력해 주세요.</p>
         </div>
       </div>
@@ -126,6 +126,18 @@ footer{padding:20px;border-top:1px solid var(--g100);font-size:12px;color:var(--
       <a class="kakao" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카카오톡 문의</a>
       <button class="sub" onclick="show('sForm')">번호 다시 입력하기</button>
     </section>
+
+    <!-- 대만·홍콩 실명 등록 (2026-11-28 — 두 지역 법상 이 유심은 여권 실명 등록 후 연결) -->
+    <div class="howto" id="rnBox" style="display:none;margin-top:14px;background:#EEF5FF;border:1.5px solid #2F6FDE">
+      <b>🪪 <span id="rnW">대만</span>에서 쓰려면 실명 등록도 해 주세요</b><br>
+      <span id="rnW2">대만</span> 법에 따라 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 출국 전에 한국에서 미리 해 두세요.<br>
+      ① 아래 버튼으로 등록 화면 열기<br>
+      ② 사용 지역 <b id="rnR">Taiwan, China</b> 선택 · 이메일 입력<br>
+      ③ 유심 카드에 적힌 <b>유심 번호 전체(8985로 시작)</b> 입력<br>
+      ④ 서류 <b>Passport(여권)</b> → 여권 사진 면 전체(아래 바코드까지) 사진 올리기<br>
+      ⑤ 동의 3개 체크 → <b>Confirm</b> · 결과는 문자·이메일로 와요<br>
+      <a class="kakao" style="background:#2F6FDE;color:#fff" href="https://global.cmlink.com/en/real-name" target="_blank" rel="noopener">실명 등록 화면 열기</a>
+    </div>
   </main>
   <footer>문의 카카오톡 채널 <b>제이디아이심</b> · 10시~18시<br><a class="kakao" href="https://pf.kakao.com/_GSixcn/chat" target="_blank" rel="noopener">💬 카카오톡 문의</a></footer>
 </div>
@@ -134,7 +146,9 @@ var API = 'https://jdisim-proxy.vercel.app/api/admin?fn=usimreg';
 var P = (new URLSearchParams(location.search).get('p') || '').replace(/[^A-Za-z0-9_-]/g, '');
 var PROD = null, timer = null;
 function $(id){ return document.getElementById(id); }
-function show(id){ ['sLoad','sBad','sForm','sWait','sDone','sDup'].forEach(function(s){ $(s).style.display = s === id ? 'block' : 'none'; }); window.scrollTo(0, 0); }
+var RN = (P.match(/^RG-(TW|HK)/i) || [])[1];   // 대만·홍콩 = CMI 유심 실명 등록 필요
+if (RN) { var w = RN.toUpperCase() === 'TW' ? '대만' : '홍콩'; $('rnW').textContent = w; $('rnW2').textContent = w; $('rnR').textContent = w === '대만' ? 'Taiwan, China' : 'Hong Kong, China'; }
+function show(id){ ['sLoad','sBad','sForm','sWait','sDone','sDup'].forEach(function(s){ $(s).style.display = s === id ? 'block' : 'none'; }); $('rnBox').style.display = RN && (id === 'sWait' || id === 'sDone') ? 'block' : 'none'; window.scrollTo(0, 0); }
 function lsGet(){ try { return localStorage.getItem('ureg:' + P); } catch (e) { return null; } }
 function lsSet(v){ try { localStorage.setItem('ureg:' + P, v); } catch (e) {} }
 function label(){ return PROD ? (PROD.label.replace(' 유심 ·', '') + ' · ' + PROD.spec.split(' · ')[0]) : ''; }
