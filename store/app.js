@@ -1755,7 +1755,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (normalizedCountry.includes('베트남')) {
       list.push("<strong>베트남 시간 기준 일일 리셋:</strong> 매일 23:00(베트남 시간 기준)에 일일 사용 용량이 자동 리셋/초기화됩니다.");
       list.push("<strong>비엣텔망 수동 고정:</strong> 신호 연결 시 속도가 느린 Vietnamobile로 자동 지정되는 경우, 셀룰러 설정에서 수동으로 'Viettel'망을 강제 고정해 주세요.");
-      list.push("<strong>ChatGPT 접속 제한 안내:</strong> 본 상품은 홍콩 IP를 경유하므로 보안상 ChatGPT 등의 특수 해외 서비스 접속이 원활하지 않을 수 있습니다.");
     }
 
     if (normalizedCountry.includes('대만') && normalizedCarrier.trim() === 'chunghwa') {   // 11/28 CMI 만 — 조이텔 이심은 실명 등록 불필요(사장님)
