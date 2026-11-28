@@ -1766,6 +1766,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       list.push("<strong>홍콩 실명 등록 필수:</strong> 홍콩 법에 따라 홍콩에서 쓰려면 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 하거나, 현지에서 받은 문자 링크로 등록해 주세요. (마카오·중국에서만 쓰면 필요 없어요)");
     }
 
+    if (['china telecom', '중국/china telecom,홍콩/china telecom hk/hkt,마카오/china telecom macau'].indexOf(normalizedCarrier.trim()) !== -1) {   // 11/28 접속 설정 CTExcel — 조이텔 앱 호환 표(챗GPT·틱톡 불가)
+      list.push("<strong>챗GPT·틱톡 사용 불가:</strong> 이 통신사(차이나텔레콤) 요금제는 챗GPT와 틱톡에 접속할 수 없어요.");
+    }
+
     if (normalizedCountry.includes('미국') || normalizedCountry.includes('캐나다') || normalizedCountry.includes('괌') || normalizedCountry.includes('사이판')) {
       list.push("<strong>단말기 컨트리락 해제 확인:</strong> 컨트리락이 해제된 공기계에서만 해외 eSIM 사용이 가능하므로 출국 전 통신사에 락 해제 여부를 확인하세요.");
     }

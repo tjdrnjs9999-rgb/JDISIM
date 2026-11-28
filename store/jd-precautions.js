@@ -19,6 +19,7 @@
     ] },
     { c: ['대만'], kx: ['chunghwa'], t: ['<strong>실명 등록(KYC) 필수:</strong> 대만 법에 따라 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 하거나, 현지에서 받은 문자 링크로 등록해 주세요.'] },
     { c: ['홍콩'], k: ['CMHK'], t: ['<strong>홍콩 실명 등록 필수:</strong> 홍콩 법에 따라 홍콩에서 쓰려면 여권으로 실명 등록을 마쳐야 데이터가 연결돼요. 출국 전 <b>global.cmlink.com/en/real-name</b> 에서 미리 하거나, 현지에서 받은 문자 링크로 등록해 주세요. (마카오·중국에서만 쓰면 필요 없어요)'] },   // 11/28 CMI(CMLink) 실명 등록
+    { kx: ['china telecom', '중국/china telecom,홍콩/china telecom hk/hkt,마카오/china telecom macau'], t: ['<strong>챗GPT·틱톡 사용 불가:</strong> 이 통신사(차이나텔레콤) 요금제는 챗GPT와 틱톡에 접속할 수 없어요.'] },   // 11/28 접속 설정 CTExcel(조이텔 앱 호환 표) — products 의 apn 이 CTExcel 인 두 묶음의 통신사 표기와 정확히 일치
     { c: ['괌', '사이판'], t: ['<strong>현지 도착 후 개통 문자로 시작:</strong> 도착해서 개통 문자가 발송되는 시점부터 사용일이 카운트돼요 — 미리 구매해 두셔도 기간이 줄지 않습니다.'] },
     { c: ['미국', '캐나다', '괌', '사이판'], t: ['<strong>단말기 컨트리락 해제 확인:</strong> 컨트리락이 해제된 기기에서만 사용 가능하므로 출국 전 통신사에 락 해제 여부를 확인하세요.'] },
     { c: ['몰디브'], t: [
